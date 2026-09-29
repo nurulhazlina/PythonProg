@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pre-Survey — Before Step 1 | Snake Game Python Tutorial</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.s-hero{background:var(--teal-dark);color:#fff;padding:38px 0 30px}
+.s-hero .eyebrow{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.65);margin:0 0 8px}
+.s-hero h1{margin:0 0 10px;font-size:clamp(1.4rem,4vw,2rem)}
+.s-hero .sub{margin:0;opacity:.8;max-width:560px;line-height:1.55}
+.s-meta{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+.smeta{background:rgba(255,255,255,.15);border-radius:8px;padding:5px 13px;font-size:13px;font-weight:600}
+.prog-wrap{padding:12px 0;background:var(--bg);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+.prog-track{height:7px;background:rgba(0,0,0,.1);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;background:var(--teal);border-radius:4px;transition:width .3s;width:0%}
+.prog-lbl{font-size:12px;color:var(--muted);margin-top:5px}
+.s-block{background:var(--card);border-radius:12px;border:1px solid var(--line);margin:24px 0;overflow:hidden}
+.s-block-hdr{background:var(--teal-dark);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.s-block-hdr h2{margin:0;font-size:16px}
+.s-block-hdr p{margin:4px 0 0;font-size:12.5px;opacity:.8}
+.badge{background:rgba(255,255,255,.2);border-radius:20px;padding:2px 10px;font-size:12px;font-weight:700;white-space:nowrap}
+.instr{background:rgba(13,85,167,.05);border:1px solid rgba(13,85,167,.15);border-radius:8px;
+  padding:12px 16px;margin:14px 18px 6px;font-size:13px;line-height:1.6;color:var(--muted)}
+.instr strong{color:var(--blue)}
+.sub-hdr{background:rgba(2,173,165,.07);border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  padding:9px 18px;font-size:12.5px;font-weight:700;color:var(--teal-dark);display:flex;align-items:center;gap:6px}
+.step-hdr{background:rgba(11,79,75,.88);color:#B9E4E1;padding:8px 18px;font-size:11.5px;
+  font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+/* ── concept MC rows ── */
+.ci-row{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:flex-start}
+.ci-row:last-child{border-bottom:none}
+.ci-row.unanswered{background:rgba(200,0,0,.04)}
+.ci-num{color:var(--teal);font-weight:700;font-size:13px;min-width:26px;flex-shrink:0;padding-top:1px}
+.ci-body{flex:1}
+.ci-q{font-size:14px;line-height:1.5;margin:0 0 10px}
+.ci-opts{display:flex;flex-direction:column;gap:6px}
+.ci-opt{display:flex;align-items:flex-start;gap:8px;cursor:pointer;padding:6px 10px;border-radius:7px;
+  border:1.5px solid var(--line);font-size:13.5px;line-height:1.4;transition:all .12s;background:var(--card)}
+.ci-opt:hover{border-color:var(--teal);background:rgba(2,173,165,.05)}
+.ci-opt.selected{border-color:var(--teal);background:rgba(2,173,165,.1);font-weight:600}
+.ci-opt.correct{border-color:#1a7f37;background:rgba(26,127,55,.1);color:#1a7f37}
+.ci-opt.wrong{border-color:var(--red);background:rgba(200,0,0,.07);color:var(--red)}
+.ci-opt input[type=radio]{margin-top:2px;flex-shrink:0;accent-color:var(--teal)}
+.opt-lbl{width:18px;height:18px;border-radius:4px;background:var(--teal-dark);color:#fff;
+  font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+/* ── Likert rows ── */
+.lk-row{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;
+  padding:12px 18px;border-bottom:1px solid var(--line)}
+.lk-row:last-child{border-bottom:none}
+.lk-row.unanswered{background:rgba(200,0,0,.04)}
+.q-head{display:flex;gap:8px;align-items:flex-start}
+.q-num{color:var(--teal);font-weight:700;font-size:13px;min-width:24px;flex-shrink:0;padding-top:1px}
+.q-txt{font-size:14px;line-height:1.5}
+.opt-col{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.lk-lbls{display:flex;gap:5px}
+.lk-lbls span{width:34px;text-align:center;font-size:10px;color:var(--muted);font-weight:600;line-height:1.2}
+.lk-btns{display:flex;gap:5px}
+.lk-btn{width:34px;height:34px;border-radius:7px;border:2px solid var(--line);background:var(--card);
+  font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .12s;color:var(--muted);flex-shrink:0}
+.lk-btn:hover{border-color:var(--teal);color:var(--teal);background:rgba(2,173,165,.06)}
+.lk-btn.sel{background:var(--teal);border-color:var(--teal);color:#fff}
+@media(max-width:620px){
+  .lk-row{grid-template-columns:1fr}
+  .opt-col{align-items:flex-start}
+}
+/* ── submit & score ── */
+.submit-area{text-align:center;padding:28px 0 36px}
+.btn-sub{background:var(--teal);color:#fff;border:none;border-radius:10px;padding:15px 50px;
+  font-size:16px;font-weight:700;cursor:pointer;transition:background .15s}
+.btn-sub:hover{background:var(--teal-dark)}
+.btn-sub:disabled{background:#aaa;cursor:not-allowed}
+.val-msg{color:var(--red);font-size:14px;margin-top:10px;display:none;font-weight:600}
+.done-box{background:rgba(2,173,165,.08);border:2px solid var(--teal);border-radius:12px;
+  padding:22px 28px;display:none;max-width:520px;margin:18px auto 0}
+.done-box h3{color:var(--teal-dark);margin:0 0 6px}
+.score-card{background:var(--teal-dark);color:#fff;border-radius:10px;padding:16px 20px;
+  margin:14px 0 10px;display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap}
+.score-num{font-size:2.4rem;font-weight:800;line-height:1}
+.score-lbl{font-size:13px;opacity:.85}
+/* ── export panel ── */
+#ep{position:fixed;top:16px;right:16px;z-index:99999;background:#0F1B22;color:#E6EDF3;
+  border-radius:12px;padding:18px;width:320px;max-height:80vh;overflow-y:auto;
+  font-family:monospace;font-size:12px;box-shadow:0 8px 32px rgba(0,0,0,.6);display:none}
+#ep h4{margin:0 0 10px;color:#79C0FF;font-size:14px}
+#ep pre{background:#0a1118;padding:8px;border-radius:5px;overflow-x:auto;font-size:10.5px;
+  white-space:pre-wrap;word-break:break-all;max-height:200px;overflow-y:auto;margin:0 0 8px}
+.eb{display:inline-block;margin:3px 3px 0 0;padding:5px 10px;border-radius:5px;border:none;cursor:pointer;font-size:11px;font-weight:700}
+.eb-c{background:#21262d;color:#E6EDF3}.eb-j{background:#238636;color:#fff}
+.eb-v{background:#1f6feb;color:#fff}.eb-x{background:#6e2020;color:#fff}
+</style>
+<style>
+/* ── Student Identity Block ── */
+.id-block{background:linear-gradient(135deg,#08312F,#0a3d39);border-radius:12px;padding:20px 22px;margin:0 0 22px;border:2px solid rgba(2,173,165,.3)}
+.id-block.id-confirmed{border-color:#02ADA5;background:linear-gradient(135deg,#052e16,#073d2e)}
+.id-block-title{font-weight:800;font-size:15px;color:#fff;display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.id-required-badge{background:#02ADA5;color:#fff;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;letter-spacing:.05em;flex-shrink:0}
+.id-subtitle{font-weight:400;font-size:13px;color:rgba(255,255,255,.6)}
+.id-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px 12px;align-items:end}
+.id-field{display:flex;flex-direction:column;gap:5px}
+.id-field.id-w2{grid-column:span 2}
+.id-field label{font-size:11px;font-weight:700;color:rgba(255,255,255,.65);letter-spacing:.06em;text-transform:uppercase}
+.id-req{color:#f5a21d;margin-left:2px}
+.id-field input,.id-field select{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);border-radius:7px;padding:9px 12px;color:#fff;font-size:13px;font-family:inherit;width:100%;box-sizing:border-box;transition:border-color .2s}
+.id-field select{cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23fff' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.id-field select option{background:#0a3d39;color:#fff}
+.id-field input:focus,.id-field select:focus{outline:none;border-color:#02ADA5;background:rgba(2,173,165,.12)}
+.id-save-btn{background:#02ADA5;color:#fff;border:none;border-radius:8px;padding:11px 22px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;transition:opacity .2s;width:100%;margin-top:14px}
+.id-save-btn:hover{opacity:.88}
+.id-confirmed-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.id-confirmed-name{font-weight:700;font-size:16px;color:#fff}
+.id-confirmed-meta{color:rgba(255,255,255,.65);font-size:13px}
+.id-edit-btn{background:transparent;border:1.5px solid rgba(255,255,255,.35);border-radius:7px;padding:7px 16px;color:rgba(255,255,255,.75);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-left:auto;transition:border-color .2s}
+.id-edit-btn:hover{border-color:#02ADA5;color:#02ADA5}
+.id-notice{background:rgba(245,162,29,.12);border:1.5px solid rgba(245,162,29,.45);border-radius:8px;padding:9px 14px;color:#f5a21d;font-size:13px;font-weight:600;margin-top:12px;display:none}
+</style>
+</head>
+<body>
+
+<nav class="sitenav"><div class="wrap">
+  <a class="brand" href="index.html">Snake Game <span>Python Tutorial</span></a>
+  <details class="navsel">
+    <summary>Steps</summary>
+    <div class="navmenu" role="menu">
+      <a href="step-1.html"><b>Step 1</b>: Variables &amp; Setup</a>
+      <a href="step-2.html"><b>Step 2</b>: Loop &amp; Events</a>
+      <a href="step-3.html"><b>Step 3</b>: Direction Control</a>
+      <a href="step-4.html"><b>Step 4</b>: Snake Body</a>
+      <a href="step-5.html"><b>Step 5</b>: Bonus Food</a>
+      <a href="step-6.html"><b>Step 6</b>: Functions</a>
+      <a href="step-7.html"><b>Step 7</b>: Wrap-Around</a>
+      <a href="step-8.html"><b>Step 8</b>: Save High Score</a>
+      <a href="step-9.html"><b>Step 9</b>: OOP Refactor</a>
+      <a href="step-10.html"><b>Step 10</b>: ML Extension</a>
+    </div>
+  </details>
+  <a class="nl" href="index.html">Home</a>
+</div></nav>
+
+<header class="s-hero"><div class="wrap">
+  <p class="eyebrow">UMPSA STEM LAB &middot; Pre-Survey &middot; Week 1</p>
+  <h1>Pre-Survey: Before You Begin</h1>
+  <p class="sub">Complete this survey <strong>before starting Step&nbsp;1</strong>. It takes about 25&nbsp;minutes.</p>
+  <div class="s-meta">
+    <span class="smeta">&#128203; 95 items</span>
+    <span class="smeta">&#8987; ~25 min</span>
+    <span class="smeta">&#128274; Auto-saved</span>
+  </div>
+</div></header>
+
+<div class="prog-wrap"><div class="wrap">
+  <div class="prog-track"><div class="prog-fill" id="pf"></div></div>
+  <div class="prog-lbl" id="pl">0 of 95 answered</div>
+</div></div>
+
+<main><div class="wrap">
+
+<!-- ── STUDENT IDENTITY ── -->
+<div class="id-block" id="idBlock">
+  <div class="id-block-title">
+    &#x1F464; Your Details
+    <span class="id-required-badge">REQUIRED</span>
+    <span class="id-subtitle">&#8212; fill in before submitting (<span style="color:#f5a21d">&#9733;</span> = required)</span>
+  </div>
+  <div id="idForm">
+    <div class="id-grid">
+      <div class="id-field id-w2">
+        <label>Full Name <span class="id-req">&#9733;</span></label>
+        <input type="text" id="id-name" placeholder="Ahmad bin Ali" autocomplete="name">
+      </div>
+      <div class="id-field">
+        <label>Matric No. <span class="id-req">&#9733;</span></label>
+        <input type="text" id="id-matric" placeholder="RE25001" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>Class <span class="id-req">&#9733;</span></label>
+        <input type="text" id="id-class" placeholder="01A" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>Gender <span class="id-req">&#9733;</span></label>
+        <select id="id-gender">
+          <option value="">-- select --</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Prefer not to say</option>
+        </select>
+      </div>
+      <div class="id-field">
+        <label>Age <span class="id-req">&#9733;</span></label>
+        <input type="number" id="id-age" min="10" max="30" placeholder="e.g. 19" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>Home State</label>
+        <select id="id-state">
+          <option value="">-- select --</option>
+          <option>Johor</option><option>Kedah</option><option>Kelantan</option>
+          <option>Melaka</option><option>Negeri Sembilan</option><option>Pahang</option>
+          <option>Perak</option><option>Perlis</option><option>Pulau Pinang</option>
+          <option>Sabah</option><option>Sarawak</option><option>Selangor</option>
+          <option>Terengganu</option><option>Kuala Lumpur</option><option>Labuan</option>
+          <option>Putrajaya</option>
+        </select>
+      </div>
+      <div class="id-field id-w2">
+        <label>IC / MyKid No.</label>
+        <input type="text" id="id-mykid" placeholder="e.g. 050101-01-1234" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>School Code</label>
+        <input type="text" id="id-school" placeholder="e.g. JBA0001" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>Phone</label>
+        <input type="tel" id="id-phone" placeholder="0123456789" autocomplete="tel">
+      </div>
+      <div class="id-field id-w2">
+        <label>Email</label>
+        <input type="email" id="id-email" placeholder="name@example.com" autocomplete="email">
+      </div>
+    </div>
+    <div class="id-notice" id="idNotice"></div>
+    <button class="id-save-btn" onclick="saveIdentity()">&#10003; Confirm My Details</button>
+  </div>
+  <div id="idConfirmed" style="display:none">
+    <div class="id-confirmed-row">
+      <span style="font-size:20px">&#9989;</span>
+      <div>
+        <div class="id-confirmed-name" id="idConfName"></div>
+        <div class="id-confirmed-meta" id="idConfMeta"></div>
+      </div>
+      <button class="id-edit-btn" onclick="editIdentity()">Edit</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== SECTION 1: Concept Inventory ===== -->
+<div class="s-block">
+  <div class="s-block-hdr">
+    <div><h2>Section 1 &mdash; Programming Concept Inventory</h2>
+    <p>Choose the best answer for each question &middot; 50 questions (5 per step) &middot; auto-scored on submit</p></div>
+    <span class="badge">50 MC</span>
+  </div>
+  <div class="instr">
+    <strong>Instructions:</strong> Select the <strong>one best answer</strong> for each question.
+    These test your understanding of Python and game programming concepts across all 10 tutorial steps.
+    Answer based on what you <em>currently know</em> — there is no pass or fail.
+  </div>
+  <div id="ci-items"></div>
+</div>
+
+<!-- ===== SECTION 2: MAI Short ===== -->
+<div class="s-block">
+  <div class="s-block-hdr">
+    <div><h2>Section 2 &mdash; Metacognitive Awareness (MAI)</h2>
+    <p>Schraw &amp; Dennison (1994) &middot; Short form &middot; 16 items</p></div>
+    <span class="badge">16 items</span>
+  </div>
+  <div class="instr">
+    <strong>Instructions:</strong> How often does each statement apply to you?<br>
+    <strong>1 = Never &nbsp; 2 = Rarely &nbsp; 3 = Sometimes &nbsp; 4 = Often &nbsp; 5 = Always</strong>
+  </div>
+  <div id="ms-items"></div>
+</div>
+
+<!-- ===== SECTION 3: Korkmaz CT ===== -->
+<div class="s-block">
+  <div class="s-block-hdr">
+    <div><h2>Section 3 &mdash; Computational Thinking Scale</h2>
+    <p>Korkmaz, &Ccedil;ak&#305;r &amp; &Ouml;zden (2017) &middot; 29 items</p></div>
+    <span class="badge">29 items</span>
+  </div>
+  <div class="instr">
+    <strong>Instructions:</strong> How well does each statement describe you?<br>
+    <strong>1 = Never &nbsp; 2 = Rarely &nbsp; 3 = Sometimes &nbsp; 4 = Often &nbsp; 5 = Always</strong>
+  </div>
+  <div id="ct-items"></div>
+</div>
+
+<div class="submit-area">
+  <button class="btn-sub" id="sub-btn" type="button" onclick="doSubmit()">Submit Survey</button>
+  <div class="val-msg" id="vm"></div>
+  <div class="done-box" id="done">
+    <h3>&#10003; Survey Submitted!</h3>
+    <div class="score-card">
+      <div><div class="score-num" id="sc-num">-</div><div class="score-lbl">out of 50</div></div>
+      <div><div class="score-num" id="sc-pct">-</div><div class="score-lbl">concept score</div></div>
+    </div>
+    <p style="font-size:14px;margin:10px 0 0">Thank you &mdash; your pre-survey is saved. You may now start <a href='step-1.html' style='color:var(--teal);font-weight:700'>Step&nbsp;1 &rarr;</a></p>
+  </div>
+</div>
+
+</div></main>
+
+<footer><div class="wrap" style="text-align:center">
+  <p><strong>See &middot; Think &middot; Explore &middot; Marvel</strong><br>UMPSA STEM LAB &middot; Snake Game Python Tutorial</p>
+  <p>
+    <a href="index.html">Home</a> &middot;
+    <a href="step-1.html">Step 1</a> &middot; <a href="step-2.html">Step 2</a> &middot;
+    <a href="step-3.html">Step 3</a> &middot; <a href="step-4.html">Step 4</a> &middot;
+    <a href="step-5.html">Step 5</a> &middot; <a href="step-6.html">Step 6</a> &middot;
+    <a href="step-7.html">Step 7</a> &middot; <a href="step-8.html">Step 8</a> &middot;
+    <a href="step-9.html">Step 9</a> &middot; <a href="step-10.html">Step 10</a>
+  </p>
+  <p style="margin-top:10px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px;
+     display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-weight:400">
+    <span>&copy; 2026 UMPSA STEM Lab Engineering Education Initiative</span>
+    <a href="https://ee.ump.edu.my/hazlina/#research" target="_blank" rel="noopener"
+       style="color:var(--teal);display:inline-flex;align-items:center;transition:opacity .15s"
+       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    </a>
+    <a href="mailto:hazlina@umpsa.edu.my"
+       style="color:var(--teal);display:inline-flex;align-items:center;transition:opacity .15s"
+       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg>
+    </a>
+  </p>
+</div></footer>
+
+<div id="ep">
+  <h4>&#128203; Export &mdash; lms_survey_pre</h4>
+  <pre id="ep-pre">loading&hellip;</pre>
+  <div>
+    <button class="eb eb-c" type="button" onclick="epCopy()">Copy JSON</button>
+    <button class="eb eb-j" type="button" onclick="epDL()">JSON</button>
+    <button class="eb eb-v" type="button" onclick="epCSV()">CSV</button>
+    <button class="eb eb-x" type="button" onclick="document.getElementById('ep').style.display='none'">Close</button>
+  </div>
+</div>
+
+<!-- concept-questions.js provides PRE_POST_QUESTIONS -->
+<script src="concept-questions.js"></script>
+<script>
+var LMS_KEY='lms_survey_pre';
+
+/* ── Build CI from PRE_POST_QUESTIONS (50 Qs, 5 per step) ── */
+var CI=[];
+for(var _s=1;_s<=10;_s++){
+  var _qs=PRE_POST_QUESTIONS[_s]||[];
+  _qs.forEach(function(q,i){
+    CI.push({id:'ci'+(CI.length+1),step:_s,text:q.q,opts:q.opts,ans:q.ans});
+  });
+}
+
+var MS=[{"id": "ms1", "sub": "DK", "text": "I understand my intellectual strengths and weaknesses."}, {"id": "ms2", "sub": "DK", "text": "I know what kinds of information are most important to learn."}, {"id": "ms3", "sub": "PK", "text": "I understand how breaking information into smaller parts helps me remember it better."}, {"id": "ms4", "sub": "PK", "text": "I know how to use my intellectual strengths to compensate for my weaknesses."}, {"id": "ms5", "sub": "CK", "text": "I use different learning strategies depending on the situation."}, {"id": "ms6", "sub": "CK", "text": "I know when to use each strategy I use for learning."}, {"id": "ms7", "sub": "PL", "text": "I set specific goals before I begin a task."}, {"id": "ms8", "sub": "PL", "text": "I set sub-goals before beginning a complex task."}, {"id": "ms9", "sub": "IM", "text": "I try to translate new information into my own words."}, {"id": "ms10", "sub": "IM", "text": "I try to use strategies that have worked in the past."}, {"id": "ms11", "sub": "MO", "text": "I know when I am having difficulty understanding something."}, {"id": "ms12", "sub": "MO", "text": "I know when to try another strategy if one is not working."}, {"id": "ms13", "sub": "DB", "text": "I re-examine my assumptions when I get confused."}, {"id": "ms14", "sub": "DB", "text": "I change strategies when I fail to understand."}, {"id": "ms15", "sub": "EV", "text": "I evaluate my thinking after I finish a task."}, {"id": "ms16", "sub": "EV", "text": "I evaluate the degree to which I have achieved my learning objectives."}];
+var CT=[{"id": "ct1", "sub": "CR", "text": "I can produce creative products."}, {"id": "ct2", "sub": "CR", "text": "I can suggest solutions to problems in an unusual way."}, {"id": "ct3", "sub": "CR", "text": "I can generate new ideas easily."}, {"id": "ct4", "sub": "CR", "text": "I can make improvements to existing designs or models."}, {"id": "ct5", "sub": "CR", "text": "I can design and develop original products."}, {"id": "ct6", "sub": "CR", "text": "I can develop original solutions to problems."}, {"id": "ct7", "sub": "CR", "text": "I can create things that are different from existing products."}, {"id": "ct8", "sub": "AT", "text": "I can break complex problems into smaller parts."}, {"id": "ct9", "sub": "AT", "text": "I can think of step-by-step solutions to problems."}, {"id": "ct10", "sub": "AT", "text": "I can order the steps for solving a problem."}, {"id": "ct11", "sub": "AT", "text": "I can convert a problem solution into a systematic list of steps."}, {"id": "ct12", "sub": "AT", "text": "I can design a process to solve a problem."}, {"id": "ct13", "sub": "AT", "text": "I can follow an algorithm to solve a problem."}, {"id": "ct14", "sub": "CO", "text": "I can easily work collaboratively with others."}, {"id": "ct15", "sub": "CO", "text": "I can distribute tasks appropriately when working in a group."}, {"id": "ct16", "sub": "CO", "text": "I contribute effectively when working with others."}, {"id": "ct17", "sub": "CO", "text": "I can listen to others' ideas and include them in solutions."}, {"id": "ct18", "sub": "CO", "text": "I can work harmoniously in a team."}, {"id": "ct19", "sub": "CO", "text": "I can adapt my ideas to fit with others in a team."}, {"id": "ct20", "sub": "CTd", "text": "I can question information I receive from others."}, {"id": "ct21", "sub": "CTd", "text": "I can evaluate information from different perspectives."}, {"id": "ct22", "sub": "CTd", "text": "I can analyse information objectively."}, {"id": "ct23", "sub": "CTd", "text": "I can distinguish between relevant and irrelevant information."}, {"id": "ct24", "sub": "CTd", "text": "I can evaluate the reliability of sources of information."}, {"id": "ct25", "sub": "PS", "text": "I can solve a problem in different ways."}, {"id": "ct26", "sub": "PS", "text": "I develop a strategy before trying to solve a problem."}, {"id": "ct27", "sub": "PS", "text": "I can determine the most logical solution to a problem."}, {"id": "ct28", "sub": "PS", "text": "I try different approaches when I cannot solve a problem."}, {"id": "ct29", "sub": "PS", "text": "I can effectively apply a problem-solving strategy."}];
+
+var STEP_LBL={"1":"Step 1: Variables & Setup","2":"Step 2: Game Loop & Events","3":"Step 3: Direction Control","4":"Step 4: Snake Body","5":"Step 5: Food & Randomness","6":"Step 6: Functions","7":"Step 7: Wrap-Around","8":"Step 8: Save High Score","9":"Step 9: Object-Oriented Programming","10":"Step 10: ML Extension"};
+var MAI_SUB={"DK":"Declarative Knowledge","PK":"Procedural Knowledge","CK":"Conditional Knowledge","PL":"Planning","IM":"Information Management","MO":"Monitoring","DB":"Debugging","EV":"Evaluation"};
+var CT_SUB={"CR":"Creativity","AT":"Algorithmic Thinking","CO":"Co-operation","CTd":"Critical Thinking","PS":"Problem Solving"};
+var LABELS=['Never','Rarely','Sometimes','Often','Always'];
+var OPT_LETTERS=['A','B','C','D'];
+var TOTAL=95; /* 50 CI + 16 MAI + 29 CT */
+
+function lmsGet(){try{return JSON.parse(localStorage.getItem(LMS_KEY)||'null')||{};}catch(e){return{};}}
+function lmsSet(d){try{localStorage.setItem(LMS_KEY,JSON.stringify(d));}catch(e){}}
+function lmsLog(ev,data){var d=lmsGet();if(!d.log)d.log=[];d.log.push({event:ev,ts:Date.now(),data:data||null});lmsSet(d);}
+
+var R={};
+(function(){var s=lmsGet();if(s.responses)R=s.responses;})();
+function saveR(){var d=lmsGet();d.responses=R;d.updated=Date.now();lmsSet(d);}
+
+function updateProg(){
+  var done=Object.keys(R).filter(function(k){return R[k]!==undefined&&R[k]!==null;}).length;
+  var pct=Math.round(done/TOTAL*100);
+  document.getElementById('pf').style.width=pct+'%';
+  document.getElementById('pl').textContent=done+' of '+TOTAL+' answered ('+pct+'%)';
+}
+
+/* ── Concept Inventory ── */
+function buildCI(){
+  var c=document.getElementById('ci-items'),lastStep=-1,n=0;
+  CI.forEach(function(item){
+    n++;
+    if(item.step!==lastStep){
+      var sh=document.createElement('div');sh.className='step-hdr';
+      sh.textContent=STEP_LBL[item.step]||('Step '+item.step);
+      c.appendChild(sh);lastStep=item.step;
+    }
+    var row=document.createElement('div');row.className='ci-row';row.id='row-'+item.id;
+    var numEl=document.createElement('div');numEl.className='ci-num';numEl.textContent=n+'.';
+    var body=document.createElement('div');body.className='ci-body';
+    var qEl=document.createElement('p');qEl.className='ci-q';qEl.textContent=item.text;
+    var opts=document.createElement('div');opts.className='ci-opts';
+    item.opts.forEach(function(opt,i){
+      var lbl=document.createElement('label');lbl.className='ci-opt';
+      if(R[item.id]===i)lbl.classList.add('selected');
+      var inp=document.createElement('input');inp.type='radio';inp.name=item.id;inp.value=i;
+      if(R[item.id]===i)inp.checked=true;
+      var letter=document.createElement('span');letter.className='opt-lbl';letter.textContent=OPT_LETTERS[i];
+      var txt=document.createTextNode(opt);
+      inp.addEventListener('change',function(){
+        opts.querySelectorAll('.ci-opt').forEach(function(l){l.classList.remove('selected');});
+        lbl.classList.add('selected');
+        R[item.id]=i;row.classList.remove('unanswered');saveR();updateProg();
+      });
+      lbl.appendChild(inp);lbl.appendChild(letter);lbl.appendChild(txt);
+      opts.appendChild(lbl);
+    });
+    body.appendChild(qEl);body.appendChild(opts);
+    row.appendChild(numEl);row.appendChild(body);
+    c.appendChild(row);
+  });
+}
+
+/* ── Likert block builder ── */
+function buildLikert(items,containerId,subLabels){
+  var c=document.getElementById(containerId),lastSub='',n=0;
+  items.forEach(function(item){
+    n++;
+    if(item.sub!==lastSub){
+      var sh=document.createElement('div');sh.className='sub-hdr';
+      sh.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg> '+(subLabels[item.sub]||item.sub);
+      c.appendChild(sh);lastSub=item.sub;
+    }
+    var row=document.createElement('div');row.className='lk-row';row.id='row-'+item.id;
+    var head=document.createElement('div');head.className='q-head';
+    var numEl=document.createElement('span');numEl.className='q-num';numEl.textContent=n+'.';
+    var txt=document.createElement('span');txt.className='q-txt';txt.textContent=item.text;
+    head.appendChild(numEl);head.appendChild(txt);
+    var col=document.createElement('div');col.className='opt-col';
+    var lbls=document.createElement('div');lbls.className='lk-lbls';
+    LABELS.forEach(function(l){var s=document.createElement('span');s.textContent=l;lbls.appendChild(s);});
+    var btns=document.createElement('div');btns.className='lk-btns';
+    for(var v=1;v<=5;v++){
+      (function(val){
+        var btn=document.createElement('button');btn.type='button';btn.className='lk-btn';
+        btn.textContent=val;btn.setAttribute('aria-label',LABELS[val-1]);
+        if(R[item.id]===val)btn.classList.add('sel');
+        btn.addEventListener('click',function(){
+          btns.querySelectorAll('.lk-btn').forEach(function(b){b.classList.remove('sel');});
+          btn.classList.add('sel');R[item.id]=val;row.classList.remove('unanswered');saveR();updateProg();
+        });
+        btns.appendChild(btn);
+      })(v);
+    }
+    col.appendChild(lbls);col.appendChild(btns);
+    row.appendChild(head);row.appendChild(col);
+    c.appendChild(row);
+  });
+}
+
+buildCI();
+buildLikert(MS,'ms-items',MAI_SUB);
+buildLikert(CT,'ct-items',CT_SUB);
+updateProg();
+lmsLog('survey_opened',{page:'pre'});
+
+/* ── submit ── */
+
+/* ═══════════════════════════════════════════
+   STUDENT IDENTITY GATE
+   ═══════════════════════════════════════════ */
+var ID_KEY = 'umpsa_snake_student';
+var _idConfirmed = false;
+
+function _setIdentityConfirmed(st) {
+  _idConfirmed = true;
+  var blk = document.getElementById('idBlock');
+  if (blk) blk.classList.add('id-confirmed');
+  var frm = document.getElementById('idForm');
+  var conf = document.getElementById('idConfirmed');
+  if (frm) frm.style.display = 'none';
+  if (conf) conf.style.display = 'block';
+  var nm = document.getElementById('idConfName');
+  var mt = document.getElementById('idConfMeta');
+  if (nm) nm.textContent = st.name || '';
+  var parts = [];
+  if (st.matric) parts.push(st.matric);
+  if (st.class) parts.push('Class ' + st.class);
+  if (st.gender) parts.push(st.gender);
+  if (st.age) parts.push('Age ' + st.age);
+  if (mt) mt.textContent = parts.join(' · ');
+}
+
+function saveIdentity() {
+  var name   = (document.getElementById('id-name')   || {}).value || '';
+  var matric = (document.getElementById('id-matric') || {}).value || '';
+  var cls    = (document.getElementById('id-class')  || {}).value || '';
+  var gender = (document.getElementById('id-gender') || {}).value || '';
+  var age    = (document.getElementById('id-age')    || {}).value || '';
+  var mykid  = (document.getElementById('id-mykid') || {}).value || '';
+  var state  = (document.getElementById('id-state') || {}).value || '';
+  var school = (document.getElementById('id-school') || {}).value || '';
+  var phone  = (document.getElementById('id-phone') || {}).value || '';
+  var email  = (document.getElementById('id-email') || {}).value || '';
+  var notice = document.getElementById('idNotice');
+  var missing = [];
+  if (!name.trim())   missing.push('Full Name');
+  if (!matric.trim()) missing.push('Matric No.');
+  if (!cls.trim())    missing.push('Class');
+  if (!gender)        missing.push('Gender');
+  if (!age)           missing.push('Age');
+  if (missing.length) {
+    if (notice) { notice.textContent = 'Required: ' + missing.join(', '); notice.style.display = 'block'; }
+    return;
+  }
+  if (notice) notice.style.display = 'none';
+  var st = { name: name.trim(), matric: matric.trim().toUpperCase(),
+             class: cls.trim(), gender: gender, age: age,
+             mykid: mykid.trim(), home_state: state,
+             school_code: school.trim(), phone: phone.trim(), email: email.trim() };
+  try { localStorage.setItem(ID_KEY, JSON.stringify(st)); } catch(e) {}
+  _setIdentityConfirmed(st);
+}
+
+function editIdentity() {
+  _idConfirmed = false;
+  var frm = document.getElementById('idForm');
+  var conf = document.getElementById('idConfirmed');
+  var blk = document.getElementById('idBlock');
+  if (frm) frm.style.display = 'block';
+  if (conf) conf.style.display = 'none';
+  if (blk) blk.classList.remove('id-confirmed');
+}
+
+(function _initIdentity() {
+  var st = {};
+  try { st = JSON.parse(localStorage.getItem(ID_KEY) || '{}'); } catch(e) {}
+  if (st.name)   { var el = document.getElementById('id-name');   if (el) el.value = st.name; }
+  if (st.matric) { var el = document.getElementById('id-matric'); if (el) el.value = st.matric; }
+  if (st.class)  { var el = document.getElementById('id-class');  if (el) el.value = st.class; }
+  if (st.gender) { var el = document.getElementById('id-gender'); if (el) el.value = st.gender; }
+  if (st.age)    { var el = document.getElementById('id-age');    if (el) el.value = st.age; }
+  if (st.home_state)   { var el = document.getElementById('id-state');  if (el) el.value = st.home_state; }
+  if (st.mykid)        { var el = document.getElementById('id-mykid');  if (el) el.value = st.mykid; }
+  if (st.school_code)  { var el = document.getElementById('id-school'); if (el) el.value = st.school_code; }
+  if (st.phone)        { var el = document.getElementById('id-phone');  if (el) el.value = st.phone; }
+  if (st.email)        { var el = document.getElementById('id-email');  if (el) el.value = st.email; }
+  if (st.name && st.matric && st.class && st.gender && st.age) {
+    _setIdentityConfirmed(st);
+  }
+  /* Gate the submit button */
+  var subBtn = document.getElementById('sub-btn');
+  if (subBtn) {
+    subBtn.addEventListener('click', function(e) {
+      if (!_idConfirmed) {
+        e.stopImmediatePropagation();
+        var notice = document.getElementById('idNotice');
+        if (notice) { notice.textContent = 'Please confirm your details above before submitting.'; notice.style.display = 'block'; }
+        var blk = document.getElementById('idBlock');
+        if (blk) blk.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, true); /* capture phase so we fire before onclick */
+  }
+})();
+/* ═══════════════════════════════════════════ */
+
+function doSubmit(){
+  var allIds=CI.map(function(i){return i.id;})
+    .concat(MS.map(function(i){return i.id;}))
+    .concat(CT.map(function(i){return i.id;}));
+  var miss=allIds.filter(function(id){return R[id]===undefined||R[id]===null;});
+  if(miss.length){
+    var vm=document.getElementById('vm');vm.style.display='block';
+    vm.textContent='Please answer all questions before submitting. ('+miss.length+' unanswered)';
+    miss.forEach(function(id){var r=document.getElementById('row-'+id);if(r)r.classList.add('unanswered');});
+    document.getElementById('row-'+miss[0]).scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  /* score concept inventory */
+  var correct=0;
+  CI.forEach(function(item){if(R[item.id]===item.ans)correct++;});
+  var pct=Math.round(correct/CI.length*100)+'%';
+  /* subscale sums */
+  var ms_subs={};MS.forEach(function(i){ms_subs[i.sub]=(ms_subs[i.sub]||0)+(R[i.id]||0);});
+  var ct_subs={};CT.forEach(function(i){ct_subs[i.sub]=(ct_subs[i.sub]||0)+(R[i.id]||0);});
+
+  /* group CI answers by step for Sheets */
+  var byStep={};
+  CI.forEach(function(item){
+    if(!byStep[item.step])byStep[item.step]=[];
+    byStep[item.step].push({answer:item.opts[R[item.id]],correct:R[item.id]===item.ans?1:0});
+  });
+
+  var payload={
+    responses:R,concept_score:correct,concept_total:CI.length,concept_pct:pct,
+    mai_subscales:ms_subs,mai_total:Object.values(ms_subs).reduce(function(a,b){return a+b;},0),
+    ct_subscales:ct_subs,ct_total:Object.values(ct_subs).reduce(function(a,b){return a+b;},0),
+    submitted_at:Date.now(),submitted_iso:new Date().toISOString()
+  };
+  var d=lmsGet();d.submitted=true;d.payload=payload;lmsSet(d);
+  lmsLog('survey_submitted',payload);
+
+  /* post concept records to Sheets (one per step) */
+  var APPS_URL='https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec';
+  var st={}; try{st=JSON.parse(localStorage.getItem('umpsa_snake_student')||'{}');}catch(e){}
+  Object.keys(byStep).forEach(function(step){
+    var sa=byStep[step];
+    var sp=Math.round(sa.filter(function(a){return a.correct;}).length/sa.length*100);
+    try{fetch(APPS_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({
+      type:'concept',step:parseInt(step,10),test_type:'pre',
+      matric:st.matric||'',name:st.name||'',class:st.class||'',gender:st.gender||'',age:st.age||'',mykid:st.mykid||'',home_state:st.home_state||'',school_code:st.school_code||'',phone:st.phone||'',email:st.email||'',
+      answers:sa,score_pct:sp,submitted_iso:new Date().toISOString()
+    })});}catch(e){}
+  });
+  /* save pre score for post-test comparison */
+  try{localStorage.setItem('lms_pretest',JSON.stringify({done:true,score:Math.round(correct/CI.length*100),ts:Date.now()}));}catch(e){}
+
+    /*bundled_test_row_sent*/
+
+  /* === Bundled pre-test row to Sheets === */
+  (function(){
+    var APPS_URL='https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec';
+    var st={}; try{st=JSON.parse(localStorage.getItem('umpsa_snake_student')||'{}');}catch(e){}
+    var answers = CI.map(function(item){ return R[item.id]!==undefined ? item.opts[R[item.id]] : ''; });
+    try{fetch(APPS_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({
+      type:'pretest',
+      matric:st.matric||'',name:st.name||'',class:st.class||'',gender:st.gender||'',age:st.age||'',mykid:st.mykid||'',home_state:st.home_state||'',school_code:st.school_code||'',phone:st.phone||'',email:st.email||'',
+      submitted_iso:new Date().toISOString(),
+      score:correct,
+      answers:answers
+    })});}catch(e){}
+  })();
+
+  /* UI */
+  document.getElementById('sub-btn').disabled=true;
+  document.getElementById('vm').style.display='none';
+  document.getElementById('sc-num').textContent=correct;
+  document.getElementById('sc-pct').textContent=pct;
+  var done=document.getElementById('done');done.style.display='block';
+  done.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+/* ── export ── */
+if(location.search.indexOf('export=1')!==-1){
+  document.getElementById('ep').style.display='block';
+  document.getElementById('ep-pre').textContent=JSON.stringify(lmsGet(),null,2);
+}
+function epCopy(){navigator.clipboard&&navigator.clipboard.writeText(JSON.stringify(lmsGet(),null,2));}
+function epDL(){
+  var a=document.createElement('a');
+  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(lmsGet(),null,2));
+  a.download=LMS_KEY+'_'+Date.now()+'.json';a.click();
+}
+function epCSV(){
+  var d=lmsGet(),rows=['field,value'];
+  Object.keys(d.responses||{}).forEach(function(k){rows.push(k+','+d.responses[k]);});
+  if(d.payload){
+    rows.push('concept_score,'+(d.payload.concept_score||0));
+    rows.push('concept_total,'+(d.payload.concept_total||0));
+    rows.push('concept_pct,'+(d.payload.concept_pct||''));
+    var ms=d.payload.mai_subscales||{};
+    Object.keys(ms).forEach(function(k){rows.push('mai_'+k+','+ms[k]);});
+    rows.push('mai_total,'+(d.payload.mai_total||0));
+    var cs=d.payload.ct_subscales||{};
+    Object.keys(cs).forEach(function(k){rows.push('ct_'+k+','+cs[k]);});
+    rows.push('ct_total,'+(d.payload.ct_total||0));
+    rows.push('submitted_iso,'+(d.payload.submitted_iso||''));
+  }
+  var a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.join('\n'));
+  a.download=LMS_KEY+'_'+Date.now()+'.csv';a.click();
+}
+</script>
+</body>
+</html>

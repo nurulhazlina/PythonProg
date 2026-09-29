@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Facilitator Notes — Step 7 | Snake Tutorial</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+/* ── LIGHT-MODE TEACHER PAGE ── independent of style.css ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F0F4F8;
+  --surface:#FFFFFF;
+  --surface2:#F7FAFC;
+  --teal:#0A8F8A;
+  --teal-dark:#076862;
+  --teal-light:#E6F6F5;
+  --ink:#1A2332;
+  --body:#374151;
+  --muted:#6B7A8D;
+  --border:#D6E0EA;
+  --amber:#D97706;
+  --amber-bg:#FFFBEB;
+  --amber-border:#FCD34D;
+  --green-bg:#F0FDF4;
+  --green-border:#86EFAC;
+  --green-ink:#166534;
+  --red-bg:#FEF2F2;
+  --red-border:#FCA5A5;
+  --red-ink:#991B1B;
+  --code-bg:#F1F5F9;
+  --code-fg:#1E293B;
+  --radius:10px;
+  --shadow:0 1px 4px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.05);
+}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg);
+  color:var(--body);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  line-height:1.65;
+}
+
+/* ── NAV ── */
+.sitenav{
+  background:var(--teal-dark);
+  color:#fff;
+  padding:0 24px;
+  display:flex;
+  align-items:center;
+  gap:20px;
+  min-height:56px;
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+.sitenav .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;font-weight:700;font-size:15px}
+.sitenav .brand img{display:none}
+.sitenav a.nl{color:rgba(255,255,255,.8);text-decoration:none;font-size:14px;padding:4px 8px;border-radius:6px;transition:background .15s}
+.sitenav a.nl:hover{background:rgba(255,255,255,.15)}
+details.navsel{margin-left:auto;position:relative}
+details.navsel summary{
+  list-style:none;cursor:pointer;color:rgba(255,255,255,.9);
+  font-size:14px;font-weight:600;padding:6px 12px;
+  border-radius:6px;transition:background .15s;
+}
+details.navsel summary:hover{background:rgba(255,255,255,.15)}
+details.navsel summary::-webkit-details-marker{display:none}
+.navmenu{
+  position:absolute;right:0;top:calc(100% + 8px);
+  background:#fff;color:var(--ink);
+  border:1px solid var(--border);border-radius:var(--radius);
+  min-width:300px;box-shadow:var(--shadow);
+  overflow:hidden;z-index:200;
+}
+.navmenu a{
+  display:block;padding:10px 16px;font-size:13.5px;
+  text-decoration:none;color:var(--body);
+  border-bottom:1px solid var(--border);transition:background .12s;
+}
+.navmenu a:last-child{border-bottom:none}
+.navmenu a:hover{background:var(--teal-light)}
+.navmenu a[aria-current="page"]{background:var(--teal-light);color:var(--teal-dark);font-weight:700}
+
+/* ── GATE ── */
+.gate{
+  max-width:520px;margin:80px auto;padding:40px 36px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;box-shadow:var(--shadow);text-align:center;
+}
+.gate h2{font-size:24px;color:var(--ink);margin-bottom:12px}
+.gate p{color:var(--muted);margin-bottom:16px;font-size:15px}
+.gate a{color:var(--teal);text-decoration:none;font-size:14px}
+.gate a:hover{text-decoration:underline}
+.lock-icon{font-size:48px;margin-bottom:16px}
+
+/* ── HERO ── */
+.t-hero{
+  background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal) 100%);
+  color:#fff;padding:40px 24px 36px;
+}
+.t-hero .wrap{max-width:900px;margin:0 auto}
+.t-hero .eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.75;margin-bottom:8px}
+.t-hero h1{font-size:clamp(22px,4vw,32px);font-weight:800;line-height:1.2;margin-bottom:8px}
+.t-hero .meta{font-size:14px;opacity:.8;margin-bottom:20px}
+.t-cta-row{display:flex;flex-wrap:wrap;gap:10px}
+.t-cta-row a{
+  display:inline-block;padding:8px 18px;border-radius:8px;
+  font-size:13px;font-weight:600;text-decoration:none;
+  background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);
+  transition:background .15s;
+}
+.t-cta-row a:hover{background:rgba(255,255,255,.28)}
+
+/* ── LAYOUT ── */
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+.page-body{padding:36px 20px 60px;max-width:900px;margin:0 auto}
+
+/* ── BANNER ── */
+.tbanner{
+  background:var(--amber-bg);border:1px solid var(--amber-border);
+  color:#78350F;border-radius:8px;padding:12px 16px;
+  font-size:13.5px;margin-bottom:28px;
+}
+.tbanner b{color:#92400E}
+
+/* ── SECTIONS ── */
+.t-section{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:28px 28px;margin-bottom:24px;
+  box-shadow:var(--shadow);
+}
+.t-section h2{
+  font-size:18px;font-weight:700;color:var(--ink);
+  padding-bottom:10px;margin-bottom:16px;
+  border-bottom:2px solid var(--teal);display:flex;align-items:center;gap:8px;
+}
+.t-section h2 .sec-icon{font-size:20px}
+.t-section h3{font-size:15px;font-weight:700;color:var(--teal-dark);margin:16px 0 8px}
+.t-section p{margin-bottom:10px;font-size:15px}
+.t-section ul{padding-left:20px;margin-bottom:12px}
+.t-section li{margin-bottom:6px;font-size:15px}
+.t-section strong{color:var(--ink)}
+
+/* ── TABLES ── */
+.t-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+.t-table thead th{
+  background:var(--teal);color:#fff;padding:10px 14px;
+  text-align:left;font-weight:600;font-size:13px;letter-spacing:.02em;
+}
+.t-table thead th:first-child{border-radius:8px 0 0 0}
+.t-table thead th:last-child{border-radius:0 8px 0 0}
+.t-table tbody tr:nth-child(even){background:var(--surface2)}
+.t-table tbody td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+.t-table td code{font-size:12.5px;background:var(--bg);padding:1px 5px;border-radius:4px;color:var(--ink)}
+.sev-low{color:#065F46;font-weight:600}
+.sev-med{color:#92400E;font-weight:600}
+.sev-high{color:#991B1B;font-weight:600}
+
+/* ── CODE ── */
+.codebox{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:12px 0;position:relative}
+.codebox pre{padding:20px;overflow-x:auto}
+.codebox code{color:var(--code-fg);font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13.5px;line-height:1.6}
+.copybtn{
+  position:absolute;top:10px;right:10px;
+  background:var(--border);color:var(--ink);
+  border:none;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;
+  transition:background .15s;
+}
+.copybtn:hover{background:rgba(255,255,255,.22)}
+.copybtn.copied{background:rgba(134,239,172,.25);color:#86EFAC}
+code{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13px;background:var(--bg);padding:1px 5px;border-radius:4px;color:var(--ink)}
+
+/* ── DEMO CARDS ── */
+.demo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:12px}
+.demo-card{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;padding:18px;border-top:3px solid var(--teal);
+}
+.demo-card .demo-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--teal);margin-bottom:6px}
+.demo-card h3{font-size:15px;font-weight:700;color:var(--ink);margin:0 0 8px}
+.demo-card p{font-size:13.5px;color:var(--body);margin:0 0 10px}
+.demo-card .demo-tip{
+  font-size:12.5px;color:var(--muted);padding:8px 10px;
+  background:var(--teal-light);border-radius:6px;
+  border-left:3px solid var(--teal);
+}
+.demo-card .demo-tip strong{color:var(--teal-dark)}
+
+/* ── ANSWER CARD ── */
+.answer-card{
+  background:var(--green-bg);border:1px solid var(--green-border);
+  border-radius:8px;padding:14px 18px;margin:12px 0;
+}
+.answer-card .answer-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--green-ink);margin-bottom:4px}
+
+/* ── CALLOUT ── */
+.callout{
+  display:flex;gap:12px;padding:14px 16px;border-radius:8px;
+  border:1px solid var(--border);background:var(--surface2);margin:12px 0;
+  font-size:14px;align-items:flex-start;
+}
+.callout-icon{font-size:22px;flex-shrink:0;line-height:1.2}
+.callout p{margin:0}
+
+/* ── STEM BRAND BAR ── */
+.stem-brand-bar{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  width:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+.stem-brand-bar .sb{
+  display:flex;align-items:center;justify-content:center;
+  padding:6px 8px;font-size:12px;font-weight:800;
+  letter-spacing:.12em;color:#fff;text-transform:uppercase;
+}
+.sb-see{background:#2E5FAF}
+.sb-think{background:#B82828}
+.sb-explore{background:#D99A10}
+.sb-marvel{background:#1FA898}
+
+/* ── FOOTER ── */
+footer{
+  background:#1C5C54;color:rgba(255,255,255,.78);
+  text-align:center;padding:20px 20px;font-size:13px;margin-top:40px;
+  display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+}
+footer a{color:rgba(255,255,255,.85);text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+footer a:hover{color:#fff}
+
+/* ── BUTTON ── */
+.cta-btn{
+  display:inline-block;padding:12px 28px;border-radius:9px;
+  font-size:15px;font-weight:700;border:none;cursor:pointer;
+  background:var(--teal);color:#fff;
+  box-shadow:0 4px 14px rgba(10,143,138,.3);
+  transition:background .15s,transform .1s;
+}
+.cta-btn:hover{background:var(--teal-dark);transform:translateY(-1px)}
+.cta-btn:active{transform:translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .t-section{padding:20px 16px}
+  .t-hero{padding:28px 16px 24px}
+  .t-cta-row a{font-size:12px;padding:6px 12px}
+  .demo-grid{grid-template-columns:1fr}
+  .t-table{font-size:13px}
+  .sitenav{padding:0 14px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── STEM BRAND BAR ── -->
+<div class="stem-brand-bar" aria-label="UMPSA STEM Lab">
+  <div class="sb sb-see">SEE</div>
+  <div class="sb sb-think">THINK</div>
+  <div class="sb sb-explore">EXPLORE</div>
+  <div class="sb sb-marvel">MARVEL</div>
+</div>
+
+<!-- ── NAV ── -->
+<nav class="sitenav">
+  <a class="brand" href="index.html">
+    <img src="stemlogo.png" alt="UMPSA STEM LAB">
+    <span>UMPSA STEM Lab Python Module</span>
+  </a>
+  <a class="nl" href="index.html">Home</a>
+  <details class="navsel">
+    <summary>Facilitator Notes ▾</summary>
+    <div class="navmenu">
+      <a href="teacher-1.html"><b>Step 1</b>: Variables &amp; Setup</a>
+      <a href="teacher-2.html"><b>Step 2</b>: Loop &amp; Events</a>
+      <a href="teacher-3.html"><b>Step 3</b>: Direction &amp; Movement</a>
+      <a href="teacher-4.html"><b>Step 4</b>: Snake Body ⭐</a>
+      <a href="teacher-5.html"><b>Step 5</b>: Bonus Food</a>
+      <a href="teacher-6.html"><b>Step 6</b>: Functions</a>
+      <a href="teacher-7.html" aria-current="page"><b>Step 7</b>: Wrap-Around ⭐</a>
+      <a href="teacher-8.html"><b>Step 8</b>: Save High Score</a>
+      <a href="teacher-9.html"><b>Step 9</b>: OOP Refactor</a>
+      <a href="teacher-10.html"><b>Step 10</b>: ML Extension</a>
+    </div>
+  </details>
+</nav>
+
+<!-- ── GATE ── -->
+<div class="gate" id="gate">
+  <div class="lock-icon">🔒</div>
+  <h2>Facilitator Notes</h2>
+  <p>This page contains exercise answers and teaching guidance for<br>
+  <strong>Step 7 — Wrap-Around ⭐</strong>.<br>
+  Not linked from the student pages.</p>
+  <p style="margin-bottom:24px"><strong>Students: please go back and try the activities first.</strong></p>
+  <button class="cta-btn" id="gatebtn" type="button">I'm a facilitator — show the notes</button>
+  <p style="margin-top:20px"><a href="step-7.html">← Back to student page</a></p>
+</div>
+
+<!-- ── MAIN CONTENT ── -->
+<div id="tcontent" hidden>
+
+<div class="t-hero">
+  <div class="wrap">
+    <p class="eyebrow">STEP 7 OF 10 · FACILITATOR NOTES</p>
+    <h1>Wrap-Around ⭐</h1>
+    <p class="meta">Core concepts: modulo operator (%) · dictionary for direction mapping · edge-case thinking</p>
+    <div class="t-cta-row">
+      <a href="teacher-6.html">← Step 6</a>
+      <a href="step-7.html">Student Page</a>
+      <a href="teacher-8.html">Step 8 →</a>
+    </div>
+  </div>
+</div>
+
+<div class="page-body">
+
+  <div class="tbanner">
+    ⏱ Suggested pace: 20 minutes · Modulo is the key concept — use the clock analogy to make it intuitive before showing the code.
+  </div>
+
+  <!-- ── SECTION 1 · Learning Objectives ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">🎯</span> Learning Objectives</h2>
+    <ul>
+      <li>Use the modulo operator <code>%</code> to implement wrap-around (toroidal) movement</li>
+      <li>Explain what happens with negative numbers in modulo</li>
+      <li>Refactor direction handling using a dictionary</li>
+      <li>Identify and reason about edge cases in game logic</li>
+    </ul>
+  </div>
+
+  <!-- ── SECTION 2 · The Big Idea ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">💡</span> The Big Idea — Annotated Code</h2>
+
+    <div class="codebox">
+      <button class="copybtn" type="button">Copy</button>
+      <pre><code># ── Direction dictionary (replaces the if/elif chain) ──
+DIRECTIONS = {
+    pygame.K_UP:    (0, -1),
+    pygame.K_DOWN:  (0,  1),
+    pygame.K_LEFT:  (-1, 0),
+    pygame.K_RIGHT: (1,  0),
+}
+
+# In the event loop:
+if event.type == pygame.KEYDOWN and event.key in DIRECTIONS:
+    ndx, ndy = DIRECTIONS[event.key]
+    # Reverse guard: don't allow 180° turn
+    if (ndx, ndy) != (-dx, -dy):
+        dx, dy = ndx, ndy
+
+# ── Wrap-around movement ──
+# OLD (collision):
+# head_x += dx
+# head_y += dy
+
+# NEW (wrap):
+head_x = (head_x + dx) % GRID_COLS
+head_y = (head_y + dy) % GRID_ROWS</code></pre>
+    </div>
+
+    <h3>Modulo <code>%</code></h3>
+    <p><code>a % b</code> gives the remainder when a is divided by b. Key property: the result is always 0 to b−1. When <code>head_x = 20</code> and <code>GRID_COLS = 20</code>, <code>20 % 20 = 0</code> — the snake appears at column 0.</p>
+
+    <h3>Negative numbers</h3>
+    <p>When <code>head_x = -1</code> and <code>GRID_COLS = 20</code>, <code>-1 % 20 = 19</code> in Python. Python modulo always returns non-negative — the snake appears at the right edge. This is intentional and makes wrap-around work naturally from any direction.</p>
+
+    <h3>Direction dictionary</h3>
+    <p>Maps each key constant to its (dx, dy) vector. Replaces four <code>elif</code> branches with a single <code>DIRECTIONS[event.key]</code> lookup. Adding a new direction means adding one line to the dictionary.</p>
+
+    <h3>New reverse guard</h3>
+    <p><code>(ndx, ndy) != (-dx, -dy)</code> checks if the new direction is exactly opposite to the current — cleaner than the four separate <code>dx != 1</code> checks used in earlier steps.</p>
+  </div>
+
+  <!-- ── SECTION 3 · Activity Answers ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">🔢</span> Activity Answers</h2>
+
+    <h3>Tier 1 — Check Understanding</h3>
+    <table class="t-table">
+      <thead><tr><th>Question</th><th>Model Answer</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>What does <code>%</code> calculate?</td>
+          <td>The remainder of division. <code>17 % 5 = 2</code> because 17 = 3×5 + 2.</td>
+        </tr>
+        <tr>
+          <td>What is <code>20 % 20</code>?</td>
+          <td>0. When the snake reaches column 20 (off screen), <code>20 % 20 = 0</code> wraps it to column 0.</td>
+        </tr>
+        <tr>
+          <td>What is <code>-1 % 20</code> in Python?</td>
+          <td>19. Python's modulo always returns a non-negative number — useful for wrap-around from the left/top edge.</td>
+        </tr>
+        <tr>
+          <td>What does the direction dictionary replace?</td>
+          <td>The long <code>if / elif</code> chain that checked each arrow key separately.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Tier 2 — Fix the Bug</h3>
+    <div class="answer-card">
+      <div class="answer-label">Bug</div>
+      <p><code>head_x = head_x + dx % GRID_COLS</code> — operator precedence: <code>%</code> applies only to <code>dx</code>, not to <code>(head_x + dx)</code>.</p>
+    </div>
+    <p><strong>Fix:</strong> <code>head_x = (head_x + dx) % GRID_COLS</code> — parentheses ensure the addition happens first.</p>
+
+    <h3>Tier 3 — Extend: Add diagonal movement</h3>
+    <div class="codebox">
+      <button class="copybtn" type="button">Copy</button>
+      <pre><code>DIRECTIONS[pygame.K_q] = (-1, -1)   # up-left diagonal
+DIRECTIONS[pygame.K_e] = (1, -1)    # up-right diagonal</code></pre>
+    </div>
+    <p>The reverse guard <code>(ndx, ndy) != (-dx, -dy)</code> handles diagonal directions automatically.</p>
+
+    <h3>Tier 4 — New Task: "Ghost mode" — pressing G toggles wrap-around on/off</h3>
+    <div class="codebox">
+      <button class="copybtn" type="button">Copy</button>
+      <pre><code>wrap = True
+
+if event.type == pygame.KEYDOWN:
+    if event.key == pygame.K_g:
+        wrap = not wrap
+
+# In update:
+if wrap:
+    head_x = (head_x + dx) % GRID_COLS
+    head_y = (head_y + dy) % GRID_ROWS
+else:
+    head_x += dx
+    head_y += dy
+    if head_x &lt; 0 or head_x &gt;= GRID_COLS or head_y &lt; 0 or head_y &gt;= GRID_ROWS:
+        running = False</code></pre>
+    </div>
+
+    <h3>Reflective Journal — Suggested Strong Answers</h3>
+    <table class="t-table">
+      <thead><tr><th style="width:32%">Prompt</th><th>Key ideas a strong answer contains</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>1. What does "edge case" mean?</td>
+          <td>A situation at the boundary of valid input — in our game, the snake reaching the screen edge is an edge case.</td>
+        </tr>
+        <tr>
+          <td>2. When would modulo be useful outside games?</td>
+          <td>Clock arithmetic (hours mod 12/24), cycling through menu items, distributing items into groups.</td>
+        </tr>
+        <tr>
+          <td>3. Why is Python's modulo of a negative number positive?</td>
+          <td>Python defines <code>a % b</code> to always return a value with the same sign as b (the divisor). This makes wrap-around work naturally.</td>
+        </tr>
+        <tr>
+          <td>4. What is a dictionary in Python?</td>
+          <td>A collection of key-value pairs. Values are retrieved by key rather than by index.</td>
+        </tr>
+        <tr>
+          <td>5. Explain wrap-around to a classmate</td>
+          <td>"When the snake goes off the right edge (column 20), modulo brings it back to column 0. It's like Pac-Man — the walls are connected."</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── SECTION 4 · Mistakes Students Actually Make ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">⚠️</span> Mistakes Students Actually Make</h2>
+    <table class="t-table">
+      <thead>
+        <tr>
+          <th>What they did</th>
+          <th>What they see</th>
+          <th>What to say</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>head_x = head_x + dx % GRID_COLS</code></td>
+          <td>Wrapping is wrong — <code>%</code> only applied to <code>dx</code></td>
+          <td>"Python evaluates <code>%</code> before <code>+</code>. Add parentheses: <code>(head_x + dx) % GRID_COLS</code>."</td>
+        </tr>
+        <tr>
+          <td>Still have wall collision check after adding wrap</td>
+          <td>Game over immediately on first wrap</td>
+          <td>"Remove the wall collision check — it conflicts with wrap-around. The snake can no longer go out of bounds."</td>
+        </tr>
+        <tr>
+          <td><code>DIRECTIONS[event.key]</code> without checking <code>event.key in DIRECTIONS</code></td>
+          <td><code>KeyError</code> when any other key is pressed</td>
+          <td>"Always check if the key exists in the dictionary first: <code>if event.key in DIRECTIONS:</code>"</td>
+        </tr>
+        <tr>
+          <td>Reverse guard <code>(-dx, -dy)</code> with the old <code>dx != 1</code> style</td>
+          <td>Inconsistent — some directions still reversible</td>
+          <td>"The dictionary refactor also replaces the reverse guard. Use <code>(ndx, ndy) != (-dx, -dy)</code> consistently."</td>
+        </tr>
+        <tr>
+          <td><code>%</code> applied to y but not x (or vice versa)</td>
+          <td>Snake wraps in one dimension only</td>
+          <td>"Both axes need wrapping: <code>head_x = (head_x + dx) % GRID_COLS</code> AND <code>head_y = (head_y + dy) % GRID_ROWS</code>."</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── SECTION 5 · Teaching & Facilitation Notes ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">🗣️</span> Teaching &amp; Facilitation Notes</h2>
+
+    <h3>Opening hook — The clock analogy</h3>
+    <p>"What time is it 3 hours after 11pm? Not 14:00 — it's 2am. That's modulo: 11 + 3 = 14, 14 % 12 = 2." Clocks, Pac-Man mazes, and wrap-around grids all use the same idea.</p>
+
+    <h3>Key pedagogical moment — negative modulo</h3>
+    <p>Most students expect <code>-1 % 20 = -1</code> (from their mental model of remainders). Show Python's actual behaviour: <code>-1 % 20 = 19</code>. Explain this is intentional — Python's modulo is defined to make wrap-around work, not just as a remainder.</p>
+
+    <h3>The dictionary refactor</h3>
+    <p>Some students will resist changing code that "already works." Frame it as: "Which is easier to add a new key to — 4 elif branches or 1 dictionary?" This surfaces the maintainability argument for data structures.</p>
+
+    <h3>CT connection — Edge case thinking</h3>
+    <p>Ask: "What are all the ways a snake's head can leave the grid? Left, right, top, bottom — four edge cases. Does our solution handle all four? Test each one."</p>
+
+    <div class="callout">
+      <span class="callout-icon">💡</span>
+      <p><strong>Pacing:</strong> Step 7 is lighter than Steps 4 and 6. Fast finishers can explore: what happens if GRID_COLS and GRID_ROWS are prime numbers? Does modulo still work? (Yes — this is a good mathematical curiosity.)</p>
+    </div>
+  </div>
+
+</div><!-- /page-body -->
+</div><!-- /tcontent -->
+
+<!-- ── SCRIPTS ── -->
+<script>
+(function(){
+  var b = document.getElementById('gatebtn');
+  if(!b) return;
+  b.addEventListener('click', function(){
+    document.getElementById('gate').hidden = true;
+    document.getElementById('tcontent').hidden = false;
+  });
+})();
+</script>
+<script>
+document.querySelectorAll('.copybtn').forEach(function(b){
+  b.addEventListener('click', function(){
+    var t = b.parentElement.querySelector('code').textContent;
+    navigator.clipboard.writeText(t).then(function(){
+      b.textContent = 'Copied!';
+      b.classList.add('copied');
+      setTimeout(function(){ b.textContent = 'Copy'; b.classList.remove('copied'); }, 2000);
+    }).catch(function(){
+      /* fallback — silently ignore */
+    });
+  });
+});
+</script>
+
+
+  <!-- CONCEPT_CHECK_ADDED -->
+  <!-- ══ CONCEPT CHECK ANSWER KEY ══ -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#x1F9E0;</span> Concept Check &mdash; Answer Key (Step 7)</h2>
+    <p>These 5 questions appear in the activity page <strong>after Tier 4</strong> (post-calibration gate).
+    Pass mark is <strong>4&nbsp;of&nbsp;5&nbsp;(80%)</strong>. Students who fail may retry; the system records attempts and final score in Google Sheets.</p>
+    <table class="t-table">
+      <thead><tr><th style="width:65%">Question (displayed to student)</th><th>Correct Answer</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Q1: snake = [(5,5),(4,5),(3,5)] — What is snake[1]?</td>
+          <td class="sev-low">&#10003; (4,5)</td>
+        </tr>
+        <tr>
+          <td>Q2: How does the snake appear to move each frame?</td>
+          <td class="sev-low">&#10003; A new head is inserted at front; last segment removed from back</td>
+        </tr>
+        <tr>
+          <td>Q3: snake.insert(0, new_head) — what does this do?</td>
+          <td class="sev-low">&#10003; Adds new_head at position 0 (the front of the list)</td>
+        </tr>
+        <tr>
+          <td>Q4: What does len(snake) tell you?</td>
+          <td class="sev-low">&#10003; The total number of body segments</td>
+        </tr>
+        <tr>
+          <td>Q5: snake.pop() removes:</td>
+          <td class="sev-low">&#10003; The last element</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:14px">
+      <span class="callout-icon">&#x1F4CA;</span>
+      <p><strong>Recorded in Google Sheet (Act_7 tab):</strong>
+      <code>concept_q1</code>&ndash;<code>concept_q5</code> (student&rsquo;s 0-based answer index),
+      <code>concept_score_pct</code>, <code>concept_passed</code> (1&nbsp;=&nbsp;pass, 0&nbsp;=&nbsp;fail),
+      <code>concept_attempts</code> (retry count).</p>
+    </div>
+  </div>
+
+  <!-- ══ GOOGLE SHEETS DATA STRUCTURE ══ -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#x1F4CA;</span> Google Sheets &mdash; Data Collected (Act_7)</h2>
+    <p>Every submission to this step writes one row to the <strong>Act_7</strong> tab in the research spreadsheet. All 13 tabs (Student_Reg, Pre_Test, Post_Test, Act_1&ndash;Act_10) share the same student identity columns.</p>
+    <table class="t-table" style="font-size:13px">
+      <thead><tr><th style="width:36%">Column</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">STUDENT IDENTITY (10 fields)</td></tr>
+        <tr><td><code>matric</code></td><td>Matric / student ID</td></tr>
+        <tr><td><code>name</code></td><td>Full name</td></tr>
+        <tr><td><code>gender</code></td><td>Gender (Female / Male / Other)</td></tr>
+        <tr><td><code>age</code></td><td>Age in years</td></tr>
+        <tr><td><code>mykid</code></td><td>MyKid / IC number</td></tr>
+        <tr><td><code>home_state</code></td><td>Home state in Malaysia</td></tr>
+        <tr><td><code>class</code></td><td>Class or cohort code</td></tr>
+        <tr><td><code>school_code</code></td><td>School or programme code</td></tr>
+        <tr><td><code>phone</code></td><td>Phone number</td></tr>
+        <tr><td><code>email</code></td><td>Email address</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">SUBMISSION</td></tr>
+        <tr><td><code>step</code></td><td>Step number (7)</td></tr>
+        <tr><td><code>submitted_iso</code></td><td>KL timestamp (UTC+8, ISO&nbsp;8601)</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">PRE-CALIBRATION</td></tr>
+        <tr><td><code>cal_confidence</code></td><td>Self-confidence before activity (1&ndash;5 scale)</td></tr>
+        <tr><td><code>cal_predicted</code></td><td>Predicted score before activity (%)</td></tr>
+        <tr><td><code>cal_reflection</code></td><td>Free-text: what will be hard?</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">ACTIVITY TIERS</td></tr>
+        <tr><td><code>t1_score_pct</code></td><td>Tier&nbsp;1 Fill-in-Blanks score (%)</td></tr>
+        <tr><td><code>t2_attempts</code></td><td>Tier&nbsp;2 Debug — number of attempts</td></tr>
+        <tr><td><code>refl2_text</code></td><td>Tier&nbsp;2 reflection free text</td></tr>
+        <tr><td><code>t3_attempts</code></td><td>Tier&nbsp;3 Complete-Code attempts</td></tr>
+        <tr><td><code>t4_attempts</code></td><td>Tier&nbsp;4 New Task attempts</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">CONCEPT CHECK</td></tr>
+        <tr><td><code>concept_q1</code>&ndash;<code>concept_q5</code></td><td>Student answer index (0-based) per question</td></tr>
+        <tr><td><code>concept_score_pct</code></td><td>Percentage correct (0&ndash;100)</td></tr>
+        <tr><td><code>concept_passed</code></td><td>1 = passed (&ge;80%), 0 = failed</td></tr>
+        <tr><td><code>concept_attempts</code></td><td>Total retries</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">REFLECTIVE JOURNAL</td></tr>
+        <tr><td><code>jr1</code>&ndash;<code>jr5</code></td><td>Journal prompts 1&ndash;5 free-text responses</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">POST-CALIBRATION</td></tr>
+        <tr><td><code>post_confidence</code></td><td>Confidence rating after activity (1&ndash;5)</td></tr>
+        <tr><td><code>post_actual</code></td><td>Self-reported actual score (%)</td></tr>
+        <tr><td><code>post_r1</code></td><td>Reflection: how accurate was the prediction?</td></tr>
+        <tr><td><code>post_r2</code></td><td>Reflection: what would you do differently?</td></tr>
+        <tr><td><code>calibration_index</code></td><td>post_actual &minus; cal_predicted (negative = overconfident)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+<footer>
+  <span>© 2026 Nurul Hazlina Noordin · UMPSA STEM Lab Engineering Education Initiative</span>
+  <a href="https://www.umpsa.edu.my" target="_blank" rel="noopener" aria-label="UMPSA website">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+  </a>
+  <a href="mailto:hazlina@umpsa.edu.my" aria-label="Email facilitator">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+  </a>
+</footer>
+
+</body>
+</html>

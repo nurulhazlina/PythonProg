@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Step 1 — Variables &amp; Setup | Snake Game Tutorial</title>
+<link rel="stylesheet" href="style.css">
+<style>
+/* ── pixel grid explorer ── */
+#grid-canvas{display:block;max-width:100%;border-radius:8px;cursor:crosshair}
+.grid-info{margin-top:10px;background:var(--code-bg);color:#E6EDF3;border-radius:8px;
+  padding:10px 14px;font-family:monospace;font-size:14px;min-height:44px;line-height:1.6}
+.grid-info .hi{color:#79C0FF}.grid-info .px{color:#A5D6FF}.grid-info .py{color:#FF7B72}
+
+/* ── animated output window ── */
+.pygame-window{position:relative;max-width:420px;margin:18px auto}
+.pygame-titlebar{background:#2a2a2a;border-radius:8px 8px 0 0;padding:6px 12px;
+  display:flex;align-items:center;gap:8px;border:1px solid #444;border-bottom:none}
+.pygame-titlebar .dots{display:flex;gap:5px}
+.pygame-titlebar .dot{width:10px;height:10px;border-radius:50%}
+.dot-r{background:#FF5F57}.dot-y{background:#FFBD2E}.dot-g{background:#28C840}
+.pygame-titlebar .title-text{color:#ccc;font-size:12px;font-family:monospace;margin:0 auto}
+#pygame-canvas{display:block;width:100%;border:1px solid #444;border-radius:0 0 8px 8px}
+.replay-btn{display:block;margin:8px auto 0;background:none;border:1px solid var(--line);
+  color:var(--muted);border-radius:6px;padding:5px 14px;cursor:pointer;font-size:13px}
+.replay-btn:hover{border-color:var(--teal);color:var(--teal)}
+
+/* ── RGB mixer ── */
+.rgb-mixer{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+@media(max-width:600px){.rgb-mixer{grid-template-columns:1fr}}
+.rgb-sliders label{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:15px}
+.rgb-sliders label span{width:1.4em;font-weight:700}
+.rgb-sliders input[type=range]{flex:1;accent-color:var(--teal);height:6px}
+.rgb-sliders .val{width:2.4em;text-align:right;font-family:monospace;color:var(--muted);font-size:14px}
+.colour-swatch{border-radius:12px;height:120px;border:1px solid var(--line);
+  transition:background .12s;display:flex;align-items:flex-end}
+.swatch-label{width:100%;text-align:center;padding:8px;font-family:monospace;
+  font-size:13px;font-weight:700;background:rgba(0,0,0,.35);border-radius:0 0 11px 11px;color:#fff}
+.preset-swatches{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.preset-btn{border:none;border-radius:8px;padding:6px 12px;font-size:13px;font-family:monospace;
+  cursor:pointer;font-weight:600;transition:transform .1s;color:#fff}
+.preset-btn:hover{transform:scale(1.06)}
+
+/* ── data type cards ── */
+.type-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:12px}
+.type-card{border-radius:10px;padding:14px 16px;border:2px solid}
+.type-card h4{margin:0 0 6px;font-size:15px}
+.type-card p{margin:0;font-size:13.5px;color:var(--muted)}
+.type-card code{display:block;margin-top:8px;font-size:13px;padding:5px 8px;border-radius:6px;background:rgba(0,0,0,.08)}
+.tc-int{border-color:var(--blue);background:rgba(13,85,167,.07)}
+.tc-int h4{color:var(--blue)}
+.tc-tuple{border-color:var(--teal);background:rgba(2,173,165,.07)}
+.tc-tuple h4{color:var(--teal)}
+.tc-str{border-color:var(--orange);background:rgba(245,162,29,.09)}
+.tc-str h4{color:#B87708}
+
+/* ── memory box diagram ── */
+.mem-row{display:flex;align-items:center;gap:0;margin:6px 0;flex-wrap:wrap;gap:6px}
+.mem-name{font-family:monospace;font-size:13.5px;font-weight:700;color:var(--muted);
+  min-width:7em;text-align:right;padding-right:8px}
+.mem-arrow{color:var(--teal);font-size:18px;line-height:1}
+.mem-box{background:var(--code-bg);color:#E6EDF3;border-radius:8px;padding:5px 12px;
+  font-family:monospace;font-size:13.5px;border:2px solid rgba(255,255,255,.1)}
+.mem-box.int-box{border-color:#79C0FF}
+.mem-box.tuple-box{border-color:#A5D6FF}
+.mem-swatch{width:18px;height:18px;border-radius:4px;display:inline-block;
+  vertical-align:middle;margin-left:6px;border:1px solid rgba(255,255,255,.2)}
+.mem-type{font-size:11.5px;color:var(--muted);margin-left:6px;letter-spacing:.04em}
+
+/* ── connection table ── */
+.connect-row{display:flex;gap:10px;align-items:flex-start;padding:10px 0;
+  border-top:1px solid var(--line);flex-wrap:wrap}
+.connect-row:first-of-type{border-top:none}
+.connect-var{font-family:monospace;font-size:13.5px;font-weight:700;color:var(--teal);
+  min-width:9em;padding-top:2px}
+.connect-arrow{color:var(--muted);padding-top:2px}
+.connect-desc{flex:1;font-size:14.5px}
+.connect-desc small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+</style>
+</head>
+<body>
+<div class="chev" id="chev">
+  <span id="see-box">See</span><span>Think</span><span>Explore</span><span>Marvel</span>
+</div>
+<nav class="sitenav"><div class="wrap">
+  <a class="brand" href="index.html">Snake Game <span>Python Tutorial</span></a>
+  <details class="navsel">
+    <summary>Steps</summary>
+    <div class="navmenu" role="menu">
+      <a href="step-1.html" aria-current="page"><b>Step 1</b>: Variables &amp; Setup</a>
+      <a href="step-2.html"><b>Step 2</b>: Loop &amp; Events</a>
+      <a href="step-3.html"><b>Step 3</b>: Direction Control</a>
+      <a href="step-4.html"><b>Step 4</b>: Snake Body ⭐</a>
+      <a href="step-5.html"><b>Step 5</b>: Bonus Food 🌟</a>
+      <a href="step-6.html"><b>Step 6</b>: Functions</a>
+      <a href="step-7.html"><b>Step 7</b>: Wrap-Around ⭐</a>
+      <a href="step-8.html"><b>Step 8</b>: Save High Score</a>
+      <a href="step-9.html"><b>Step 9</b>: OOP Refactor</a>
+      <a href="step-10.html"><b>Step 10</b>: ML Extension</a>
+    </div>
+  </details>
+  <a class="nl" href="index.html">Home</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <p class="eyebrow">UMPSA STEM LAB · Step 1 of 10</p>
+  <h1>Step 1 — Variables &amp; Setup</h1>
+  <p class="sub">Understand pixels, colours and data types — then write the code that opens your Snake game window.</p>
+  <div class="pills">
+    <span class="pill">Variables</span><span class="pill">Tuples</span>
+    <span class="pill">int / str / tuple</span><span class="pill">RGB Colours</span><span class="pill">Pixel Coordinates</span>
+  </div>
+</div></header>
+
+<div class="progress-bar"><div class="progress-inner">
+  <div class="track"><i style="width:11%"></i></div>
+  <b>Step 1 / 10</b>
+</div></div>
+
+<div class="wrap">
+
+<!-- ═══ SECTION 1 — What you'll learn ═══ -->
+<section>
+  <h2>What you'll build in Step 1</h2>
+  <p class="lede">By the end of this step you will have a working Python program that opens a dark game window — the blank canvas your Snake game will be drawn on.</p>
+  <div class="grid2">
+    <div class="mini"><h4>🎯 Learning goals</h4>
+      <p>Understand pixels, screen coordinates, RGB colours, Python data types, and how to store values in variables.</p></div>
+    <div class="mini"><h4>🐍 Snake game connection</h4>
+      <p>Every constant you write here (GRID_COLS, CELL_SIZE, colours) is used in all nine steps. Get them right once, use them everywhere.</p></div>
+  </div>
+  <div class="cal tip"><b>Big idea</b>
+  A variable is a <em>named box</em> that holds a value. You give it a name; Python remembers the value. Constants (written in UPPER_CASE) are variables whose values you never change after setting them.</div>
+</section>
+
+<!-- ═══ SECTION 2 — Pixels & Coordinates ═══ -->
+<section>
+  <h2>Pixels &amp; Coordinates</h2>
+  <p class="lede">Every image on a screen is made of tiny coloured squares called <strong>pixels</strong>. Pygame uses an (x, y) coordinate system to identify each one.</p>
+
+  <h3>How the coordinate system works</h3>
+  <p>Unlike a maths graph, the Pygame y-axis is <strong>flipped</strong>: (0, 0) is the <em>top-left</em> corner, and y increases <em>downward</em>.</p>
+
+  <!-- Interactive grid -->
+  <div style="text-align:center;margin:16px 0">
+    <canvas id="grid-canvas" width="500" height="340"></canvas>
+    <div class="grid-info" id="grid-info">
+      👆 Hover over a cell to see its <span class="hi">grid position</span> and <span class="px">pixel x</span> / <span class="py">pixel y</span>
+    </div>
+  </div>
+
+  <h3>From grid to pixels</h3>
+  <p>The snake game uses a <strong>grid of cells</strong>, not individual pixels. Each cell is <code>CELL_SIZE × CELL_SIZE</code> pixels. To find the pixel position of a cell:</p>
+  <pre class="code">pixel_x = col  * CELL_SIZE    # e.g. column 3  →  3 × 30 = 90 px from left
+pixel_y = row  * CELL_SIZE    # e.g. row 2     →  2 × 30 = 60 px from top</pre>
+
+  <div class="cal info"><b>Why this matters for Snake</b>
+  Every snake segment and every piece of food is drawn using this formula. When you store a snake cell as <code>(col, row)</code>, you multiply by <code>CELL_SIZE</code> to get the actual screen coordinates before calling <code>pygame.draw.rect()</code>.</div>
+</section>
+
+<!-- ═══ SECTION 3 — Animated output ═══ -->
+<section>
+  <h2>What does Step 1 produce?</h2>
+  <p class="lede">When you run the Step 1 program, Pygame opens a <strong>600 × 450 pixel</strong> window, fills it with the dark background colour, holds for 3 seconds, then closes.</p>
+
+  <div class="pygame-window">
+    <div class="pygame-titlebar">
+      <div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      <span class="title-text">Snake</span>
+    </div>
+    <canvas id="pygame-canvas" width="600" height="450" style="height:220px"></canvas>
+  </div>
+  <button class="replay-btn" id="replay-btn">↺ Replay animation</button>
+
+  <h3>How the window size is calculated</h3>
+  <p>Instead of typing <code>600</code> and <code>450</code> directly, we <em>calculate</em> them from the grid constants. This way, changing <code>GRID_COLS</code> automatically changes the window — we only update one number:</p>
+  <pre class="code">GRID_COLS = 20
+CELL_SIZE = 30
+
+WINDOW_W = GRID_COLS * CELL_SIZE   # 20 × 30 = 600 pixels
+WINDOW_H = GRID_ROWS * CELL_SIZE   # 15 × 30 = 450 pixels</pre>
+</section>
+
+<!-- ═══ SECTION 4 — RGB Colours ═══ -->
+<section>
+  <h2>Colours — RGB Tuples</h2>
+  <p class="lede">Every colour on a screen is mixed from three light channels: <strong>Red</strong>, <strong>Green</strong>, and <strong>Blue</strong>. Each channel is an integer from <strong>0</strong> (off) to <strong>255</strong> (full brightness).</p>
+
+  <div class="rgb-mixer">
+    <div class="rgb-sliders">
+      <label><span style="color:#FF7B72">R</span>
+        <input type="range" id="sl-r" min="0" max="255" value="0">
+        <span class="val" id="vr">0</span>
+      </label>
+      <label><span style="color:#56d364">G</span>
+        <input type="range" id="sl-g" min="0" max="255" value="200">
+        <span class="val" id="vg">200</span>
+      </label>
+      <label><span style="color:#79C0FF">B</span>
+        <input type="range" id="sl-b" min="0" max="255" value="80">
+        <span class="val" id="vb">80</span>
+      </label>
+      <div style="margin-top:10px;font-family:monospace;font-size:14px">
+        Python: <code id="tuple-display">( 0, 200,  80)</code>
+      </div>
+      <div class="preset-swatches">
+        <button class="preset-btn" id="pr-green"  style="background:rgb(0,200,80)"  data-rgb="0,200,80">GREEN</button>
+        <button class="preset-btn" id="pr-dkgreen" style="background:rgb(0,160,50)"  data-rgb="0,160,50">DKGREEN</button>
+        <button class="preset-btn" id="pr-red"    style="background:rgb(220,50,50)"  data-rgb="220,50,50">RED</button>
+        <button class="preset-btn" id="pr-white"  style="background:rgb(200,200,200);color:#333" data-rgb="255,255,255">WHITE</button>
+        <button class="preset-btn" id="pr-bg"     style="background:rgb(30,30,30)"   data-rgb="30,30,30">BG</button>
+      </div>
+    </div>
+    <div>
+      <div class="colour-swatch" id="swatch" style="background:rgb(0,200,80)">
+        <div class="swatch-label" id="swatch-label">rgb(0, 200, 80)</div>
+      </div>
+      <div style="margin-top:12px;font-size:14px;color:var(--muted)">
+        <p style="margin:4px 0">🔴 Red = 0 → no red</p>
+        <p style="margin:4px 0">🟢 Green = 200 → lots of green</p>
+        <p style="margin:4px 0">🔵 Blue = 80 → a little blue</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>The colours used in Snake</h3>
+  <table>
+    <thead><tr><th>Variable</th><th>Tuple</th><th>Swatch</th><th>Used for</th></tr></thead>
+    <tbody>
+      <tr><td><code>GREEN</code></td><td><code>(0, 200, 80)</code></td>
+        <td><span style="display:inline-block;width:28px;height:18px;border-radius:4px;background:rgb(0,200,80);vertical-align:middle;border:1px solid #555"></span></td>
+        <td>Snake body segments</td></tr>
+      <tr><td><code>DKGREEN</code></td><td><code>(0, 160, 50)</code></td>
+        <td><span style="display:inline-block;width:28px;height:18px;border-radius:4px;background:rgb(0,160,50);vertical-align:middle;border:1px solid #555"></span></td>
+        <td>Snake head (darker so it stands out)</td></tr>
+      <tr><td><code>RED</code></td><td><code>(220, 50, 50)</code></td>
+        <td><span style="display:inline-block;width:28px;height:18px;border-radius:4px;background:rgb(220,50,50);vertical-align:middle;border:1px solid #555"></span></td>
+        <td>Food circle</td></tr>
+      <tr><td><code>WHITE</code></td><td><code>(255, 255, 255)</code></td>
+        <td><span style="display:inline-block;width:28px;height:18px;border-radius:4px;background:rgb(255,255,255);vertical-align:middle;border:1px solid #555"></span></td>
+        <td>Score text on screen</td></tr>
+      <tr><td><code>BG</code></td><td><code>(30, 30, 30)</code></td>
+        <td><span style="display:inline-block;width:28px;height:18px;border-radius:4px;background:rgb(30,30,30);vertical-align:middle;border:1px solid #555"></span></td>
+        <td>Background fill every frame</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ═══ SECTION 5 — Data Types ═══ -->
+<section>
+  <h2>Data Types in Python</h2>
+  <p class="lede">Python automatically assigns a <strong>type</strong> to every value. The type determines what you can do with the value. Step 1 uses three types.</p>
+
+  <div class="type-cards">
+    <div class="type-card tc-int">
+      <h4>int — Integer</h4>
+      <p>A whole number. Used for grid dimensions, speed, and pixel sizes.</p>
+      <code>GRID_COLS = 20<br>CELL_SIZE = 30<br>SNAKE_SPEED = 8</code>
+    </div>
+    <div class="type-card tc-tuple">
+      <h4>tuple — Ordered group</h4>
+      <p>An unchangeable sequence in <code>( )</code>. Perfect for RGB colours and later for (col, row) positions.</p>
+      <code>GREEN = (0, 200, 80)<br>BG    = (30, 30, 30)</code>
+    </div>
+    <div class="type-card tc-str">
+      <h4>str — String</h4>
+      <p>Text in quotes. Used for the window title and later for direction names like "RIGHT".</p>
+      <code>"Snake"<br>"RIGHT"<br>"GAME OVER"</code>
+    </div>
+  </div>
+
+  <h3>Why tuples for colours?</h3>
+  <div class="cal note"><b>Tuple = sealed container</b>
+  A tuple cannot be changed after creation. Colour values should never change mid-game, so a tuple is the correct choice — it makes the intent clear. Later you'll use tuples for snake body positions <code>(col, row)</code> too, for the same reason: a cell's identity shouldn't accidentally mutate.</div>
+
+  <h3>Checking types in Python</h3>
+  <p>You can always ask Python what type a value is:</p>
+  <pre class="code">print(type(20))           # &lt;class 'int'&gt;
+print(type((0, 200, 80))) # &lt;class 'tuple'&gt;
+print(type("Snake"))      # &lt;class 'str'&gt;
+print(type(3.14))         # &lt;class 'float'&gt;  ← decimals</pre>
+</section>
+
+<!-- ═══ SECTION 6 — Variables as memory boxes ═══ -->
+<section>
+  <h2>Variables — Named Boxes in Memory</h2>
+  <p class="lede">When Python runs <code>GRID_COLS = 20</code>, it sets aside a slot in memory, labels it <code>GRID_COLS</code>, and stores the value <code>20</code> there. Any time the program needs that value, it reads it by name.</p>
+
+  <div style="margin:18px 0">
+    <div class="mem-row">
+      <span class="mem-name">GRID_COLS</span>
+      <span class="mem-arrow">→</span>
+      <span class="mem-box int-box">20</span>
+      <span class="mem-type">int</span>
+    </div>
+    <div class="mem-row">
+      <span class="mem-name">GRID_ROWS</span>
+      <span class="mem-arrow">→</span>
+      <span class="mem-box int-box">15</span>
+      <span class="mem-type">int</span>
+    </div>
+    <div class="mem-row">
+      <span class="mem-name">CELL_SIZE</span>
+      <span class="mem-arrow">→</span>
+      <span class="mem-box int-box">30</span>
+      <span class="mem-type">int</span>
+    </div>
+    <div class="mem-row">
+      <span class="mem-name">WINDOW_W</span>
+      <span class="mem-arrow">→</span>
+      <span class="mem-box int-box">600</span>
+      <span class="mem-type">int &nbsp; (= 20 × 30)</span>
+    </div>
+    <div class="mem-row">
+      <span class="mem-name">GREEN</span>
+      <span class="mem-arrow">→</span>
+      <span class="mem-box tuple-box">(0, 200, 80)</span>
+      <span class="mem-swatch" style="background:rgb(0,200,80)"></span>
+      <span class="mem-type">tuple</span>
+    </div>
+    <div class="mem-row">
+      <span class="mem-name">RED</span>
+      <span class="mem-arrow">→</span>
+      <span class="mem-box tuple-box">(220, 50, 50)</span>
+      <span class="mem-swatch" style="background:rgb(220,50,50)"></span>
+      <span class="mem-type">tuple</span>
+    </div>
+    <div class="mem-row">
+      <span class="mem-name">BG</span>
+      <span class="mem-arrow">→</span>
+      <span class="mem-box tuple-box">(30, 30, 30)</span>
+      <span class="mem-swatch" style="background:rgb(30,30,30);border:1px solid #555"></span>
+      <span class="mem-type">tuple</span>
+    </div>
+  </div>
+
+  <div class="cal tip"><b>UPPER_CASE naming convention</b>
+  Python doesn't enforce constants — you <em>could</em> change GRID_COLS. But writing it in capitals is a signal to yourself and other programmers: "don't change this". It's a convention, not a rule.</div>
+</section>
+
+<!-- ═══ SECTION 7 — Snake game connection ═══ -->
+<section>
+  <h2>How Step 1 Connects to the Snake Game</h2>
+  <p class="lede">Every variable you define in Step 1 is <em>reused unchanged</em> in Steps 2–9. Changing a constant here changes the whole game.</p>
+
+  <div class="connect-row">
+    <span class="connect-var">GRID_COLS / GRID_ROWS</span>
+    <span class="connect-arrow">→</span>
+    <div class="connect-desc">Defines the playing field size. The snake's (col, row) position must stay within 0–19 and 0–14.
+      <small>Used in: Steps 4, 6, 7, 8, 9</small></div>
+  </div>
+  <div class="connect-row">
+    <span class="connect-var">CELL_SIZE</span>
+    <span class="connect-arrow">→</span>
+    <div class="connect-desc">Converts grid coordinates to pixels. <code>col × CELL_SIZE</code> gives the screen x position.
+      <small>Used in: every step that draws anything (Steps 1–9)</small></div>
+  </div>
+  <div class="connect-row">
+    <span class="connect-var">SNAKE_SPEED</span>
+    <span class="connect-arrow">→</span>
+    <div class="connect-desc">Controls how many times per second the game loop runs (frames per second). Higher = faster snake.
+      <small>Used in: Steps 2–9 via <code>clock.tick(SNAKE_SPEED)</code></small></div>
+  </div>
+  <div class="connect-row">
+    <span class="connect-var">GREEN / DKGREEN</span>
+    <span class="connect-arrow">→</span>
+    <div class="connect-desc">Colour for body segments and head. Head uses DKGREEN so students can see which end is leading.
+      <small>Used in: Steps 4–9 in <code>pygame.draw.rect()</code></small></div>
+  </div>
+  <div class="connect-row">
+    <span class="connect-var">RED</span>
+    <span class="connect-arrow">→</span>
+    <div class="connect-desc">Colour for the food circle drawn with <code>pygame.draw.circle()</code>.
+      <small>Used in: Steps 4–9</small></div>
+  </div>
+  <div class="connect-row">
+    <span class="connect-var">BG</span>
+    <span class="connect-arrow">→</span>
+    <div class="connect-desc">The game loop calls <code>screen.fill(BG)</code> every frame to erase the previous frame before redrawing.
+      <small>Used in: Steps 2–9 — essential for animation</small></div>
+  </div>
+</section>
+
+<!-- ═══ SECTION 8 — The Code ═══ -->
+<section>
+  <h2>The Code — Step 1</h2>
+  <p class="lede">Type this into Thonny and run it. A dark window titled "Snake" will appear for 3 seconds, then close.</p>
+  <div class="tabs">
+    <button aria-selected="true" data-tab="tab-new">Full Code (Step 1)</button>
+    <button aria-selected="false" data-tab="tab-explain">Line-by-Line</button>
+  </div>
+  <div class="panel" id="tab-new">
+    <pre class="code"># Step 1-1: Import the Pygame library so we can use its functions
+import pygame
+pygame.init()
+
+# Step 1-2: Constants — grid size (never change these mid-game)
+GRID_COLS   = 20        # 20 columns → 20 cells wide
+GRID_ROWS   = 15        # 15 rows    → 15 cells tall
+CELL_SIZE   = 30        # each cell is 30 × 30 pixels
+SNAKE_SPEED = 8         # game loop runs 8 times per second
+
+# Step 1-3: Colour constants — tuples of (Red, Green, Blue), 0-255 each
+WHITE   = (255, 255, 255)   # score text
+GREEN   = (  0, 200,  80)   # snake body
+DKGREEN = (  0, 160,  50)   # snake head (darker)
+RED     = (220,  50,  50)   # food
+BG      = ( 30,  30,  30)   # background — very dark grey
+
+# Step 1-4: Calculate window size in pixels
+WINDOW_W = GRID_COLS * CELL_SIZE   # 20 × 30 = 600 px wide
+WINDOW_H = GRID_ROWS * CELL_SIZE   # 15 × 30 = 450 px tall
+
+# Step 1-5: Create the window and set its title
+screen = pygame.display.set_mode((WINDOW_W, WINDOW_H))
+pygame.display.set_caption("Snake")
+
+# Step 1-6: Fill with background colour and show the window
+screen.fill(BG)
+pygame.display.flip()
+
+# Step 1-7: Wait 3 seconds so you can see it, then quit
+pygame.time.wait(3000)
+pygame.quit()</pre>
+  </div>
+  <div class="panel" id="tab-explain" hidden>
+    <div class="step"><div class="idx">1</div><div class="body">
+      <h4><code>import pygame</code> + <code>pygame.init()</code></h4>
+      <p>Loads the Pygame library and initialises all its subsystems (graphics, sound, input). Always the first two lines.</p>
+    </div></div>
+    <div class="step"><div class="idx">2</div><div class="body">
+      <h4>Constants block (lines 5–9)</h4>
+      <p><code>GRID_COLS = 20</code> stores the integer 20 in a variable. <code>UPPER_CASE</code> names signal "don't change this". These four values define the entire playing field.</p>
+    </div></div>
+    <div class="step"><div class="idx">3</div><div class="body">
+      <h4>Colour tuples (lines 12–17)</h4>
+      <p>Each colour is a <code>tuple</code> of three integers. Pygame uses (R, G, B). <code>BG = (30, 30, 30)</code> is a very dark grey — just enough to see the grid cells.</p>
+    </div></div>
+    <div class="step"><div class="idx">4</div><div class="body">
+      <h4><code>WINDOW_W = GRID_COLS * CELL_SIZE</code></h4>
+      <p>Python evaluates the right side first: 20 × 30 = 600. Then it stores 600 in WINDOW_W. The <code>*</code> operator multiplies two integers.</p>
+    </div></div>
+    <div class="step"><div class="idx">5</div><div class="body">
+      <h4><code>pygame.display.set_mode((WINDOW_W, WINDOW_H))</code></h4>
+      <p>Opens the OS window. Note the double brackets: the outer ones are the function call; the inner <code>(600, 450)</code> is a <em>tuple</em> — the size argument. Returns a <em>surface</em> object stored in <code>screen</code>.</p>
+    </div></div>
+    <div class="step"><div class="idx">6</div><div class="body">
+      <h4><code>screen.fill(BG)</code> + <code>pygame.display.flip()</code></h4>
+      <p>Paints every pixel of the surface the BG colour. <code>flip()</code> pushes the surface to the physical screen. Without flip, nothing appears.</p>
+    </div></div>
+    <div class="step"><div class="idx">7</div><div class="body">
+      <h4><code>pygame.time.wait(3000)</code> + <code>pygame.quit()</code></h4>
+      <p>Pauses for 3000 milliseconds (3 seconds) so you can see the window. <code>quit()</code> shuts down Pygame cleanly. In later steps, the game loop replaces the wait.</p>
+    </div></div>
+  </div>
+</section>
+
+
+<div style="margin:40px 0 20px;text-align:center">
+  <p style="font-size:15px;color:var(--muted);margin-bottom:16px">You've covered all the concepts for Step 1. Time to apply them.</p>
+  <a href="step-1-activity.html" style="display:inline-flex;align-items:center;gap:10px;background:var(--teal);color:#fff;font-weight:700;font-size:16px;padding:14px 32px;border-radius:10px;text-decoration:none;transition:opacity .2s;box-shadow:0 4px 14px rgba(2,173,165,.35)" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+    Start Activities &rarr;
+    <span style="font-size:12px;font-weight:400;opacity:.85">Tier 1 &rarr; 2 &rarr; 3 &rarr; 4</span>
+  </a>
+</div>
+
+<div class="stepnav">
+  <a href="step-2.html" class="next"><small>Next</small><b>Step 2: Loop & Events →</b></a>
+</div>
+</div><!-- end .wrap -->
+
+<div id="teacher-reveal" hidden style="position:fixed;bottom:24px;right:24px;background:#08312F;
+  color:#B9E4E1;border-radius:10px;padding:14px 18px;font-size:14px;z-index:999;
+  border:1px solid rgba(255,255,255,.2);box-shadow:0 8px 24px rgba(0,0,0,.4)">
+  🔑 Teacher access: <a href="teacher-1.html" style="color:#8FD9D5">Open Teacher Notes →</a>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p><strong>See · Think · Explore · Marvel</strong><br>UMPSA STEM LAB · Snake Game Python Tutorial</p>
+    <p>
+      <a href="index.html">Home</a> · <a href="step-1.html">Step 1</a> · <a href="step-2.html">Step 2</a> · <a href="step-3.html">Step 3</a> · <a href="step-4.html">Step 4</a> · <a href="step-5.html">Step 5</a> · <a href="step-6.html">Step 6</a> · <a href="step-7.html">Step 7</a> · <a href="step-8.html">Step 8</a> · <a href="step-9.html">Step 9</a> · <a href="step-10.html">Step 10</a>
+      <p style="margin-top:10px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-weight:400">
+    <span>© 2026 Nurul Hazlina Noordin · UMPSA STEM Lab Engineering Education Initiative</span>
+    <a href="https://ee.ump.edu.my/hazlina/#research" target="_blank" rel="noopener"
+       title="Visit research page" aria-label="Research website"
+       style="color:var(--teal);display:inline-flex;align-items:center;transition:opacity .15s"
+       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="2" y1="12" x2="22" y2="12"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    </a>
+    <a href="mailto:hazlina@umpsa.edu.my"
+       title="hazlina@umpsa.edu.my" aria-label="Email Dr Nurul Hazlina"
+       style="color:var(--teal);display:inline-flex;align-items:center;transition:opacity .15s"
+       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true">
+        <rect x="2" y="4" width="20" height="16" rx="2"/>
+        <polyline points="2,4 12,13 22,4"/>
+      </svg>
+    </a>
+  </p>
+</footer>
+
+<script>
+/* ── Tab switching ── */
+document.querySelectorAll('.tabs').forEach(function(tb){
+  tb.querySelectorAll('button').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      tb.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-selected','false');});
+      btn.setAttribute('aria-selected','true');
+      var sec=tb.closest('section')||tb.parentElement;
+      sec.querySelectorAll('.panel').forEach(function(p){p.hidden=true;});
+      var t=sec.querySelector('#'+btn.dataset.tab);
+      if(t) t.hidden=false;
+    });
+  });
+});
+
+/* ── Teacher easter egg ── */
+(function(){
+  var clicks=0,timer;
+  var box=document.getElementById('see-box');
+  if(!box)return;
+  box.style.cursor='pointer';
+  box.addEventListener('click',function(){
+    clicks++;clearTimeout(timer);
+    timer=setTimeout(function(){clicks=0;},1500);
+    if(clicks>=3){clicks=0;var el=document.getElementById('teacher-reveal');
+      if(el){el.hidden=false;box.style.outline='2px solid #fff';}}
+  });
+})();
+
+/* ── Line numbers ── */
+document.querySelectorAll('pre.code:not(.code-fill)').forEach(function(pre){
+  var lines=pre.textContent.split('\n');
+  if(lines.length&&lines[lines.length-1].trim()==='')lines.pop();
+  pre.innerHTML=lines.map(function(line,i){
+    var ln=String(i+1).padStart(3,' ');
+    var esc=line.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return '<span class="code-ln">'+ln+'</span>'+esc;
+  }).join('\n');
+});
+
+/* ══ PIXEL GRID EXPLORER ══ */
+(function(){
+  var canvas=document.getElementById('grid-canvas');
+  if(!canvas)return;
+  var ctx=canvas.getContext('2d');
+  var COLS=20,ROWS=15,CELL=22,PAD=30;
+  var W=canvas.width,H=canvas.height;
+  var hovCol=-1,hovRow=-1;
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // axes labels
+    ctx.fillStyle='#5B7284';ctx.font='11px monospace';ctx.textAlign='center';
+    for(var c=0;c<COLS;c+=5){
+      ctx.fillText(c,PAD+c*CELL+CELL/2,16);
+    }
+    ctx.textAlign='right';
+    for(var r=0;r<ROWS;r+=3){
+      ctx.fillText(r,PAD-4,PAD+r*CELL+CELL/2+4);
+    }
+    // label axis
+    ctx.fillStyle='#79C0FF';ctx.font='bold 11px monospace';ctx.textAlign='center';
+    ctx.fillText('col (x)',PAD+COLS*CELL/2,H-4);
+    ctx.save();ctx.translate(10,PAD+ROWS*CELL/2);ctx.rotate(-Math.PI/2);
+    ctx.fillStyle='#FF7B72';ctx.fillText('row (y)',0,0);ctx.restore();
+
+    // grid cells
+    for(var row=0;row<ROWS;row++){
+      for(var col=0;col<COLS;col++){
+        var px=PAD+col*CELL,py=PAD+row*CELL;
+        var isHov=(col===hovCol&&row===hovRow);
+        // snake demo cells
+        var isSnake=(row===7&&col>=8&&col<=10);
+        var isHead=(row===7&&col===10);
+        var isFood=(row===4&&col===15);
+        ctx.fillStyle=isHov?'rgba(2,173,165,.4)':isHead?'#02806A':isSnake?'#02ADA5':isFood?'#C80000':'#182429';
+        ctx.strokeStyle=isHov?'#02ADA5':'#2B3A41';
+        ctx.lineWidth=isHov?1.5:0.5;
+        ctx.beginPath();ctx.roundRect(px+1,py+1,CELL-2,CELL-2,3);
+        ctx.fill();ctx.stroke();
+        // coord label in hovered cell
+        if(isHov){
+          ctx.fillStyle='#fff';ctx.font='bold 9px monospace';ctx.textAlign='center';
+          ctx.fillText('('+col+','+row+')',px+CELL/2,py+CELL/2+3);
+        }
+      }
+    }
+    // axis arrows
+    ctx.strokeStyle='#79C0FF';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(PAD,H-20);ctx.lineTo(PAD+COLS*CELL,H-20);ctx.stroke();
+    ctx.strokeStyle='#FF7B72';
+    ctx.beginPath();ctx.moveTo(12,PAD);ctx.lineTo(12,PAD+ROWS*CELL);ctx.stroke();
+  }
+
+  canvas.addEventListener('mousemove',function(e){
+    var r=canvas.getBoundingClientRect();
+    var scale=canvas.width/r.width;
+    var mx=(e.clientX-r.left)*scale,my=(e.clientY-r.top)*scale;
+    var c=Math.floor((mx-PAD)/CELL),row=Math.floor((my-PAD)/CELL);
+    if(c>=0&&c<COLS&&row>=0&&row<ROWS){
+      hovCol=c;hovRow=row;
+      var px=c*30,py=row*30;
+      document.getElementById('grid-info').innerHTML=
+        'Grid cell: <span class="hi">(col='+c+', row='+row+')</span> → '+
+        'Pixel x = col × 30 = <span class="px">'+px+'</span>, '+
+        'Pixel y = row × 30 = <span class="py">'+py+'</span>';
+    } else {hovCol=-1;hovRow=-1;}
+    draw();
+  });
+  canvas.addEventListener('mouseleave',function(){hovCol=-1;hovRow=-1;draw();
+    document.getElementById('grid-info').innerHTML=
+      '👆 Hover over a cell to see its <span class="hi">grid position</span> and <span class="px">pixel x</span> / <span class="py">pixel y</span>';
+  });
+  draw();
+})();
+
+/* ══ ANIMATED PYGAME WINDOW ══ */
+(function(){
+  var canvas=document.getElementById('pygame-canvas');
+  if(!canvas)return;
+  var ctx=canvas.getContext('2d');
+  var W=canvas.width,H=canvas.height;
+  var phase=0,frameId;
+
+  function animate(ts){
+    ctx.clearRect(0,0,W,H);
+    var prog=Math.min(phase/60,1); // 0→1 over 60 frames
+    // background fills in
+    var alpha=prog;
+    ctx.fillStyle='rgb(30,30,30)';
+    ctx.fillRect(0,0,W*prog,H);
+    // grid lines appear after bg
+    if(prog>0.4){
+      var gridAlpha=(prog-0.4)/0.6*0.15;
+      ctx.strokeStyle='rgba(255,255,255,'+gridAlpha+')';
+      ctx.lineWidth=0.5;
+      var CELL=30;
+      for(var x=0;x<=W;x+=CELL){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+      for(var y=0;y<=H;y+=CELL){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    }
+    // pixel size label
+    if(prog>0.7){
+      var la=(prog-0.7)/0.3;
+      ctx.fillStyle='rgba(2,173,165,'+la+')';
+      ctx.font='bold 13px monospace';ctx.textAlign='left';
+      ctx.fillText('600 px',10,H-10);
+      ctx.save();ctx.translate(W-10,H/2);ctx.rotate(-Math.PI/2);
+      ctx.fillText('450 px',0,0);ctx.restore();
+    }
+    phase++;
+    if(phase<120) frameId=requestAnimationFrame(animate);
+  }
+
+  function start(){phase=0;cancelAnimationFrame(frameId);animate(0);}
+  start();
+  document.getElementById('replay-btn').addEventListener('click',start);
+})();
+
+/* ══ RGB MIXER ══ */
+(function(){
+  var slR=document.getElementById('sl-r');
+  var slG=document.getElementById('sl-g');
+  var slB=document.getElementById('sl-b');
+  var vr=document.getElementById('vr');
+  var vg=document.getElementById('vg');
+  var vb=document.getElementById('vb');
+  var swatch=document.getElementById('swatch');
+  var label=document.getElementById('swatch-label');
+  var tupleD=document.getElementById('tuple-display');
+
+  function pad(n){return String(n).padStart(3,' ');}
+  function update(){
+    var r=+slR.value,g=+slG.value,b=+slB.value;
+    vr.textContent=r;vg.textContent=g;vb.textContent=b;
+    var col='rgb('+r+','+g+','+b+')';
+    swatch.style.background=col;
+    label.textContent=col;
+    tupleD.textContent='('+pad(r)+','+pad(g)+','+pad(b)+')';
+    // text contrast
+    var lum=0.299*r+0.587*g+0.114*b;
+    label.style.color=lum>128?'#111':'#fff';
+  }
+  [slR,slG,slB].forEach(function(s){s.addEventListener('input',update);});
+
+  document.querySelectorAll('.preset-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var parts=btn.dataset.rgb.split(',').map(Number);
+      slR.value=parts[0];slG.value=parts[1];slB.value=parts[2];update();
+    });
+  });
+  update();
+})();
+</script>
+</body>
+</html>

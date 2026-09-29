@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Facilitator Notes — Step 1 | Snake Tutorial</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+/* ── LIGHT-MODE TEACHER PAGE ── independent of style.css ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F0F4F8;
+  --surface:#FFFFFF;
+  --surface2:#F7FAFC;
+  --teal:#0A8F8A;
+  --teal-dark:#076862;
+  --teal-light:#E6F6F5;
+  --ink:#1A2332;
+  --body:#374151;
+  --muted:#6B7A8D;
+  --border:#D6E0EA;
+  --amber:#D97706;
+  --amber-bg:#FFFBEB;
+  --amber-border:#FCD34D;
+  --green-bg:#F0FDF4;
+  --green-border:#86EFAC;
+  --green-ink:#166534;
+  --red-bg:#FEF2F2;
+  --red-border:#FCA5A5;
+  --red-ink:#991B1B;
+  --code-bg:#F1F5F9;
+  --code-fg:#1E293B;
+  --radius:10px;
+  --shadow:0 1px 4px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.05);
+}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg);
+  color:var(--body);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  line-height:1.65;
+}
+
+/* ── NAV ── */
+.sitenav{
+  background:var(--teal-dark);
+  color:#fff;
+  padding:0 24px;
+  display:flex;
+  align-items:center;
+  gap:20px;
+  min-height:56px;
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+.sitenav .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;font-weight:700;font-size:15px}
+.sitenav .brand img{display:none}
+.sitenav a.nl{color:rgba(255,255,255,.8);text-decoration:none;font-size:14px;padding:4px 8px;border-radius:6px;transition:background .15s}
+.sitenav a.nl:hover{background:rgba(255,255,255,.15)}
+details.navsel{margin-left:auto;position:relative}
+details.navsel summary{
+  list-style:none;cursor:pointer;color:rgba(255,255,255,.9);
+  font-size:14px;font-weight:600;padding:6px 12px;
+  border-radius:6px;transition:background .15s;
+}
+details.navsel summary:hover{background:rgba(255,255,255,.15)}
+details.navsel summary::-webkit-details-marker{display:none}
+.navmenu{
+  position:absolute;right:0;top:calc(100% + 8px);
+  background:#fff;color:var(--ink);
+  border:1px solid var(--border);border-radius:var(--radius);
+  min-width:300px;box-shadow:var(--shadow);
+  overflow:hidden;z-index:200;
+}
+.navmenu a{
+  display:block;padding:10px 16px;font-size:13.5px;
+  text-decoration:none;color:var(--body);
+  border-bottom:1px solid var(--border);transition:background .12s;
+}
+.navmenu a:last-child{border-bottom:none}
+.navmenu a:hover{background:var(--teal-light)}
+.navmenu a[aria-current="page"]{background:var(--teal-light);color:var(--teal-dark);font-weight:700}
+
+/* ── GATE ── */
+.gate{
+  max-width:520px;margin:80px auto;padding:40px 36px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;box-shadow:var(--shadow);text-align:center;
+}
+.gate h2{font-size:24px;color:var(--ink);margin-bottom:12px}
+.gate p{color:var(--muted);margin-bottom:16px;font-size:15px}
+.gate a{color:var(--teal);text-decoration:none;font-size:14px}
+.gate a:hover{text-decoration:underline}
+.lock-icon{font-size:48px;margin-bottom:16px}
+
+/* ── HERO ── */
+.t-hero{
+  background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal) 100%);
+  color:#fff;padding:40px 24px 36px;
+}
+.t-hero .wrap{max-width:900px;margin:0 auto}
+.t-hero .eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.75;margin-bottom:8px}
+.t-hero h1{font-size:clamp(22px,4vw,32px);font-weight:800;line-height:1.2;margin-bottom:8px}
+.t-hero .meta{font-size:14px;opacity:.8;margin-bottom:20px}
+.t-cta-row{display:flex;flex-wrap:wrap;gap:10px}
+.t-cta-row a{
+  display:inline-block;padding:8px 18px;border-radius:8px;
+  font-size:13px;font-weight:600;text-decoration:none;
+  background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);
+  transition:background .15s;
+}
+.t-cta-row a:hover{background:rgba(255,255,255,.28)}
+
+/* ── LAYOUT ── */
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+.page-body{padding:36px 20px 60px;max-width:900px;margin:0 auto}
+
+/* ── BANNER ── */
+.tbanner{
+  background:var(--amber-bg);border:1px solid var(--amber-border);
+  color:#78350F;border-radius:8px;padding:12px 16px;
+  font-size:13.5px;margin-bottom:28px;
+}
+.tbanner b{color:#92400E}
+
+/* ── SECTIONS ── */
+.t-section{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:28px 28px;margin-bottom:24px;
+  box-shadow:var(--shadow);
+}
+.t-section h2{
+  font-size:18px;font-weight:700;color:var(--ink);
+  padding-bottom:10px;margin-bottom:16px;
+  border-bottom:2px solid var(--teal);display:flex;align-items:center;gap:8px;
+}
+.t-section h2 .sec-icon{font-size:20px}
+.t-section h3{font-size:15px;font-weight:700;color:var(--teal-dark);margin:16px 0 8px}
+.t-section p{margin-bottom:10px;font-size:15px}
+.t-section ul{padding-left:20px;margin-bottom:12px}
+.t-section li{margin-bottom:6px;font-size:15px}
+.t-section strong{color:var(--ink)}
+
+/* ── TABLES ── */
+.t-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+.t-table thead th{
+  background:var(--teal);color:#fff;padding:10px 14px;
+  text-align:left;font-weight:600;font-size:13px;letter-spacing:.02em;
+}
+.t-table thead th:first-child{border-radius:8px 0 0 0}
+.t-table thead th:last-child{border-radius:0 8px 0 0}
+.t-table tbody tr:nth-child(even){background:var(--surface2)}
+.t-table tbody td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+.t-table td code{font-size:12.5px;background:var(--bg);padding:1px 5px;border-radius:4px;color:var(--ink)}
+.sev-low{color:#065F46;font-weight:600}
+.sev-med{color:#92400E;font-weight:600}
+.sev-high{color:#991B1B;font-weight:600}
+
+/* ── CODE ── */
+.codebox{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:12px 0;position:relative}
+.codebox pre{padding:20px;overflow-x:auto}
+.codebox code{color:var(--code-fg);font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13.5px;line-height:1.6}
+.copybtn{
+  position:absolute;top:10px;right:10px;
+  background:var(--border);color:var(--ink);
+  border:none;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;
+  transition:background .15s;
+}
+.copybtn:hover{background:rgba(255,255,255,.22)}
+.copybtn.copied{background:rgba(134,239,172,.25);color:#86EFAC}
+code{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13px;background:var(--bg);padding:1px 5px;border-radius:4px;color:var(--ink)}
+
+/* ── DEMO CARDS ── */
+.demo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:12px}
+.demo-card{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;padding:18px;border-top:3px solid var(--teal);
+}
+.demo-card .demo-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--teal);margin-bottom:6px}
+.demo-card h3{font-size:15px;font-weight:700;color:var(--ink);margin:0 0 8px}
+.demo-card p{font-size:13.5px;color:var(--body);margin:0 0 10px}
+.demo-card .demo-tip{
+  font-size:12.5px;color:var(--muted);padding:8px 10px;
+  background:var(--teal-light);border-radius:6px;
+  border-left:3px solid var(--teal);
+}
+.demo-card .demo-tip strong{color:var(--teal-dark)}
+
+/* ── ANSWER CARD ── */
+.answer-card{
+  background:var(--green-bg);border:1px solid var(--green-border);
+  border-radius:8px;padding:14px 18px;margin:12px 0;
+}
+.answer-card .answer-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--green-ink);margin-bottom:4px}
+
+/* ── CALLOUT ── */
+.callout{
+  display:flex;gap:12px;padding:14px 16px;border-radius:8px;
+  border:1px solid var(--border);background:var(--surface2);margin:12px 0;
+  font-size:14px;align-items:flex-start;
+}
+.callout-icon{font-size:22px;flex-shrink:0;line-height:1.2}
+.callout p{margin:0}
+
+/* ── STEM BRAND BAR ── */
+.stem-brand-bar{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  width:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+.stem-brand-bar .sb{
+  display:flex;align-items:center;justify-content:center;
+  padding:6px 8px;font-size:12px;font-weight:800;
+  letter-spacing:.12em;color:#fff;text-transform:uppercase;
+}
+.sb-see{background:#2E5FAF}
+.sb-think{background:#B82828}
+.sb-explore{background:#D99A10}
+.sb-marvel{background:#1FA898}
+
+/* ── FOOTER ── */
+footer{
+  background:#1C5C54;color:rgba(255,255,255,.78);
+  text-align:center;padding:20px 20px;font-size:13px;margin-top:40px;
+  display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+}
+footer a{color:rgba(255,255,255,.85);text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+footer a:hover{color:#fff}
+
+/* ── BUTTON ── */
+.cta-btn{
+  display:inline-block;padding:12px 28px;border-radius:9px;
+  font-size:15px;font-weight:700;border:none;cursor:pointer;
+  background:var(--teal);color:#fff;
+  box-shadow:0 4px 14px rgba(10,143,138,.3);
+  transition:background .15s,transform .1s;
+}
+.cta-btn:hover{background:var(--teal-dark);transform:translateY(-1px)}
+.cta-btn:active{transform:translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .t-section{padding:20px 16px}
+  .t-hero{padding:28px 16px 24px}
+  .t-cta-row a{font-size:12px;padding:6px 12px}
+  .demo-grid{grid-template-columns:1fr}
+  .t-table{font-size:13px}
+  .sitenav{padding:0 14px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── STEM BRAND BAR ── -->
+<div class="stem-brand-bar" aria-label="UMPSA STEM Lab">
+  <div class="sb sb-see">SEE</div>
+  <div class="sb sb-think">THINK</div>
+  <div class="sb sb-explore">EXPLORE</div>
+  <div class="sb sb-marvel">MARVEL</div>
+</div>
+
+<!-- ── NAV ── -->
+<nav class="sitenav">
+  <a class="brand" href="index.html">
+    <img src="stemlogo.png" alt="UMPSA STEM LAB">
+    <span>UMPSA STEM Lab Python Module</span>
+  </a>
+  <a class="nl" href="index.html">Home</a>
+  <details class="navsel">
+    <summary>Facilitator Notes ▾</summary>
+    <div class="navmenu">
+      <a href="teacher-1.html" aria-current="page"><b>Step 1</b>: Variables, Tuples &amp; Constants</a>
+      <a href="teacher-2.html"><b>Step 2</b>: While Loop &amp; Event Handling</a>
+      <a href="teacher-3.html"><b>Step 3</b>: Conditionals — Direction Control</a>
+      <a href="teacher-4.html"><b>Step 4</b>: Lists — The Snake Body</a>
+      <a href="teacher-5.html"><b>Step 5</b>: for Loops &amp; Bonus Foods</a>
+      <a href="teacher-6.html"><b>Step 6</b>: Functions &amp; DRY Principle</a>
+      <a href="teacher-7.html"><b>Step 7</b>: Modulo, Wrap-Around &amp; Dictionaries</a>
+      <a href="teacher-8.html"><b>Step 8</b>: File I/O, try/except &amp; Leaderboard</a>
+      <a href="teacher-9.html"><b>Step 9</b>: OOP &amp; Classes</a>
+      <a href="teacher-10.html"><b>Step 10</b>: ML Extension &amp; Final Presentation</a>
+    </div>
+  </details>
+</nav>
+
+<!-- ── GATE ── -->
+<div class="gate" id="gate">
+  <div class="lock-icon">🔒</div>
+  <h2>Facilitator Notes</h2>
+  <p>This page contains exercise answers and teaching guidance for<br>
+  <strong>Step 1 — Variables, Tuples &amp; Constants</strong>.<br>
+  Not linked from the student pages.</p>
+  <p style="margin-bottom:24px"><strong>Students: please go back and try the activities first.</strong></p>
+  <button class="cta-btn" id="gatebtn" type="button">I'm a facilitator — show the notes</button>
+  <p style="margin-top:20px"><a href="step-1.html">← Back to student page</a></p>
+</div>
+
+<!-- ── MAIN CONTENT ── -->
+<div id="tcontent" hidden>
+
+<div class="t-hero">
+  <div class="wrap">
+    <p class="eyebrow">Snake Game Python Tutorial &nbsp;·&nbsp; Facilitator Notes</p>
+    <h1>Step 1 — Variables, Tuples &amp; Constants</h1>
+    <p class="meta">Topics: Variables · Tuples · Constants &nbsp;|&nbsp; CT Focus: Decomposition &nbsp;|&nbsp; Cognitive Load: Low</p>
+    <div class="t-cta-row">
+      <a href="step-1.html">▶ Student page</a>
+      <a href="index.html">← Home</a>
+      <a href="teacher-2.html">Step 2 →</a>
+      <a href="teacher-index.html">📚 All facilitator notes</a>
+    </div>
+  </div>
+</div>
+
+<div class="page-body">
+
+  <div class="tbanner">
+    <b>Keep this link private.</b> Not linked from student pages — share the URL only with co-facilitators and researchers.
+  </div>
+
+  <!-- ── SECTION 1 · What is being taught ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">🎯</span> What is being taught</h2>
+
+    <ul>
+      <li><strong>Core idea:</strong> Variables hold values; tuples group related values (RGB colours); <code>ALL_CAPS</code> names signal constants that should not change during the game.</li>
+      <li><strong>Why pygame?</strong> It gives immediate visual feedback — students see their window open after only ~8 lines of code. This is the "reward" that carries them through the rest of the tutorial.</li>
+      <li><strong>The main trap:</strong> Many students confuse variable <em>naming</em> with variable <em>type</em>. A tuple named <code>BLACK</code> is still a tuple; the name does not make it a colour in Python's eyes.</li>
+      <li><strong>CT Connection — Decomposition:</strong> Breaking the game config into separate named constants is the simplest act of decomposition — one concept, one name, one place to change it.</li>
+    </ul>
+
+    <h3>Quick-start errors to scan for</h3>
+    <table class="t-table">
+      <thead><tr><th>Mistake</th><th>Behaviour</th><th>Severity</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>CELL_SIZE = (30)</code> thinking it is a tuple</td>
+          <td>Works but is an <code>int</code> — parentheses alone do not create a tuple</td>
+          <td><span class="sev-low">Low</span></td>
+        </tr>
+        <tr>
+          <td>Forgets <code>pygame.init()</code></td>
+          <td><code>RuntimeError</code> or blank window</td>
+          <td><span class="sev-low">Low — immediate error</span></td>
+        </tr>
+        <tr>
+          <td><code>WINDOW_W = COLS + CELL_SIZE</code> instead of <code>*</code></td>
+          <td>Window is only 50 pixels wide (adds instead of multiplies)</td>
+          <td><span class="sev-low">Obvious visually</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── SECTION 2 · Interactive Demos ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">🖥️</span> Interactive Demos on the Student Page</h2>
+    <p>Step 1 has three embedded interactive demos. Preview the student page (<a href="step-1.html" target="_blank">step-1.html</a>) before your session so you know what students will encounter. Use the notes below to guide discussion at each demo.</p>
+
+    <div class="demo-grid">
+
+      <div class="demo-card">
+        <div class="demo-label">Demo 1 — Grid Canvas</div>
+        <h3>Interactive Coordinate System</h3>
+        <p>A clickable/hoverable grid that shows pixel coordinates as students move the cursor. Helps make the abstract idea of <code>(col, row)</code> positions concrete before writing code.</p>
+        <div class="demo-tip"><strong>In class:</strong> Ask "What coordinates is the top-left corner?" (0, 0). Then "Where is the centre of a 20×15 grid?" Watch students realise the origin is top-left, not bottom-left like a maths graph.</div>
+      </div>
+
+      <div class="demo-card">
+        <div class="demo-label">Demo 2 — Pygame Canvas</div>
+        <h3>Animated Window Simulation</h3>
+        <p>Shows the pygame window being "built" step by step — grid lines appear, then the border, then the caption. A replay button lets students watch again. Previews what their program will produce.</p>
+        <div class="demo-tip"><strong>In class:</strong> Run the animation once before students type any code. Say "This is the finish line for Step 1 — a window with nothing in it yet." It sets expectations and builds excitement.</div>
+      </div>
+
+      <div class="demo-card">
+        <div class="demo-label">Demo 3 — RGB Mixer</div>
+        <h3>Live Colour Tuple Mixer</h3>
+        <p>Three sliders (R, G, B) that update a live colour swatch and display the Python tuple syntax in real time. Preset buttons load the exact colours used in the Snake game.</p>
+        <div class="demo-tip"><strong>In class:</strong> Ask students to match the background colour of the room or their shirt. Then read out the tuple Python displays. Good hook: "You just described a colour as a Python data structure."</div>
+      </div>
+
+    </div>
+
+    <div class="callout" style="margin-top:16px">
+      <span class="callout-icon">💡</span>
+      <p>Step 1 does <strong>not</strong> have a Common Mistakes or Quick Check section on the student page — those start from Step 3 onwards. Use the Mistakes table in this guide for real-time diagnosis instead.</p>
+    </div>
+  </div>
+
+  <!-- ── SECTION 3 · Main program & annotated code ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">📋</span> Main Program &amp; Annotated Code</h2>
+    <p>The complete Step 1 boilerplate students should produce. All constants are defined at the top — a deliberate structure they will carry into every subsequent step.</p>
+
+    <div class="codebox">
+      <button class="copybtn" type="button">Copy</button>
+      <pre><code>import pygame
+pygame.init()
+
+# Grid constants
+GRID_COLS = 20
+GRID_ROWS = 15
+CELL_SIZE  = 30
+
+# Colour constants (R, G, B) tuples
+BLACK  = (0,   0,   0)
+WHITE  = (255, 255, 255)
+GREEN  = (0,   200, 80)
+RED    = (220, 50,  50)
+BG     = (30,  30,  30)
+
+# Window dimensions (derived from grid constants — not magic numbers)
+WINDOW_W = GRID_COLS * CELL_SIZE   # 20 × 30 = 600
+WINDOW_H = GRID_ROWS * CELL_SIZE   # 15 × 30 = 450
+screen = pygame.display.set_mode((WINDOW_W, WINDOW_H))
+pygame.display.set_caption("Snake")</code></pre>
+    </div>
+
+    <h3>Why <code>WINDOW_W = GRID_COLS * CELL_SIZE</code>?</h3>
+    <p>Emphasise that this is decomposition in action: change one constant (<code>CELL_SIZE = 40</code>) and the whole window scales automatically. Students who hardcode <code>600</code> will struggle at Step 3 when they need to change the grid size.</p>
+  </div>
+
+  <!-- ── SECTION 4 · Exercise answer ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">✅</span> Exercise Answer</h2>
+    <p>Exercise prompt: <em>"Add a <code>SNAKE_SPEED</code> constant and a <code>SNAKE_COLOUR</code> tuple. Run the code — the window should open without errors."</em></p>
+
+    <div class="answer-card">
+      <div class="answer-label">Model answer</div>
+    </div>
+    <div class="codebox">
+      <button class="copybtn" type="button">Copy</button>
+      <pre><code>SNAKE_SPEED  = 10
+SNAKE_COLOUR = (0, 200, 80)
+# Run the code — the window should appear and stay open until closed.</code></pre>
+    </div>
+
+    <h3>What to look for</h3>
+    <ul>
+      <li>Both names in <code>ALL_CAPS</code> (convention for constants).</li>
+      <li><code>SNAKE_COLOUR</code> written as a tuple with parentheses, not a list with brackets.</li>
+      <li>The window <em>stays open</em> — if it flashes and closes, the student hasn't added the event loop yet (that comes in Step 2, which is fine).</li>
+    </ul>
+  </div>
+
+  <!-- ── SECTION 5 · Activity Answers ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">🗝️</span> Activity Answers — <a href="step-1-activity.html" style="font-size:14px;font-weight:400;color:var(--teal)">step-1-activity.html</a></h2>
+    <p>The activity uses a 4-tier progressive structure with calibration and reflection gates. Below are the accepted answers for each tier.</p>
+
+    <h3>Tier 1 — Fill in the Blanks (7 blanks)</h3>
+    <table class="t-table">
+      <thead><tr><th>Blank</th><th>Context in code</th><th>Accepted answer</th></tr></thead>
+      <tbody>
+        <tr><td><strong>b1</strong></td><td><code>GRID_COLS = ___</code></td><td><code>20</code></td></tr>
+        <tr><td><strong>b2</strong></td><td><code>GRID_ROWS = ___</code></td><td><code>15</code></td></tr>
+        <tr><td><strong>b3</strong></td><td><code>CELL_SIZE = ___</code></td><td><code>30</code></td></tr>
+        <tr><td><strong>b4</strong></td><td><code>WHITE = ___</code></td><td><code>(255, 255, 255)</code></td></tr>
+        <tr><td><strong>b5</strong></td><td><code>RED = ___</code></td><td><code>(220, 50, 50)</code></td></tr>
+        <tr><td><strong>b6</strong></td><td><code>WINDOW_W = ___ * CELL_SIZE</code></td><td><code>GRID_COLS</code></td></tr>
+        <tr><td><strong>b7</strong></td><td><code>WINDOW_H = GRID_ROWS * ___</code></td><td><code>CELL_SIZE</code></td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px;color:var(--muted);margin-top:6px">The auto-checker is case-insensitive and ignores whitespace, so <code>grid_cols</code> and <code>GRID_COLS</code> both pass for b6/b7.</p>
+
+    <h3>Tier 2 — Debug: Find &amp; Fix (3 bugs)</h3>
+    <table class="t-table">
+      <thead><tr><th>Bug</th><th>Faulty line</th><th>Root cause</th><th>Correct line</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Bug 1</strong></td>
+          <td><code>CELL_SIZE = "30"</code></td>
+          <td>Value is a string, not an integer. Multiplying a string by an int repeats characters rather than scaling pixels — causes a <code>TypeError</code> when computing window size.</td>
+          <td><code>CELL_SIZE = 30</code></td>
+        </tr>
+        <tr>
+          <td><strong>Bug 2</strong></td>
+          <td><code>GREEN = [0, 200, 80]</code></td>
+          <td>Square brackets create a mutable <strong>list</strong>, not an immutable tuple. Colour constants should be tuples. While pygame accepts both, using a list violates the intent and could allow accidental mutation.</td>
+          <td><code>GREEN = (0, 200, 80)</code></td>
+        </tr>
+        <tr>
+          <td><strong>Bug 3</strong></td>
+          <td><code>WINDOW_W = GRID_COLS + CELL_SIZE</code></td>
+          <td>Addition gives 20 + 30 = 50 pixels wide instead of 20 × 30 = 600. The window will be tiny — students can see this immediately when they run the code.</td>
+          <td><code>WINDOW_W = GRID_COLS * CELL_SIZE</code></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:10px">
+      <span class="callout-icon">💡</span>
+      <p>The checker accepts any "why" explanation of 10+ characters and checks the fix text for the key marker (<code>cell_size=30</code>, <code>green=(0,200,80)</code>, <code>*</code>). Short explanations get rejected — encourage students to write a full sentence.</p>
+    </div>
+
+    <h3>Tier 3 — Complete Code (model answer)</h3>
+    <div class="codebox">
+      <button class="copybtn" type="button">Copy</button>
+      <pre><code>import pygame
+pygame.init()
+
+GRID_COLS   = 20
+GRID_ROWS   = 15
+CELL_SIZE   = 30
+SNAKE_SPEED = 8
+
+WHITE   = (255, 255, 255)
+GREEN   = (  0, 200,  80)
+DKGREEN = (  0, 160,  50)
+RED     = (220,  50,  50)
+BG      = ( 30,  30,  30)
+
+WINDOW_W = GRID_COLS * CELL_SIZE    # 600
+WINDOW_H = GRID_ROWS * CELL_SIZE    # 450
+
+screen = pygame.display.set_mode((WINDOW_W, WINDOW_H))
+pygame.display.set_caption("Snake")
+
+screen.fill(BG)
+pygame.display.flip()
+pygame.time.wait(3000)
+pygame.quit()</code></pre>
+    </div>
+    <p style="font-size:13px;color:var(--muted)">The checker requires 16 of 18 checks to pass, so minor variations in constant values (e.g. different <code>SNAKE_SPEED</code>) are tolerated.</p>
+
+    <h3>Tier 4 — New Task (assessed) ⭐</h3>
+    <p>Students add <code>GOLD = (255, 200, 0)</code> and a <code>BORDER_COLOUR</code> of their choice, then print the type of every colour constant. Any <code>BORDER_COLOUR</code> tuple is accepted.</p>
+    <div class="codebox">
+      <button class="copybtn" type="button">Copy</button>
+      <pre><code># Model answer — BORDER_COLOUR value is the student's own choice
+import pygame
+pygame.init()
+
+GRID_COLS   = 20
+GRID_ROWS   = 15
+CELL_SIZE   = 30
+SNAKE_SPEED = 8
+
+WHITE        = (255, 255, 255)
+GREEN        = (  0, 200,  80)
+DKGREEN      = (  0, 160,  50)
+RED          = (220,  50,  50)
+BG           = ( 30,  30,  30)
+GOLD         = (255, 200,   0)
+BORDER_COLOUR = (100, 100, 100)  # any valid RGB tuple is accepted
+
+WINDOW_W = GRID_COLS * CELL_SIZE
+WINDOW_H = GRID_ROWS * CELL_SIZE
+
+print("WHITE:", type(WHITE))
+print("GREEN:", type(GREEN))
+print("DKGREEN:", type(DKGREEN))
+print("RED:", type(RED))
+print("BG:", type(BG))
+print("GOLD:", type(GOLD))
+print("BORDER_COLOUR:", type(BORDER_COLOUR))
+
+screen = pygame.display.set_mode((WINDOW_W, WINDOW_H))
+pygame.display.set_caption("Snake")
+screen.fill(BG)
+pygame.display.flip()
+pygame.time.wait(3000)
+pygame.quit()</code></pre>
+    </div>
+    <p style="font-size:13px;margin-top:8px"><strong>Expected terminal output</strong> (every line should show <code>&lt;class 'tuple'&gt;</code>):</p>
+    <div class="codebox">
+      <pre><code>WHITE: &lt;class 'tuple'&gt;
+GREEN: &lt;class 'tuple'&gt;
+DKGREEN: &lt;class 'tuple'&gt;
+RED: &lt;class 'tuple'&gt;
+BG: &lt;class 'tuple'&gt;
+GOLD: &lt;class 'tuple'&gt;
+BORDER_COLOUR: &lt;class 'tuple'&gt;</code></pre>
+    </div>
+    <p style="font-size:13px;color:var(--muted)">If a student's output shows <code>&lt;class 'list'&gt;</code> for any line, they used square brackets — redirect to Bug 2 in Tier 2 as a reference.</p>
+
+    <h3>Reflective Journal — Suggested Strong Answers</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:10px">The journal is open-ended and graded on length (15+ words per prompt). These are reference responses — not the only valid answers.</p>
+
+    <table class="t-table">
+      <thead><tr><th style="width:28%">Prompt</th><th>Key ideas a strong answer contains</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>1. Most confusing part of Step 1?</td>
+          <td>Common answers: why <code>WINDOW_W = GRID_COLS * CELL_SIZE</code> rather than a hard number; the difference between tuple and list syntax. A good answer names the concept and explains what resolved the confusion.</td>
+        </tr>
+        <tr>
+          <td>2. Why UPPER_CASE for constants?</td>
+          <td>It is a Python <em>convention</em> (not enforced by the language). It signals to every reader: "do not change this value." Good answer mentions PEP 8 or convention vs. rule.</td>
+        </tr>
+        <tr>
+          <td>3. Tuple vs list for colours?</td>
+          <td>Tuples are immutable — a colour like <code>GREEN = (0, 200, 80)</code> should never change mid-game. Using a tuple communicates that intent and prevents accidental mutation. Lists can be changed; tuples cannot.</td>
+        </tr>
+        <tr>
+          <td>4. Change CELL_SIZE 30 → 20?</td>
+          <td>Because <code>WINDOW_W = GRID_COLS * CELL_SIZE</code>, the window would shrink from 600×450 to 400×300. All derived values update automatically — this is the power of decomposition / named constants.</td>
+        </tr>
+        <tr>
+          <td>5. Explain Step 1 to a classmate?</td>
+          <td>Should cover: variable = named box in memory; tuple = a fixed group of numbers in <code>()</code>; constant = a variable you agree not to change; <code>pygame.display.set_mode()</code> opens the game window using the calculated pixel dimensions.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── SECTION 7 · Mistakes students actually make ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">⚠️</span> Mistakes Students Actually Make</h2>
+
+    <table class="t-table">
+      <thead>
+        <tr>
+          <th>What they did</th>
+          <th>What they see</th>
+          <th>What to say</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Named colour tuples in lowercase (<code>green = (0,200,80)</code>)</td>
+          <td>Code runs but Python convention is broken — future collaborators will not recognise it as a constant</td>
+          <td>"Why do professional codebases write colours in caps? What's the convention signal?"</td>
+        </tr>
+        <tr>
+          <td><code>WINDOW_W = GRID_COLS + CELL_SIZE</code></td>
+          <td>Tiny 50-pixel window (20 + 30 instead of 20 × 30)</td>
+          <td>"What does <code>+</code> mean versus <code>*</code>? Draw the grid on paper and count the pixels across."</td>
+        </tr>
+        <tr>
+          <td>Used a list <code>[255, 0, 0]</code> instead of tuple <code>(255, 0, 0)</code></td>
+          <td>Works — pygame accepts both — but intent is wrong</td>
+          <td>"Colours do not change during the game. Use a tuple (immutable) to show that in code."</td>
+        </tr>
+        <tr>
+          <td>Wrote <code>CELL_SIZE = (30)</code> thinking it creates a tuple</td>
+          <td>Works as an <code>int</code>, not a tuple. <code>print(type(CELL_SIZE))</code> shows <code>&lt;class 'int'&gt;</code></td>
+          <td>"Parentheses alone don't make a tuple. A single-element tuple needs a trailing comma: <code>(30,)</code> — but for a plain number we just write <code>30</code>."</td>
+        </tr>
+        <tr>
+          <td>Forgets <code>pygame.init()</code></td>
+          <td>Immediate <code>RuntimeError</code> or blank/frozen window</td>
+          <td>"Think of pygame.init() as starting the engine before driving the car. What happens if you skip it?"</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── SECTION 6 · Teaching & facilitation notes ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">🗣️</span> Teaching &amp; Facilitation Notes</h2>
+
+    <h3>Opening hook — the labelled box analogy</h3>
+    <p>A <strong>variable</strong> is a labelled box. A <strong>tuple</strong> is a box that holds exactly N things and <em>refuses to be opened and changed</em>. A <strong>constant</strong> is a box with tape over the lid — Python won't stop you, but the name tells every developer "do not change this."</p>
+
+    <h3>Slow down on ALL_CAPS</h3>
+    <p>Python does <strong>not</strong> enforce immutability on constants — it is a human convention. Some students will test this by reassigning <code>BLACK = (255,0,0)</code> and seeing it "work." That is expected. The lesson is that the convention communicates intent, not a language rule.</p>
+
+    <h3>The window is the reward</h3>
+    <p>Even an empty dark window is exciting for beginners. Celebrate it. Students who see their window appear are motivated to keep going. Students who hit an error at this point need extra support — isolate their code before Step 2.</p>
+
+    <h3>Check everyone's constants before Step 2</h3>
+    <p>Steps 2–9 all build on this file. If a student has the wrong <code>CELL_SIZE</code> or <code>WINDOW_W</code>, every subsequent step will produce unexpected results. Do a quick scan of the room before moving on — students can display their window on screen for a visual "pass/fail" check.</p>
+
+    <h3>CT discussion prompt</h3>
+    <div class="callout">
+      <span class="callout-icon">💬</span>
+      <p>"If we want to change the grid from 20×15 to 30×20, which lines need to change? Why is it only 2?" — This surfaces decomposition: because the window size is derived from the constants, not hardcoded.</p>
+    </div>
+
+    <h3>Pacing</h3>
+    <p>Step 1 should take 15–20 minutes for most students. If a student finishes in under 10 minutes, ask them to: (1) try the RGB mixer and find the colour of their hair in Python tuple form, and (2) add a <code>FPS = 10</code> constant and explain where it will be used later.</p>
+  </div>
+
+</div><!-- /page-body -->
+</div><!-- /tcontent -->
+
+<!-- ── SCRIPTS ── -->
+<script>
+(function(){
+  var b = document.getElementById('gatebtn');
+  if(!b) return;
+  b.addEventListener('click', function(){
+    document.getElementById('gate').hidden = true;
+    document.getElementById('tcontent').hidden = false;
+  });
+})();
+</script>
+<script>
+document.querySelectorAll('.copybtn').forEach(function(b){
+  b.addEventListener('click', function(){
+    var t = b.parentElement.querySelector('code').textContent;
+    navigator.clipboard.writeText(t).then(function(){
+      b.textContent = 'Copied!';
+      b.classList.add('copied');
+      setTimeout(function(){ b.textContent = 'Copy'; b.classList.remove('copied'); }, 2000);
+    }).catch(function(){
+      /* fallback — silently ignore */
+    });
+  });
+});
+</script>
+
+
+  <!-- CONCEPT_CHECK_ADDED -->
+  <!-- ══ CONCEPT CHECK ANSWER KEY ══ -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#x1F9E0;</span> Concept Check &mdash; Answer Key (Step 1)</h2>
+    <p>These 5 questions appear in the activity page <strong>after Tier 4</strong> (post-calibration gate).
+    Pass mark is <strong>4&nbsp;of&nbsp;5&nbsp;(80%)</strong>. Students who fail may retry; the system records attempts and final score in Google Sheets.</p>
+    <table class="t-table">
+      <thead><tr><th style="width:65%">Question (displayed to student)</th><th>Correct Answer</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Q1: Which of these is a string (text) value in Python?</td>
+          <td class="sev-low">&#10003; &quot;snake&quot;</td>
+        </tr>
+        <tr>
+          <td>Q2: What does WIN_WIDTH = 600 create?</td>
+          <td class="sev-low">&#10003; A named constant storing 600</td>
+        </tr>
+        <tr>
+          <td>Q3: What will this print?  x = 3 / x = x + 1 / print(x)</td>
+          <td class="sev-low">&#10003; 4</td>
+        </tr>
+        <tr>
+          <td>Q4: Which line correctly imports the pygame library?</td>
+          <td class="sev-low">&#10003; import pygame</td>
+        </tr>
+        <tr>
+          <td>Q5: What does pygame.init() do?</td>
+          <td class="sev-low">&#10003; Initialises all pygame subsystems (sound, display, etc.)</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:14px">
+      <span class="callout-icon">&#x1F4CA;</span>
+      <p><strong>Recorded in Google Sheet (Act_1 tab):</strong>
+      <code>concept_q1</code>&ndash;<code>concept_q5</code> (student&rsquo;s 0-based answer index),
+      <code>concept_score_pct</code>, <code>concept_passed</code> (1&nbsp;=&nbsp;pass, 0&nbsp;=&nbsp;fail),
+      <code>concept_attempts</code> (retry count).</p>
+    </div>
+  </div>
+
+  <!-- ══ GOOGLE SHEETS DATA STRUCTURE ══ -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#x1F4CA;</span> Google Sheets &mdash; Data Collected (Act_1)</h2>
+    <p>Every submission to this step writes one row to the <strong>Act_1</strong> tab in the research spreadsheet. All 13 tabs (Student_Reg, Pre_Test, Post_Test, Act_1&ndash;Act_10) share the same student identity columns.</p>
+    <table class="t-table" style="font-size:13px">
+      <thead><tr><th style="width:36%">Column</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">STUDENT IDENTITY (10 fields)</td></tr>
+        <tr><td><code>matric</code></td><td>Matric / student ID</td></tr>
+        <tr><td><code>name</code></td><td>Full name</td></tr>
+        <tr><td><code>gender</code></td><td>Gender (Female / Male / Other)</td></tr>
+        <tr><td><code>age</code></td><td>Age in years</td></tr>
+        <tr><td><code>mykid</code></td><td>MyKid / IC number</td></tr>
+        <tr><td><code>home_state</code></td><td>Home state in Malaysia</td></tr>
+        <tr><td><code>class</code></td><td>Class or cohort code</td></tr>
+        <tr><td><code>school_code</code></td><td>School or programme code</td></tr>
+        <tr><td><code>phone</code></td><td>Phone number</td></tr>
+        <tr><td><code>email</code></td><td>Email address</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">SUBMISSION</td></tr>
+        <tr><td><code>step</code></td><td>Step number (1)</td></tr>
+        <tr><td><code>submitted_iso</code></td><td>KL timestamp (UTC+8, ISO&nbsp;8601)</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">PRE-CALIBRATION</td></tr>
+        <tr><td><code>cal_confidence</code></td><td>Self-confidence before activity (1&ndash;5 scale)</td></tr>
+        <tr><td><code>cal_predicted</code></td><td>Predicted score before activity (%)</td></tr>
+        <tr><td><code>cal_reflection</code></td><td>Free-text: what will be hard?</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">ACTIVITY TIERS</td></tr>
+        <tr><td><code>t1_score_pct</code></td><td>Tier&nbsp;1 Fill-in-Blanks score (%)</td></tr>
+        <tr><td><code>t2_attempts</code></td><td>Tier&nbsp;2 Debug — number of attempts</td></tr>
+        <tr><td><code>refl2_text</code></td><td>Tier&nbsp;2 reflection free text</td></tr>
+        <tr><td><code>t3_attempts</code></td><td>Tier&nbsp;3 Complete-Code attempts</td></tr>
+        <tr><td><code>t4_attempts</code></td><td>Tier&nbsp;4 New Task attempts</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">CONCEPT CHECK</td></tr>
+        <tr><td><code>concept_q1</code>&ndash;<code>concept_q5</code></td><td>Student answer index (0-based) per question</td></tr>
+        <tr><td><code>concept_score_pct</code></td><td>Percentage correct (0&ndash;100)</td></tr>
+        <tr><td><code>concept_passed</code></td><td>1 = passed (&ge;80%), 0 = failed</td></tr>
+        <tr><td><code>concept_attempts</code></td><td>Total retries</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">REFLECTIVE JOURNAL</td></tr>
+        <tr><td><code>jr1</code>&ndash;<code>jr5</code></td><td>Journal prompts 1&ndash;5 free-text responses</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">POST-CALIBRATION</td></tr>
+        <tr><td><code>post_confidence</code></td><td>Confidence rating after activity (1&ndash;5)</td></tr>
+        <tr><td><code>post_actual</code></td><td>Self-reported actual score (%)</td></tr>
+        <tr><td><code>post_r1</code></td><td>Reflection: how accurate was the prediction?</td></tr>
+        <tr><td><code>post_r2</code></td><td>Reflection: what would you do differently?</td></tr>
+        <tr><td><code>calibration_index</code></td><td>post_actual &minus; cal_predicted (negative = overconfident)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+<footer>
+  <span>© 2026 Nurul Hazlina Noordin · UMPSA STEM Lab Engineering Education Initiative</span>
+  <a href="https://www.umpsa.edu.my" target="_blank" rel="noopener" aria-label="UMPSA website">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+  </a>
+  <a href="mailto:hazlina@umpsa.edu.my" aria-label="Email facilitator">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+  </a>
+</footer>
+
+</body>
+</html>

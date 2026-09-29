@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Facilitator Notes — Step 2 | Snake Tutorial</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+/* ── LIGHT-MODE TEACHER PAGE ── independent of style.css ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F0F4F8;
+  --surface:#FFFFFF;
+  --surface2:#F7FAFC;
+  --teal:#0A8F8A;
+  --teal-dark:#076862;
+  --teal-light:#E6F6F5;
+  --ink:#1A2332;
+  --body:#374151;
+  --muted:#6B7A8D;
+  --border:#D6E0EA;
+  --amber:#D97706;
+  --amber-bg:#FFFBEB;
+  --amber-border:#FCD34D;
+  --green-bg:#F0FDF4;
+  --green-border:#86EFAC;
+  --green-ink:#166534;
+  --red-bg:#FEF2F2;
+  --red-border:#FCA5A5;
+  --red-ink:#991B1B;
+  --code-bg:#F1F5F9;
+  --code-fg:#1E293B;
+  --radius:10px;
+  --shadow:0 1px 4px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.05);
+}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg);
+  color:var(--body);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  line-height:1.65;
+}
+
+/* ── NAV ── */
+.sitenav{
+  background:var(--teal-dark);
+  color:#fff;
+  padding:0 24px;
+  display:flex;
+  align-items:center;
+  gap:20px;
+  min-height:56px;
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+.sitenav .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;font-weight:700;font-size:15px}
+.sitenav .brand img{display:none}
+.sitenav a.nl{color:rgba(255,255,255,.8);text-decoration:none;font-size:14px;padding:4px 8px;border-radius:6px;transition:background .15s}
+.sitenav a.nl:hover{background:rgba(255,255,255,.15)}
+details.navsel{margin-left:auto;position:relative}
+details.navsel summary{
+  list-style:none;cursor:pointer;color:rgba(255,255,255,.9);
+  font-size:14px;font-weight:600;padding:6px 12px;
+  border-radius:6px;transition:background .15s;
+}
+details.navsel summary:hover{background:rgba(255,255,255,.15)}
+details.navsel summary::-webkit-details-marker{display:none}
+.navmenu{
+  position:absolute;right:0;top:calc(100% + 8px);
+  background:#fff;color:var(--ink);
+  border:1px solid var(--border);border-radius:var(--radius);
+  min-width:300px;box-shadow:var(--shadow);
+  overflow:hidden;z-index:200;
+}
+.navmenu a{
+  display:block;padding:10px 16px;font-size:13.5px;
+  text-decoration:none;color:var(--body);
+  border-bottom:1px solid var(--border);transition:background .12s;
+}
+.navmenu a:last-child{border-bottom:none}
+.navmenu a:hover{background:var(--teal-light)}
+.navmenu a[aria-current="page"]{background:var(--teal-light);color:var(--teal-dark);font-weight:700}
+
+/* ── GATE ── */
+.gate{
+  max-width:520px;margin:80px auto;padding:40px 36px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;box-shadow:var(--shadow);text-align:center;
+}
+.gate h2{font-size:24px;color:var(--ink);margin-bottom:12px}
+.gate p{color:var(--muted);margin-bottom:16px;font-size:15px}
+.gate a{color:var(--teal);text-decoration:none;font-size:14px}
+.gate a:hover{text-decoration:underline}
+.lock-icon{font-size:48px;margin-bottom:16px}
+
+/* ── HERO ── */
+.t-hero{
+  background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal) 100%);
+  color:#fff;padding:40px 24px 36px;
+}
+.t-hero .wrap{max-width:900px;margin:0 auto}
+.t-hero .eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.75;margin-bottom:8px}
+.t-hero h1{font-size:clamp(22px,4vw,32px);font-weight:800;line-height:1.2;margin-bottom:8px}
+.t-hero .meta{font-size:14px;opacity:.8;margin-bottom:20px}
+.t-cta-row{display:flex;flex-wrap:wrap;gap:10px}
+.t-cta-row a{
+  display:inline-block;padding:8px 18px;border-radius:8px;
+  font-size:13px;font-weight:600;text-decoration:none;
+  background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);
+  transition:background .15s;
+}
+.t-cta-row a:hover{background:rgba(255,255,255,.28)}
+
+/* ── LAYOUT ── */
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+.page-body{padding:36px 20px 60px;max-width:900px;margin:0 auto}
+
+/* ── BANNER ── */
+.tbanner{
+  background:var(--amber-bg);border:1px solid var(--amber-border);
+  color:#78350F;border-radius:8px;padding:12px 16px;
+  font-size:13.5px;margin-bottom:28px;
+}
+.tbanner b{color:#92400E}
+
+/* ── SECTIONS ── */
+.t-section{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:28px 28px;margin-bottom:24px;
+  box-shadow:var(--shadow);
+}
+.t-section h2{
+  font-size:18px;font-weight:700;color:var(--ink);
+  padding-bottom:10px;margin-bottom:16px;
+  border-bottom:2px solid var(--teal);display:flex;align-items:center;gap:8px;
+}
+.t-section h2 .sec-icon{font-size:20px}
+.t-section h3{font-size:15px;font-weight:700;color:var(--teal-dark);margin:16px 0 8px}
+.t-section p{margin-bottom:10px;font-size:15px}
+.t-section ul{padding-left:20px;margin-bottom:12px}
+.t-section li{margin-bottom:6px;font-size:15px}
+.t-section strong{color:var(--ink)}
+
+/* ── TABLES ── */
+.t-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+.t-table thead th{
+  background:var(--teal);color:#fff;padding:10px 14px;
+  text-align:left;font-weight:600;font-size:13px;letter-spacing:.02em;
+}
+.t-table thead th:first-child{border-radius:8px 0 0 0}
+.t-table thead th:last-child{border-radius:0 8px 0 0}
+.t-table tbody tr:nth-child(even){background:var(--surface2)}
+.t-table tbody td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+.t-table td code{font-size:12.5px;background:var(--bg);padding:1px 5px;border-radius:4px;color:var(--ink)}
+.sev-low{color:#065F46;font-weight:600}
+.sev-med{color:#92400E;font-weight:600}
+.sev-high{color:#991B1B;font-weight:600}
+
+/* ── CODE ── */
+.codebox{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:12px 0;position:relative}
+.codebox pre{padding:20px;overflow-x:auto}
+.codebox code{color:var(--code-fg);font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13.5px;line-height:1.6}
+.copybtn{
+  position:absolute;top:10px;right:10px;
+  background:var(--border);color:var(--ink);
+  border:none;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;
+  transition:background .15s;
+}
+.copybtn:hover{background:rgba(255,255,255,.22)}
+.copybtn.copied{background:rgba(134,239,172,.25);color:#86EFAC}
+code{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13px;background:var(--bg);padding:1px 5px;border-radius:4px;color:var(--ink)}
+
+/* ── DEMO CARDS ── */
+.demo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:12px}
+.demo-card{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;padding:18px;border-top:3px solid var(--teal);
+}
+.demo-card .demo-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--teal);margin-bottom:6px}
+.demo-card h3{font-size:15px;font-weight:700;color:var(--ink);margin:0 0 8px}
+.demo-card p{font-size:13.5px;color:var(--body);margin:0 0 10px}
+.demo-card .demo-tip{
+  font-size:12.5px;color:var(--muted);padding:8px 10px;
+  background:var(--teal-light);border-radius:6px;
+  border-left:3px solid var(--teal);
+}
+.demo-card .demo-tip strong{color:var(--teal-dark)}
+
+/* ── ANSWER CARD ── */
+.answer-card{
+  background:var(--green-bg);border:1px solid var(--green-border);
+  border-radius:8px;padding:14px 18px;margin:12px 0;
+}
+.answer-card .answer-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--green-ink);margin-bottom:4px}
+
+/* ── CALLOUT ── */
+.callout{
+  display:flex;gap:12px;padding:14px 16px;border-radius:8px;
+  border:1px solid var(--border);background:var(--surface2);margin:12px 0;
+  font-size:14px;align-items:flex-start;
+}
+.callout-icon{font-size:22px;flex-shrink:0;line-height:1.2}
+.callout p{margin:0}
+
+/* ── STEM BRAND BAR ── */
+.stem-brand-bar{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  width:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+.stem-brand-bar .sb{
+  display:flex;align-items:center;justify-content:center;
+  padding:6px 8px;font-size:12px;font-weight:800;
+  letter-spacing:.12em;color:#fff;text-transform:uppercase;
+}
+.sb-see{background:#2E5FAF}
+.sb-think{background:#B82828}
+.sb-explore{background:#D99A10}
+.sb-marvel{background:#1FA898}
+
+/* ── FOOTER ── */
+footer{
+  background:#1C5C54;color:rgba(255,255,255,.78);
+  text-align:center;padding:20px 20px;font-size:13px;margin-top:40px;
+  display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+}
+footer a{color:rgba(255,255,255,.85);text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+footer a:hover{color:#fff}
+
+/* ── BUTTON ── */
+.cta-btn{
+  display:inline-block;padding:12px 28px;border-radius:9px;
+  font-size:15px;font-weight:700;border:none;cursor:pointer;
+  background:var(--teal);color:#fff;
+  box-shadow:0 4px 14px rgba(10,143,138,.3);
+  transition:background .15s,transform .1s;
+}
+.cta-btn:hover{background:var(--teal-dark);transform:translateY(-1px)}
+.cta-btn:active{transform:translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .t-section{padding:20px 16px}
+  .t-hero{padding:28px 16px 24px}
+  .t-cta-row a{font-size:12px;padding:6px 12px}
+  .demo-grid{grid-template-columns:1fr}
+  .t-table{font-size:13px}
+  .sitenav{padding:0 14px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── STEM BRAND BAR ── -->
+<div class="stem-brand-bar" aria-label="UMPSA STEM Lab">
+  <div class="sb sb-see">SEE</div>
+  <div class="sb sb-think">THINK</div>
+  <div class="sb sb-explore">EXPLORE</div>
+  <div class="sb sb-marvel">MARVEL</div>
+</div>
+
+<!-- ── NAV ── -->
+<nav class="sitenav">
+  <a class="brand" href="index.html">
+    <img src="stemlogo.png" alt="UMPSA STEM LAB">
+    <span>UMPSA STEM Lab Python Module</span>
+  </a>
+  <a class="nl" href="index.html">Home</a>
+  <details class="navsel">
+    <summary>Facilitator Notes ▾</summary>
+    <div class="navmenu">
+      <a href="teacher-1.html"><b>Step 1</b>: Variables, Tuples &amp; Constants</a>
+      <a href="teacher-2.html" aria-current="page"><b>Step 2</b>: While Loop &amp; Event Handling</a>
+      <a href="teacher-3.html"><b>Step 3</b>: Conditionals — Direction Control</a>
+      <a href="teacher-4.html"><b>Step 4</b>: Lists — The Snake Body</a>
+      <a href="teacher-5.html"><b>Step 5</b>: for Loops &amp; Bonus Foods</a>
+      <a href="teacher-6.html"><b>Step 6</b>: Functions &amp; DRY Principle</a>
+      <a href="teacher-7.html"><b>Step 7</b>: Modulo, Wrap-Around &amp; Dictionaries</a>
+      <a href="teacher-8.html"><b>Step 8</b>: File I/O, try/except &amp; Leaderboard</a>
+      <a href="teacher-9.html"><b>Step 9</b>: OOP &amp; Classes</a>
+      <a href="teacher-10.html"><b>Step 10</b>: ML Extension &amp; Final Presentation</a>
+    </div>
+  </details>
+</nav>
+
+<!-- ── GATE ── -->
+<div class="gate" id="gate">
+  <div class="lock-icon">🔒</div>
+  <h2>Facilitator Notes</h2>
+  <p>This page contains exercise answers and teaching guidance for<br>
+  <strong>Step 2 — Loop &amp; Events</strong>.<br>
+  Not linked from the student pages.</p>
+  <p style="margin-bottom:24px"><strong>Students: please go back and try the activities first.</strong></p>
+  <button class="cta-btn" id="gatebtn" type="button">I'm a facilitator — show the notes</button>
+  <p style="margin-top:20px"><a href="step-2.html">← Back to student page</a></p>
+</div>
+
+<!-- ── MAIN CONTENT ── -->
+<div id="tcontent" hidden>
+
+<div class="t-hero">
+  <div class="wrap">
+    <p class="eyebrow">STEP 2 OF 10 · FACILITATOR NOTES</p>
+    <h1>Loop &amp; Events</h1>
+    <p class="meta">Core concepts: while loop · Boolean flags · event queue · pygame.QUIT · pygame.time.Clock</p>
+    <div class="t-cta-row">
+      <a href="teacher-1.html">← Step 1</a>
+      <a href="step-2.html">Student Page</a>
+      <a href="teacher-3.html">Step 3 →</a>
+      <a href="teacher-index.html">📚 All facilitator notes</a>
+    </div>
+  </div>
+</div>
+
+<div class="page-body">
+
+  <div class="tbanner">
+    ⏱ Suggested pace: 20–25 minutes · This is the first "real" game loop — give students time to observe it running before adding complexity.
+  </div>
+
+  <!-- ── SECTION 1 · Learning Objectives ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">🎯</span> Learning Objectives</h2>
+    <p>What students will be able to do after Step 2:</p>
+    <ul>
+      <li>Explain what a while loop is and when it exits</li>
+      <li>Trace through the event queue and identify the QUIT event</li>
+      <li>Understand how <code>pygame.time.Clock.tick(fps)</code> limits frame rate</li>
+      <li>Describe the game loop as: <strong>Process → Update → Draw</strong></li>
+    </ul>
+  </div>
+
+  <!-- ── SECTION 2 · The Big Idea ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">💡</span> The Big Idea — Annotated Code</h2>
+    <p>Key code block: the game loop.</p>
+
+    <div class="codebox">
+      <button class="copybtn" type="button">Copy</button>
+      <pre><code>clock = pygame.time.Clock()
+running = True            # Boolean flag — controls the loop
+
+while running:            # "Keep going while running is True"
+    # 1. PROCESS — read all events from the queue
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False   # set flag → loop exits next iteration
+
+    # 2. UPDATE — move the game state (nothing yet in Step 2)
+
+    # 3. DRAW — render to screen
+    screen.fill(BG)
+    pygame.display.flip()   # swap buffers: make the new frame visible
+
+    clock.tick(8)           # wait until 1/8 second has elapsed → 8 FPS</code></pre>
+    </div>
+
+    <h3>Boolean flag pattern</h3>
+    <p><code>running = True</code> at start; <code>running = False</code> to stop. Better than <code>break</code> because it is visible and testable — you can inspect <code>running</code> in any frame to know the loop state.</p>
+
+    <h3>Event queue</h3>
+    <p>pygame collects every keyboard, mouse, and window event in a queue each frame. <code>pygame.event.get()</code> drains the entire queue. If you never drain it, the queue fills and pygame's event system stalls — the window becomes unresponsive.</p>
+
+    <h3><code>pygame.QUIT</code></h3>
+    <p>Fired when the user clicks the red × button. Without this check the window appears "frozen" (unresponsive) but the loop keeps running in the background.</p>
+
+    <h3><code>pygame.display.flip()</code></h3>
+    <p>Swaps the back buffer to the screen — required every frame. pygame draws to a hidden back buffer; <code>flip()</code> is the "reveal." Without it, every frame is drawn but never shown, so students see a blank/black window.</p>
+
+    <h3><code>clock.tick(8)</code></h3>
+    <p>Sleeps until 1/8 second has elapsed since the last call; returns the actual milliseconds since last call. Essential for consistent speed across fast and slow machines.</p>
+  </div>
+
+  <!-- ── SECTION 3 · Activity Answers ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">🔢</span> Activity Answers — <a href="step-2-activity.html" style="font-size:14px;font-weight:400;color:var(--teal)">step-2-activity.html</a></h2>
+
+    <h3>Tier 1 — Check Understanding</h3>
+    <table class="t-table">
+      <thead><tr><th>Question</th><th>Accepted answer</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>1. What does <code>running = True</code> do?</td>
+          <td>Sets a Boolean variable that keeps the while loop going. When it becomes <code>False</code>, the loop exits.</td>
+        </tr>
+        <tr>
+          <td>2. What happens if you remove the <code>pygame.QUIT</code> event check?</td>
+          <td>The window becomes unresponsive; Alt+F4 or Task Manager is needed to close it.</td>
+        </tr>
+        <tr>
+          <td>3. What is <code>clock.tick(8)</code> doing?</td>
+          <td>Limiting the game to 8 frames per second by sleeping until 1/8 second has elapsed.</td>
+        </tr>
+        <tr>
+          <td>4. Name the three phases of a game loop in order.</td>
+          <td>Process events → Update state → Draw / render.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Tier 2 — Fix the Bug</h3>
+    <div class="answer-card">
+      <div class="answer-label">Bug</div>
+      <p style="margin:0;font-size:14px"><code>clock.tick()</code> is called before <code>screen.fill(BG)</code> and <code>pygame.display.flip()</code>.</p>
+    </div>
+    <p><strong>Fix:</strong> Move <code>clock.tick(8)</code> to the very end of the while loop body, after <code>pygame.display.flip()</code>. The clock times the full frame including drawing.</p>
+
+    <h3>Tier 3 — Extend (change FPS to 15)</h3>
+    <div class="codebox">
+      <button class="copybtn" type="button">Copy</button>
+      <pre><code>clock.tick(15)   # was 8 — 15 fps is smoother</code></pre>
+    </div>
+    <p>Students should observe the clock running faster and the screen refreshing more often. A good follow-up: "What would happen at <code>clock.tick(1)</code>?"</p>
+
+    <h3>Tier 4 — New Task: Frame counter</h3>
+    <p>Add a frame counter that prints to the terminal every 60 frames.</p>
+    <div class="codebox">
+      <button class="copybtn" type="button">Copy</button>
+      <pre><code>frame_count = 0
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+    screen.fill(BG)
+    pygame.display.flip()
+    clock.tick(8)
+    frame_count += 1
+    if frame_count % 60 == 0:
+        print(f"Frame {frame_count}")</code></pre>
+    </div>
+
+    <h3>Reflective Journal — Suggested Answers</h3>
+    <table class="t-table">
+      <thead><tr><th style="width:32%">Prompt</th><th>Key ideas a strong answer contains</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>1. Most confusing part?</td>
+          <td>Usually "why do we need <code>pygame.display.flip()</code>?" — the double-buffer concept. Answer: pygame draws to a hidden buffer; <code>flip()</code> makes it visible.</td>
+        </tr>
+        <tr>
+          <td>2. What is a Boolean?</td>
+          <td>A value that is only <code>True</code> or <code>False</code>. Used as a switch/flag to control program flow.</td>
+        </tr>
+        <tr>
+          <td>3. Why a while loop instead of a for loop?</td>
+          <td>We don't know in advance how many frames the game will have — the loop runs indefinitely until the player quits.</td>
+        </tr>
+        <tr>
+          <td>4. What does "event" mean in programming?</td>
+          <td>An action the user or system performs (click, key press, window close) that the program can respond to.</td>
+        </tr>
+        <tr>
+          <td>5. Explain to a classmate?</td>
+          <td>Should cover: the loop runs 8 times per second; each time it checks for events, updates the game, then draws the screen.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── SECTION 4 · Mistakes ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">⚠️</span> Mistakes Students Actually Make</h2>
+    <table class="t-table">
+      <thead>
+        <tr>
+          <th>What they did</th>
+          <th>What they see</th>
+          <th>What to say</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Removed <code>pygame.display.flip()</code></td>
+          <td>Black/blank window — loop runs but nothing shows</td>
+          <td>"pygame draws to a hidden buffer. <code>flip()</code> is the reveal — without it, every frame is drawn but never shown."</td>
+        </tr>
+        <tr>
+          <td><code>running = true</code> (lowercase)</td>
+          <td><code>NameError: name 'true' is not defined</code></td>
+          <td>"Python Boolean values are <code>True</code> and <code>False</code> with capital first letters — they're not strings."</td>
+        </tr>
+        <tr>
+          <td>Put <code>clock.tick()</code> before the draw calls</td>
+          <td>Works but FPS measurement is off</td>
+          <td>"<code>clock.tick()</code> measures time since last call. Put it last so it times the full frame including drawing."</td>
+        </tr>
+        <tr>
+          <td>Forgot <code>for event in pygame.event.get():</code></td>
+          <td>Window freezes after ~1 second (event queue fills)</td>
+          <td>"Even if you don't handle any events, you must drain the queue every frame or pygame's event system stalls."</td>
+        </tr>
+        <tr>
+          <td>Used <code>while True:</code> with no exit</td>
+          <td>Can't close the window gracefully</td>
+          <td>"A Boolean flag makes the exit condition visible and testable. <code>break</code> works but hides the intent."</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── SECTION 5 · Teaching Notes ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">🗣️</span> Teaching &amp; Facilitation Notes</h2>
+
+    <h3>Opening hook</h3>
+    <p>"How does Netflix keep video playing smoothly? How does your mouse pointer follow your hand in real time?" Both use an event loop — a program that loops rapidly, checking what happened and updating what to show. A game loop is the same idea.</p>
+
+    <h3>Key pedagogical moment — the 3-phase structure</h3>
+    <p>Write <strong>Process → Update → Draw</strong> on the board. Every frame follows this pattern. Step 2 has no Update yet (the snake doesn't move) — that's intentional so students can observe the loop structure in isolation before adding complexity.</p>
+
+    <h3>CT connection — Algorithm Design</h3>
+    <p>The game loop IS an algorithm. Ask: "What is the input? What is the output? What are the steps?" This surfaces computational thinking through a real artifact students have written themselves.</p>
+
+    <h3>Pacing tip</h3>
+    <p>If students ask "why is 8 FPS so slow?" — that's the perfect moment to explain that Steps 2–4 run slowly on purpose so we can observe each frame. The snake will speed up in later steps.</p>
+
+    <div class="callout">
+      <span class="callout-icon">💡</span>
+      <p><strong>Differentiation:</strong> Fast finishers can change the FPS and observe the effect, or try printing <code>event.type</code> for every event to see what pygame generates (mouse movements, etc.).</p>
+    </div>
+  </div>
+
+</div><!-- /page-body -->
+</div><!-- /tcontent -->
+
+<!-- ── SCRIPTS ── -->
+<script>
+(function(){
+  var b = document.getElementById('gatebtn');
+  if(!b) return;
+  b.addEventListener('click', function(){
+    document.getElementById('gate').hidden = true;
+    document.getElementById('tcontent').hidden = false;
+  });
+})();
+</script>
+<script>
+document.querySelectorAll('.copybtn').forEach(function(b){
+  b.addEventListener('click', function(){
+    var t = b.parentElement.querySelector('code').textContent;
+    navigator.clipboard.writeText(t).then(function(){
+      b.textContent = 'Copied!';
+      b.classList.add('copied');
+      setTimeout(function(){ b.textContent = 'Copy'; b.classList.remove('copied'); }, 2000);
+    }).catch(function(){
+      /* fallback — silently ignore */
+    });
+  });
+});
+</script>
+
+
+  <!-- CONCEPT_CHECK_ADDED -->
+  <!-- ══ CONCEPT CHECK ANSWER KEY ══ -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#x1F9E0;</span> Concept Check &mdash; Answer Key (Step 2)</h2>
+    <p>These 5 questions appear in the activity page <strong>after Tier 4</strong> (post-calibration gate).
+    Pass mark is <strong>4&nbsp;of&nbsp;5&nbsp;(80%)</strong>. Students who fail may retry; the system records attempts and final score in Google Sheets.</p>
+    <table class="t-table">
+      <thead><tr><th style="width:65%">Question (displayed to student)</th><th>Correct Answer</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Q1: What does clock.tick(FPS) control inside the game loop?</td>
+          <td class="sev-low">&#10003; The frame rate — how fast the loop runs</td>
+        </tr>
+        <tr>
+          <td>Q2: Which pygame event type fires when the user closes the window?</td>
+          <td class="sev-low">&#10003; pygame.QUIT</td>
+        </tr>
+        <tr>
+          <td>Q3: What is the game loop responsible for each iteration?</td>
+          <td class="sev-low">&#10003; Reading input, updating state, and drawing — every frame</td>
+        </tr>
+        <tr>
+          <td>Q4: How many times does while True: run (with no break)?</td>
+          <td class="sev-low">&#10003; Until break or sys.exit() is called</td>
+        </tr>
+        <tr>
+          <td>Q5: What value does pygame.event.get() return when no events occurred?</td>
+          <td class="sev-low">&#10003; An empty list []</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:14px">
+      <span class="callout-icon">&#x1F4CA;</span>
+      <p><strong>Recorded in Google Sheet (Act_2 tab):</strong>
+      <code>concept_q1</code>&ndash;<code>concept_q5</code> (student&rsquo;s 0-based answer index),
+      <code>concept_score_pct</code>, <code>concept_passed</code> (1&nbsp;=&nbsp;pass, 0&nbsp;=&nbsp;fail),
+      <code>concept_attempts</code> (retry count).</p>
+    </div>
+  </div>
+
+  <!-- ══ GOOGLE SHEETS DATA STRUCTURE ══ -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#x1F4CA;</span> Google Sheets &mdash; Data Collected (Act_2)</h2>
+    <p>Every submission to this step writes one row to the <strong>Act_2</strong> tab in the research spreadsheet. All 13 tabs (Student_Reg, Pre_Test, Post_Test, Act_1&ndash;Act_10) share the same student identity columns.</p>
+    <table class="t-table" style="font-size:13px">
+      <thead><tr><th style="width:36%">Column</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">STUDENT IDENTITY (10 fields)</td></tr>
+        <tr><td><code>matric</code></td><td>Matric / student ID</td></tr>
+        <tr><td><code>name</code></td><td>Full name</td></tr>
+        <tr><td><code>gender</code></td><td>Gender (Female / Male / Other)</td></tr>
+        <tr><td><code>age</code></td><td>Age in years</td></tr>
+        <tr><td><code>mykid</code></td><td>MyKid / IC number</td></tr>
+        <tr><td><code>home_state</code></td><td>Home state in Malaysia</td></tr>
+        <tr><td><code>class</code></td><td>Class or cohort code</td></tr>
+        <tr><td><code>school_code</code></td><td>School or programme code</td></tr>
+        <tr><td><code>phone</code></td><td>Phone number</td></tr>
+        <tr><td><code>email</code></td><td>Email address</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">SUBMISSION</td></tr>
+        <tr><td><code>step</code></td><td>Step number (2)</td></tr>
+        <tr><td><code>submitted_iso</code></td><td>KL timestamp (UTC+8, ISO&nbsp;8601)</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">PRE-CALIBRATION</td></tr>
+        <tr><td><code>cal_confidence</code></td><td>Self-confidence before activity (1&ndash;5 scale)</td></tr>
+        <tr><td><code>cal_predicted</code></td><td>Predicted score before activity (%)</td></tr>
+        <tr><td><code>cal_reflection</code></td><td>Free-text: what will be hard?</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">ACTIVITY TIERS</td></tr>
+        <tr><td><code>t1_score_pct</code></td><td>Tier&nbsp;1 Fill-in-Blanks score (%)</td></tr>
+        <tr><td><code>t2_attempts</code></td><td>Tier&nbsp;2 Debug — number of attempts</td></tr>
+        <tr><td><code>refl2_text</code></td><td>Tier&nbsp;2 reflection free text</td></tr>
+        <tr><td><code>t3_attempts</code></td><td>Tier&nbsp;3 Complete-Code attempts</td></tr>
+        <tr><td><code>t4_attempts</code></td><td>Tier&nbsp;4 New Task attempts</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">CONCEPT CHECK</td></tr>
+        <tr><td><code>concept_q1</code>&ndash;<code>concept_q5</code></td><td>Student answer index (0-based) per question</td></tr>
+        <tr><td><code>concept_score_pct</code></td><td>Percentage correct (0&ndash;100)</td></tr>
+        <tr><td><code>concept_passed</code></td><td>1 = passed (&ge;80%), 0 = failed</td></tr>
+        <tr><td><code>concept_attempts</code></td><td>Total retries</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">REFLECTIVE JOURNAL</td></tr>
+        <tr><td><code>jr1</code>&ndash;<code>jr5</code></td><td>Journal prompts 1&ndash;5 free-text responses</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">POST-CALIBRATION</td></tr>
+        <tr><td><code>post_confidence</code></td><td>Confidence rating after activity (1&ndash;5)</td></tr>
+        <tr><td><code>post_actual</code></td><td>Self-reported actual score (%)</td></tr>
+        <tr><td><code>post_r1</code></td><td>Reflection: how accurate was the prediction?</td></tr>
+        <tr><td><code>post_r2</code></td><td>Reflection: what would you do differently?</td></tr>
+        <tr><td><code>calibration_index</code></td><td>post_actual &minus; cal_predicted (negative = overconfident)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+<footer>
+  <span>© 2026 Nurul Hazlina Noordin · UMPSA STEM Lab Engineering Education Initiative</span>
+  <a href="https://www.umpsa.edu.my" target="_blank" rel="noopener" aria-label="UMPSA website">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+  </a>
+  <a href="mailto:hazlina@umpsa.edu.my" aria-label="Email facilitator">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+  </a>
+</footer>
+
+</body>
+</html>

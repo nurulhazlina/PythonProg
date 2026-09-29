@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Step 7 — Wrap-Around | Snake Game Tutorial</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.ct-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(13,85,167,.1);border:1px solid rgba(13,85,167,.3);border-radius:20px;padding:4px 12px;font-size:12.5px;font-weight:700;color:var(--blue);letter-spacing:.04em;margin:3px 4px 3px 0}
+.ct-badge.teal{background:rgba(2,173,165,.1);border-color:rgba(2,173,165,.3);color:var(--teal-dark)}
+.ct-badge.orange{background:rgba(245,162,29,.12);border-color:rgba(245,162,29,.4);color:#8a5c00}
+.ct-badge.red{background:rgba(200,0,0,.08);border-color:rgba(200,0,0,.25);color:var(--red)}
+.ct-spot{background:rgba(13,85,167,.05);border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0}
+.ct-spot h4{margin:0 0 6px;color:var(--blue);font-size:15px}.ct-spot p{margin:0;font-size:14.5px}
+.ct-spot.teal{background:rgba(2,173,165,.05);border-color:var(--teal)}.ct-spot.teal h4{color:var(--teal)}
+.ct-spot.orange{background:rgba(245,162,29,.05);border-color:#B87708}.ct-spot.orange h4{color:#B87708}
+/* modulo visualizer */
+.mod-calc{background:var(--code-bg);border-radius:12px;padding:20px;margin:16px 0;text-align:center}
+.mod-number{font-size:48px;font-weight:700;color:var(--teal);font-family:monospace;transition:color .3s}
+.mod-expr{font-size:18px;font-family:monospace;color:#8B949E;margin:6px 0}
+.mod-result{font-size:32px;font-weight:700;color:#56d364;font-family:monospace}
+.mod-bar{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin:12px 0}
+.mod-cell{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-family:monospace;font-weight:700;background:rgba(255,255,255,.08);color:#8B949E;border:1px solid rgba(255,255,255,.1);transition:all .3s}
+.mod-cell.active{background:var(--teal);color:#fff;border-color:var(--teal)}
+/* dict viz */
+.dict-box{background:var(--code-bg);border-radius:10px;padding:14px 18px;margin:12px 0}
+.dict-row{display:flex;align-items:center;gap:12px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06);font-family:monospace;font-size:14px}
+.dict-key{color:#79C0FF;min-width:90px}.dict-arrow{color:#8B949E}.dict-val{color:#56d364}
+
+/* ── Common Mistakes ── */
+.mistake-grid{display:flex;flex-direction:column;gap:18px;margin:16px 0}
+.mistake-card{border-radius:12px;overflow:hidden;border:1.5px solid var(--line)}
+.mistake-hdr{padding:11px 16px;font-weight:700;font-size:14px}
+.mistake-hdr.err{background:rgba(200,0,0,.08);color:var(--red);border-bottom:1px solid rgba(200,0,0,.2)}
+.mistake-hdr.warn{background:rgba(245,162,29,.1);color:#8a5c00;border-bottom:1px solid rgba(245,162,29,.3)}
+.mistake-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.mistake-result{background:rgba(200,0,0,.06);border-left:3px solid var(--red);border-radius:0 8px 8px 0;
+  padding:10px 14px;font-size:13.5px;color:var(--ink)}
+pre.code.bad{border:1.5px solid rgba(200,0,0,.3)!important;margin:0!important}
+pre.code.good{border:1.5px solid rgba(86,211,100,.4)!important;margin:0!important}
+/* ── Quick Check ── */
+.qc-item{background:var(--card);border:1.5px solid var(--line);border-radius:12px;
+  padding:16px;margin-bottom:14px}
+.qc-q{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:12px;line-height:1.5}
+.qc-num{display:inline-flex;align-items:center;justify-content:center;
+  background:var(--teal);color:#fff;border-radius:50%;width:24px;height:24px;
+  font-size:13px;font-weight:800;margin-right:8px;flex-shrink:0;vertical-align:middle}
+.qc-opts{display:flex;flex-direction:column;gap:8px}
+.qc-btn{text-align:left;background:rgba(0,0,0,.04);border:1.5px solid var(--line);
+  border-radius:8px;padding:10px 14px;font-size:14px;cursor:pointer;
+  font-family:inherit;color:var(--ink);transition:border-color .15s,background .15s;line-height:1.5}
+.qc-btn:hover:not(:disabled){border-color:var(--teal);background:rgba(2,173,165,.05)}
+.qc-btn.qc-correct{background:rgba(86,211,100,.12);border-color:#56d364;color:#1a4a1e}
+.qc-btn.qc-wrong{background:rgba(200,0,0,.08);border-color:var(--red);color:#5a1010}
+.qc-feedback{margin-top:10px;font-size:14px;padding:10px 14px;border-radius:8px;display:none;line-height:1.5}
+.qc-feedback.qc-correct{background:rgba(86,211,100,.12);border:1px solid #56d364;color:#1a4a1e;display:block}
+.qc-feedback.qc-wrong{background:rgba(200,0,0,.08);border:1px solid var(--red);color:#5a1010;display:block}
+
+/* ── wrap-around grid demo ── */
+.wrap-wrap{background:#0F1B22;border-radius:14px;padding:16px;margin:14px 0;text-align:center}
+#wrap-canvas{display:block;border-radius:10px;max-width:100%;margin:0 auto}
+.wrap-info{font:13px/1.6 monospace;color:#E6EDF3;padding:10px 14px;border-radius:8px;background:rgba(255,255,255,.04);margin:10px 0;min-height:40px;text-align:left}
+.wrap-info .kw{color:#FF7B72}.wrap-info .val{color:#F5A21D}.wrap-info .ok{color:#56d364}
+.wrap-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.wrap-btn{padding:7px 18px;border-radius:7px;border:none;cursor:pointer;font:600 13px system-ui;color:#fff}
+.wrap-btn.l{background:#0D55A7}.wrap-btn.r{background:#02ADA5}
+.wrap-btn.u{background:#6f42c1}.wrap-btn.d{background:#C80000}
+.wrap-btn.reset{background:#5b7284}
+</style>
+</head>
+<body>
+<div class="chev" id="chev"><span id="see-box">See</span><span>Think</span><span>Explore</span><span>Marvel</span></div>
+<nav class="sitenav"><div class="wrap">
+  <a class="brand" href="index.html">Snake Game <span>Python Tutorial</span></a>
+  <details class="navsel"><summary>Steps</summary><div class="navmenu" role="menu">
+      <a href="step-1.html"><b>Step 1</b>: Variables &amp; Setup</a>
+      <a href="step-2.html"><b>Step 2</b>: Loop &amp; Events</a>
+      <a href="step-3.html"><b>Step 3</b>: Direction Control</a>
+      <a href="step-4.html"><b>Step 4</b>: Snake Body ⭐</a>
+      <a href="step-5.html"><b>Step 5</b>: Bonus Food 🌟</a>
+      <a href="step-6.html"><b>Step 6</b>: Functions</a>
+      <a href="step-7.html" aria-current="page"><b>Step 7</b>: Wrap-Around ⭐</a>
+      <a href="step-8.html"><b>Step 8</b>: Save High Score</a>
+      <a href="step-9.html"><b>Step 9</b>: OOP Refactor</a>
+      <a href="step-10.html"><b>Step 10</b>: ML Extension</a>
+    </div></details>
+  <a class="nl" href="index.html">Home</a>
+</div></nav>
+<header class="hero"><div class="wrap">
+  <p class="eyebrow">UMPSA STEM LAB · Step 7 of 10</p>
+  <h1>Step 7 — Wrap-Around ⭐</h1>
+  <p class="sub">Replace wall death with Pac-Man style wrap-around using the modulo operator <code>%</code>. Also refactor direction handling to use a Python dictionary.</p>
+  <div class="pills"><span class="pill">% modulo</span><span class="pill">Dictionary</span><span class="pill">dict lookup</span><span class="pill">wrap-around</span></div>
+</div></header>
+<div class="progress-bar"><div class="wrap"><div class="track"><i style="width:67%"></i></div><b>Step 7 / 10</b></div></div>
+<div class="wrap">
+
+<section>
+  <h2>The Modulo Operator <code>%</code></h2>
+  <p class="lede">Modulo returns the <em>remainder</em> after division. It's how you make numbers "wrap around" — the same maths that makes clocks work.</p>
+
+  <div class="ct-spot">
+    <h4>🔄 Pattern Recognition — the modulo pattern</h4>
+    <p>Modulo is one of the most powerful patterns in programming. It appears in: clock arithmetic (12 + 5 = 5 PM, not 17), cyclic animations (frame % total_frames), hash tables (key % bucket_count), audio beats (frame % tempo == 0), and every game with a "circular" world. Once you see this pattern, you'll recognise it everywhere.</p>
+  </div>
+
+  <h3>Interactive modulo calculator</h3>
+  <p>Drag the slider to change the numerator. Watch it cycle:</p>
+  <div class="mod-calc">
+    <div class="mod-number" id="mod-n">0</div>
+    <input type="range" min="0" max="39" value="0" id="mod-slider" style="width:80%;margin:10px 0">
+    <div class="mod-expr" id="mod-expr">0 % 20 =</div>
+    <div class="mod-result" id="mod-result">0</div>
+    <div style="font-size:13px;color:#8B949E;margin-top:8px">The result always stays in 0–19 (grid columns)</div>
+  </div>
+  <div class="mod-bar" id="mod-bar"></div>
+
+  <h3>How it replaces the wall collision</h3>
+  <div class="grid2">
+    <div class="mini"><h4>Step 4: die at wall</h4>
+      <pre class="code">if hx &lt; 0 or hx &gt;= GRID_COLS:
+    running = False   # game over!</pre>
+    </div>
+    <div class="mini"><h4>Step 7: wrap at wall</h4>
+      <pre class="code">hx = hx % GRID_COLS   # wrap 20→0, -1→19
+hy = hy % GRID_ROWS   # wrap 15→0, -1→14</pre>
+    </div>
+  </div>
+  <p>That's it! Two lines replace the four-condition wall check. When <code>hx</code> reaches 20, <code>20 % 20 = 0</code> — the snake teleports to the left edge.</p>
+</section>
+
+<section>
+  <h2>Edge cases — negative numbers</h2>
+  <p class="lede">Python's modulo handles negative numbers elegantly. <code>-1 % 20 = 19</code> — the snake going left past column 0 reappears at column 19.</p>
+
+  <table>
+    <thead><tr><th>Expression</th><th>Result</th><th>Snake effect</th></tr></thead>
+    <tbody>
+      <tr><td><code>20 % 20</code></td><td>0</td><td>Right wall → left edge</td></tr>
+      <tr><td><code>-1 % 20</code></td><td>19</td><td>Left wall → right edge</td></tr>
+      <tr><td><code>15 % 15</code></td><td>0</td><td>Bottom wall → top edge</td></tr>
+      <tr><td><code>-1 % 15</code></td><td>14</td><td>Top wall → bottom edge</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cal tip"><b>Python vs C/Java:</b> Python's <code>%</code> always returns a non-negative result when the divisor is positive. C and Java can return negative results (<code>-1 % 20 = -1</code> in C). Python's behaviour is mathematically consistent and better for wrap-around.</div>
+</section>
+
+<section>
+  <h2>Refactoring with a Dictionary</h2>
+  <p class="lede">Replace the chain of <code>if/elif</code> for direction with a Python dictionary. Lookup is O(1) and the code is shorter and easier to extend.</p>
+
+  <div class="ct-spot orange">
+    <h4>💡 Abstraction — data vs logic</h4>
+    <p>The if/elif chain is <em>logic</em>. The dictionary is <em>data</em>. Whenever you find yourself writing a long chain of if/elif that maps one value to another, consider a dictionary instead. It separates the "what" (the mapping) from the "how" (the lookup), making the code easier to change (add "WARP" direction? Just add one entry).</p>
+  </div>
+
+  <h3>Direction dictionary</h3>
+  <div class="dict-box">
+    <div class="dict-row"><span class="dict-key">"RIGHT"</span><span class="dict-arrow">→</span><span class="dict-val">(+1, 0)</span></div>
+    <div class="dict-row"><span class="dict-key">"LEFT"</span><span class="dict-arrow">→</span><span class="dict-val">(-1, 0)</span></div>
+    <div class="dict-row"><span class="dict-key">"UP"</span><span class="dict-arrow">→</span><span class="dict-val">(0, -1)</span></div>
+    <div class="dict-row"><span class="dict-key">"DOWN"</span><span class="dict-arrow">→</span><span class="dict-val">(0, +1)</span></div>
+  </div>
+
+  <div class="grid2">
+    <div class="mini"><h4>Before: if/elif chain</h4>
+      <pre class="code">if   direction=="RIGHT": hx+=1
+elif direction=="LEFT":  hx-=1
+elif direction=="UP":    hy-=1
+elif direction=="DOWN":  hy+=1</pre>
+    </div>
+    <div class="mini"><h4>After: dictionary lookup</h4>
+      <pre class="code">MOVES = {"RIGHT":(1,0),"LEFT":(-1,0),
+         "UP":(0,-1),"DOWN":(0,1)}
+dx, dy = MOVES[direction]
+hx += dx; hy += dy</pre>
+    </div>
+  </div>
+</section>
+
+
+<section>
+  <h2>&#127762; Watch the Snake Wrap Around — Interactive Grid</h2>
+  <p>Click the arrow buttons to move the snake head. When it reaches an edge, <code>hx = hx % GRID_COLS</code> fires and it reappears on the other side. Watch the calculation update live.</p>
+
+  <div class="wrap-wrap">
+    <canvas id="wrap-canvas" width="480" height="300"></canvas>
+    <div class="wrap-info" id="wrap-info">Press an arrow to start moving. Move toward an edge to see wrap-around!</div>
+    <div class="wrap-btns">
+      <button class="wrap-btn u" id="wb-up">▲ UP</button>
+      <button class="wrap-btn l" id="wb-left">◀ LEFT</button>
+      <button class="wrap-btn d" id="wb-down">▼ DOWN</button>
+      <button class="wrap-btn r" id="wb-right">▶ RIGHT</button>
+      <button class="wrap-btn reset" id="wb-reset">↺ Reset</button>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>The Complete Step 7 Changes</h2>
+  <div class="tabs">
+    <button aria-selected="true"  data-tab="tab-new6">Key Changes</button>
+    <button aria-selected="false" data-tab="tab-full6">Full Code</button>
+    <button aria-selected="false" data-tab="tab-explain6">Line-by-Line</button>
+  </div>
+  <div class="panel" id="tab-new6">
+    <pre class="code"># At the top (constants section) — add direction map
+MOVES = {
+    "RIGHT": ( 1,  0),
+    "LEFT":  (-1,  0),
+    "UP":    ( 0, -1),
+    "DOWN":  ( 0,  1)
+}
+
+# In update_game() — replace if/elif chain with:
+hx, hy = snake[0]
+dx, dy = MOVES[direction]
+hx += dx; hy += dy
+
+# Wrap-around (replaces wall-death check):
+hx = hx % GRID_COLS   # wraps 0..GRID_COLS-1
+hy = hy % GRID_ROWS   # wraps 0..GRID_ROWS-1
+
+new_head = (hx, hy)
+# (No more "if hx < 0 or..." — wall is now a portal)
+
+# Self-collision check stays the same:
+if new_head in snake[1:]:
+    return snake, food, score, False</pre>
+  </div>
+  <div class="panel" id="tab-full6" hidden>
+    <pre class="code">import pygame, random
+pygame.init()
+GRID_COLS=20; GRID_ROWS=15; CELL_SIZE=30; SNAKE_SPEED=8
+WHITE=(255,255,255); GREEN=(0,200,80); DKGREEN=(0,160,50); RED=(220,50,50); BG=(30,30,30)
+WINDOW_W=GRID_COLS*CELL_SIZE; WINDOW_H=GRID_ROWS*CELL_SIZE
+MOVES={"RIGHT":(1,0),"LEFT":(-1,0),"UP":(0,-1),"DOWN":(0,1)}
+
+def draw_game(screen, snake, food, score, font):
+    screen.fill(BG)
+    for i,(cx,cy) in enumerate(snake):
+        pygame.draw.rect(screen,DKGREEN if i==0 else GREEN,
+            pygame.Rect(cx*CELL_SIZE,cy*CELL_SIZE,CELL_SIZE-2,CELL_SIZE-2),border_radius=4)
+    fx,fy=food
+    pygame.draw.circle(screen,RED,(fx*CELL_SIZE+CELL_SIZE//2,fy*CELL_SIZE+CELL_SIZE//2),CELL_SIZE//3)
+    screen.blit(font.render(f"Score:{score}",True,WHITE),(8,6))
+    pygame.display.flip()
+
+def update_game(snake, direction, food, score):
+    hx,hy=snake[0]
+    dx,dy=MOVES[direction]
+    hx+=dx; hy+=dy
+    hx%=GRID_COLS; hy%=GRID_ROWS   # WRAP instead of die
+    new_head=(hx,hy)
+    if new_head in snake[1:]: return snake,food,score,False  # self only
+    ate=new_head==food
+    snake.insert(0,new_head)
+    if ate: score+=1; food=(random.randint(0,GRID_COLS-1),random.randint(0,GRID_ROWS-1))
+    else: snake.pop()
+    return snake,food,score,True
+
+screen=pygame.display.set_mode((WINDOW_W,WINDOW_H)); pygame.display.set_caption("Snake Wrap")
+font=pygame.font.SysFont(None,28); clock=pygame.time.Clock()
+running=True; direction="RIGHT"; snake=[(10,7),(9,7),(8,7)]
+food=(random.randint(0,GRID_COLS-1),random.randint(0,GRID_ROWS-1)); score=0
+
+while running:
+    for event in pygame.event.get():
+        if event.type==pygame.QUIT: running=False
+        if event.type==pygame.KEYDOWN:
+            if event.key==pygame.K_ESCAPE: running=False
+            if   event.key==pygame.K_UP and direction!="DOWN": direction="UP"
+            elif event.key==pygame.K_DOWN and direction!="UP": direction="DOWN"
+            elif event.key==pygame.K_LEFT and direction!="RIGHT": direction="LEFT"
+            elif event.key==pygame.K_RIGHT and direction!="LEFT": direction="RIGHT"
+    snake,food,score,running=update_game(snake,direction,food,score)
+    draw_game(screen,snake,food,score,font)
+    clock.tick(SNAKE_SPEED)
+pygame.quit()</pre>
+  </div>
+  <div class="panel" id="tab-explain6" hidden>
+    <div class="step"><div class="idx">1</div><div class="body"><h4><code>MOVES[direction]</code></h4><p>Dictionary lookup by key. If <code>direction = "UP"</code>, this returns <code>(0, -1)</code>. Accessing a key that doesn't exist raises <code>KeyError</code> — but since we only assign valid direction strings from keyboard events, this is safe. <code>MOVES.get(direction, (0,0))</code> would be safe with a default.</p></div></div>
+    <div class="step"><div class="idx">2</div><div class="body"><h4><code>hx %= GRID_COLS</code></h4><p>Augmented assignment: <code>x %= n</code> is shorthand for <code>x = x % n</code>. The <code>%=</code> operator modifies in place (like <code>+=</code>). This is a concise one-liner for the wrap.</p></div></div>
+    <div class="step"><div class="idx">3</div><div class="body"><h4>Self-collision check order</h4><p>In Step 7 we check self-collision BEFORE inserting the new head (unlike Step 4). The check is <code>new_head in snake[1:]</code> which is now just <code>new_head in snake</code> since we haven't inserted yet. Both approaches are correct; the order matters.</p></div></div>
+  </div>
+</section>
+
+<section>
+  <h2>Try It — Exercises</h2>
+  <div class="step"><div class="idx">1</div><div class="body">
+    <h4>Modulo in Python shell <span class="ct-badge teal" style="vertical-align:middle">🔄 Pattern</span></h4>
+    <p>Open Python: try <code>20 % 20</code>, <code>-1 % 20</code>, <code>21 % 20</code>, <code>40 % 20</code>. What pattern do you notice? Then try <code>7 % 3</code> and <code>10 % 4</code>.</p>
+  </div></div>
+  <div class="step"><div class="idx">2</div><div class="body">
+    <h4>Add walls as optional <span class="ct-badge red" style="vertical-align:middle">📋 Algorithm</span></h4>
+    <p>Add a global <code>WRAP_MODE = True</code>. In update_game, use <code>if WRAP_MODE: hx%=GRID_COLS; else: if hx&lt;0 ...: running=False</code>. Toggle it with the W key in the event loop.</p>
+  </div></div>
+  <div class="step"><div class="idx">3</div><div class="body">
+    <h4>Add a fifth direction <span class="ct-badge orange" style="vertical-align:middle">💡 Abstraction</span></h4>
+    <p>Add <code>"STOP": (0, 0)</code> to MOVES. Bind it to the space bar. The snake pauses! Notice you only needed to add one dictionary entry — no if/elif change needed.</p>
+  </div></div>
+</section>
+
+
+
+<!-- ══ Common Mistakes ══ -->
+<section>
+  <h2>&#9888;&#65039; Common Mistakes &#x2014; Spot These Before You Start</h2>
+  <p class="lede">These are the errors beginners make most often in Step 7. Read them now so you can recognise them in your own code.</p>
+  <div class="mistake-grid">
+<div class="mistake-card">
+      <div class="mistake-hdr err">&#10007; Mistake 1: Using <code>==</code> instead of <code>%</code> for wrap-around</div>
+      <div class="mistake-body">
+        <pre class="code bad">if x == GRID_COLS:
+    x = 0
+if x == -1:
+    x = GRID_COLS - 1</pre>
+        <div class="mistake-result">&#x1F41E; This works at speed 1, but if the snake ever moves more than 1 cell per frame (faster speeds), it can jump past the boundary entirely without being wrapped.</div>
+        <pre class="code good">x = x % GRID_COLS    # handles any value in one line</pre>
+      </div>
+    </div>
+    <div class="mistake-card">
+      <div class="mistake-hdr err">&#10007; Mistake 2: Wrapping only x but not y</div>
+      <div class="mistake-body">
+        <pre class="code bad">x = x % GRID_COLS   # x wraps &#x2713;
+# y not wrapped &#x2014; game still ends at top/bottom!</pre>
+        <div class="mistake-result">&#x1F41E; Horizontal wrap works, but the snake dies when it hits the top or bottom edge. Both axes need wrapping.</div>
+        <pre class="code good">x = x % GRID_COLS
+y = y % GRID_ROWS    # must wrap both axes</pre>
+      </div>
+    </div>
+    <div class="mistake-card">
+      <div class="mistake-hdr warn">&#9889; Mistake 3: Confusion about negative modulo</div>
+      <div class="mistake-body">
+        <pre class="code bad"># Student expects -1 % 20 to give -1 (like in C/Java)</pre>
+        <div class="mistake-result">&#x26A1; Python's <code>%</code> always returns a non-negative result when the divisor is positive. So <code>-1 % 20</code> gives <code>19</code>, not <code>-1</code>. This is actually what we want &#x2014; the snake appears at the right edge when leaving the left edge!</div>
+        <pre class="code good">print(-1 % 20)   # prints 19 &#x2014; Python wraps correctly for us</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ Quick Check ══ -->
+<section>
+  <h2>&#9989; Quick Check &#x2014; Are You Ready?</h2>
+  <p class="lede">Three questions &#x2014; not graded. They help you spot gaps before the activities.</p>
+  <div id="qcheck">
+    <div class="qc-item">
+      <div class="qc-q"><span class="qc-num">1</span> What does the expression <code>x % GRID_COLS</code> do when <code>x = GRID_COLS</code> (i.e., the snake exits the right edge)?</div>
+      <div class="qc-opts">
+        <button class="qc-btn" data-q="1" data-ok="1">It returns <code>0</code> &#x2014; placing the snake at the left edge. Any multiple of <code>GRID_COLS</code> gives 0.</button>
+        <button class="qc-btn" data-q="1" data-ok="0">It returns <code>GRID_COLS</code> &#x2014; keeping the snake at the right edge.</button>
+        <button class="qc-btn" data-q="1" data-ok="0">It returns <code>GRID_COLS</code> &#x2014; keeping the snake at the right edge.</button>
+      </div>
+      <div class="qc-feedback" id="qcfb1"></div>
+    </div>
+    <div class="qc-item">
+      <div class="qc-q"><span class="qc-num">2</span> Why is <code>%</code> better than an <code>if/elif</code> chain for wrap-around?</div>
+      <div class="qc-opts">
+        <button class="qc-btn" data-q="2" data-ok="1"><code>%</code> works for any value &#x2014; including large jumps &#x2014; in a single expression. An <code>if/elif</code> chain only handles the exact boundary values it tests.</button>
+        <button class="qc-btn" data-q="2" data-ok="0">They produce identical results &#x2014; <code>%</code> is just shorter to write.</button>
+        <button class="qc-btn" data-q="2" data-ok="0">They produce identical results &#x2014; <code>%</code> is just shorter to write.</button>
+      </div>
+      <div class="qc-feedback" id="qcfb2"></div>
+    </div>
+    <div class="qc-item">
+      <div class="qc-q"><span class="qc-num">3</span> What does <code>-1 % 20</code> return in Python?</div>
+      <div class="qc-opts">
+        <button class="qc-btn" data-q="3" data-ok="1"><code>19</code> &#x2014; Python's modulo always returns a non-negative result when the divisor is positive, so the snake correctly appears at the right edge.</button>
+        <button class="qc-btn" data-q="3" data-ok="0"><code>-1</code> &#x2014; Python keeps the sign of the dividend, just like other languages.</button>
+        <button class="qc-btn" data-q="3" data-ok="0"><code>-1</code> &#x2014; Python keeps the sign of the dividend, just like other languages.</button>
+      </div>
+      <div class="qc-feedback" id="qcfb3"></div>
+    </div>
+  </div>
+
+  <div id="qcheck-result" hidden style="margin-top:20px;text-align:center;padding:18px;border-radius:12px;background:rgba(2,173,165,.08);border:1.5px solid var(--teal)">
+    <p style="margin:0;font-size:17px;font-weight:700;color:var(--teal-dark)" id="qcheck-msg"></p>
+  </div>
+
+</section>
+
+<div style="margin:40px 0 20px;text-align:center">
+  <p style="font-size:15px;color:var(--muted);margin-bottom:16px">You've covered all the concepts for Step 7. Time to apply them.</p>
+  <a href="step-7-activity.html" style="display:inline-flex;align-items:center;gap:10px;background:var(--teal);color:#fff;font-weight:700;font-size:16px;padding:14px 32px;border-radius:10px;text-decoration:none;transition:opacity .2s;box-shadow:0 4px 14px rgba(2,173,165,.35)" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+    Start Activities &rarr;
+    <span style="font-size:12px;font-weight:400;opacity:.85">Tier 1 &rarr; 2 &rarr; 3 &rarr; 4</span>
+  </a>
+</div>
+
+<div class="stepnav">
+  <a href="step-6.html"><small>Previous</small><b>← Functions</b></a>
+  <a href="step-8.html" class="next"><small>Next</small><b>Step 8: Save High Score →</b></a>
+</div>
+</div>
+<div id="teacher-reveal" hidden style="position:fixed;bottom:24px;right:24px;background:#08312F;color:#B9E4E1;border-radius:10px;padding:14px 18px;font-size:14px;z-index:999;border:1px solid rgba(255,255,255,.2);box-shadow:0 8px 24px rgba(0,0,0,.4)">
+  🔑 Teacher access: <a href="teacher-7.html" style="color:#8FD9D5">Open Teacher Notes →</a>
+</div>
+<footer><div class="wrap"><p><strong>See · Think · Explore · Marvel</strong><br>UMPSA STEM LAB · Snake Game Python Tutorial</p></div>  <p style="margin-top:10px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-weight:400">
+    <span>© 2026 Nurul Hazlina Noordin · UMPSA STEM Lab Engineering Education Initiative</span>
+    <a href="https://ee.ump.edu.my/hazlina/#research" target="_blank" rel="noopener"
+       title="Visit research page" aria-label="Research website"
+       style="color:var(--teal);display:inline-flex;align-items:center;transition:opacity .15s"
+       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="2" y1="12" x2="22" y2="12"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    </a>
+    <a href="mailto:hazlina@umpsa.edu.my"
+       title="hazlina@umpsa.edu.my" aria-label="Email Dr Nurul Hazlina"
+       style="color:var(--teal);display:inline-flex;align-items:center;transition:opacity .15s"
+       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true">
+        <rect x="2" y="4" width="20" height="16" rx="2"/>
+        <polyline points="2,4 12,13 22,4"/>
+      </svg>
+    </a>
+  </p>
+</footer>
+<script>
+document.querySelectorAll('.tabs').forEach(function(tb){tb.querySelectorAll('button').forEach(function(btn){btn.addEventListener('click',function(){tb.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-selected','false');});btn.setAttribute('aria-selected','true');var sec=tb.closest('section')||tb.parentElement;sec.querySelectorAll('.panel').forEach(function(p){p.hidden=true;});var t=sec.querySelector('#'+btn.dataset.tab);if(t)t.hidden=false;});});});
+(function(){var clicks=0,timer,box=document.getElementById('see-box');if(!box)return;box.style.cursor='pointer';box.addEventListener('click',function(){clicks++;clearTimeout(timer);timer=setTimeout(function(){clicks=0;},1500);if(clicks>=3){clicks=0;var el=document.getElementById('teacher-reveal');if(el)el.hidden=false;}});})();
+document.querySelectorAll('pre.code').forEach(function(pre){var lines=pre.textContent.split('\n');if(lines.length&&lines[lines.length-1].trim()==='')lines.pop();pre.innerHTML=lines.map(function(line,i){var ln=String(i+1).padStart(3,' ');var esc=line.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');return '<span class="code-ln">'+ln+'</span>'+esc;}).join('\n');});
+/* Modulo visualizer */
+(function(){
+  var n=document.getElementById('mod-n');
+  var sl=document.getElementById('mod-slider');
+  var expr=document.getElementById('mod-expr');
+  var res=document.getElementById('mod-result');
+  var bar=document.getElementById('mod-bar');
+  var N=20;
+  // init bar
+  for(var i=0;i<N;i++){var c=document.createElement('div');c.className='mod-cell';c.id='mc'+i;c.textContent=i;bar.appendChild(c);}
+  function update(){
+    var val=parseInt(sl.value);
+    var r=((val%N)+N)%N;
+    n.textContent=val;
+    expr.textContent=val+' % '+N+' =';
+    res.textContent=r;
+    for(var i=0;i<N;i++){document.getElementById('mc'+i).classList.toggle('active',i===r);}
+    n.style.color=r===0?'#56d364':'#02ADA5';
+  }
+  sl.addEventListener('input',update);update();
+})();
+
+/* ══ QUICK CHECK QUIZ ══ */
+(function(){
+  var answered={};
+  var score=0;
+  var total=0;
+  document.querySelectorAll('#qcheck .qc-item').forEach(function(item,i){total++;answered[i]=false;});
+  document.querySelectorAll('#qcheck .qc-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var q=+btn.getAttribute('data-q');
+      if(answered[q]) return;
+      answered[q]=true;
+      var isOk=btn.getAttribute('data-ok')==='1';
+      if(isOk) score++;
+      btn.classList.add(isOk?'qc-correct':'qc-wrong');
+      var item=btn.closest('.qc-item');
+      // show correct answer if wrong
+      if(!isOk){
+        item.querySelectorAll('[data-ok="1"]').forEach(function(b){b.classList.add('qc-correct');});
+      }
+      // disable all buttons in this question
+      item.querySelectorAll('.qc-btn').forEach(function(b){b.disabled=true;});
+      // set feedback text
+      var fbEl=document.getElementById('qcfb'+q);
+      if(fbEl){
+        if(isOk){
+          fbEl.innerHTML='&#10003; Correct!';
+        } else {
+          var okBtn=item.querySelector('[data-ok="1"]');
+          var okLabel=okBtn?okBtn.textContent.trim():'';
+          fbEl.innerHTML='&#10007; Not quite. The right answer: <strong>'+okLabel+'</strong>';
+        }
+        fbEl.className='qc-feedback '+(isOk?'qc-correct':'qc-wrong');
+      }
+      // check if all answered
+      var allDone=true;
+      for(var k in answered){if(!answered[k]){allDone=false;break;}}
+      if(allDone){
+        var res=document.getElementById('qcheck-result');
+        var msg=document.getElementById('qcheck-msg');
+        if(res&&msg){
+          res.hidden=false;
+          var pct=Math.round(score/total*100);
+          if(pct===100) msg.textContent='Perfect — '+score+'/'+total+'! You are ready to move on. 🚀';
+          else if(pct>=67) msg.textContent='Good — '+score+'/'+total+'. Review the misses above, then continue.';
+          else msg.textContent=''+score+'/'+total+' — re-read the sections above, then try again.';
+        }
+      }
+    });
+  });
+})();
+
+/* ══ WRAP-AROUND GRID DEMO ══ */
+(function(){
+  var canvas=document.getElementById('wrap-canvas');
+  if(!canvas) return;
+  var ctx=canvas.getContext('2d');
+  var COLS=16,ROWS=10,W=480,H=300;
+  canvas.width=W; canvas.height=H;
+  var CW=W/COLS, CH=H/ROWS;
+
+  var hx=8, hy=5, trail=[], prevHx=8, prevHy=5;
+  var wrapFlash=0;
+
+  function render(wrapMsg){
+    ctx.fillStyle='#0F1B22'; ctx.fillRect(0,0,W,H);
+    // grid
+    ctx.strokeStyle='rgba(255,255,255,.05)'; ctx.lineWidth=1;
+    for(var c=0;c<=COLS;c++){ctx.beginPath();ctx.moveTo(c*CW,0);ctx.lineTo(c*CW,H);ctx.stroke();}
+    for(var r=0;r<=ROWS;r++){ctx.beginPath();ctx.moveTo(0,r*CH);ctx.lineTo(W,r*CH);ctx.stroke();}
+
+    // edge glow on wrap
+    if(wrapFlash>0){
+      ctx.strokeStyle='rgba(245,162,29,'+wrapFlash+')'; ctx.lineWidth=4;
+      ctx.strokeRect(2,2,W-4,H-4); wrapFlash=Math.max(0,wrapFlash-.05);
+    }
+
+    // trail
+    trail.forEach(function(t,i){
+      var a=(i+1)/trail.length*.3;
+      ctx.fillStyle='rgba(2,173,165,'+a+')';
+      ctx.beginPath(); ctx.roundRect(t.x*CW+2,t.y*CH+2,CW-4,CH-4,4); ctx.fill();
+    });
+
+    // head
+    ctx.fillStyle='#02ADA5';
+    ctx.beginPath(); ctx.roundRect(hx*CW+1,hy*CH+1,CW-2,CH-2,5); ctx.fill();
+    ctx.fillStyle='#fff';
+    ctx.font='bold 10px monospace'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('('+hx+','+hy+')', hx*CW+CW/2, hy*CH+CH/2);
+
+    // col/row labels
+    ctx.fillStyle='rgba(255,255,255,.2)'; ctx.font='9px monospace'; ctx.textBaseline='top';
+    for(var c=0;c<COLS;c++){ctx.textAlign='center';ctx.fillText(c,c*CW+CW/2,2);}
+    ctx.textAlign='left'; ctx.textBaseline='middle';
+    for(var r=0;r<ROWS;r++){ctx.fillText(r,2,r*CH+CH/2);}
+  }
+
+  function setInfo(msg){ document.getElementById('wrap-info').innerHTML=msg; }
+  var DIRS={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};
+  var dirNames={up:'UP',down:'DOWN',left:'LEFT',right:'RIGHT'};
+
+  function move(dir){
+    trail.push({x:hx,y:hy});
+    if(trail.length>6) trail.shift();
+    prevHx=hx; prevHy=hy;
+    var d=DIRS[dir];
+    var nx=hx+d[0], ny=hy+d[1];
+    var wrapped=false, wrapStr='';
+    if(nx<0||nx>=COLS){
+      var before=nx; nx=((nx%COLS)+COLS)%COLS;
+      wrapStr='<span class="kw">hx</span> = <span class="val">'+before+'</span> % '+COLS+' = <span class="ok">'+nx+'</span> ← wrapped!';
+      wrapped=true; wrapFlash=1;
+    }
+    if(ny<0||ny>=ROWS){
+      var before=ny; ny=((ny%ROWS)+ROWS)%ROWS;
+      wrapStr='<span class="kw">hy</span> = <span class="val">'+before+'</span> % '+ROWS+' = <span class="ok">'+ny+'</span> ← wrapped!';
+      wrapped=true; wrapFlash=1;
+    }
+    hx=nx; hy=ny;
+    if(wrapped){
+      setInfo(wrapStr+'<br><span style="color:#aaa">Python modulo keeps coordinates inside 0–'+(COLS-1)+' and 0–'+(ROWS-1)+'</span>');
+    } else {
+      setInfo('<span class="kw">hx</span> = <span class="val">'+hx+'</span> &nbsp; <span class="kw">hy</span> = <span class="val">'+hy+'</span> &nbsp;|&nbsp; '
+        +(hx<=1||hx>=COLS-2||hy<=1||hy>=ROWS-2?'<span style="color:#F5A21D">Near edge — keep going!</span>':'Still inside grid'));
+    }
+    render(wrapped);
+  }
+
+  document.getElementById('wb-up').addEventListener('click',function(){move('up');});
+  document.getElementById('wb-down').addEventListener('click',function(){move('down');});
+  document.getElementById('wb-left').addEventListener('click',function(){move('left');});
+  document.getElementById('wb-right').addEventListener('click',function(){move('right');});
+  document.getElementById('wb-reset').addEventListener('click',function(){
+    hx=8;hy=5;trail=[];wrapFlash=0;
+    setInfo('Press an arrow to start moving. Move toward an edge to see wrap-around!');
+    render(false);
+  });
+
+  render(false);
+})();
+
+</script>
+</body>
+</html>

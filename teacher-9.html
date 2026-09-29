@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Facilitator Notes — Step 9 | Snake Tutorial</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+/* ── LIGHT-MODE TEACHER PAGE ── independent of style.css ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F0F4F8;
+  --surface:#FFFFFF;
+  --surface2:#F7FAFC;
+  --teal:#0A8F8A;
+  --teal-dark:#076862;
+  --teal-light:#E6F6F5;
+  --ink:#1A2332;
+  --body:#374151;
+  --muted:#6B7A8D;
+  --border:#D6E0EA;
+  --amber:#D97706;
+  --amber-bg:#FFFBEB;
+  --amber-border:#FCD34D;
+  --green-bg:#F0FDF4;
+  --green-border:#86EFAC;
+  --green-ink:#166534;
+  --red-bg:#FEF2F2;
+  --red-border:#FCA5A5;
+  --red-ink:#991B1B;
+  --code-bg:#F1F5F9;
+  --code-fg:#1E293B;
+  --radius:10px;
+  --shadow:0 1px 4px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.05);
+}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg);
+  color:var(--body);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  line-height:1.65;
+}
+.sitenav{
+  background:var(--teal-dark);
+  color:#fff;
+  padding:0 24px;
+  display:flex;
+  align-items:center;
+  gap:20px;
+  min-height:56px;
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+.sitenav .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;font-weight:700;font-size:15px}
+.sitenav .brand img{display:none}
+.sitenav a.nl{color:rgba(255,255,255,.8);text-decoration:none;font-size:14px;padding:4px 8px;border-radius:6px;transition:background .15s}
+.sitenav a.nl:hover{background:rgba(255,255,255,.15)}
+details.navsel{margin-left:auto;position:relative}
+details.navsel summary{
+  list-style:none;cursor:pointer;color:rgba(255,255,255,.9);
+  font-size:14px;font-weight:600;padding:6px 12px;
+  border-radius:6px;transition:background .15s;
+}
+details.navsel summary:hover{background:rgba(255,255,255,.15)}
+details.navsel summary::-webkit-details-marker{display:none}
+.navmenu{
+  position:absolute;right:0;top:calc(100% + 8px);
+  background:#fff;color:var(--ink);
+  border:1px solid var(--border);border-radius:var(--radius);
+  min-width:300px;box-shadow:var(--shadow);
+  overflow:hidden;z-index:200;
+}
+.navmenu a{
+  display:block;padding:10px 16px;font-size:13.5px;
+  text-decoration:none;color:var(--body);
+  border-bottom:1px solid var(--border);transition:background .12s;
+}
+.navmenu a:last-child{border-bottom:none}
+.navmenu a:hover{background:var(--teal-light)}
+.navmenu a[aria-current="page"]{background:var(--teal-light);color:var(--teal-dark);font-weight:700}
+.gate{
+  max-width:520px;margin:80px auto;padding:40px 36px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;box-shadow:var(--shadow);text-align:center;
+}
+.gate h2{font-size:24px;color:var(--ink);margin-bottom:12px}
+.gate p{color:var(--muted);margin-bottom:16px;font-size:15px}
+.gate a{color:var(--teal);text-decoration:none;font-size:14px}
+.gate a:hover{text-decoration:underline}
+.lock-icon{font-size:48px;margin-bottom:16px}
+.t-hero{
+  background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal) 100%);
+  color:#fff;padding:40px 24px 36px;
+}
+.t-hero .wrap{max-width:900px;margin:0 auto}
+.t-hero .eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.75;margin-bottom:8px}
+.t-hero h1{font-size:clamp(22px,4vw,32px);font-weight:800;line-height:1.2;margin-bottom:8px}
+.t-hero .meta{font-size:14px;opacity:.8;margin-bottom:20px}
+.t-cta-row{display:flex;flex-wrap:wrap;gap:10px}
+.t-cta-row a{
+  display:inline-block;padding:8px 18px;border-radius:8px;
+  font-size:13px;font-weight:600;text-decoration:none;
+  background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);
+  transition:background .15s;
+}
+.t-cta-row a:hover{background:rgba(255,255,255,.28)}
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+.page-body{padding:36px 20px 60px;max-width:900px;margin:0 auto}
+.tbanner{
+  background:var(--amber-bg);border:1px solid var(--amber-border);
+  color:#78350F;border-radius:8px;padding:12px 16px;
+  font-size:13.5px;margin-bottom:28px;
+}
+.tbanner b{color:#92400E}
+.t-section{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:28px 28px;margin-bottom:24px;
+  box-shadow:var(--shadow);
+}
+.t-section h2{
+  font-size:18px;font-weight:700;color:var(--ink);
+  padding-bottom:10px;margin-bottom:16px;
+  border-bottom:2px solid var(--teal);display:flex;align-items:center;gap:8px;
+}
+.t-section h2 .sec-icon{font-size:20px}
+.t-section h3{font-size:15px;font-weight:700;color:var(--teal-dark);margin:16px 0 8px}
+.t-section p{margin-bottom:10px;font-size:15px}
+.t-section ul{padding-left:20px;margin-bottom:12px}
+.t-section li{margin-bottom:6px;font-size:15px}
+.t-section strong{color:var(--ink)}
+.t-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+.t-table thead th{
+  background:var(--teal);color:#fff;padding:10px 14px;
+  text-align:left;font-weight:600;font-size:13px;letter-spacing:.02em;
+}
+.t-table thead th:first-child{border-radius:8px 0 0 0}
+.t-table thead th:last-child{border-radius:0 8px 0 0}
+.t-table tbody tr:nth-child(even){background:var(--surface2)}
+.t-table tbody td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+.t-table td code{font-size:12.5px;background:var(--bg);padding:1px 5px;border-radius:4px;color:var(--ink)}
+.codebox{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:12px 0;position:relative}
+.codebox pre{padding:20px;overflow-x:auto}
+.codebox code{color:var(--code-fg);font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13.5px;line-height:1.6}
+.copybtn{
+  position:absolute;top:10px;right:10px;
+  background:var(--border);color:var(--ink);
+  border:none;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;
+  transition:background .15s;
+}
+.copybtn:hover{background:rgba(255,255,255,.22)}
+.copybtn.copied{background:rgba(134,239,172,.25);color:#86EFAC}
+code{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13px;background:var(--bg);padding:1px 5px;border-radius:4px;color:var(--ink)}
+.callout{
+  display:flex;gap:12px;padding:14px 16px;border-radius:8px;
+  border:1px solid var(--border);background:var(--surface2);margin:12px 0;
+  font-size:14px;align-items:flex-start;
+}
+.callout-icon{font-size:22px;flex-shrink:0;line-height:1.2}
+.callout p{margin:0}
+.stem-brand-bar{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  width:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+.stem-brand-bar .sb{
+  display:flex;align-items:center;justify-content:center;
+  padding:6px 8px;font-size:12px;font-weight:800;
+  letter-spacing:.12em;color:#fff;text-transform:uppercase;
+}
+.sb-see{background:#2E5FAF}
+.sb-think{background:#B82828}
+.sb-explore{background:#D99A10}
+.sb-marvel{background:#1FA898}
+footer{
+  background:#1C5C54;color:rgba(255,255,255,.78);
+  text-align:center;padding:20px 20px;font-size:13px;margin-top:40px;
+  display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+}
+footer a{color:rgba(255,255,255,.85);text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+footer a:hover{color:#fff}
+.cta-btn{
+  display:inline-block;padding:12px 28px;border-radius:9px;
+  font-size:15px;font-weight:700;border:none;cursor:pointer;
+  background:var(--teal);color:#fff;
+  box-shadow:0 4px 14px rgba(10,143,138,.3);
+  transition:background .15s,transform .1s;
+}
+.cta-btn:hover{background:var(--teal-dark);transform:translateY(-1px)}
+.cta-btn:active{transform:translateY(0)}
+@media(max-width:600px){
+  .t-section{padding:20px 16px}
+  .t-hero{padding:28px 16px 24px}
+  .t-cta-row a{font-size:12px;padding:6px 12px}
+  .t-table{font-size:13px}
+  .sitenav{padding:0 14px}
+}
+</style>
+</head>
+<body>
+
+<div class="stem-brand-bar" aria-label="UMPSA STEM Lab">
+  <div class="sb sb-see">SEE</div>
+  <div class="sb sb-think">THINK</div>
+  <div class="sb sb-explore">EXPLORE</div>
+  <div class="sb sb-marvel">MARVEL</div>
+</div>
+
+<nav class="sitenav">
+  <a class="brand" href="index.html">
+    <img src="stemlogo.png" alt="UMPSA STEM LAB">
+    <span>UMPSA STEM Lab Python Module</span>
+  </a>
+  <a class="nl" href="index.html">Home</a>
+  <details class="navsel">
+    <summary>Facilitator Notes &#9662;</summary>
+    <div class="navmenu">
+      <a href="teacher-1.html"><b>Step 1</b>: Variables &amp; Setup</a>
+      <a href="teacher-2.html"><b>Step 2</b>: Loop &amp; Events</a>
+      <a href="teacher-3.html"><b>Step 3</b>: Direction &amp; Movement</a>
+      <a href="teacher-4.html"><b>Step 4</b>: Snake Body &#11088;</a>
+      <a href="teacher-5.html"><b>Step 5</b>: Bonus Food</a>
+      <a href="teacher-6.html"><b>Step 6</b>: Functions</a>
+      <a href="teacher-7.html"><b>Step 7</b>: Wrap-Around &#11088;</a>
+      <a href="teacher-8.html"><b>Step 8</b>: Save High Score</a>
+      <a href="teacher-9.html" aria-current="page"><b>Step 9</b>: OOP Refactor</a>
+      <a href="teacher-10.html"><b>Step 10</b>: ML Extension</a>
+    </div>
+  </details>
+</nav>
+
+<div class="gate" id="gate">
+  <div class="lock-icon">&#128274;</div>
+  <h2>Facilitator Notes</h2>
+  <p>This page contains exercise answers and teaching guidance for<br>
+  <strong>Step 9 &mdash; OOP Refactor</strong>.<br>
+  Not linked from the student pages.</p>
+  <p style="margin-bottom:24px"><strong>Students: please go back and try the activities first.</strong></p>
+  <button class="cta-btn" id="gatebtn" type="button">I&#39;m a facilitator &mdash; show the notes</button>
+  <p style="margin-top:20px"><a href="step-9.html">&#8592; Back to student page</a></p>
+</div>
+
+<div id="tcontent" hidden>
+
+<div class="t-hero">
+  <div class="wrap">
+    <p class="eyebrow">STEP 9 OF 10 &nbsp;&middot;&nbsp; FACILITATOR NOTES</p>
+    <h1>OOP Refactor</h1>
+    <p class="meta">Core concepts: classes &nbsp;&middot;&nbsp; __init__ &nbsp;&middot;&nbsp; self &nbsp;&middot;&nbsp; methods &nbsp;&middot;&nbsp; encapsulation &nbsp;&middot;&nbsp; Snake / Food / Game classes</p>
+    <div class="t-cta-row">
+      <a href="teacher-8.html">&#8592; Step 8</a>
+      <a href="step-9.html">Student Page</a>
+      <a href="teacher-10.html">Step 10 &#8594;</a>
+    </div>
+  </div>
+</div>
+
+<div class="page-body">
+
+  <div class="tbanner">
+    &#9201; <b>Suggested pace: 35&ndash;40 minutes</b> &nbsp;&middot;&nbsp; This is the longest step. OOP is a new paradigm &mdash; budget time for the blueprint analogy and let students explore the class structure before typing code.
+  </div>
+
+  <!-- ── SECTION 1 · Learning Objectives ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#127919;</span> Learning Objectives</h2>
+    <ul>
+      <li>Define a class with <code>class ClassName:</code></li>
+      <li>Use <code>__init__</code> to initialise object state</li>
+      <li>Use <code>self</code> to refer to the current instance</li>
+      <li>Call methods on objects using dot notation</li>
+      <li>Refactor the snake game into Snake, Food, and Game classes</li>
+    </ul>
+  </div>
+
+  <!-- ── SECTION 2 · The Big Idea ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#128161;</span> The Big Idea &mdash; Annotated Code</h2>
+
+    <div class="codebox">
+      <button class="copybtn" type="button">Copy</button>
+      <pre><code>class Snake:
+    """Represents the snake: its body, direction, and movement logic."""
+
+    def __init__(self):
+        self.body = [(10, 7), (9, 7), (8, 7)]  # list of (col, row) tuples
+        self.dx = 1
+        self.dy = 0
+        self.alive = True
+
+    def turn(self, dx, dy):
+        """Change direction — guards against 180° reversal."""
+        if (dx, dy) != (-self.dx, -self.dy):
+            self.dx, self.dy = dx, dy
+
+    def move(self):
+        """Advance the snake one step; returns True if food was eaten."""
+        hx, hy = self.body[0]
+        new_head = ((hx + self.dx) % GRID_COLS, (hy + self.dy) % GRID_ROWS)
+        self.body.insert(0, new_head)
+        return False   # caller must pop tail if False
+
+    def grow(self):
+        """Grow — tail already inserted by move(); just don&#39;t pop."""
+        pass
+
+    def check_self_collision(self):
+        return self.body[0] in self.body[1:]
+
+    def draw(self, surface):
+        for i, (col, row) in enumerate(self.body):
+            colour = DKGREEN if i == 0 else GREEN
+            pygame.draw.rect(surface, colour,
+                (col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE-1, CELL_SIZE-1))
+
+
+class Food:
+    """Manages food position and drawing."""
+
+    def __init__(self):
+        self.respawn()
+
+    def respawn(self, avoid=()):
+        while True:
+            x = random.randint(0, GRID_COLS-1)
+            y = random.randint(0, GRID_ROWS-1)
+            if (x, y) not in avoid:
+                self.x, self.y = x, y
+                break
+
+    def draw(self, surface):
+        pygame.draw.rect(surface, RED,
+            (self.x * CELL_SIZE, self.y * CELL_SIZE, CELL_SIZE-1, CELL_SIZE-1))
+
+
+class Game:
+    """Top-level controller — owns the snake, food, score, and game loop."""
+
+    def __init__(self):
+        self.snake = Snake()
+        self.food  = Food()
+        self.score = 0
+        self.running = True
+
+    def update(self):
+        self.snake.move()
+        if self.snake.body[0] == (self.food.x, self.food.y):
+            self.score += 1
+            self.food.respawn(avoid=self.snake.body)
+        else:
+            self.snake.body.pop()
+        if self.snake.check_self_collision():
+            self.running = False
+
+    def draw(self, surface):
+        surface.fill(BG)
+        self.snake.draw(surface)
+        self.food.draw(surface)
+        pygame.display.flip()</code></pre>
+    </div>
+
+    <h3>Key concept explanations</h3>
+    <ul>
+      <li><strong><code>class</code></strong>: defines a blueprint for creating objects. Each object is an <strong>instance</strong> of the class.</li>
+      <li><strong><code>__init__</code></strong>: runs automatically when an object is created (<code>snake = Snake()</code>). Initialises the instance&#39;s attributes.</li>
+      <li><strong><code>self</code></strong>: a reference to the specific instance being operated on. <code>self.body</code> = this snake&#39;s body, not any other snake&#39;s.</li>
+      <li><strong>Methods</strong>: functions defined inside a class, always taking <code>self</code> as the first parameter.</li>
+      <li><strong>Dot notation</strong>: <code>snake.move()</code>, <code>food.respawn()</code> &mdash; access attributes and methods through the object.</li>
+      <li><strong>Encapsulation</strong>: each class owns its own data and the methods that operate on it. <code>Food.respawn()</code> knows where to put food; the Game doesn&#39;t need to know how.</li>
+    </ul>
+  </div>
+
+  <!-- ── SECTION 3 · Activity Answers ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#128290;</span> Activity Answers</h2>
+
+    <h3>Tier 1 &mdash; Check Understanding</h3>
+    <table class="t-table">
+      <thead><tr><th>Question</th><th>Accepted answer</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>What is the difference between a class and an object?</td>
+          <td>A class is a blueprint (the definition); an object is an instance (a specific thing created from the blueprint).</td>
+        </tr>
+        <tr>
+          <td>What does <code>__init__</code> do?</td>
+          <td>It&#39;s the initialiser &mdash; runs automatically when a new object is created, setting up the object&#39;s initial state.</td>
+        </tr>
+        <tr>
+          <td>Why does every method take <code>self</code> as the first parameter?</td>
+          <td><code>self</code> refers to the specific instance being operated on, so the method knows which object&#39;s data to use.</td>
+        </tr>
+        <tr>
+          <td>What does dot notation (<code>snake.move()</code>) do?</td>
+          <td>Calls the <code>move</code> method on the <code>snake</code> object &mdash; <code>self</code> inside <code>move</code> refers to that snake instance.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Tier 2 &mdash; Fix the Bug</h3>
+    <p><strong>Bug:</strong> <code>def turn(dx, dy):</code> &mdash; missing <code>self</code> parameter.</p>
+    <p><strong>Error:</strong> <code>TypeError: turn() takes 2 positional arguments but 3 were given</code> (Python automatically passes <code>self</code> as the first arg)</p>
+    <p><strong>Fix:</strong> <code>def turn(self, dx, dy):</code></p>
+
+    <h3>Tier 3 &mdash; Extend: Add a <code>speed</code> attribute to <code>Snake</code></h3>
+    <div class="codebox">
+      <button class="copybtn" type="button">Copy</button>
+      <pre><code># In Snake.__init__:
+self.speed = 8   # initial FPS
+
+# In Game.update, after eating food:
+self.snake.speed = min(20, self.snake.speed + 0.5)
+
+# In main loop:
+clock.tick(int(game.snake.speed))</code></pre>
+    </div>
+
+    <h3>Tier 4 &mdash; New Task: Add a <code>reset()</code> method to <code>Game</code></h3>
+    <div class="codebox">
+      <button class="copybtn" type="button">Copy</button>
+      <pre><code>def reset(self):
+    self.snake = Snake()
+    self.food = Food()
+    self.score = 0
+    self.running = True
+
+# After game over, press R to restart:
+if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+    game.reset()</code></pre>
+    </div>
+
+    <h3>Reflective Journal &mdash; Suggested Strong Answers</h3>
+    <table class="t-table">
+      <thead><tr><th>Prompt</th><th>Key ideas a strong answer contains</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>1. What is encapsulation?</td>
+          <td>Bundling data (attributes) and the methods that operate on it inside a class. Other parts of the program interact through a defined interface, not raw data.</td>
+        </tr>
+        <tr>
+          <td>2. Why is OOP useful?</td>
+          <td>Organises complex programs; each class has one job; easy to add features without breaking other parts; real-world concepts map to objects.</td>
+        </tr>
+        <tr>
+          <td>3. What is inheritance? (preview)</td>
+          <td>A class can inherit attributes and methods from a parent class. E.g., <code>BonusFood(Food)</code> would be a Food with extra behaviour.</td>
+        </tr>
+        <tr>
+          <td>4. When is OOP overkill?</td>
+          <td>For small scripts with one function &mdash; a class adds overhead. OOP pays off when a program has multiple interacting entities with their own state.</td>
+        </tr>
+        <tr>
+          <td>5. Explain <code>self</code> to a classmate</td>
+          <td>"When you call <code>snake.move()</code>, Python automatically passes <code>snake</code> as <code>self</code>. It&#39;s like saying &#39;move YOURSELF&#39; &mdash; each snake knows which body is its own."</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── SECTION 4 · Mistakes ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#9888;&#65039;</span> Mistakes Students Actually Make</h2>
+    <table class="t-table">
+      <thead>
+        <tr>
+          <th>What they did</th>
+          <th>What they see</th>
+          <th>What to say</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Missing <code>self</code> in <code>__init__</code> parameters</td>
+          <td><code>TypeError: __init__() takes 0 positional arguments but 1 was given</code></td>
+          <td>"Python automatically passes the new object as the first argument. <code>__init__</code> must accept <code>self</code>."</td>
+        </tr>
+        <tr>
+          <td><code>body = [...]</code> (without <code>self.</code>)</td>
+          <td><code>NameError: name &#39;body&#39; is not defined</code> when method accesses it</td>
+          <td>"Without <code>self.</code>, <code>body</code> is a local variable that disappears when <code>__init__</code> finishes. Use <code>self.body</code>."</td>
+        </tr>
+        <tr>
+          <td>Calling <code>Snake.move()</code> instead of <code>snake.move()</code></td>
+          <td><code>TypeError: move() missing 1 required positional argument: &#39;self&#39;</code></td>
+          <td>"Call methods on an instance (lowercase): <code>snake.move()</code>. <code>Snake.move()</code> is a class-level call that needs the instance explicitly."</td>
+        </tr>
+        <tr>
+          <td>Putting game logic in <code>__init__</code></td>
+          <td>Game runs once on creation, then can&#39;t restart</td>
+          <td>"<code>__init__</code> sets up state. Put running logic in a separate <code>update()</code> or <code>run()</code> method."</td>
+        </tr>
+        <tr>
+          <td>Accessing <code>snake.body</code> from <code>Game</code> directly</td>
+          <td>Works but breaks encapsulation</td>
+          <td>"It works, but it&#39;s better to call <code>snake.move()</code> and let Snake manage its own body. This is the principle of encapsulation."</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── SECTION 5 · Teaching Notes ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#128483;&#65039;</span> Teaching &amp; Facilitation Notes</h2>
+
+    <h3>Opening hook &mdash; Blueprint analogy</h3>
+    <p>"A class is like an architectural blueprint. The blueprint for a house describes rooms, windows, doors. Each actual house built from the blueprint is an object &mdash; an instance. Different houses, same design."</p>
+    <p>Or: "A class is like a cookie cutter; objects are the cookies. Same shape, different dough."</p>
+
+    <h3>Scaffolding suggestion</h3>
+    <p>Have students read the finished class definitions before typing them. Ask: "What does this class know? What can it do? What does it NOT know or care about?" This is the encapsulation exercise.</p>
+
+    <h3>Key pedagogical moment &mdash; why refactor?</h3>
+    <p>The step-8 code is ~150 lines of procedural code. Ask students: "If you wanted to add a second snake for multiplayer, what would you need to change?" In procedural code: a lot. With <code>Snake</code> as a class: create <code>snake2 = Snake()</code>. This motivates OOP concretely.</p>
+
+    <h3>CT connection &mdash; Abstraction + Decomposition</h3>
+    <div class="callout">
+      <span class="callout-icon">&#128172;</span>
+      <p>Classes are the ultimate abstraction. The <code>Game</code> class doesn&#39;t know how <code>Snake.draw()</code> works &mdash; it just calls it. Decomposition: each class has a single responsibility.</p>
+    </div>
+
+    <h3>Pacing</h3>
+    <p>This is the longest step. Consider splitting it across two sessions if time is tight. First session: understand and trace the class structure. Second session: type and run the refactored code.</p>
+  </div>
+
+</div><!-- /page-body -->
+</div><!-- /tcontent -->
+
+<script>
+(function(){
+  var b = document.getElementById('gatebtn');
+  if(!b) return;
+  b.addEventListener('click', function(){
+    document.getElementById('gate').hidden = true;
+    document.getElementById('tcontent').hidden = false;
+  });
+})();
+</script>
+<script>
+document.querySelectorAll('.copybtn').forEach(function(b){
+  b.addEventListener('click', function(){
+    var t = b.parentElement.querySelector('code').textContent;
+    navigator.clipboard.writeText(t).then(function(){
+      b.textContent = 'Copied!';
+      b.classList.add('copied');
+      setTimeout(function(){ b.textContent = 'Copy'; b.classList.remove('copied'); }, 2000);
+    }).catch(function(){});
+  });
+});
+</script>
+
+
+  <!-- CONCEPT_CHECK_ADDED -->
+  <!-- ══ CONCEPT CHECK ANSWER KEY ══ -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#x1F9E0;</span> Concept Check &mdash; Answer Key (Step 9)</h2>
+    <p>These 5 questions appear in the activity page <strong>after Tier 4</strong> (post-calibration gate).
+    Pass mark is <strong>4&nbsp;of&nbsp;5&nbsp;(80%)</strong>. Students who fail may retry; the system records attempts and final score in Google Sheets.</p>
+    <table class="t-table">
+      <thead><tr><th style="width:65%">Question (displayed to student)</th><th>Correct Answer</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Q1: Replacing literal 30 with CELL_SIZE = 30 throughout is better because:</td>
+          <td class="sev-low">&#10003; You only need to change one line to update all usages</td>
+        </tr>
+        <tr>
+          <td>Q2: What does a # TODO: add sound comment indicate?</td>
+          <td class="sev-low">&#10003; A note marking work planned for the future</td>
+        </tr>
+        <tr>
+          <td>Q3: Moving snake-drawing code into draw_snake() is an example of:</td>
+          <td class="sev-low">&#10003; Refactoring — isolating responsibility into a dedicated function</td>
+        </tr>
+        <tr>
+          <td>Q4: A helper function grid_to_pixel(col, row) is useful because:</td>
+          <td class="sev-low">&#10003; It converts coordinates in one place and can be called anywhere</td>
+        </tr>
+        <tr>
+          <td>Q5: Which of these is NOT a benefit of using named constants?</td>
+          <td class="sev-low">&#10003; Slightly faster execution</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:14px">
+      <span class="callout-icon">&#x1F4CA;</span>
+      <p><strong>Recorded in Google Sheet (Act_9 tab):</strong>
+      <code>concept_q1</code>&ndash;<code>concept_q5</code> (student&rsquo;s 0-based answer index),
+      <code>concept_score_pct</code>, <code>concept_passed</code> (1&nbsp;=&nbsp;pass, 0&nbsp;=&nbsp;fail),
+      <code>concept_attempts</code> (retry count).</p>
+    </div>
+  </div>
+
+  <!-- ══ GOOGLE SHEETS DATA STRUCTURE ══ -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#x1F4CA;</span> Google Sheets &mdash; Data Collected (Act_9)</h2>
+    <p>Every submission to this step writes one row to the <strong>Act_9</strong> tab in the research spreadsheet. All 13 tabs (Student_Reg, Pre_Test, Post_Test, Act_1&ndash;Act_10) share the same student identity columns.</p>
+    <table class="t-table" style="font-size:13px">
+      <thead><tr><th style="width:36%">Column</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">STUDENT IDENTITY (10 fields)</td></tr>
+        <tr><td><code>matric</code></td><td>Matric / student ID</td></tr>
+        <tr><td><code>name</code></td><td>Full name</td></tr>
+        <tr><td><code>gender</code></td><td>Gender (Female / Male / Other)</td></tr>
+        <tr><td><code>age</code></td><td>Age in years</td></tr>
+        <tr><td><code>mykid</code></td><td>MyKid / IC number</td></tr>
+        <tr><td><code>home_state</code></td><td>Home state in Malaysia</td></tr>
+        <tr><td><code>class</code></td><td>Class or cohort code</td></tr>
+        <tr><td><code>school_code</code></td><td>School or programme code</td></tr>
+        <tr><td><code>phone</code></td><td>Phone number</td></tr>
+        <tr><td><code>email</code></td><td>Email address</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">SUBMISSION</td></tr>
+        <tr><td><code>step</code></td><td>Step number (9)</td></tr>
+        <tr><td><code>submitted_iso</code></td><td>KL timestamp (UTC+8, ISO&nbsp;8601)</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">PRE-CALIBRATION</td></tr>
+        <tr><td><code>cal_confidence</code></td><td>Self-confidence before activity (1&ndash;5 scale)</td></tr>
+        <tr><td><code>cal_predicted</code></td><td>Predicted score before activity (%)</td></tr>
+        <tr><td><code>cal_reflection</code></td><td>Free-text: what will be hard?</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">ACTIVITY TIERS</td></tr>
+        <tr><td><code>t1_score_pct</code></td><td>Tier&nbsp;1 Fill-in-Blanks score (%)</td></tr>
+        <tr><td><code>t2_attempts</code></td><td>Tier&nbsp;2 Debug — number of attempts</td></tr>
+        <tr><td><code>refl2_text</code></td><td>Tier&nbsp;2 reflection free text</td></tr>
+        <tr><td><code>t3_attempts</code></td><td>Tier&nbsp;3 Complete-Code attempts</td></tr>
+        <tr><td><code>t4_attempts</code></td><td>Tier&nbsp;4 New Task attempts</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">CONCEPT CHECK</td></tr>
+        <tr><td><code>concept_q1</code>&ndash;<code>concept_q5</code></td><td>Student answer index (0-based) per question</td></tr>
+        <tr><td><code>concept_score_pct</code></td><td>Percentage correct (0&ndash;100)</td></tr>
+        <tr><td><code>concept_passed</code></td><td>1 = passed (&ge;80%), 0 = failed</td></tr>
+        <tr><td><code>concept_attempts</code></td><td>Total retries</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">REFLECTIVE JOURNAL</td></tr>
+        <tr><td><code>jr1</code>&ndash;<code>jr5</code></td><td>Journal prompts 1&ndash;5 free-text responses</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">POST-CALIBRATION</td></tr>
+        <tr><td><code>post_confidence</code></td><td>Confidence rating after activity (1&ndash;5)</td></tr>
+        <tr><td><code>post_actual</code></td><td>Self-reported actual score (%)</td></tr>
+        <tr><td><code>post_r1</code></td><td>Reflection: how accurate was the prediction?</td></tr>
+        <tr><td><code>post_r2</code></td><td>Reflection: what would you do differently?</td></tr>
+        <tr><td><code>calibration_index</code></td><td>post_actual &minus; cal_predicted (negative = overconfident)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+<footer>
+  <span>&copy; 2026 Nurul Hazlina Noordin · UMPSA STEM Lab Engineering Education Initiative</span>
+  <a href="https://www.umpsa.edu.my" target="_blank" rel="noopener" aria-label="UMPSA website">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+  </a>
+  <a href="mailto:hazlina@umpsa.edu.my" aria-label="Email facilitator">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+  </a>
+</footer>
+
+</body>
+</html>

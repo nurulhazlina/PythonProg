@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Facilitator Notes — Step 4 | Snake Tutorial</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+/* ── LIGHT-MODE TEACHER PAGE ── independent of style.css ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F0F4F8;
+  --surface:#FFFFFF;
+  --surface2:#F7FAFC;
+  --teal:#0A8F8A;
+  --teal-dark:#076862;
+  --teal-light:#E6F6F5;
+  --ink:#1A2332;
+  --body:#374151;
+  --muted:#6B7A8D;
+  --border:#D6E0EA;
+  --amber:#D97706;
+  --amber-bg:#FFFBEB;
+  --amber-border:#FCD34D;
+  --green-bg:#F0FDF4;
+  --green-border:#86EFAC;
+  --green-ink:#166534;
+  --red-bg:#FEF2F2;
+  --red-border:#FCA5A5;
+  --red-ink:#991B1B;
+  --code-bg:#F1F5F9;
+  --code-fg:#1E293B;
+  --radius:10px;
+  --shadow:0 1px 4px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.05);
+}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg);
+  color:var(--body);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  line-height:1.65;
+}
+
+/* ── NAV ── */
+.sitenav{
+  background:var(--teal-dark);
+  color:#fff;
+  padding:0 24px;
+  display:flex;
+  align-items:center;
+  gap:20px;
+  min-height:56px;
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+.sitenav .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;font-weight:700;font-size:15px}
+.sitenav .brand img{display:none}
+.sitenav a.nl{color:rgba(255,255,255,.8);text-decoration:none;font-size:14px;padding:4px 8px;border-radius:6px;transition:background .15s}
+.sitenav a.nl:hover{background:rgba(255,255,255,.15)}
+details.navsel{margin-left:auto;position:relative}
+details.navsel summary{
+  list-style:none;cursor:pointer;color:rgba(255,255,255,.9);
+  font-size:14px;font-weight:600;padding:6px 12px;
+  border-radius:6px;transition:background .15s;
+}
+details.navsel summary:hover{background:rgba(255,255,255,.15)}
+details.navsel summary::-webkit-details-marker{display:none}
+.navmenu{
+  position:absolute;right:0;top:calc(100% + 8px);
+  background:#fff;color:var(--ink);
+  border:1px solid var(--border);border-radius:var(--radius);
+  min-width:300px;box-shadow:var(--shadow);
+  overflow:hidden;z-index:200;
+}
+.navmenu a{
+  display:block;padding:10px 16px;font-size:13.5px;
+  text-decoration:none;color:var(--body);
+  border-bottom:1px solid var(--border);transition:background .12s;
+}
+.navmenu a:last-child{border-bottom:none}
+.navmenu a:hover{background:var(--teal-light)}
+.navmenu a[aria-current="page"]{background:var(--teal-light);color:var(--teal-dark);font-weight:700}
+
+/* ── GATE ── */
+.gate{
+  max-width:520px;margin:80px auto;padding:40px 36px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;box-shadow:var(--shadow);text-align:center;
+}
+.gate h2{font-size:24px;color:var(--ink);margin-bottom:12px}
+.gate p{color:var(--muted);margin-bottom:16px;font-size:15px}
+.gate a{color:var(--teal);text-decoration:none;font-size:14px}
+.gate a:hover{text-decoration:underline}
+.lock-icon{font-size:48px;margin-bottom:16px}
+
+/* ── HERO ── */
+.t-hero{
+  background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal) 100%);
+  color:#fff;padding:40px 24px 36px;
+}
+.t-hero .wrap{max-width:900px;margin:0 auto}
+.t-hero .eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.75;margin-bottom:8px}
+.t-hero h1{font-size:clamp(22px,4vw,32px);font-weight:800;line-height:1.2;margin-bottom:8px}
+.t-hero .meta{font-size:14px;opacity:.8;margin-bottom:20px}
+.t-cta-row{display:flex;flex-wrap:wrap;gap:10px}
+.t-cta-row a{
+  display:inline-block;padding:8px 18px;border-radius:8px;
+  font-size:13px;font-weight:600;text-decoration:none;
+  background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);
+  transition:background .15s;
+}
+.t-cta-row a:hover{background:rgba(255,255,255,.28)}
+
+/* ── LAYOUT ── */
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+.page-body{padding:36px 20px 60px;max-width:900px;margin:0 auto}
+
+/* ── BANNER ── */
+.tbanner{
+  background:var(--amber-bg);border:1px solid var(--amber-border);
+  color:#78350F;border-radius:8px;padding:12px 16px;
+  font-size:13.5px;margin-bottom:28px;
+}
+.tbanner b{color:#92400E}
+
+/* ── SECTIONS ── */
+.t-section{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:28px 28px;margin-bottom:24px;
+  box-shadow:var(--shadow);
+}
+.t-section h2{
+  font-size:18px;font-weight:700;color:var(--ink);
+  padding-bottom:10px;margin-bottom:16px;
+  border-bottom:2px solid var(--teal);display:flex;align-items:center;gap:8px;
+}
+.t-section h2 .sec-icon{font-size:20px}
+.t-section h3{font-size:15px;font-weight:700;color:var(--teal-dark);margin:16px 0 8px}
+.t-section p{margin-bottom:10px;font-size:15px}
+.t-section ul{padding-left:20px;margin-bottom:12px}
+.t-section li{margin-bottom:6px;font-size:15px}
+.t-section strong{color:var(--ink)}
+
+/* ── TABLES ── */
+.t-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+.t-table thead th{
+  background:var(--teal);color:#fff;padding:10px 14px;
+  text-align:left;font-weight:600;font-size:13px;letter-spacing:.02em;
+}
+.t-table thead th:first-child{border-radius:8px 0 0 0}
+.t-table thead th:last-child{border-radius:0 8px 0 0}
+.t-table tbody tr:nth-child(even){background:var(--surface2)}
+.t-table tbody td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+.t-table td code{font-size:12.5px;background:var(--bg);padding:1px 5px;border-radius:4px;color:var(--ink)}
+.sev-low{color:#065F46;font-weight:600}
+.sev-med{color:#92400E;font-weight:600}
+.sev-high{color:#991B1B;font-weight:600}
+
+/* ── CODE ── */
+.codebox{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:12px 0;position:relative}
+.codebox pre{padding:20px;overflow-x:auto}
+.codebox code{color:var(--code-fg);font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13.5px;line-height:1.6}
+.copybtn{
+  position:absolute;top:10px;right:10px;
+  background:var(--border);color:var(--ink);
+  border:none;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;
+  transition:background .15s;
+}
+.copybtn:hover{background:rgba(255,255,255,.22)}
+.copybtn.copied{background:rgba(134,239,172,.25);color:#86EFAC}
+code{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13px;background:var(--bg);padding:1px 5px;border-radius:4px;color:var(--ink)}
+
+/* ── DEMO CARDS ── */
+.demo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:12px}
+.demo-card{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;padding:18px;border-top:3px solid var(--teal);
+}
+.demo-card .demo-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--teal);margin-bottom:6px}
+.demo-card h3{font-size:15px;font-weight:700;color:var(--ink);margin:0 0 8px}
+.demo-card p{font-size:13.5px;color:var(--body);margin:0 0 10px}
+.demo-card .demo-tip{
+  font-size:12.5px;color:var(--muted);padding:8px 10px;
+  background:var(--teal-light);border-radius:6px;
+  border-left:3px solid var(--teal);
+}
+.demo-card .demo-tip strong{color:var(--teal-dark)}
+
+/* ── ANSWER CARD ── */
+.answer-card{
+  background:var(--green-bg);border:1px solid var(--green-border);
+  border-radius:8px;padding:14px 18px;margin:12px 0;
+}
+.answer-card .answer-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--green-ink);margin-bottom:4px}
+
+/* ── CALLOUT ── */
+.callout{
+  display:flex;gap:12px;padding:14px 16px;border-radius:8px;
+  border:1px solid var(--border);background:var(--surface2);margin:12px 0;
+  font-size:14px;align-items:flex-start;
+}
+.callout-icon{font-size:22px;flex-shrink:0;line-height:1.2}
+.callout p{margin:0}
+
+/* ── STEM BRAND BAR ── */
+.stem-brand-bar{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  width:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+.stem-brand-bar .sb{
+  display:flex;align-items:center;justify-content:center;
+  padding:6px 8px;font-size:12px;font-weight:800;
+  letter-spacing:.12em;color:#fff;text-transform:uppercase;
+}
+.sb-see{background:#2E5FAF}
+.sb-think{background:#B82828}
+.sb-explore{background:#D99A10}
+.sb-marvel{background:#1FA898}
+
+/* ── FOOTER ── */
+footer{
+  background:#1C5C54;color:rgba(255,255,255,.78);
+  text-align:center;padding:20px 20px;font-size:13px;margin-top:40px;
+  display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+}
+footer a{color:rgba(255,255,255,.85);text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+footer a:hover{color:#fff}
+
+/* ── BUTTON ── */
+.cta-btn{
+  display:inline-block;padding:12px 28px;border-radius:9px;
+  font-size:15px;font-weight:700;border:none;cursor:pointer;
+  background:var(--teal);color:#fff;
+  box-shadow:0 4px 14px rgba(10,143,138,.3);
+  transition:background .15s,transform .1s;
+}
+.cta-btn:hover{background:var(--teal-dark);transform:translateY(-1px)}
+.cta-btn:active{transform:translateY(0)}
+
+/* ── HOTSPOT BANNER ── */
+.hotspot-banner{
+  background:#FEF3C7;border:2px solid #F59E0B;
+  color:#78350F;border-radius:10px;padding:16px 20px;
+  font-size:14px;margin-bottom:0;
+}
+.hotspot-banner strong{color:#92400E}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .t-section{padding:20px 16px}
+  .t-hero{padding:28px 16px 24px}
+  .t-cta-row a{font-size:12px;padding:6px 12px}
+  .demo-grid{grid-template-columns:1fr}
+  .t-table{font-size:13px}
+  .sitenav{padding:0 14px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── STEM BRAND BAR ── -->
+<div class="stem-brand-bar" aria-label="UMPSA STEM Lab">
+  <div class="sb sb-see">SEE</div>
+  <div class="sb sb-think">THINK</div>
+  <div class="sb sb-explore">EXPLORE</div>
+  <div class="sb sb-marvel">MARVEL</div>
+</div>
+
+<!-- ── NAV ── -->
+<nav class="sitenav">
+  <a class="brand" href="index.html">
+    <img src="stemlogo.png" alt="UMPSA STEM LAB">
+    <span>UMPSA STEM Lab Python Module</span>
+  </a>
+  <a class="nl" href="index.html">Home</a>
+  <details class="navsel">
+    <summary>Facilitator Notes ▾</summary>
+    <div class="navmenu">
+      <a href="teacher-1.html"><b>Step 1</b>: Variables, Tuples &amp; Constants</a>
+      <a href="teacher-2.html"><b>Step 2</b>: While Loop &amp; Event Handling</a>
+      <a href="teacher-3.html"><b>Step 3</b>: Conditionals — Direction Control</a>
+      <a href="teacher-4.html" aria-current="page"><b>Step 4</b>: Lists — The Snake Body</a>
+      <a href="teacher-5.html"><b>Step 5</b>: for Loops &amp; Bonus Foods</a>
+      <a href="teacher-6.html"><b>Step 6</b>: Functions &amp; DRY Principle</a>
+      <a href="teacher-7.html"><b>Step 7</b>: Modulo, Wrap-Around &amp; Dictionaries</a>
+      <a href="teacher-8.html"><b>Step 8</b>: File I/O, try/except &amp; Leaderboard</a>
+      <a href="teacher-9.html"><b>Step 9</b>: OOP &amp; Classes</a>
+      <a href="teacher-10.html"><b>Step 10</b>: ML Extension &amp; Final Presentation</a>
+    </div>
+  </details>
+</nav>
+
+<!-- ── GATE ── -->
+<div class="gate" id="gate">
+  <div class="lock-icon">🔒</div>
+  <h2>Facilitator Notes</h2>
+  <p>This page contains exercise answers and teaching guidance for<br>
+  <strong>Step 4 — Snake Body</strong>.<br>
+  Not linked from the student pages.</p>
+  <p style="margin-bottom:24px"><strong>Students: please go back and try the activities first.</strong></p>
+  <button class="cta-btn" id="gatebtn" type="button">I'm a facilitator — show the notes</button>
+  <p style="margin-top:20px"><a href="step-4.html">← Back to student page</a></p>
+</div>
+
+<!-- ── MAIN CONTENT ── -->
+<div id="tcontent" hidden>
+
+<div class="t-hero">
+  <div class="wrap">
+    <p class="eyebrow">STEP 4 OF 10 · FACILITATOR NOTES</p>
+    <h1>Snake Body ⭐</h1>
+    <p class="meta">Core concepts: lists · append/pop · wall collision · self-collision · random food · ★ Metacognitive Hotspot</p>
+    <div class="t-cta-row">
+      <a href="teacher-3.html">← Step 3</a>
+      <a href="step-4.html">Student Page</a>
+      <a href="teacher-5.html">Step 5 →</a>
+      <a href="teacher-index.html">📚 All facilitator notes</a>
+    </div>
+  </div>
+</div>
+
+<div class="page-body">
+
+  <div class="tbanner hotspot-banner">
+    ⭐ <strong>Metacognitive Hotspot</strong> — This is the most cognitively demanding step. Students often feel overwhelmed. Normalise struggle: <em>"if this feels hard, you are learning."</em> Allow extra time and pair/share.
+  </div>
+  <div style="margin-bottom:28px"></div>
+
+  <!-- ── SECTION 1 · Learning Objectives ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">🎯</span> Learning Objectives</h2>
+    <p>What students will be able to do after Step 4:</p>
+    <ul>
+      <li>Represent the snake as a Python list of (x, y) tuples</li>
+      <li>Use <code>list.insert(0, ...)</code> and <code>list.pop()</code> to move without growing</li>
+      <li>Use <code>list.append()</code> when the snake eats food (grow)</li>
+      <li>Detect wall collision (head off-screen) and self-collision (head in body)</li>
+      <li>Place food randomly using <code>random.randint()</code></li>
+    </ul>
+  </div>
+
+  <!-- ── SECTION 2 · The Big Idea ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">💡</span> The Big Idea — Annotated Code</h2>
+
+    <div class="codebox">
+      <button class="copybtn" type="button">Copy</button>
+      <pre><code>import random
+
+# Snake = list of (col, row) tuples, head first
+snake = [(10, 7), (9, 7), (8, 7)]   # starting body, 3 cells
+
+# Food position
+food_x = random.randint(0, GRID_COLS - 1)
+food_y = random.randint(0, GRID_ROWS - 1)
+
+# --- Move the snake (update step) ---
+new_head = (snake[0][0] + dx, snake[0][1] + dy)  # compute new head
+snake.insert(0, new_head)       # add new head at front
+
+if new_head == (food_x, food_y):  # ate food → grow
+    food_x = random.randint(0, GRID_COLS - 1)
+    food_y = random.randint(0, GRID_ROWS - 1)
+else:
+    snake.pop()                   # no food → remove tail (length stays same)
+
+# --- Collision detection ---
+hx, hy = snake[0]
+
+# Wall collision
+if hx < 0 or hx >= GRID_COLS or hy < 0 or hy >= GRID_ROWS:
+    running = False
+
+# Self collision — is head in the rest of the body?
+if snake[0] in snake[1:]:
+    running = False</code></pre>
+    </div>
+
+    <h3>List as a queue</h3>
+    <p><code>insert(0, head)</code> pushes a new head to the front; <code>pop()</code> removes the tail. The list always represents the full body, newest segment first. This is the "train" model: new engine added at front, last carriage uncoupled at back.</p>
+
+    <h3>Grow = skip the pop</h3>
+    <p>When food is eaten, we insert the new head but do NOT pop the tail. The list grows by 1 element. The tail stays attached — like the train picking up a new carriage.</p>
+
+    <h3><code>snake[1:]</code> — slice without the head</h3>
+    <p>A slice from index 1 to end — the body without the head. Checking <code>snake[0] in snake[1:]</code> asks "is the head position anywhere in the body?" Using <code>snake[0] in snake</code> (without the slice) would always be True and the game would end immediately.</p>
+
+    <h3><code>random.randint(a, b)</code></h3>
+    <p>Returns a random integer between a and b <strong>inclusive</strong>. So <code>randint(0, GRID_COLS-1)</code> gives a valid column index from 0 to 19 for a 20-column grid.</p>
+  </div>
+
+  <!-- ── SECTION 3 · Activity Answers ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">🔢</span> Activity Answers — <a href="step-4-activity.html" style="font-size:14px;font-weight:400;color:var(--teal)">step-4-activity.html</a></h2>
+
+    <h3>Tier 1 — Check Understanding</h3>
+    <table class="t-table">
+      <thead><tr><th>Question</th><th>Accepted answer</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>1. Why is the snake stored as a list?</td>
+          <td>A list can grow (append) and shrink (pop) as the snake eats food and moves. A single variable can't represent a multi-segment body.</td>
+        </tr>
+        <tr>
+          <td>2. What does <code>snake.insert(0, new_head)</code> do?</td>
+          <td>Adds the new head position to the front (index 0) of the list, shifting all other segments back by one index.</td>
+        </tr>
+        <tr>
+          <td>3. Why don't we <code>pop()</code> when the snake eats food?</td>
+          <td>We want the snake to grow — keeping the tail means the body is one cell longer after eating.</td>
+        </tr>
+        <tr>
+          <td>4. What does <code>snake[0] in snake[1:]</code> check?</td>
+          <td>Whether the head's position appears anywhere in the rest of the body (self-collision check).</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Tier 2 — Fix the Bug</h3>
+    <div class="answer-card">
+      <div class="answer-label">Bug</div>
+      <p style="margin:0;font-size:14px"><code>snake.pop(0)</code> instead of <code>snake.pop()</code> — pops from the front (removes the head!) instead of the tail.</p>
+    </div>
+    <p><strong>Effect:</strong> Snake shrinks from the front — it appears to "reverse eat" itself and disappears.</p>
+    <p><strong>Fix:</strong> <code>snake.pop()</code> with no argument removes the last element (the tail).</p>
+
+    <h3>Tier 3 — Extend: Show score on window title</h3>
+    <div class="codebox">
+      <button class="copybtn" type="button">Copy</button>
+      <pre><code>score = len(snake) - 3   # initial length is 3
+pygame.display.set_caption(f"Snake — Score: {score}")</code></pre>
+    </div>
+
+    <h3>Tier 4 — New Task: Food never spawns on the snake</h3>
+    <div class="codebox">
+      <button class="copybtn" type="button">Copy</button>
+      <pre><code>def spawn_food(snake):
+    while True:
+        fx = random.randint(0, GRID_COLS - 1)
+        fy = random.randint(0, GRID_ROWS - 1)
+        if (fx, fy) not in snake:
+            return fx, fy
+
+food_x, food_y = spawn_food(snake)
+# After eating:
+food_x, food_y = spawn_food(snake)</code></pre>
+    </div>
+
+    <h3>Reflective Journal — Suggested Answers</h3>
+    <table class="t-table">
+      <thead><tr><th style="width:32%">Prompt</th><th>Key ideas a strong answer contains</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>1. Most confusing part?</td>
+          <td>Usually the insert/pop pattern. Key explanation: the list represents a "train" — a new carriage at the front, one removed at the back = same length.</td>
+        </tr>
+        <tr>
+          <td>2. What is a list in Python?</td>
+          <td>An ordered, mutable collection of items. Items can be added, removed, and accessed by index.</td>
+        </tr>
+        <tr>
+          <td>3. Why use a tuple for each body segment?</td>
+          <td><code>(x, y)</code> is a fixed pair — it shouldn't change. A tuple signals immutability. Also makes the <code>in</code> check work correctly by value comparison.</td>
+        </tr>
+        <tr>
+          <td>4. What is a slice?</td>
+          <td><code>snake[1:]</code> is a slice — a copy of the list from index 1 to the end. It doesn't modify the original list.</td>
+        </tr>
+        <tr>
+          <td>5. Explain to a classmate?</td>
+          <td>Should cover: snake is a list; every frame, add new head to front, remove tail from back (unless ate food); check if head is off-screen or touching body.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── SECTION 4 · Mistakes ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">⚠️</span> Mistakes Students Actually Make</h2>
+    <table class="t-table">
+      <thead>
+        <tr>
+          <th>What they did</th>
+          <th>What they see</th>
+          <th>What to say</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>snake.pop(0)</code> instead of <code>snake.pop()</code></td>
+          <td>Snake shrinks from front, disappears quickly</td>
+          <td>"<code>pop(0)</code> removes the first element — that's the head. <code>pop()</code> with no argument removes the last — the tail."</td>
+        </tr>
+        <tr>
+          <td><code>snake[0] in snake</code> (no slice)</td>
+          <td>Game ends the moment it starts — head is always in the list</td>
+          <td>"The head is part of the snake too! Use <code>snake[1:]</code> to check only the body, not the head itself."</td>
+        </tr>
+        <tr>
+          <td><code>random.randint(0, GRID_COLS)</code> (off by one)</td>
+          <td>Food can appear one column off-screen</td>
+          <td>"<code>randint(a, b)</code> includes b. Grid columns are 0 to GRID_COLS-1, so use <code>randint(0, GRID_COLS - 1)</code>."</td>
+        </tr>
+        <tr>
+          <td><code>new_head = (snake[0] + dx, ...)</code></td>
+          <td><code>TypeError: can only concatenate tuple (not "int") to tuple</code></td>
+          <td>"<code>snake[0]</code> is a tuple <code>(x, y)</code>. Access x with <code>snake[0][0]</code> and y with <code>snake[0][1]</code>."</td>
+        </tr>
+        <tr>
+          <td>Insert AFTER pop</td>
+          <td>Snake jumps one cell — tail removed before new head added</td>
+          <td>"The order matters: insert new head first, then conditionally pop the tail."</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── SECTION 5 · Metacognitive Hotspot ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">⭐</span> Metacognitive Hotspot — Teaching Notes</h2>
+
+    <h3>Why this step is hard</h3>
+    <p>Step 4 introduces THREE new concepts simultaneously (lists, random, collision detection) and combines them with Step 3's movement. Students are holding more state in their heads than before. This is the cognitive load peak of the tutorial.</p>
+
+    <h3>Normalising struggle</h3>
+    <div class="callout">
+      <span class="callout-icon">💬</span>
+      <p>"If this step feels harder than the others — it is. You are working with a more complex data structure. Confusion here is evidence of learning, not failure."</p>
+    </div>
+
+    <h3>The "train" mental model</h3>
+    <p>A snake body is like a train. Each frame: a new engine is added to the front, and the last carriage is uncoupled from the back. When the train picks up a passenger (food), the last carriage stays on — the train grows by one.</p>
+
+    <h3>Collaborative strategy</h3>
+    <p>Consider asking students to <strong>trace through the list state on paper</strong> for 3–4 frames before writing code. Draw the list as boxes with (x, y) values. This externalises the mental model and surfaces the insert/pop pattern concretely.</p>
+
+    <h3>CT connection — Data structures as design</h3>
+    <div class="callout">
+      <span class="callout-icon">💬</span>
+      <p>Ask: "Why not store the snake as 50 separate variables like <code>snake1_x</code>, <code>snake1_y</code>, <code>snake2_x</code>...?" This surfaces abstraction and the power of lists — a single structure that scales to any length.</p>
+    </div>
+
+    <h3>Checkpoint before Step 5</h3>
+    <p>Every student should have a working game where the snake grows on food and the game ends on wall/self collision. Do a quick visual check before allowing anyone to advance. This is a natural assessment point.</p>
+  </div>
+
+</div><!-- /page-body -->
+</div><!-- /tcontent -->
+
+<!-- ── SCRIPTS ── -->
+<script>
+(function(){
+  var b = document.getElementById('gatebtn');
+  if(!b) return;
+  b.addEventListener('click', function(){
+    document.getElementById('gate').hidden = true;
+    document.getElementById('tcontent').hidden = false;
+  });
+})();
+</script>
+<script>
+document.querySelectorAll('.copybtn').forEach(function(b){
+  b.addEventListener('click', function(){
+    var t = b.parentElement.querySelector('code').textContent;
+    navigator.clipboard.writeText(t).then(function(){
+      b.textContent = 'Copied!';
+      b.classList.add('copied');
+      setTimeout(function(){ b.textContent = 'Copy'; b.classList.remove('copied'); }, 2000);
+    }).catch(function(){
+      /* fallback — silently ignore */
+    });
+  });
+});
+</script>
+
+
+  <!-- CONCEPT_CHECK_ADDED -->
+  <!-- ══ CONCEPT CHECK ANSWER KEY ══ -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#x1F9E0;</span> Concept Check &mdash; Answer Key (Step 4)</h2>
+    <p>These 5 questions appear in the activity page <strong>after Tier 4</strong> (post-calibration gate).
+    Pass mark is <strong>4&nbsp;of&nbsp;5&nbsp;(80%)</strong>. Students who fail may retry; the system records attempts and final score in Google Sheets.</p>
+    <table class="t-table">
+      <thead><tr><th style="width:65%">Question (displayed to student)</th><th>Correct Answer</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Q1: food_x = random.randint(0, GRID_W-1) * CELL_SIZE — Why multiply by CELL_SIZE?</td>
+          <td class="sev-low">&#10003; To snap food positions to the grid</td>
+        </tr>
+        <tr>
+          <td>Q2: What event triggers spawning a new food position?</td>
+          <td class="sev-low">&#10003; The snake head position equalling the food position</td>
+        </tr>
+        <tr>
+          <td>Q3: Self-collision means:</td>
+          <td class="sev-low">&#10003; The snake's head touches one of its own body segments</td>
+        </tr>
+        <tr>
+          <td>Q4: pygame.draw.rect(win, GREEN, [x, y, w, h]) draws:</td>
+          <td class="sev-low">&#10003; A filled rectangle</td>
+        </tr>
+        <tr>
+          <td>Q5: Which stores a food position correctly as grid coordinates?</td>
+          <td class="sev-low">&#10003; food = (rand_col, rand_row)</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:14px">
+      <span class="callout-icon">&#x1F4CA;</span>
+      <p><strong>Recorded in Google Sheet (Act_4 tab):</strong>
+      <code>concept_q1</code>&ndash;<code>concept_q5</code> (student&rsquo;s 0-based answer index),
+      <code>concept_score_pct</code>, <code>concept_passed</code> (1&nbsp;=&nbsp;pass, 0&nbsp;=&nbsp;fail),
+      <code>concept_attempts</code> (retry count).</p>
+    </div>
+  </div>
+
+  <!-- ══ GOOGLE SHEETS DATA STRUCTURE ══ -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#x1F4CA;</span> Google Sheets &mdash; Data Collected (Act_4)</h2>
+    <p>Every submission to this step writes one row to the <strong>Act_4</strong> tab in the research spreadsheet. All 13 tabs (Student_Reg, Pre_Test, Post_Test, Act_1&ndash;Act_10) share the same student identity columns.</p>
+    <table class="t-table" style="font-size:13px">
+      <thead><tr><th style="width:36%">Column</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">STUDENT IDENTITY (10 fields)</td></tr>
+        <tr><td><code>matric</code></td><td>Matric / student ID</td></tr>
+        <tr><td><code>name</code></td><td>Full name</td></tr>
+        <tr><td><code>gender</code></td><td>Gender (Female / Male / Other)</td></tr>
+        <tr><td><code>age</code></td><td>Age in years</td></tr>
+        <tr><td><code>mykid</code></td><td>MyKid / IC number</td></tr>
+        <tr><td><code>home_state</code></td><td>Home state in Malaysia</td></tr>
+        <tr><td><code>class</code></td><td>Class or cohort code</td></tr>
+        <tr><td><code>school_code</code></td><td>School or programme code</td></tr>
+        <tr><td><code>phone</code></td><td>Phone number</td></tr>
+        <tr><td><code>email</code></td><td>Email address</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">SUBMISSION</td></tr>
+        <tr><td><code>step</code></td><td>Step number (4)</td></tr>
+        <tr><td><code>submitted_iso</code></td><td>KL timestamp (UTC+8, ISO&nbsp;8601)</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">PRE-CALIBRATION</td></tr>
+        <tr><td><code>cal_confidence</code></td><td>Self-confidence before activity (1&ndash;5 scale)</td></tr>
+        <tr><td><code>cal_predicted</code></td><td>Predicted score before activity (%)</td></tr>
+        <tr><td><code>cal_reflection</code></td><td>Free-text: what will be hard?</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">ACTIVITY TIERS</td></tr>
+        <tr><td><code>t1_score_pct</code></td><td>Tier&nbsp;1 Fill-in-Blanks score (%)</td></tr>
+        <tr><td><code>t2_attempts</code></td><td>Tier&nbsp;2 Debug — number of attempts</td></tr>
+        <tr><td><code>refl2_text</code></td><td>Tier&nbsp;2 reflection free text</td></tr>
+        <tr><td><code>t3_attempts</code></td><td>Tier&nbsp;3 Complete-Code attempts</td></tr>
+        <tr><td><code>t4_attempts</code></td><td>Tier&nbsp;4 New Task attempts</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">CONCEPT CHECK</td></tr>
+        <tr><td><code>concept_q1</code>&ndash;<code>concept_q5</code></td><td>Student answer index (0-based) per question</td></tr>
+        <tr><td><code>concept_score_pct</code></td><td>Percentage correct (0&ndash;100)</td></tr>
+        <tr><td><code>concept_passed</code></td><td>1 = passed (&ge;80%), 0 = failed</td></tr>
+        <tr><td><code>concept_attempts</code></td><td>Total retries</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">REFLECTIVE JOURNAL</td></tr>
+        <tr><td><code>jr1</code>&ndash;<code>jr5</code></td><td>Journal prompts 1&ndash;5 free-text responses</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">POST-CALIBRATION</td></tr>
+        <tr><td><code>post_confidence</code></td><td>Confidence rating after activity (1&ndash;5)</td></tr>
+        <tr><td><code>post_actual</code></td><td>Self-reported actual score (%)</td></tr>
+        <tr><td><code>post_r1</code></td><td>Reflection: how accurate was the prediction?</td></tr>
+        <tr><td><code>post_r2</code></td><td>Reflection: what would you do differently?</td></tr>
+        <tr><td><code>calibration_index</code></td><td>post_actual &minus; cal_predicted (negative = overconfident)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+<footer>
+  <span>© 2026 Nurul Hazlina Noordin · UMPSA STEM Lab Engineering Education Initiative</span>
+  <a href="https://www.umpsa.edu.my" target="_blank" rel="noopener" aria-label="UMPSA website">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+  </a>
+  <a href="mailto:hazlina@umpsa.edu.my" aria-label="Email facilitator">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+  </a>
+</footer>
+
+</body>
+</html>

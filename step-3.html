@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Step 3 — Direction &amp; Movement | Snake Game Tutorial</title>
+<link rel="stylesheet" href="style.css">
+<style>
+/* CT badges (reuse from step-2) */
+.ct-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(13,85,167,.1);
+  border:1px solid rgba(13,85,167,.3);border-radius:20px;padding:4px 12px;
+  font-size:12.5px;font-weight:700;color:var(--blue);letter-spacing:.04em;margin:3px 4px 3px 0}
+.ct-badge.teal{background:rgba(2,173,165,.1);border-color:rgba(2,173,165,.3);color:var(--teal-dark)}
+.ct-badge.orange{background:rgba(245,162,29,.12);border-color:rgba(245,162,29,.4);color:#8a5c00}
+.ct-badge.red{background:rgba(200,0,0,.08);border-color:rgba(200,0,0,.25);color:var(--red)}
+.ct-spot{background:rgba(13,85,167,.05);border-left:3px solid var(--blue);
+  border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0}
+.ct-spot h4{margin:0 0 6px;color:var(--blue);font-size:15px}
+.ct-spot p{margin:0;font-size:14.5px}
+.ct-spot.teal{background:rgba(2,173,165,.05);border-color:var(--teal)}
+.ct-spot.teal h4{color:var(--teal)}
+.ct-spot.orange{background:rgba(245,162,29,.05);border-color:#B87708}
+.ct-spot.orange h4{color:#B87708}
+.ct-spot.red{background:rgba(200,0,0,.04);border-color:var(--red)}
+.ct-spot.red h4{color:var(--red)}
+
+/* ── interactive snake controller ── */
+.snake-demo-wrap{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:start}
+@media(max-width:600px){.snake-demo-wrap{grid-template-columns:1fr}}
+#head-canvas{display:block;max-width:100%;border-radius:10px;cursor:default}
+.dpad{display:grid;grid-template-columns:repeat(3,52px);grid-template-rows:repeat(3,52px);
+  gap:5px;margin:0 auto}
+.dpad-btn{width:52px;height:52px;border-radius:10px;border:none;font-size:20px;
+  cursor:pointer;background:var(--card);border:2px solid var(--line);
+  display:flex;align-items:center;justify-content:center;transition:transform .1s,background .15s}
+.dpad-btn:hover{background:rgba(2,173,165,.15);border-color:var(--teal)}
+.dpad-btn:active{transform:scale(.93)}
+.dpad-btn.blocked{animation:flash-red .35s ease}
+@keyframes flash-red{0%,100%{background:var(--card)}50%{background:rgba(200,0,0,.25);border-color:var(--red)}}
+.dpad-btn[disabled]{opacity:.3;cursor:default}
+.head-info{margin-top:12px;background:var(--code-bg);border-radius:8px;
+  padding:10px 14px;font-family:monospace;font-size:13.5px;color:#E6EDF3;line-height:1.8}
+.head-info .hi{color:#79C0FF}.head-info .py{color:#A5D6FF}
+.head-info .gr{color:#56d364}.head-info .rd{color:#FF7B72}
+
+/* ── if/elif decision tree ── */
+.dectree{margin:16px 0;font-family:monospace}
+.dt-node{display:flex;align-items:flex-start;gap:10px;padding:7px 12px;border-radius:8px;
+  margin:4px 0;cursor:pointer;border:2px solid var(--line);transition:background .15s,border-color .15s}
+.dt-node:hover{border-color:var(--teal);background:rgba(2,173,165,.06)}
+.dt-node.active{border-color:var(--teal);background:rgba(2,173,165,.1)}
+.dt-node.matched{border-color:#56d364;background:rgba(86,211,100,.1)}
+.dt-node.skipped{border-color:rgba(255,255,255,.07);opacity:.45}
+.dt-kw{color:#FF7B72;font-weight:700;min-width:2.5em}
+.dt-cond{color:#79C0FF}
+.dt-arrow{color:var(--muted);margin:0 6px}
+.dt-action{color:#56d364}
+.dt-result{margin-top:8px;padding:8px 14px;border-radius:8px;font-size:14px;
+  background:rgba(86,211,100,.1);border:1px solid rgba(86,211,100,.3);color:#56d364;display:none}
+
+/* ── op table ── */
+.op-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid var(--line);flex-wrap:wrap}
+.op-row:first-of-type{border-top:none}
+.op-sym{font-family:monospace;font-size:16px;font-weight:700;color:var(--teal);min-width:3em}
+.op-name{font-size:14px;min-width:6em}
+.op-ex{font-family:monospace;font-size:13.5px;color:var(--muted)}
+.op-res{font-family:monospace;font-size:13.5px;padding:2px 8px;border-radius:5px;font-weight:700}
+.op-res.t{background:rgba(86,211,100,.15);color:#56d364}
+.op-res.f{background:rgba(255,123,114,.12);color:#FF7B72}
+
+/* ── direction/coordinate table ── */
+.dir-table{border-collapse:collapse;width:100%;margin:12px 0}
+.dir-table th,.dir-table td{padding:8px 12px;border:1px solid var(--line);font-size:14px}
+.dir-table th{background:rgba(2,173,165,.08);font-weight:700;text-align:left}
+.dir-table td:nth-child(3),.dir-table td:nth-child(4){font-family:monospace;text-align:center}
+.pos{color:#56d364;font-weight:700}.neg{color:#FF7B72;font-weight:700}
+
+/* ── guard visual ── */
+.guard-row{display:flex;gap:12px;margin:12px 0;flex-wrap:wrap}
+.guard-card{flex:1 1 180px;border-radius:10px;padding:12px 16px;text-align:center}
+.guard-card.ok{border:2px solid #56d364;background:rgba(86,211,100,.07)}
+.guard-card.bad{border:2px solid var(--red);background:rgba(200,0,0,.06)}
+.guard-card .icon{font-size:28px;margin-bottom:6px}
+.guard-card h4{margin:0 0 4px;font-size:14px}
+.guard-card p{margin:0;font-size:13px;color:var(--muted)}
+
+/* ── coord diagram ── */
+#coord-canvas{display:block;max-width:100%;border-radius:8px;cursor:pointer}
+.coord-info{margin-top:8px;background:var(--code-bg);border-radius:8px;
+  padding:9px 14px;font-family:monospace;font-size:13.5px;color:#E6EDF3}
+
+/* ── Common Mistakes ── */
+.mistake-grid{display:flex;flex-direction:column;gap:18px;margin:16px 0}
+.mistake-card{border-radius:12px;overflow:hidden;border:1.5px solid var(--line)}
+.mistake-hdr{padding:11px 16px;font-weight:700;font-size:14px}
+.mistake-hdr.err{background:rgba(200,0,0,.08);color:var(--red);border-bottom:1px solid rgba(200,0,0,.2)}
+.mistake-hdr.warn{background:rgba(245,162,29,.1);color:#8a5c00;border-bottom:1px solid rgba(245,162,29,.3)}
+.mistake-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.mistake-result{background:rgba(200,0,0,.06);border-left:3px solid var(--red);border-radius:0 8px 8px 0;
+  padding:10px 14px;font-size:13.5px;color:var(--ink)}
+pre.code.bad{border:1.5px solid rgba(200,0,0,.3)!important;margin:0!important}
+pre.code.good{border:1.5px solid rgba(86,211,100,.4)!important;margin:0!important}
+/* ── Quick Check ── */
+.qc-item{background:var(--card);border:1.5px solid var(--line);border-radius:12px;
+  padding:16px;margin-bottom:14px}
+.qc-q{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:12px;line-height:1.5}
+.qc-num{display:inline-flex;align-items:center;justify-content:center;
+  background:var(--teal);color:#fff;border-radius:50%;width:24px;height:24px;
+  font-size:13px;font-weight:800;margin-right:8px;flex-shrink:0;vertical-align:middle}
+.qc-opts{display:flex;flex-direction:column;gap:8px}
+.qc-btn{text-align:left;background:rgba(0,0,0,.04);border:1.5px solid var(--line);
+  border-radius:8px;padding:10px 14px;font-size:14px;cursor:pointer;
+  font-family:inherit;color:var(--ink);transition:border-color .15s,background .15s;line-height:1.5}
+.qc-btn:hover:not(:disabled){border-color:var(--teal);background:rgba(2,173,165,.05)}
+.qc-btn.qc-correct{background:rgba(86,211,100,.12);border-color:#56d364;color:#1a4a1e}
+.qc-btn.qc-wrong{background:rgba(200,0,0,.08);border-color:var(--red);color:#5a1010}
+.qc-feedback{margin-top:10px;font-size:14px;padding:10px 14px;border-radius:8px;display:none;line-height:1.5}
+.qc-feedback.qc-correct{background:rgba(86,211,100,.12);border:1px solid #56d364;color:#1a4a1e;display:block}
+.qc-feedback.qc-wrong{background:rgba(200,0,0,.08);border:1px solid var(--red);color:#5a1010;display:block}
+
+/* ── rect playground ── */
+.rect-playground{background:#0F1B22;border-radius:14px;padding:16px;margin:14px 0;display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.rect-controls{flex:1;min-width:200px}
+.rect-controls label{display:block;color:#A5D6FF;font:12px monospace;margin-top:10px}
+.rect-controls input[type=range]{width:100%;accent-color:#02ADA5}
+.rect-val{color:#F5A21D;font:700 12px monospace}
+.rect-canvas-wrap{flex:1;min-width:240px}
+#rect-canvas{display:block;border-radius:8px;background:#000;max-width:100%;image-rendering:pixelated}
+.rect-code-out{font:12px/1.6 monospace;color:#E6EDF3;background:rgba(255,255,255,.04);border-radius:8px;padding:10px;margin-top:10px;white-space:pre}
+.rect-code-out .kw{color:#FF7B72}.rect-code-out .cl{color:#D2A8FF}.rect-code-out .nb{color:#A5D6FF}.rect-code-out .val{color:#F5A21D}
+</style>
+</head>
+<body>
+<div class="chev" id="chev">
+  <span id="see-box">See</span><span>Think</span><span>Explore</span><span>Marvel</span>
+</div>
+<nav class="sitenav"><div class="wrap">
+  <a class="brand" href="index.html">Snake Game <span>Python Tutorial</span></a>
+  <details class="navsel">
+    <summary>Steps</summary>
+    <div class="navmenu" role="menu">
+      <a href="step-1.html"><b>Step 1</b>: Variables &amp; Setup</a>
+      <a href="step-2.html"><b>Step 2</b>: Loop &amp; Events</a>
+      <a href="step-3.html" aria-current="page"><b>Step 3</b>: Direction Control</a>
+      <a href="step-4.html"><b>Step 4</b>: Snake Body ⭐</a>
+      <a href="step-5.html"><b>Step 5</b>: Bonus Food 🌟</a>
+      <a href="step-6.html"><b>Step 6</b>: Functions</a>
+      <a href="step-7.html"><b>Step 7</b>: Wrap-Around ⭐</a>
+      <a href="step-8.html"><b>Step 8</b>: Save High Score</a>
+      <a href="step-9.html"><b>Step 9</b>: OOP Refactor</a>
+      <a href="step-10.html"><b>Step 10</b>: ML Extension</a>
+    </div>
+  </details>
+  <a class="nl" href="index.html">Home</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <p class="eyebrow">UMPSA STEM LAB · Step 3 of 10</p>
+  <h1>Step 3 — Direction &amp; Movement</h1>
+  <p class="sub">Map arrow keys to directions, guard against impossible reversals, and move the snake head one cell per frame — your first visible game action.</p>
+  <div class="pills">
+    <span class="pill">if / elif</span><span class="pill">Conditionals</span>
+    <span class="pill">Boolean AND</span><span class="pill">String</span><span class="pill">Coordinates</span>
+  </div>
+</div></header>
+
+<div class="progress-bar"><div class="progress-inner">
+  <div class="track"><i style="width:33%"></i></div>
+  <b>Step 3 / 10</b>
+</div></div>
+
+<div class="wrap">
+
+<!-- ══ SECTION 1 — intro ══ -->
+<section>
+  <h2>What you'll build in Step 3</h2>
+  <p class="lede">For the first time the player can <strong>control something on screen</strong>. A single dark-green square — the snake head — moves across the grid, changing direction when arrow keys are pressed.</p>
+  <div class="grid2">
+    <div class="mini"><h4>🎯 Learning goals</h4>
+      <p>Understand if/elif chains, the Boolean AND operator, how string values store state, and how (col, row) coordinates change with direction.</p></div>
+    <div class="mini"><h4>🐍 Snake game progress</h4>
+      <p>The <code>direction</code> variable and the <code>hx, hy</code> head position introduced here are used unchanged in every later step.</p></div>
+  </div>
+  <h3>CT skills this step</h3>
+  <div style="margin:8px 0">
+    <span class="ct-badge red">📋 Algorithm Design</span>
+    <span class="ct-badge">🔍 Evaluation / Logic</span>
+    <span class="ct-badge teal">🔄 Pattern Recognition</span>
+    <span class="ct-badge orange">💡 Abstraction</span>
+  </div>
+</section>
+
+<!-- ══ SECTION 2 — try the controller ══ -->
+<section>
+  <h2>Try It — Control the Snake Head</h2>
+  <p class="lede">Use the D-pad buttons (or arrow keys on your keyboard while focused here) to move the head around the grid. Watch how <code>hx</code>, <code>hy</code> and <code>direction</code> change — and notice what happens when you try to reverse direction.</p>
+
+  <div class="snake-demo-wrap">
+    <div>
+      <canvas id="head-canvas" width="400" height="300" tabindex="0"></canvas>
+      <div class="head-info" id="head-info">Loading…</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:14px">
+      <div class="dpad">
+        <div></div>
+        <button class="dpad-btn" id="btn-up"    title="Up">▲</button>
+        <div></div>
+        <button class="dpad-btn" id="btn-left"  title="Left">◀</button>
+        <div style="background:rgba(255,255,255,.05);border-radius:50%;width:52px;height:52px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted)">D-pad</div>
+        <button class="dpad-btn" id="btn-right" title="Right">▶</button>
+        <div></div>
+        <button class="dpad-btn" id="btn-down"  title="Down">▼</button>
+        <div></div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);text-align:center">
+        🔴 red flash = reverse blocked<br>by the direction guard
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SECTION 3 — variables: direction, hx, hy ══ -->
+<section>
+  <h2>New Variables: <code>direction</code>, <code>hx</code>, <code>hy</code></h2>
+  <p class="lede">Three variables carry the state of the moving head from one frame to the next.</p>
+
+  <div class="grid2">
+    <div class="mini">
+      <h4><code>direction = "RIGHT"</code></h4>
+      <p>A <strong>string</strong> storing one of four values: <code>"RIGHT"</code>, <code>"LEFT"</code>, <code>"UP"</code>, <code>"DOWN"</code>. It starts as "RIGHT" — the snake moves right at game start. Changed by the arrow-key event handler.</p>
+    </div>
+    <div class="mini">
+      <h4><code>hx, hy = 10, 7</code></h4>
+      <p><strong>Two integers</strong> assigned in one line (tuple unpacking). <code>hx</code> = head column, <code>hy</code> = head row. Starting at (10, 7) puts the head in the centre of the 20×15 grid.</p>
+    </div>
+  </div>
+
+  <h3>How direction maps to coordinate changes</h3>
+  <table class="dir-table">
+    <thead><tr><th>direction</th><th>Meaning</th><th>hx change</th><th>hy change</th><th>Why?</th></tr></thead>
+    <tbody>
+      <tr><td><code>"RIGHT"</code></td><td>Move →</td><td class="pos">+1</td><td>0</td><td>Column increases leftward</td></tr>
+      <tr><td><code>"LEFT"</code></td><td>Move ←</td><td class="neg">−1</td><td>0</td><td>Column decreases</td></tr>
+      <tr><td><code>"UP"</code></td><td>Move ↑</td><td>0</td><td class="neg">−1</td><td>y=0 is the TOP — up = row decreases</td></tr>
+      <tr><td><code>"DOWN"</code></td><td>Move ↓</td><td>0</td><td class="pos">+1</td><td>y increases downward</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cal note"><b>Remember: y is flipped!</b>
+  In Pygame (like most screens), the top-left is (0, 0) and y increases <em>downward</em>. Moving "UP" on screen means <em>subtracting</em> from <code>hy</code>. This trips up almost every beginner — don't worry if it feels backwards at first.</div>
+
+  <!-- coordinate move demo -->
+  <h3>See the coordinate change — click to move</h3>
+  <canvas id="coord-canvas" width="480" height="200" title="Click to advance"></canvas>
+  <div class="coord-info" id="coord-info">Click the canvas to step through a movement sequence.</div>
+</section>
+
+<!-- ══ SECTION 4 — if / elif ══ -->
+<section>
+  <h2>if / elif — Conditional Chains</h2>
+  <p class="lede">An <code>if/elif</code> chain checks conditions one by one from top to bottom. <strong>The first branch that is True runs; the rest are skipped entirely.</strong></p>
+
+  <div class="ct-spot red">
+    <h4>📋 Algorithm Design — decision making</h4>
+    <p>Conditionals are how algorithms make decisions. The if/elif chain here is a <em>decision tree</em>: given an arrow key, which direction should the snake go? This same logic structure appears in navigation apps, spam filters, and game AI.</p>
+  </div>
+
+  <h3>Decision tree — click an arrow key to trace it</h3>
+  <div style="display:flex;gap:8px;margin:10px 0;flex-wrap:wrap">
+    <button class="replay-btn" id="dt-up"    style="font-size:16px;padding:7px 16px">▲ Press UP</button>
+    <button class="replay-btn" id="dt-down"  style="font-size:16px;padding:7px 16px">▼ Press DOWN</button>
+    <button class="replay-btn" id="dt-left"  style="font-size:16px;padding:7px 16px">◀ Press LEFT</button>
+    <button class="replay-btn" id="dt-right" style="font-size:16px;padding:7px 16px">▶ Press RIGHT</button>
+    <button class="replay-btn" id="dt-reset" style="padding:7px 14px">↺ Reset</button>
+  </div>
+  <div class="dectree" id="dectree">
+    <div class="dt-node" id="dn0"><span class="dt-kw">if</span><span class="dt-cond">&nbsp;K_UP and direction != "DOWN"</span><span class="dt-arrow">→</span><span class="dt-action">direction = "UP"</span></div>
+    <div class="dt-node" id="dn1"><span class="dt-kw">elif</span><span class="dt-cond">&nbsp;K_DOWN and direction != "UP"</span><span class="dt-arrow">→</span><span class="dt-action">direction = "DOWN"</span></div>
+    <div class="dt-node" id="dn2"><span class="dt-kw">elif</span><span class="dt-cond">&nbsp;K_LEFT and direction != "RIGHT"</span><span class="dt-arrow">→</span><span class="dt-action">direction = "LEFT"</span></div>
+    <div class="dt-node" id="dn3"><span class="dt-kw">elif</span><span class="dt-cond">&nbsp;K_RIGHT and direction != "LEFT"</span><span class="dt-arrow">→</span><span class="dt-action">direction = "RIGHT"</span></div>
+  </div>
+  <div class="dt-result" id="dt-result"></div>
+</section>
+
+<!-- ══ SECTION 5 — boolean AND + != ══ -->
+<section>
+  <h2>Boolean Logic — <code>and</code> &amp; <code>!=</code></h2>
+  <p class="lede">Each condition in the if/elif uses <strong>two</strong> operators you need to understand: <code>and</code> and <code>!=</code>.</p>
+
+  <div class="ct-spot">
+    <h4>🔍 Evaluation / Logic</h4>
+    <p>Boolean logic is how computers make choices. The <code>and</code> operator creates a <em>compound condition</em> — BOTH parts must be True for the whole expression to be True. This is the same logic used in database queries, search filters, and access controls.</p>
+  </div>
+
+  <h3>The operators</h3>
+  <div class="op-row">
+    <span class="op-sym">!=</span><span class="op-name">not equal</span>
+    <span class="op-ex">direction != "DOWN"</span><span class="op-arrow">→</span>
+    <span class="op-res t">True</span> when direction is "RIGHT", "LEFT" or "UP"<br>
+    <span class="op-res f">False</span> only when direction is exactly "DOWN"
+  </div>
+  <div class="op-row">
+    <span class="op-sym">and</span><span class="op-name">logical AND</span>
+    <span class="op-ex">A and B</span><span class="op-arrow">→</span>
+    True only when BOTH A <em>and</em> B are True
+  </div>
+
+  <h3>Truth table — <code>K_UP pressed  and  direction != "DOWN"</code></h3>
+  <table>
+    <thead><tr><th>K_UP pressed?</th><th>direction != "DOWN"?</th><th>Result</th><th>What happens</th></tr></thead>
+    <tbody>
+      <tr><td>✅ True</td><td>✅ True (direction="RIGHT")</td><td style="color:#56d364;font-weight:700">True</td><td>direction = "UP" ← allowed</td></tr>
+      <tr><td>✅ True</td><td>❌ False (direction="DOWN")</td><td style="color:#FF7B72;font-weight:700">False</td><td>Blocked — reverse guard fires 🔴</td></tr>
+      <tr><td>❌ False</td><td>✅ True</td><td style="color:#FF7B72;font-weight:700">False</td><td>K_UP not pressed — skip</td></tr>
+      <tr><td>❌ False</td><td>❌ False</td><td style="color:#FF7B72;font-weight:700">False</td><td>Skip</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ══ SECTION 6 — reverse guard ══ -->
+<section>
+  <h2>The Reverse Guard — why it matters</h2>
+  <p class="lede">Without the guard, pressing the opposite arrow key would make the snake <strong>instantly collide with itself</strong> — killing the game on the first keypress. The guard is a small piece of logic that prevents a physically impossible move.</p>
+
+  <div class="guard-row">
+    <div class="guard-card ok">
+      <div class="icon">✅</div>
+      <h4>Allowed turn</h4>
+      <p>Moving RIGHT, press UP<br><code>"RIGHT" != "DOWN"</code> → True<br>direction changes to "UP"</p>
+    </div>
+    <div class="guard-card bad">
+      <div class="icon">🔴</div>
+      <h4>Blocked reverse</h4>
+      <p>Moving DOWN, press UP<br><code>"DOWN" != "DOWN"</code> → False<br>direction stays "DOWN"</p>
+    </div>
+    <div class="guard-card bad">
+      <div class="icon">💀</div>
+      <h4>Without the guard</h4>
+      <p>Head moves into its own neck — instant collision — game over on first press!</p>
+    </div>
+  </div>
+
+  <div class="ct-spot teal">
+    <h4 style="color:var(--teal)">🔄 Pattern Recognition — input validation</h4>
+    <p>The reverse guard is a form of <em>input validation</em> — checking that user input makes sense before acting on it. You'll see this pattern everywhere: form fields that reject empty inputs, ATMs that reject negative withdrawals, login systems that check passwords before granting access.</p>
+  </div>
+</section>
+
+<!-- ══ SECTION 7 — drawing ══ -->
+<section>
+  <h2>Drawing the Head — <code>pygame.draw.rect()</code></h2>
+  <p class="lede">Each frame the head is drawn as a rounded rectangle using the pixel-coordinate formula from Step 1.</p>
+
+  <div class="ct-spot orange">
+    <h4>💡 Abstraction — draw.rect hides pixel math</h4>
+    <p><code>pygame.draw.rect()</code> abstracts away all the pixel-by-pixel drawing. You just say "draw a rectangle at this position with this colour" and Pygame handles thousands of pixel operations for you.</p>
+  </div>
+
+  <pre class="code"># Step 3-4: Convert grid (col, row) to pixel (x, y) and draw
+pygame.draw.rect(
+    screen,                           # which surface to draw on
+    DKGREEN,                          # colour tuple from Step 1
+    pygame.Rect(
+        hx * CELL_SIZE,               # pixel x = col × 30
+        hy * CELL_SIZE,               # pixel y = row × 30
+        CELL_SIZE - 2,                # width: 28px (2px gap makes grid visible)
+        CELL_SIZE - 2                 # height: 28px
+    ),
+    border_radius=4                   # rounded corners — cosmetic touch
+)</pre>
+
+  <p>The <code>-2</code> on width and height leaves a 1-pixel gap between cells — this makes the grid look neat and helps the player see individual segments.</p>
+</section>
+
+
+<section>
+  <h2>&#127922; pygame.draw.rect() — Live Playground</h2>
+  <p>Drag the sliders to change the rectangle's position, size, and corners. Watch the canvas and the code update live — this is exactly what happens 30× per second when your snake moves.</p>
+
+  <div class="rect-playground">
+    <div class="rect-controls">
+      <label>hx (col) <span class="rect-val" id="rv-hx">5</span></label>
+      <input type="range" min="0" max="14" value="5" id="rs-hx">
+      <label>hy (row) <span class="rect-val" id="rv-hy">4</span></label>
+      <input type="range" min="0" max="9" value="4" id="rs-hy">
+      <label>CELL_SIZE <span class="rect-val" id="rv-cs">28</span>px</label>
+      <input type="range" min="10" max="36" value="28" id="rs-cs">
+      <label>border_radius <span class="rect-val" id="rv-br">4</span>px</label>
+      <input type="range" min="0" max="14" value="4" id="rs-br">
+    </div>
+    <div class="rect-canvas-wrap">
+      <canvas id="rect-canvas" width="420" height="280"></canvas>
+      <pre class="rect-code-out" id="rect-code"></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SECTION 8 — code ══ -->
+<section>
+  <h2>The Code — Step 3</h2>
+  <p class="lede">Run this. Use arrow keys to steer the head. Press Escape to quit. (The head will vanish off-screen — Step 6 fixes that with wrap-around.)</p>
+  <div class="tabs">
+    <button aria-selected="true"  data-tab="tab-new">New Lines (Step 3)</button>
+    <button aria-selected="false" data-tab="tab-full">Full Code</button>
+    <button aria-selected="false" data-tab="tab-explain">Line-by-Line</button>
+  </div>
+  <div class="panel" id="tab-new">
+    <pre class="code"># Step 3-1: Starting position (centre of 20×15 grid) and direction
+direction = "RIGHT"
+hx, hy    = 10, 7       # head column, head row
+
+# ── inside the for-event loop ────────────────────────────────────
+# Step 3-2: Arrow keys → change direction (with reverse guard)
+if event.type == pygame.KEYDOWN:
+    if   event.key == pygame.K_UP    and direction != "DOWN":
+        direction = "UP"
+    elif event.key == pygame.K_DOWN  and direction != "UP":
+        direction = "DOWN"
+    elif event.key == pygame.K_LEFT  and direction != "RIGHT":
+        direction = "LEFT"
+    elif event.key == pygame.K_RIGHT and direction != "LEFT":
+        direction = "RIGHT"
+
+# ── after event loop, before draw ────────────────────────────────
+# Step 3-3: Move head one grid cell in the current direction
+if   direction == "RIGHT": hx += 1
+elif direction == "LEFT":  hx -= 1
+elif direction == "UP":    hy -= 1
+elif direction == "DOWN":  hy += 1
+
+# Step 3-4: Draw head as a dark-green rounded rectangle
+pygame.draw.rect(screen, DKGREEN,
+    pygame.Rect(hx * CELL_SIZE, hy * CELL_SIZE,
+                CELL_SIZE - 2, CELL_SIZE - 2),
+    border_radius=4)</pre>
+  </div>
+  <div class="panel" id="tab-full" hidden>
+    <pre class="code">import pygame
+pygame.init()
+
+GRID_COLS   = 20
+GRID_ROWS   = 15
+CELL_SIZE   = 30
+SNAKE_SPEED = 8
+
+WHITE   = (255, 255, 255)
+GREEN   = (  0, 200,  80)
+DKGREEN = (  0, 160,  50)
+RED     = (220,  50,  50)
+BG      = ( 30,  30,  30)
+
+WINDOW_W = GRID_COLS * CELL_SIZE
+WINDOW_H = GRID_ROWS * CELL_SIZE
+screen = pygame.display.set_mode((WINDOW_W, WINDOW_H))
+pygame.display.set_caption("Snake")
+
+clock     = pygame.time.Clock()
+running   = True
+direction = "RIGHT"         # Step 3-1
+hx, hy    = 10, 7           # Step 3-1: start in centre
+
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE: running = False
+            # Step 3-2: arrow keys change direction (with guard)
+            if   event.key == pygame.K_UP    and direction != "DOWN":  direction = "UP"
+            elif event.key == pygame.K_DOWN  and direction != "UP":    direction = "DOWN"
+            elif event.key == pygame.K_LEFT  and direction != "RIGHT": direction = "LEFT"
+            elif event.key == pygame.K_RIGHT and direction != "LEFT":  direction = "RIGHT"
+
+    # Step 3-3: move head one cell
+    if   direction == "RIGHT": hx += 1
+    elif direction == "LEFT":  hx -= 1
+    elif direction == "UP":    hy -= 1
+    elif direction == "DOWN":  hy += 1
+
+    # Step 3-4: draw
+    screen.fill(BG)
+    pygame.draw.rect(screen, DKGREEN,
+        pygame.Rect(hx * CELL_SIZE, hy * CELL_SIZE,
+                    CELL_SIZE - 2, CELL_SIZE - 2),
+        border_radius=4)
+    pygame.display.flip()
+    clock.tick(SNAKE_SPEED)
+
+pygame.quit()</pre>
+  </div>
+  <div class="panel" id="tab-explain" hidden>
+    <div class="step"><div class="idx">1</div><div class="body">
+      <h4><code>direction = "RIGHT"</code></h4>
+      <p>A string variable holding the current movement direction. Strings are immutable text in quotes. We use ALL-CAPS strings ("RIGHT" not "right") as a self-documenting convention — it's clear these are fixed labels, not user-generated text.</p>
+    </div></div>
+    <div class="step"><div class="idx">2</div><div class="body">
+      <h4><code>hx, hy = 10, 7</code></h4>
+      <p>Python lets you assign multiple variables in one line using tuple unpacking. Equivalent to <code>hx = 10; hy = 7</code>. Position (10, 7) is roughly the centre of the 20×15 grid — head starts with room to move in any direction.</p>
+    </div></div>
+    <div class="step"><div class="idx">3</div><div class="body">
+      <h4>The if/elif chain (direction change)</h4>
+      <p>Python evaluates each condition top-to-bottom. The first True branch runs and the rest are <em>skipped</em> — this is why we use <code>elif</code> (not <code>if</code>) for the second, third and fourth cases. Using all <code>if</code>s would allow multiple branches to run.</p>
+    </div></div>
+    <div class="step"><div class="idx">4</div><div class="body">
+      <h4><code>and direction != "DOWN"</code></h4>
+      <p>The compound condition short-circuits: if the key is NOT K_UP (first part is False), Python doesn't even check the second part. This is called <em>short-circuit evaluation</em> — efficient and safe.</p>
+    </div></div>
+    <div class="step"><div class="idx">5</div><div class="body">
+      <h4><code>hx += 1</code>, <code>hy -= 1</code>, etc.</h4>
+      <p><code>+=</code> is shorthand for <code>hx = hx + 1</code>. Each frame this runs <em>once</em>, moving exactly one cell. Because the game loop runs 8 times/second, the snake moves 8 cells/second across the grid.</p>
+    </div></div>
+    <div class="step"><div class="idx">6</div><div class="body">
+      <h4><code>pygame.Rect(hx*CELL_SIZE, hy*CELL_SIZE, ...)</code></h4>
+      <p>A <code>Rect</code> object defines a rectangle by (x, y, width, height). We multiply grid coords by CELL_SIZE to get pixel coords. <code>CELL_SIZE-2</code> leaves a thin gap between cells, making the grid pattern visible.</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- ══ SECTION 9 — exercises ══ -->
+<section>
+  <h2>Try It — Exercises</h2>
+  <p class="lede">Predict the result before you run each change.</p>
+  <div class="step"><div class="idx">1</div><div class="body">
+    <h4>Remove one guard <span class="ct-badge" style="vertical-align:middle">🔍 Logic</span></h4>
+    <p>Delete <code>and direction != "DOWN"</code> from the UP check. Play the game — press UP while moving DOWN. What happens? Does the snake die immediately? Why?</p>
+  </div></div>
+  <div class="step"><div class="idx">2</div><div class="body">
+    <h4>WASD alternative controls <span class="ct-badge teal" style="vertical-align:middle">🔄 Pattern</span></h4>
+    <p>Add W, A, S, D as alternative direction keys (<code>pygame.K_w</code>, <code>pygame.K_a</code>, etc.). Notice the <em>pattern</em> — the elif chain looks almost identical to the arrow-key block. Could you combine them?</p>
+  </div></div>
+  <div class="step"><div class="idx">3</div><div class="body">
+    <h4>Change start direction <span class="ct-badge orange" style="vertical-align:middle">💡 Abstraction</span></h4>
+    <p>Change <code>direction = "RIGHT"</code> to <code>direction = "DOWN"</code>. Where does the head start moving? Does this break anything else in the code?</p>
+  </div></div>
+  <div class="step"><div class="idx">4</div><div class="body">
+    <h4>Print the coordinates <span class="ct-badge red" style="vertical-align:middle">📋 Algorithm</span></h4>
+    <p>Add <code>print(f"hx={hx}  hy={hy}  direction={direction}")</code> after the movement lines. Run the game and move the head. Can you predict what the numbers will be before they print?</p>
+  </div></div>
+  <div class="step"><div class="idx">5</div><div class="body">
+    <h4>Edge-of-screen bug <span class="ct-badge red" style="vertical-align:middle">📋 Algorithm</span></h4>
+    <p>Let the head move off the right edge (past column 19). What happens on screen? Note this down — Step 6 fixes it with the modulo operator.</p>
+  </div></div>
+</section>
+
+
+
+<!-- ══ Common Mistakes ══ -->
+<section>
+  <h2>&#9888;&#65039; Common Mistakes &#x2014; Spot These Before You Start</h2>
+  <p class="lede">These are the errors beginners make most often in Step 3. Read them now so you can recognise them in your own code.</p>
+  <div class="mistake-grid">
+<div class="mistake-card">
+      <div class="mistake-hdr err">&#10007; Mistake 1: Pressing the opposite direction reverses into yourself</div>
+      <div class="mistake-body">
+        <pre class="code bad">if event.key == pygame.K_LEFT:
+    direction = (-1, 0)   # fine if going right... but:</pre>
+        <div class="mistake-result">&#x1F41E; What happens: If the snake is heading RIGHT (1,0) and you press LEFT (-1,0), the head moves into the second segment. Instant game over.</div>
+        <pre class="code good">if event.key == pygame.K_LEFT and direction != (1, 0):
+    direction = (-1, 0)   # guard: ignore if already going right</pre>
+      </div>
+    </div>
+    <div class="mistake-card">
+      <div class="mistake-hdr err">&#10007; Mistake 2: Using <code>if</code>/<code>if</code> instead of <code>if</code>/<code>elif</code></div>
+      <div class="mistake-body">
+        <pre class="code bad">if event.key == pygame.K_UP:    direction = (0, -1)
+if event.key == pygame.K_DOWN:  direction = (0, 1)   # runs even if UP matched!</pre>
+        <div class="mistake-result">&#x1F41E; What happens: If somehow both fire in one frame, the last <code>if</code> wins. Using <code>elif</code> short-circuits: only the first true branch runs.</div>
+        <pre class="code good">if event.key == pygame.K_UP:      direction = (0, -1)
+elif event.key == pygame.K_DOWN:  direction = (0, 1)
+elif event.key == pygame.K_LEFT:  direction = (-1, 0)
+elif event.key == pygame.K_RIGHT: direction = (1, 0)</pre>
+      </div>
+    </div>
+    <div class="mistake-card">
+      <div class="mistake-hdr warn">&#9889; Mistake 3: Forgetting the snake moves every frame, not just on keypress</div>
+      <div class="mistake-body">
+        <pre class="code bad"># Student thinks direction only applies when a key is held down</pre>
+        <div class="mistake-result">&#x1F41E; The direction variable is read every frame. Once set, it stays until changed. The snake keeps moving in that direction even with no key pressed &#x2014; that&#39;s intentional!</div>
+        <pre class="code good"># direction persists between frames &#x2014; it remembers the last pressed key
+# (In Steps 3-9 you update it only when a new key is pressed)</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ Quick Check ══ -->
+<section>
+  <h2>&#9989; Quick Check &#x2014; Are You Ready?</h2>
+  <p class="lede">Three questions &#x2014; not graded. They help you spot gaps before the activities.</p>
+  <div id="qcheck">
+    <div class="qc-item">
+      <div class="qc-q"><span class="qc-num">1</span> Why must we prevent pressing the opposite direction?</div>
+      <div class="qc-opts">
+        <button class="qc-btn" data-q="1" data-ok="1">The snake's second segment is right behind the head &#x2014; reversing would move the head into it, causing an instant collision.</button>
+        <button class="qc-btn" data-q="1" data-ok="0">Pressing LEFT when going RIGHT would move the head into the snake's own second segment.</button>
+        <button class="qc-btn" data-q="1" data-ok="0">Pressing LEFT when going RIGHT would move the head into the snake's own second segment.</button>
+      </div>
+      <div class="qc-feedback" id="qcfb1"></div>
+    </div>
+    <div class="qc-item">
+      <div class="qc-q"><span class="qc-num">2</span> Why use <code>elif</code> for direction keys instead of separate <code>if</code> statements?</div>
+      <div class="qc-opts">
+        <button class="qc-btn" data-q="2" data-ok="1"><code>elif</code> means only one branch runs per event &#x2014; once a direction is set, the others are skipped.</button>
+        <button class="qc-btn" data-q="2" data-ok="0">With all <code>if</code>, each key check runs independently, which can cause unexpected results if multiple branches match.</button>
+        <button class="qc-btn" data-q="2" data-ok="0">With all <code>if</code>, each key check runs independently, which can cause unexpected results if multiple branches match.</button>
+      </div>
+      <div class="qc-feedback" id="qcfb2"></div>
+    </div>
+    <div class="qc-item">
+      <div class="qc-q"><span class="qc-num">3</span> What happens to <code>direction</code> between key presses?</div>
+      <div class="qc-opts">
+        <button class="qc-btn" data-q="3" data-ok="1">It keeps its last value &#x2014; the snake continues moving in the same direction until a new key is pressed.</button>
+        <button class="qc-btn" data-q="3" data-ok="0">It resets to (0,0) each frame, so the snake stops if no key is held.</button>
+        <button class="qc-btn" data-q="3" data-ok="0">It resets to (0,0) each frame, so the snake stops if no key is held.</button>
+      </div>
+      <div class="qc-feedback" id="qcfb3"></div>
+    </div>
+  </div>
+
+  <div id="qcheck-result" hidden style="margin-top:20px;text-align:center;padding:18px;border-radius:12px;background:rgba(2,173,165,.08);border:1.5px solid var(--teal)">
+    <p style="margin:0;font-size:17px;font-weight:700;color:var(--teal-dark)" id="qcheck-msg"></p>
+  </div>
+
+</section>
+
+<div style="margin:40px 0 20px;text-align:center">
+  <p style="font-size:15px;color:var(--muted);margin-bottom:16px">You've covered all the concepts for Step 3. Time to apply them.</p>
+  <a href="step-3-activity.html" style="display:inline-flex;align-items:center;gap:10px;background:var(--teal);color:#fff;font-weight:700;font-size:16px;padding:14px 32px;border-radius:10px;text-decoration:none;transition:opacity .2s;box-shadow:0 4px 14px rgba(2,173,165,.35)" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+    Start Activities &rarr;
+    <span style="font-size:12px;font-weight:400;opacity:.85">Tier 1 &rarr; 2 &rarr; 3 &rarr; 4</span>
+  </a>
+</div>
+
+<div class="stepnav">
+  <a href="step-2.html"><small>Previous</small><b>← Loop & Events</b></a>
+  <a href="step-4.html" class="next"><small>Next</small><b>Step 4: Snake Body →</b></a>
+</div>
+</div>
+
+<div id="teacher-reveal" hidden style="position:fixed;bottom:24px;right:24px;background:#08312F;
+  color:#B9E4E1;border-radius:10px;padding:14px 18px;font-size:14px;z-index:999;
+  border:1px solid rgba(255,255,255,.2);box-shadow:0 8px 24px rgba(0,0,0,.4)">
+  🔑 Teacher access: <a href="teacher-3.html" style="color:#8FD9D5">Open Teacher Notes →</a>
+</div>
+
+<footer><div class="wrap">
+  <p><strong>See · Think · Explore · Marvel</strong><br>UMPSA STEM LAB · Snake Game Python Tutorial</p>
+  <p><a href="index.html">Home</a> · <a href="step-1.html">Step 1</a> · <a href="step-2.html">Step 2</a> · <a href="step-3.html">Step 3</a> · <a href="step-4.html">Step 4</a> · <a href="step-5.html">Step 5</a> · <a href="step-6.html">Step 6</a> · <a href="step-7.html">Step 7</a> · <a href="step-8.html">Step 8</a> · <a href="step-9.html">Step 9</a> · <a href="step-10.html">Step 10</a>
+      <p style="margin-top:10px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-weight:400">
+    <span>© 2026 Nurul Hazlina Noordin · UMPSA STEM Lab Engineering Education Initiative</span>
+    <a href="https://ee.ump.edu.my/hazlina/#research" target="_blank" rel="noopener"
+       title="Visit research page" aria-label="Research website"
+       style="color:var(--teal);display:inline-flex;align-items:center;transition:opacity .15s"
+       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="2" y1="12" x2="22" y2="12"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    </a>
+    <a href="mailto:hazlina@umpsa.edu.my"
+       title="hazlina@umpsa.edu.my" aria-label="Email Dr Nurul Hazlina"
+       style="color:var(--teal);display:inline-flex;align-items:center;transition:opacity .15s"
+       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true">
+        <rect x="2" y="4" width="20" height="16" rx="2"/>
+        <polyline points="2,4 12,13 22,4"/>
+      </svg>
+    </a>
+  </p>
+</footer>
+
+<script>
+/* ── tabs ── */
+document.querySelectorAll('.tabs').forEach(function(tb){
+  tb.querySelectorAll('button').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      tb.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-selected','false');});
+      btn.setAttribute('aria-selected','true');
+      var sec=tb.closest('section')||tb.parentElement;
+      sec.querySelectorAll('.panel').forEach(function(p){p.hidden=true;});
+      var t=sec.querySelector('#'+btn.dataset.tab);
+      if(t) t.hidden=false;
+    });
+  });
+});
+
+/* ── teacher easter egg ── */
+(function(){
+  var clicks=0,timer,box=document.getElementById('see-box');
+  if(!box) return; box.style.cursor='pointer';
+  box.addEventListener('click',function(){
+    clicks++;clearTimeout(timer);
+    timer=setTimeout(function(){clicks=0;},1500);
+    if(clicks>=3){clicks=0;var el=document.getElementById('teacher-reveal');
+      if(el){el.hidden=false;box.style.outline='2px solid #fff';}}
+  });
+})();
+
+/* ── line numbers ── */
+document.querySelectorAll('pre.code').forEach(function(pre){
+  var lines=pre.textContent.split('\n');
+  if(lines.length&&lines[lines.length-1].trim()==='') lines.pop();
+  pre.innerHTML=lines.map(function(line,i){
+    var ln=String(i+1).padStart(3,' ');
+    var esc=line.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return '<span class="code-ln">'+ln+'</span>'+esc;
+  }).join('\n');
+});
+
+/* ══ INTERACTIVE SNAKE HEAD CONTROLLER ══ */
+(function(){
+  var canvas=document.getElementById('head-canvas');
+  if(!canvas) return;
+  var ctx=canvas.getContext('2d');
+  var COLS=13,ROWS=10,CELL=28,PAD=16;
+  var W=canvas.width,H=canvas.height;
+  var hx=6,hy=4,dir='RIGHT',blocked=false,blockTimer;
+
+  function info(){
+    var px=hx*30,py=hy*30;
+    document.getElementById('head-info').innerHTML=
+      'direction = <span class="gr">"'+dir+'"</span> &nbsp;|&nbsp; '+
+      'hx = <span class="hi">'+hx+'</span>  hy = <span class="hi">'+hy+'</span><br>'+
+      'pixel x = hx × 30 = <span class="py">'+px+'</span>  '+
+      'pixel y = hy × 30 = <span class="py">'+py+'</span>';
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0F1B22';ctx.fillRect(0,0,W,H);
+    // grid
+    for(var r=0;r<ROWS;r++){
+      for(var c=0;c<COLS;c++){
+        var x=PAD+c*CELL,y=PAD+r*CELL;
+        var isHead=(c===hx&&r===hy);
+        ctx.fillStyle=isHead?(blocked?'rgba(200,0,0,.7)':'#02806A'):'#182429';
+        ctx.strokeStyle='#2B3A41';ctx.lineWidth=0.5;
+        ctx.beginPath();ctx.roundRect(x+1,y+1,CELL-2,CELL-2,3);ctx.fill();ctx.stroke();
+        if(isHead){
+          // eyes
+          var ex=x+CELL/2,ey=y+CELL/2,er=3;
+          var offs={RIGHT:[4,-4,4,4],LEFT:[-4,-4,-4,4],UP:[-4,-4,4,-4],DOWN:[-4,4,4,4]};
+          var o=offs[dir]||[4,-4,4,4];
+          [[o[0],o[1]],[o[2],o[3]]].forEach(function(p){
+            ctx.beginPath();ctx.arc(ex+p[0],ey+p[1],er,0,Math.PI*2);
+            ctx.fillStyle='#fff';ctx.fill();
+            ctx.beginPath();ctx.arc(ex+p[0]+1,ey+p[1]+1,1.5,0,Math.PI*2);
+            ctx.fillStyle='#000';ctx.fill();
+          });
+        }
+      }
+    }
+    // coord label
+    ctx.fillStyle='rgba(2,173,165,.6)';ctx.font='11px monospace';ctx.textAlign='left';ctx.textBaseline='top';
+    ctx.fillText('('+hx+', '+hy+')',PAD+hx*CELL+2,PAD+hy*CELL+2);
+    info();
+  }
+
+  function tryMove(newDir){
+    var opp={RIGHT:'LEFT',LEFT:'RIGHT',UP:'DOWN',DOWN:'UP'};
+    if(opp[dir]===newDir){
+      // blocked — flash
+      blocked=true;draw();
+      clearTimeout(blockTimer);
+      blockTimer=setTimeout(function(){blocked=false;draw();},350);
+      // flash button red
+      var btnMap={UP:'btn-up',DOWN:'btn-down',LEFT:'btn-left',RIGHT:'btn-right'};
+      var btn=document.getElementById(btnMap[newDir]);
+      if(btn){btn.classList.add('blocked');setTimeout(function(){btn.classList.remove('blocked');},400);}
+      return;
+    }
+    dir=newDir;
+    if(dir==='RIGHT'&&hx<COLS-1) hx++;
+    else if(dir==='LEFT'&&hx>0) hx--;
+    else if(dir==='UP'&&hy>0) hy--;
+    else if(dir==='DOWN'&&hy<ROWS-1) hy++;
+    draw();
+  }
+
+  document.getElementById('btn-up').addEventListener('click',function(){tryMove('UP');});
+  document.getElementById('btn-down').addEventListener('click',function(){tryMove('DOWN');});
+  document.getElementById('btn-left').addEventListener('click',function(){tryMove('LEFT');});
+  document.getElementById('btn-right').addEventListener('click',function(){tryMove('RIGHT');});
+
+  // keyboard support
+  canvas.addEventListener('keydown',function(e){
+    var map={ArrowUp:'UP',ArrowDown:'DOWN',ArrowLeft:'LEFT',ArrowRight:'RIGHT'};
+    if(map[e.key]){e.preventDefault();tryMove(map[e.key]);}
+  });
+
+  draw();
+})();
+
+/* ══ COORDINATE MOVEMENT CANVAS ══ */
+(function(){
+  var canvas=document.getElementById('coord-canvas');
+  if(!canvas) return;
+  var ctx=canvas.getContext('2d');
+  var W=canvas.width,H=canvas.height;
+  var steps=[
+    {hx:5,hy:4,dir:'RIGHT',label:'hx=5, hy=4 → move RIGHT → hx += 1'},
+    {hx:6,hy:4,dir:'RIGHT',label:'hx=6, hy=4 → move RIGHT → hx += 1'},
+    {hx:7,hy:4,dir:'UP',   label:'Press UP → direction="UP" → hy -= 1'},
+    {hx:7,hy:3,dir:'UP',   label:'hx=7, hy=3 → move UP → hy -= 1'},
+    {hx:7,hy:2,dir:'DOWN', label:'Press DOWN? Blocked! direction stays "UP"'},
+    {hx:7,hy:1,dir:'LEFT', label:'Press LEFT → direction="LEFT" → hx -= 1'},
+    {hx:6,hy:1,dir:'LEFT', label:'hx=6, hy=1 → move LEFT → hx -= 1'}
+  ];
+  var idx=0;
+  var COLS=12,ROWS=8,CELL=36,PAD=20;
+
+  function drawStep(s){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0F1B22';ctx.fillRect(0,0,W,H);
+    for(var r=0;r<ROWS;r++){
+      for(var c=0;c<COLS;c++){
+        var x=PAD+c*CELL,y=PAD+r*CELL;
+        var isH=(c===s.hx&&r===s.hy);
+        ctx.fillStyle=isH?'#025940':'#182429';
+        ctx.strokeStyle='#263139';ctx.lineWidth=0.5;
+        ctx.beginPath();ctx.roundRect(x+1,y+1,CELL-2,CELL-2,3);ctx.fill();ctx.stroke();
+        if(isH){
+          ctx.fillStyle='#02ADA5';ctx.font='bold 10px monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+          ctx.fillText('('+c+','+r+')',x+CELL/2,y+CELL/2);
+        }
+      }
+    }
+    document.getElementById('coord-info').innerHTML=
+      '<span style="color:#56d364">Step '+(idx+1)+'/'+steps.length+':</span> '+s.label+
+      (idx<steps.length-1?' <span style="color:var(--muted)">(click for next)</span>':'  ✓ Done — click to restart');
+  }
+
+  canvas.addEventListener('click',function(){
+    idx=(idx+1)%steps.length;
+    drawStep(steps[idx]);
+  });
+  drawStep(steps[0]);
+})();
+
+/* ══ IF/ELIF DECISION TREE ══ */
+(function(){
+  var curDir='RIGHT'; // default demo state
+  var nodes=['dn0','dn1','dn2','dn3'];
+  var keys={up:'K_UP',down:'K_DOWN',left:'K_LEFT',right:'K_RIGHT'};
+  var opp={up:'DOWN',down:'UP',left:'RIGHT',right:'LEFT'};
+  var newdir={up:'UP',down:'DOWN',left:'LEFT',right:'RIGHT'};
+  var branches={up:0,down:1,left:2,right:3};
+
+  function reset(){
+    nodes.forEach(function(id){
+      var el=document.getElementById(id);
+      el.classList.remove('active','matched','skipped');
+    });
+    var r=document.getElementById('dt-result');
+    r.style.display='none';r.textContent='';
+  }
+
+  function trace(key){
+    reset();
+    var guardFails=(opp[key]===curDir); // reverse blocked?
+    var matchIdx=branches[key];
+    nodes.forEach(function(id,i){
+      var el=document.getElementById(id);
+      if(i<matchIdx){
+        el.classList.add('skipped');
+      } else if(i===matchIdx){
+        if(guardFails){
+          el.classList.add('active');
+        } else {
+          el.classList.add('matched');
+          curDir=newdir[key];
+        }
+      } else {
+        el.classList.add('skipped');
+      }
+    });
+    var r=document.getElementById('dt-result');
+    r.style.display='block';
+    if(guardFails){
+      r.style.background='rgba(200,0,0,.1)';r.style.borderColor='rgba(200,0,0,.3)';r.style.color='#FF7B72';
+      r.innerHTML='🔴 Guard blocked! direction != "'+opp[key]+'" is <b>False</b> — condition fails. direction stays "'+curDir+'".';
+    } else {
+      r.style.background='rgba(86,211,100,.1)';r.style.borderColor='rgba(86,211,100,.3)';r.style.color='#56d364';
+      r.innerHTML='✅ Branch matched! direction is now <b>"'+curDir+'"</b>. All later elif branches are skipped.';
+    }
+  }
+
+  document.getElementById('dt-up').addEventListener('click',function(){trace('up');});
+  document.getElementById('dt-down').addEventListener('click',function(){trace('down');});
+  document.getElementById('dt-left').addEventListener('click',function(){trace('left');});
+  document.getElementById('dt-right').addEventListener('click',function(){trace('right');});
+  document.getElementById('dt-reset').addEventListener('click',function(){reset();curDir='RIGHT';});
+})();
+
+/* ══ QUICK CHECK QUIZ ══ */
+(function(){
+  var answered={};
+  var score=0;
+  var total=0;
+  document.querySelectorAll('#qcheck .qc-item').forEach(function(item,i){total++;answered[i]=false;});
+  document.querySelectorAll('#qcheck .qc-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var q=+btn.getAttribute('data-q');
+      if(answered[q]) return;
+      answered[q]=true;
+      var isOk=btn.getAttribute('data-ok')==='1';
+      if(isOk) score++;
+      btn.classList.add(isOk?'qc-correct':'qc-wrong');
+      var item=btn.closest('.qc-item');
+      // show correct answer if wrong
+      if(!isOk){
+        item.querySelectorAll('[data-ok="1"]').forEach(function(b){b.classList.add('qc-correct');});
+      }
+      // disable all buttons in this question
+      item.querySelectorAll('.qc-btn').forEach(function(b){b.disabled=true;});
+      // set feedback text
+      var fbEl=document.getElementById('qcfb'+q);
+      if(fbEl){
+        if(isOk){
+          fbEl.innerHTML='&#10003; Correct!';
+        } else {
+          var okBtn=item.querySelector('[data-ok="1"]');
+          var okLabel=okBtn?okBtn.textContent.trim():'';
+          fbEl.innerHTML='&#10007; Not quite. The right answer: <strong>'+okLabel+'</strong>';
+        }
+        fbEl.className='qc-feedback '+(isOk?'qc-correct':'qc-wrong');
+      }
+      // check if all answered
+      var allDone=true;
+      for(var k in answered){if(!answered[k]){allDone=false;break;}}
+      if(allDone){
+        var res=document.getElementById('qcheck-result');
+        var msg=document.getElementById('qcheck-msg');
+        if(res&&msg){
+          res.hidden=false;
+          var pct=Math.round(score/total*100);
+          if(pct===100) msg.textContent='Perfect — '+score+'/'+total+'! You are ready to move on. 🚀';
+          else if(pct>=67) msg.textContent='Good — '+score+'/'+total+'. Review the misses above, then continue.';
+          else msg.textContent=''+score+'/'+total+' — re-read the sections above, then try again.';
+        }
+      }
+    });
+  });
+})();
+
+/* ══ RECT PLAYGROUND ══ */
+(function(){
+  var canvas=document.getElementById('rect-canvas');
+  if(!canvas) return;
+  var ctx=canvas.getContext('2d');
+  var W=420,H=280,COLS=15,ROWS=10;
+  canvas.width=W; canvas.height=H;
+
+  var rsHx=document.getElementById('rs-hx'), rvHx=document.getElementById('rv-hx');
+  var rsHy=document.getElementById('rs-hy'), rvHy=document.getElementById('rv-hy');
+  var rsCs=document.getElementById('rs-cs'), rvCs=document.getElementById('rv-cs');
+  var rsBr=document.getElementById('rs-br'), rvBr=document.getElementById('rv-br');
+  var codeEl=document.getElementById('rect-code');
+
+  function draw(){
+    var hx=+rsHx.value, hy=+rsHy.value, cs=+rsCs.value, br=+rsBr.value;
+    rvHx.textContent=hx; rvHy.textContent=hy; rvCs.textContent=cs; rvBr.textContent=br;
+
+    // compute canvas cell size so grid fits
+    var cw=Math.floor(W/COLS), ch=Math.floor(H/ROWS);
+    ctx.fillStyle='#111'; ctx.fillRect(0,0,W,H);
+
+    // grid lines
+    ctx.strokeStyle='rgba(255,255,255,.06)'; ctx.lineWidth=1;
+    for(var c=0;c<=COLS;c++){ctx.beginPath();ctx.moveTo(c*cw,0);ctx.lineTo(c*cw,H);ctx.stroke();}
+    for(var r=0;r<=ROWS;r++){ctx.beginPath();ctx.moveTo(0,r*ch);ctx.lineTo(W,r*ch);ctx.stroke();}
+
+    // highlight target cell
+    ctx.fillStyle='rgba(2,173,165,.15)';
+    ctx.fillRect(hx*cw, hy*ch, cw, ch);
+
+    // draw the rect at cs scale (show what pygame would render)
+    var px=hx*cw, py=hy*ch;
+    var rw=Math.min(cs-2, cw-2), rh=Math.min(cs-2, ch-2);
+    var clampedBr=Math.min(br, Math.floor(rw/2), Math.floor(rh/2));
+
+    ctx.fillStyle='#02ADA5';
+    ctx.beginPath();
+    ctx.roundRect(px+1, py+1, rw, rh, clampedBr);
+    ctx.fill();
+
+    // label
+    ctx.fillStyle='rgba(255,255,255,.6)'; ctx.font='9px monospace'; ctx.textAlign='left';
+    ctx.fillText('('+hx+','+hy+')', px+3, py+11);
+
+    // pixel coords annotation
+    ctx.fillStyle='#F5A21D'; ctx.font='10px monospace';
+    var pxX=hx*cs, pxY=hy*cs;
+    ctx.fillText('pixel x='+pxX, px+1, py+rh+14);
+    ctx.fillText('pixel y='+pxY, px+1, py+rh+26);
+
+    // update code
+    if(codeEl){
+      codeEl.innerHTML=
+        '<span class="kw">pygame</span>.<span class="cl">draw</span>.rect(\n'
+        +'  screen,\n'
+        +'  DKGREEN,\n'
+        +'  <span class="kw">pygame</span>.Rect(\n'
+        +'    <span class="nb">hx</span> * CELL_SIZE  =  <span class="val">'+pxX+'</span>,\n'
+        +'    <span class="nb">hy</span> * CELL_SIZE  =  <span class="val">'+pxY+'</span>,\n'
+        +'    CELL_SIZE - 2   =  <span class="val">'+(cs-2)+'</span>,\n'
+        +'    CELL_SIZE - 2   =  <span class="val">'+(cs-2)+'</span>,\n'
+        +'  ),\n'
+        +'  border_radius=<span class="val">'+br+'</span>\n'
+        +')';
+    }
+  }
+
+  [rsHx,rsHy,rsCs,rsBr].forEach(function(el){el.addEventListener('input',draw);});
+  draw();
+})();
+
+</script>
+</body>
+</html>

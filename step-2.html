@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Step 2 — Loop &amp; Events | Snake Game Tutorial</title>
+<link rel="stylesheet" href="style.css">
+<!-- Google tag (gtag.js) — replace G-XXXXXXXXXX with your Measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX');
+</script>
+<style>
+/* ── CT skills badge ── */
+.ct-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(13,85,167,.1);
+  border:1px solid rgba(13,85,167,.3);border-radius:20px;padding:4px 12px;
+  font-size:12.5px;font-weight:700;color:var(--blue);letter-spacing:.04em;margin:3px 4px 3px 0}
+.ct-badge.teal{background:rgba(2,173,165,.1);border-color:rgba(2,173,165,.3);color:var(--teal-dark)}
+.ct-badge.orange{background:rgba(245,162,29,.12);border-color:rgba(245,162,29,.4);color:#8a5c00}
+.ct-badge.red{background:rgba(200,0,0,.08);border-color:rgba(200,0,0,.25);color:var(--red)}
+.ct-spot{background:rgba(13,85,167,.05);border-left:3px solid var(--blue);
+  border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0}
+.ct-spot h4{margin:0 0 6px;color:var(--blue);font-size:15px}
+.ct-spot p{margin:0;font-size:14.5px}
+
+/* ── while-loop visualizer ── */
+.loop-vis{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:stretch;margin:20px 0}
+@media(max-width:600px){.loop-vis{grid-template-columns:1fr;gap:10px}}
+.loop-box{border:2px solid var(--line);border-radius:10px;padding:12px 14px;font-family:monospace;font-size:14px;text-align:center}
+.loop-box.cond{border-color:var(--teal);background:rgba(2,173,165,.07)}
+.loop-box.body{border-color:var(--blue);background:rgba(13,85,167,.06)}
+.loop-box.end{border-color:var(--muted);background:rgba(0,0,0,.04)}
+.loop-arrow{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:0 8px;color:var(--muted);font-size:22px;gap:4px}
+.loop-label{font-size:11px;text-align:center;color:var(--muted);letter-spacing:.06em;font-weight:700}
+.loop-trace{background:var(--code-bg);border-radius:10px;padding:14px 16px;margin-top:14px;font-family:monospace;font-size:13.5px;color:#E6EDF3;line-height:1.8;min-height:80px}
+.loop-trace .hi{color:#A5D6FF}.loop-trace .yes{color:#56d364}.loop-trace .no{color:#FF7B72}
+.loop-trace .fn{color:#D2A8FF}
+
+/* ── animated game loop canvas ── */
+#loop-canvas{display:block;max-width:100%;border-radius:10px;cursor:default}
+
+/* ── event queue ── */
+.evt-queue{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:14px 0}
+.evt-item{background:var(--code-bg);color:#E6EDF3;border-radius:8px;padding:7px 12px;
+  font-family:monospace;font-size:13px;border:1.5px solid rgba(255,255,255,.08);
+  transition:transform .2s,box-shadow .2s}
+.evt-item.active{border-color:var(--teal);box-shadow:0 0 0 3px rgba(2,173,165,.25);transform:scale(1.06)}
+.evt-item.processed{opacity:.35;text-decoration:line-through}
+.evt-type{color:#79C0FF;font-weight:700}
+.evt-arrow{color:var(--muted);font-size:20px}
+.evt-handler{background:rgba(2,173,165,.12);border:1.5px solid var(--teal);border-radius:8px;
+  padding:7px 14px;font-family:monospace;font-size:13px;color:var(--teal)}
+
+/* ── FPS visualizer ── */
+.fps-demo{background:var(--code-bg);border-radius:10px;padding:16px;margin:14px 0}
+#fps-canvas{display:block;max-width:100%;border-radius:6px}
+.fps-ctrl{display:flex;align-items:center;gap:12px;margin-top:10px;flex-wrap:wrap}
+.fps-ctrl label{color:#E6EDF3;font-size:14px;font-family:monospace}
+.fps-ctrl input[type=range]{flex:1;min-width:100px;accent-color:var(--teal)}
+#fps-display{font-family:monospace;font-size:22px;font-weight:700;color:var(--teal);min-width:3em}
+
+/* ── bool card ── */
+.bool-row{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0}
+.bool-card{flex:1 1 140px;border-radius:10px;padding:14px 16px;text-align:center;border:2px solid}
+.bool-card.t{border-color:#56d364;background:rgba(86,211,100,.08)}
+.bool-card.f{border-color:#FF7B72;background:rgba(255,123,114,.08)}
+.bool-card .bval{font-size:28px;font-weight:900;font-family:monospace;margin:4px 0}
+.bool-card.t .bval{color:#56d364}.bool-card.f .bval{color:#FF7B72}
+.bool-card p{margin:0;font-size:13px;color:var(--muted)}
+
+/* ── connection flow ── */
+.flow-strip{display:flex;gap:0;align-items:center;flex-wrap:wrap;margin:14px 0}
+.flow-node{background:var(--card);border:1.5px solid var(--line);border-radius:9px;
+  padding:9px 13px;font-size:13.5px;text-align:center;min-width:100px}
+.flow-node.active{border-color:var(--teal);background:rgba(2,173,165,.07);font-weight:700;color:var(--teal)}
+.flow-sep{color:var(--muted);padding:0 6px;font-size:18px}
+.flow-loop{color:var(--teal);font-size:13px;font-weight:700;
+  border:1.5px dashed var(--teal);border-radius:8px;padding:5px 10px;margin-left:8px}
+
+/* ── Common Mistakes ── */
+.mistake-grid{display:flex;flex-direction:column;gap:18px;margin:16px 0}
+.mistake-card{border-radius:12px;overflow:hidden;border:1.5px solid var(--line)}
+.mistake-hdr{padding:11px 16px;font-weight:700;font-size:14px}
+.mistake-hdr.err{background:rgba(200,0,0,.08);color:var(--red);border-bottom:1px solid rgba(200,0,0,.2)}
+.mistake-hdr.warn{background:rgba(245,162,29,.1);color:#8a5c00;border-bottom:1px solid rgba(245,162,29,.3)}
+.mistake-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.mistake-result{background:rgba(200,0,0,.06);border-left:3px solid var(--red);border-radius:0 8px 8px 0;
+  padding:10px 14px;font-size:13.5px;color:var(--ink)}
+pre.code.bad{border:1.5px solid rgba(200,0,0,.3)!important;margin:0!important}
+pre.code.good{border:1.5px solid rgba(86,211,100,.4)!important;margin:0!important}
+
+/* ── Quick Check ── */
+.qc-item{background:var(--card);border:1.5px solid var(--line);border-radius:12px;
+  padding:16px;margin-bottom:14px}
+.qc-q{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:12px;line-height:1.5}
+.qc-num{display:inline-flex;align-items:center;justify-content:center;
+  background:var(--teal);color:#fff;border-radius:50%;width:24px;height:24px;
+  font-size:13px;font-weight:800;margin-right:8px;flex-shrink:0;vertical-align:middle}
+.qc-opts{display:flex;flex-direction:column;gap:8px}
+.qc-btn{text-align:left;background:rgba(0,0,0,.04);border:1.5px solid var(--line);
+  border-radius:8px;padding:10px 14px;font-size:14px;cursor:pointer;
+  font-family:inherit;color:var(--ink);transition:border-color .15s,background .15s;line-height:1.5}
+.qc-btn:hover:not(:disabled){border-color:var(--teal);background:rgba(2,173,165,.05)}
+.qc-btn.qc-correct{background:rgba(86,211,100,.12);border-color:#56d364;color:#1a4a1e}
+.qc-btn.qc-wrong{background:rgba(200,0,0,.08);border-color:var(--red);color:#5a1010}
+.qc-feedback{margin-top:10px;font-size:14px;padding:10px 14px;border-radius:8px;display:none;line-height:1.5}
+.qc-feedback.qc-correct{background:rgba(86,211,100,.12);border:1px solid #56d364;color:#1a4a1e;display:block}
+.qc-feedback.qc-wrong{background:rgba(200,0,0,.08);border:1px solid var(--red);color:#5a1010;display:block}
+</style>
+</head>
+<body>
+<div class="chev" id="chev">
+  <span id="see-box">See</span><span>Think</span><span>Explore</span><span>Marvel</span>
+</div>
+<nav class="sitenav"><div class="wrap">
+  <a class="brand" href="index.html">Snake Game <span>Python Tutorial</span></a>
+  <details class="navsel">
+    <summary>Steps</summary>
+    <div class="navmenu" role="menu">
+      <a href="step-1.html"><b>Step 1</b>: Variables &amp; Setup</a>
+      <a href="step-2.html" aria-current="page"><b>Step 2</b>: Loop &amp; Events</a>
+      <a href="step-3.html"><b>Step 3</b>: Direction Control</a>
+      <a href="step-4.html"><b>Step 4</b>: Snake Body ⭐</a>
+      <a href="step-5.html"><b>Step 5</b>: Bonus Food 🌟</a>
+      <a href="step-6.html"><b>Step 6</b>: Functions</a>
+      <a href="step-7.html"><b>Step 7</b>: Wrap-Around ⭐</a>
+      <a href="step-8.html"><b>Step 8</b>: Save High Score</a>
+      <a href="step-9.html"><b>Step 9</b>: OOP Refactor</a>
+      <a href="step-10.html"><b>Step 10</b>: ML Extension</a>
+    </div>
+  </details>
+  <a class="nl" href="index.html">Home</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <p class="eyebrow">UMPSA STEM LAB · Step 2 of 10</p>
+  <h1>Step 2 — Loop &amp; Events</h1>
+  <p class="sub">Build the heartbeat of every game: a loop that runs 8 times per second — listening for input, drawing the screen, and keeping perfect time.</p>
+  <div class="pills">
+    <span class="pill">while loop</span><span class="pill">Boolean</span><span class="pill">Events</span>
+    <span class="pill">Clock / FPS</span><span class="pill">Iteration</span>
+  </div>
+</div></header>
+
+<div class="progress-bar"><div class="progress-inner">
+  <div class="track"><i style="width:22%"></i></div>
+  <b>Step 2 / 10</b>
+</div></div>
+
+<div class="wrap">
+
+<!-- ══ SECTION 1 — what you'll build ══ -->
+<section>
+  <h2>What you'll build in Step 2</h2>
+  <p class="lede">You'll upgrade Step 1's 3-second window into a <strong>proper game window</strong> that stays open until the player closes it — and runs at a steady 8 frames per second.</p>
+  <div class="grid2">
+    <div class="mini"><h4>🎯 Learning goals</h4>
+      <p>Understand while loops, Boolean values, the event queue, and how a clock controls game speed.</p></div>
+    <div class="mini"><h4>🐍 Snake game progress</h4>
+      <p>This game loop is the <em>skeleton</em> every later step builds on. Steps 3–9 only <em>add code inside</em> this loop — the structure never changes.</p></div>
+  </div>
+
+  <h3>Computational Thinking (CT) skills this step</h3>
+  <div style="margin:8px 0">
+    <span class="ct-badge">🔍 Decomposition</span>
+    <span class="ct-badge teal">🔄 Pattern Recognition</span>
+    <span class="ct-badge orange">💡 Abstraction</span>
+    <span class="ct-badge red">📋 Algorithm Design</span>
+  </div>
+  <p style="font-size:14.5px;color:var(--muted);margin-top:6px">Each badge below shows where each CT skill appears in this step.</p>
+</section>
+
+<!-- ══ SECTION 2 — CT: Decomposition ══ -->
+<section>
+  <h2>CT: Decomposition — breaking the game into steps</h2>
+  <p class="lede">Every game — Snake, Minecraft, any mobile app — has the same three-part cycle. Recognising this pattern is <em>Decomposition</em> at work.</p>
+
+  <div class="ct-spot">
+    <h4>🔍 Decomposition</h4>
+    <p>Breaking a complex problem (run a game) into smaller, repeatable sub-problems (handle input → update state → draw screen).</p>
+  </div>
+
+  <h3>The universal game loop</h3>
+  <div class="flow-strip">
+    <div class="flow-node active">① Handle<br>Events</div>
+    <span class="flow-sep">→</span>
+    <div class="flow-node">② Update<br>Game State</div>
+    <span class="flow-sep">→</span>
+    <div class="flow-node">③ Draw<br>Screen</div>
+    <span class="flow-sep">→</span>
+    <div class="flow-node">④ Tick<br>Clock</div>
+    <div class="flow-loop">↺ repeat</div>
+  </div>
+  <p>This pattern appears in <em>every</em> real-time game ever made. You are learning the industry standard, not a classroom abstraction.</p>
+
+  <div class="grid2" style="margin-top:12px">
+    <div class="mini"><h4>① Events (Step 2)</h4><p>Read keyboard, mouse, window-close events every frame.</p></div>
+    <div class="mini"><h4>② Update (Steps 3–7)</h4><p>Move snake, check collisions, grow body, update score.</p></div>
+    <div class="mini"><h4>③ Draw (Step 4+)</h4><p>Fill background, draw snake segments, food, score text.</p></div>
+    <div class="mini"><h4>④ Clock (Step 2)</h4><p>Wait so the loop always runs at the same speed.</p></div>
+  </div>
+</section>
+
+<!-- ══ SECTION 3 — While loop ══ -->
+<section>
+  <h2>The while Loop — how it works</h2>
+  <p class="lede">A <code>while</code> loop checks a condition. If it is <code>True</code>, it runs the body. Then it checks again. It stops only when the condition becomes <code>False</code>.</p>
+
+  <pre class="code">while condition:     # ← check condition each time
+    # body runs if condition is True
+    # (can be thousands of lines)
+# code here runs AFTER the loop ends</pre>
+
+  <h3>Boolean — the True/False type</h3>
+  <p>A <strong>bool</strong> is Python's fourth data type (after int, float, str). It has exactly two possible values:</p>
+  <div class="bool-row">
+    <div class="bool-card t">
+      <div class="bval">True</div>
+      <p>Loop keeps running<br>Game is active</p>
+    </div>
+    <div class="bool-card f">
+      <div class="bval">False</div>
+      <p>Loop stops<br>Game exits</p>
+    </div>
+  </div>
+
+  <h3>Watch the loop execute — step by step</h3>
+  <p>The <code>running</code> flag starts as <code>True</code>. Each frame, the loop checks it. Click to simulate what happens when the player closes the window:</p>
+  <div style="text-align:center;margin:10px 0">
+    <button class="replay-btn" id="loop-step-btn" style="font-size:14px;padding:8px 20px">▶ Next frame</button>
+    <button class="replay-btn" id="loop-reset-btn" style="margin-left:8px">↺ Reset</button>
+  </div>
+  <div class="loop-trace" id="loop-trace">Click "Next frame" to start the simulation.</div>
+
+  <div class="cal tip" style="margin-top:16px"><b>Why a flag?</b>
+  We could call <code>sys.exit()</code> directly when we detect QUIT, but using a <code>running</code> flag is cleaner: it lets the loop finish its current frame (saving data, playing a sound) before exiting gracefully.</div>
+</section>
+
+<!-- ══ SECTION 4 — event queue ══ -->
+<section>
+  <h2>The Event Queue</h2>
+  <p class="lede">Between frames, the operating system collects <strong>everything</strong> the user did — key presses, mouse moves, window clicks — and places each event in a queue. Your code processes them all with <code>pygame.event.get()</code>.</p>
+
+  <div class="ct-spot" style="border-color:var(--teal);background:rgba(2,173,165,.05)">
+    <h4 style="color:var(--teal)">🔄 Pattern Recognition</h4>
+    <p>The event loop <em>matches</em> each incoming event against known patterns (<code>event.type == pygame.QUIT</code>). This is the same idea as spam filtering and facial recognition — check each item against a known pattern and act accordingly.</p>
+  </div>
+
+  <h3>How the queue works</h3>
+  <p>Click the event types below to simulate processing the queue:</p>
+  <div class="evt-queue" id="evt-queue">
+    <div class="evt-item" id="ev0"><span class="evt-type">KEYDOWN</span> K_UP</div>
+    <div class="evt-arrow">→</div>
+    <div class="evt-item" id="ev1"><span class="evt-type">KEYDOWN</span> K_RIGHT</div>
+    <div class="evt-arrow">→</div>
+    <div class="evt-item" id="ev2"><span class="evt-type">QUIT</span></div>
+  </div>
+  <div id="evt-handler-box" style="display:none;margin:10px 0">
+    <div class="evt-handler" id="evt-handler-text"></div>
+  </div>
+  <button class="replay-btn" id="evt-btn" style="margin-top:6px">▶ Process next event</button>
+  <button class="replay-btn" id="evt-reset" style="margin-left:8px">↺ Reset</button>
+
+  <h3>Event types in Pygame</h3>
+  <table>
+    <thead><tr><th>Constant</th><th>When it fires</th><th>Extra info on event</th></tr></thead>
+    <tbody>
+      <tr><td><code>pygame.QUIT</code></td><td>Player clicks the ✕ button</td><td>None</td></tr>
+      <tr><td><code>pygame.KEYDOWN</code></td><td>Key is pressed down</td><td><code>event.key</code> — which key</td></tr>
+      <tr><td><code>pygame.KEYUP</code></td><td>Key is released</td><td><code>event.key</code></td></tr>
+      <tr><td><code>pygame.MOUSEBUTTONDOWN</code></td><td>Mouse button clicked</td><td><code>event.pos</code>, <code>event.button</code></td></tr>
+    </tbody>
+  </table>
+
+  <div class="cal note"><b>for loop inside while loop</b>
+  <code>pygame.event.get()</code> returns a <em>list</em> of events. The <code>for</code> loop processes them one by one. Nested loops (a loop inside another loop) are a very common programming pattern — you're already using two loop types at once.</div>
+</section>
+
+<!-- ══ SECTION 5 — clock / FPS ══ -->
+<section>
+  <h2>Frames Per Second — keeping perfect time</h2>
+  <p class="lede"><strong>FPS (frames per second)</strong> is how many times the game loop runs every second. Without a clock, the loop runs as fast as possible — thousands of times per second — making the game unplayable and burning CPU.</p>
+
+  <div class="ct-spot" style="border-color:#B87708;background:rgba(245,162,29,.05)">
+    <h4 style="color:#B87708">💡 Abstraction</h4>
+    <p><code>clock.tick(8)</code> hides all the timing complexity — sleep calculations, OS scheduling — behind a single function call. You don't need to know <em>how</em> it works, only <em>what</em> it does: "make this frame last at least 1/8 of a second".</p>
+  </div>
+
+  <h3>See the effect of different FPS values</h3>
+  <div class="fps-demo">
+    <canvas id="fps-canvas" width="600" height="80"></canvas>
+    <div class="fps-ctrl">
+      <span id="fps-display">8</span>
+      <label>FPS</label>
+      <input type="range" id="fps-slider" min="1" max="60" value="8" step="1">
+      <span style="color:#E6EDF3;font-size:13px">Each dot = one frame</span>
+    </div>
+  </div>
+
+  <h3>What happens at different speeds?</h3>
+  <table>
+    <thead><tr><th>SNAKE_SPEED</th><th>Frames / sec</th><th>Effect on game</th></tr></thead>
+    <tbody>
+      <tr><td><code>2</code></td><td>2</td><td>Very slow — snake moves like it's underwater</td></tr>
+      <tr><td><code>8</code></td><td>8</td><td>Default — comfortable beginner speed</td></tr>
+      <tr><td><code>15</code></td><td>15</td><td>Challenge mode — harder to control</td></tr>
+      <tr><td><code>60</code></td><td>60</td><td>Unplayable — snake crosses the grid in 0.3 s</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cal tip"><b>1 frame = 1 snake move</b>
+  In Step 4, the snake moves one cell every frame. So FPS directly controls <em>how fast</em> the snake moves. SNAKE_SPEED = 8 means the snake moves 8 cells per second. This is why it's called SNAKE_SPEED!</div>
+</section>
+
+<!-- ══ SECTION 6 — animated game loop ══ -->
+<section>
+  <h2>Visualising the Animated Game Loop</h2>
+  <p class="lede">Every frame, the same four things happen in the same order. Watch the loop cycle at SNAKE_SPEED = 8:</p>
+  <div style="text-align:center;margin:14px 0">
+    <canvas id="loop-canvas" width="560" height="200"></canvas>
+  </div>
+  <div style="text-align:center">
+    <button class="replay-btn" id="anim-toggle" style="font-size:14px;padding:8px 22px">⏸ Pause</button>
+  </div>
+</section>
+
+<!-- ══ SECTION 7 — CT: Algorithm ══ -->
+<section>
+  <h2>CT: Algorithm Design — the game loop IS an algorithm</h2>
+  <div class="ct-spot" style="border-color:var(--red);background:rgba(200,0,0,.04)">
+    <h4 style="color:var(--red)">📋 Algorithm Design</h4>
+    <p>An algorithm is a precise, step-by-step procedure that solves a problem. The game loop is an algorithm — it has clear steps, a termination condition (<code>running = False</code>), and produces a predictable result (smooth game play) every time.</p>
+  </div>
+
+  <h3>The game loop as pseudocode</h3>
+  <pre class="code">ALGORITHM GameLoop:
+  running ← True
+  WHILE running = True:
+    FOR each event in event_queue:
+      IF event = QUIT THEN running ← False
+      IF event = KEY_ESC THEN running ← False
+    END FOR
+    fill screen with BG colour
+    push frame to display
+    wait until 1/SNAKE_SPEED seconds have passed
+  END WHILE
+  quit pygame</pre>
+
+  <p>This pseudocode maps <em>exactly</em> to the Python code you'll write. Pseudocode is a CT tool — it lets you plan logic without worrying about syntax.</p>
+
+  <h3>How this algorithm evolves through the steps</h3>
+  <div class="step"><div class="idx">2</div><div class="body">
+    <h4>Now (Step 2)</h4>
+    <p>Events + fill + flip + tick. Minimal — a living window with no game yet.</p>
+  </div></div>
+  <div class="step"><div class="idx">3</div><div class="body">
+    <h4>Step 3: Direction control added</h4>
+    <p>Arrow key events now change a <code>direction</code> variable inside the event loop.</p>
+  </div></div>
+  <div class="step"><div class="idx">4</div><div class="body">
+    <h4>Step 4: Snake moves + draw</h4>
+    <p>After events: move snake, check food, check collision. Then draw snake + food on screen.</p>
+  </div></div>
+  <div class="step"><div class="idx">5–9</div><div class="body">
+    <h4>Steps 5–9: More logic, same structure</h4>
+    <p>Functions, wrap-around, high score, OOP — all added <em>inside</em> this same loop skeleton.</p>
+  </div></div>
+</section>
+
+<!-- ══ SECTION 8 — code ══ -->
+<section>
+  <h2>The Code — Step 2</h2>
+  <p class="lede">Run this in Thonny. The dark window stays open — try pressing Escape or clicking the ✕ to close it.</p>
+  <div class="tabs">
+    <button aria-selected="true" data-tab="tab-new">New Lines (Step 2)</button>
+    <button aria-selected="false" data-tab="tab-full">Full Code</button>
+    <button aria-selected="false" data-tab="tab-explain">Line-by-Line</button>
+  </div>
+  <div class="panel" id="tab-new">
+    <pre class="code"># Step 2-1: Create clock and the running flag (bool: True = keep going)
+clock   = pygame.time.Clock()
+running = True
+
+# Step 2-2: The game loop — repeats 8 times per second while running is True
+while running:
+
+    # Step 2-3: Process every event the OS collected since last frame
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:        # player clicked ✕
+            running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE: # player pressed Escape
+                running = False
+
+    # Step 2-4: Draw — fill background then push the frame to screen
+    screen.fill(BG)
+    pygame.display.flip()
+
+    # Step 2-5: Limit loop to SNAKE_SPEED frames per second
+    clock.tick(SNAKE_SPEED)
+
+# Step 2-6: Loop ended — clean up Pygame
+pygame.quit()</pre>
+  </div>
+  <div class="panel" id="tab-full" hidden>
+    <pre class="code">import pygame
+pygame.init()
+
+GRID_COLS   = 20
+GRID_ROWS   = 15
+CELL_SIZE   = 30
+SNAKE_SPEED = 8
+
+WHITE   = (255, 255, 255)
+GREEN   = (  0, 200,  80)
+DKGREEN = (  0, 160,  50)
+RED     = (220,  50,  50)
+BG      = ( 30,  30,  30)
+
+WINDOW_W = GRID_COLS * CELL_SIZE
+WINDOW_H = GRID_ROWS * CELL_SIZE
+screen = pygame.display.set_mode((WINDOW_W, WINDOW_H))
+pygame.display.set_caption("Snake")
+
+# ── Step 2 additions ──────────────────────────────────────────────
+clock   = pygame.time.Clock()
+running = True
+
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                running = False
+
+    screen.fill(BG)
+    pygame.display.flip()
+    clock.tick(SNAKE_SPEED)
+
+pygame.quit()</pre>
+  </div>
+  <div class="panel" id="tab-explain" hidden>
+    <div class="step"><div class="idx">1</div><div class="body">
+      <h4><code>clock = pygame.time.Clock()</code></h4>
+      <p>Creates a clock object that can track and control time. Like buying a stopwatch — it doesn't do anything yet, but it's ready.</p>
+    </div></div>
+    <div class="step"><div class="idx">2</div><div class="body">
+      <h4><code>running = True</code></h4>
+      <p>A Boolean variable (type: <code>bool</code>). Starts True because we want the game to run. Setting it to False anywhere in the loop causes the loop to exit after the current frame completes.</p>
+    </div></div>
+    <div class="step"><div class="idx">3</div><div class="body">
+      <h4><code>while running:</code></h4>
+      <p>Python evaluates <code>running</code> before each loop iteration. <code>running</code> is truthy, so it's equivalent to <code>while running == True:</code>. The indented block is the loop body.</p>
+    </div></div>
+    <div class="step"><div class="idx">4</div><div class="body">
+      <h4><code>for event in pygame.event.get():</code></h4>
+      <p><code>pygame.event.get()</code> returns a list of Event objects and clears the queue. The for loop iterates each one. If no events occurred this frame, the list is empty and the for loop body doesn't run at all — that's fine.</p>
+    </div></div>
+    <div class="step"><div class="idx">5</div><div class="body">
+      <h4><code>if event.type == pygame.QUIT:</code></h4>
+      <p>Each Event has a <code>.type</code> attribute. <code>pygame.QUIT</code> is an integer constant (value 256). We use the name for readability. The <code>==</code> operator compares — it produces <code>True</code> or <code>False</code>.</p>
+    </div></div>
+    <div class="step"><div class="idx">6</div><div class="body">
+      <h4><code>screen.fill(BG)</code> + <code>pygame.display.flip()</code></h4>
+      <p>Every frame we repaint the entire screen. <code>flip()</code> swaps the hidden drawing buffer to the visible screen — this prevents flickering. Without it, students would see objects being drawn mid-frame.</p>
+    </div></div>
+    <div class="step"><div class="idx">7</div><div class="body">
+      <h4><code>clock.tick(SNAKE_SPEED)</code></h4>
+      <p>Tells the clock "this frame should last at least 1/8 second (125 ms)". If the frame finished in 2 ms, the clock sleeps for 123 ms. Returns the actual milliseconds the frame took — useful for advanced speed control.</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- ══ SECTION 9 — exercises ══ -->
+<section>
+  <h2>Try It — Exercises</h2>
+  <p class="lede">Each exercise reinforces a specific concept. Predict the outcome first, then run.</p>
+  <div class="step"><div class="idx">1</div><div class="body">
+    <h4>Speed experiment <span class="ct-badge" style="vertical-align:middle">🔄 Pattern</span></h4>
+    <p>Try <code>SNAKE_SPEED = 2</code>, then <code>30</code>, then <code>60</code>. How does this affect how fast the snake will move in later steps? (Hint: 1 frame = 1 cell moved.)</p>
+  </div></div>
+  <div class="step"><div class="idx">2</div><div class="body">
+    <h4>Event detective <span class="ct-badge teal" style="vertical-align:middle">🔄 Pattern</span></h4>
+    <p>Add <code>print(event.type, event)</code> inside the <code>for event</code> loop. Run the program, then press keys and move the mouse over the window. What integers do you see? What event fires when you press a key?</p>
+  </div></div>
+  <div class="step"><div class="idx">3</div><div class="body">
+    <h4>Add a third exit key <span class="ct-badge red" style="vertical-align:middle">📋 Algorithm</span></h4>
+    <p>Add code so pressing <code>Space</code> also exits. In Pygame, space is <code>pygame.K_SPACE</code>. Where in the algorithm should you add this check?</p>
+  </div></div>
+  <div class="step"><div class="idx">4</div><div class="body">
+    <h4>Count the frames <span class="ct-badge orange" style="vertical-align:middle">💡 Abstraction</span></h4>
+    <p>Add a variable <code>frame_count = 0</code> before the loop. Inside the loop, add <code>frame_count += 1</code>. After the loop, add <code>print("Total frames:", frame_count)</code>. Run for about 5 seconds, then close. How many frames ran? Does it match <code>SNAKE_SPEED × seconds</code>?</p>
+  </div></div>
+</section>
+
+
+
+<!-- ══ SECTION 10 — Common Mistakes ══ -->
+<section>
+  <h2>⚠️ Common Mistakes — Spot These Before You Start</h2>
+  <p class="lede">These are the three errors beginners make most often in Step 2. Read them now so you can recognise them in your own code.</p>
+
+  <div class="mistake-grid">
+
+    <div class="mistake-card">
+      <div class="mistake-hdr err">✗ Mistake 1: Missing <code>pygame.display.flip()</code></div>
+      <div class="mistake-body">
+        <pre class="code bad">    screen.fill(BG)
+    # pygame.display.flip()  ← forgot this!
+    clock.tick(SNAKE_SPEED)</pre>
+        <div class="mistake-result">🪲 What happens: The window opens but stays completely black. Nothing ever appears — not even the background colour.</div>
+        <pre class="code good">    screen.fill(BG)
+    pygame.display.flip()   # ← push the frame to screen
+    clock.tick(SNAKE_SPEED)</pre>
+      </div>
+    </div>
+
+    <div class="mistake-card">
+      <div class="mistake-hdr err">✗ Mistake 2: Missing <code>clock.tick()</code></div>
+      <div class="mistake-body">
+        <pre class="code bad">    screen.fill(BG)
+    pygame.display.flip()
+    # clock.tick(SNAKE_SPEED)  ← forgot this!</pre>
+        <div class="mistake-result">🪲 What happens: The loop runs at full CPU speed — thousands of frames per second. In Step 4 the snake will cross the whole screen in a fraction of a second. Impossible to play.</div>
+        <pre class="code good">    screen.fill(BG)
+    pygame.display.flip()
+    clock.tick(SNAKE_SPEED)  # ← cap to 8 fps</pre>
+      </div>
+    </div>
+
+    <div class="mistake-card">
+      <div class="mistake-hdr warn">⚡ Mistake 3: Code accidentally outside the loop (indentation)</div>
+      <div class="mistake-body">
+        <pre class="code bad">while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+screen.fill(BG)          # ← outdented! outside loop
+pygame.display.flip()    # ← outside loop</pre>
+        <div class="mistake-result">🪲 What happens: <code>fill</code> and <code>flip</code> run once before the loop, then nothing ever updates. The screen stays blank after the first frame.</div>
+        <pre class="code good">while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+    screen.fill(BG)       # ← indented: inside loop ✓
+    pygame.display.flip() # ← inside loop ✓</pre>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ SECTION 11 — Quick Check ══ -->
+<section>
+  <h2>✅ Quick Check — Are You Ready?</h2>
+  <p class="lede">Three questions — not graded. They just help you spot any gaps before the activities.</p>
+
+  <div id="qcheck">
+    <div class="qc-item">
+      <div class="qc-q"><span class="qc-num">1</span> What does setting <code>running = False</code> inside the event loop do?</div>
+      <div class="qc-opts">
+        <button class="qc-btn" data-q="1" data-ok="0">Immediately closes the Pygame window</button>
+        <button class="qc-btn" data-q="1" data-ok="1">Lets the current frame finish, then the while loop exits</button>
+        <button class="qc-btn" data-q="1" data-ok="0">Stops events but keeps drawing</button>
+      </div>
+      <div class="qc-feedback" id="qcfb1"></div>
+    </div>
+
+    <div class="qc-item">
+      <div class="qc-q"><span class="qc-num">2</span> What does <code>clock.tick(8)</code> do each frame?</div>
+      <div class="qc-opts">
+        <button class="qc-btn" data-q="2" data-ok="0">Draws 8 copies of the frame for smoothness</button>
+        <button class="qc-btn" data-q="2" data-ok="0">Makes the clock speed up by 8×</button>
+        <button class="qc-btn" data-q="2" data-ok="1">Sleeps long enough to cap the loop at 8 frames per second</button>
+      </div>
+      <div class="qc-feedback" id="qcfb2"></div>
+    </div>
+
+    <div class="qc-item">
+      <div class="qc-q"><span class="qc-num">3</span> Pick the correct order for the four actions every game-loop frame:</div>
+      <div class="qc-opts">
+        <button class="qc-btn" data-q="3" data-ok="0">Draw → Events → Tick → Update</button>
+        <button class="qc-btn" data-q="3" data-ok="1">Events → Update → Draw → Tick</button>
+        <button class="qc-btn" data-q="3" data-ok="0">Tick → Events → Draw → Update</button>
+      </div>
+      <div class="qc-feedback" id="qcfb3"></div>
+    </div>
+  </div>
+
+  <div id="qcheck-result" hidden style="margin-top:20px;text-align:center;padding:18px;border-radius:12px;background:rgba(2,173,165,.08);border:1.5px solid var(--teal)">
+    <p style="margin:0;font-size:17px;font-weight:700;color:var(--teal-dark)" id="qcheck-msg"></p>
+  </div>
+</section>
+
+<div style="margin:40px 0 20px;text-align:center">
+  <p style="font-size:15px;color:var(--muted);margin-bottom:16px">You've covered all the concepts for Step 2. Time to apply them.</p>
+  <a href="step-2-activity.html" style="display:inline-flex;align-items:center;gap:10px;background:var(--teal);color:#fff;font-weight:700;font-size:16px;padding:14px 32px;border-radius:10px;text-decoration:none;transition:opacity .2s;box-shadow:0 4px 14px rgba(2,173,165,.35)" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+    Start Activities &rarr;
+    <span style="font-size:12px;font-weight:400;opacity:.85">Tier 1 &rarr; 2 &rarr; 3 &rarr; 4</span>
+  </a>
+</div>
+
+<div class="stepnav">
+  <a href="step-1.html"><small>Previous</small><b>← Variables & Setup</b></a>
+  <a href="step-3.html" class="next"><small>Next</small><b>Step 3: Direction Control →</b></a>
+</div>
+</div>
+
+<div id="teacher-reveal" hidden style="position:fixed;bottom:24px;right:24px;background:#08312F;
+  color:#B9E4E1;border-radius:10px;padding:14px 18px;font-size:14px;z-index:999;
+  border:1px solid rgba(255,255,255,.2);box-shadow:0 8px 24px rgba(0,0,0,.4)">
+  🔑 Teacher access: <a href="teacher-2.html" style="color:#8FD9D5">Open Teacher Notes →</a>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p><strong>See · Think · Explore · Marvel</strong><br>UMPSA STEM LAB · Snake Game Python Tutorial</p>
+    <p>
+      <a href="index.html">Home</a> · <a href="step-1.html">Step 1</a> · <a href="step-2.html">Step 2</a> · <a href="step-3.html">Step 3</a> · <a href="step-4.html">Step 4</a> · <a href="step-5.html">Step 5</a> · <a href="step-6.html">Step 6</a> · <a href="step-7.html">Step 7</a> · <a href="step-8.html">Step 8</a> · <a href="step-9.html">Step 9</a> · <a href="step-10.html">Step 10</a>
+      <p style="margin-top:10px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-weight:400">
+    <span>© 2026 Nurul Hazlina Noordin · UMPSA STEM Lab Engineering Education Initiative</span>
+    <a href="https://ee.ump.edu.my/hazlina/#research" target="_blank" rel="noopener"
+       title="Visit research page" aria-label="Research website"
+       style="color:var(--teal);display:inline-flex;align-items:center;transition:opacity .15s"
+       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="2" y1="12" x2="22" y2="12"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    </a>
+    <a href="mailto:hazlina@umpsa.edu.my"
+       title="hazlina@umpsa.edu.my" aria-label="Email Dr Nurul Hazlina"
+       style="color:var(--teal);display:inline-flex;align-items:center;transition:opacity .15s"
+       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true">
+        <rect x="2" y="4" width="20" height="16" rx="2"/>
+        <polyline points="2,4 12,13 22,4"/>
+      </svg>
+    </a>
+  </p>
+</footer>
+
+<script>
+/* ── Tab switching ── */
+document.querySelectorAll('.tabs').forEach(function(tb){
+  tb.querySelectorAll('button').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      tb.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-selected','false');});
+      btn.setAttribute('aria-selected','true');
+      var sec=tb.closest('section')||tb.parentElement;
+      sec.querySelectorAll('.panel').forEach(function(p){p.hidden=true;});
+      var t=sec.querySelector('#'+btn.dataset.tab);
+      if(t) t.hidden=false;
+    });
+  });
+});
+
+/* ── Teacher easter egg ── */
+(function(){
+  var clicks=0,timer;
+  var box=document.getElementById('see-box');
+  if(!box) return;
+  box.style.cursor='pointer';
+  box.addEventListener('click',function(){
+    clicks++;clearTimeout(timer);
+    timer=setTimeout(function(){clicks=0;},1500);
+    if(clicks>=3){clicks=0;var el=document.getElementById('teacher-reveal');
+      if(el){el.hidden=false;box.style.outline='2px solid #fff';}}
+  });
+})();
+
+/* ── Line numbers ── */
+document.querySelectorAll('pre.code').forEach(function(pre){
+  var lines=pre.textContent.split('\n');
+  if(lines.length&&lines[lines.length-1].trim()==='') lines.pop();
+  pre.innerHTML=lines.map(function(line,i){
+    var ln=String(i+1).padStart(3,' ');
+    var esc=line.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return '<span class="code-ln">'+ln+'</span>'+esc;
+  }).join('\n');
+});
+
+/* ══ WHILE LOOP STEP SIMULATOR ══ */
+(function(){
+  var steps=[
+    {html:'<span class="hi">Frame 1:</span> Check condition — <code>running</code> = <span class="yes">True</span> → enter loop body'},
+    {html:'&nbsp;&nbsp;Process events: queue is empty → skip for-loop'},
+    {html:'&nbsp;&nbsp;<span class="fn">screen.fill(BG)</span> + <span class="fn">pygame.display.flip()</span> → frame drawn'},
+    {html:'&nbsp;&nbsp;<span class="fn">clock.tick(8)</span> → sleep ~125ms. Frame complete.'},
+    {html:'<span class="hi">Frame 2:</span> Check condition — <code>running</code> = <span class="yes">True</span> → enter loop body'},
+    {html:'&nbsp;&nbsp;Process events: found <span class="hi">KEYDOWN</span> K_ESCAPE!'},
+    {html:'&nbsp;&nbsp;&nbsp;&nbsp;→ <code>running = <span class="no">False</span></code> — flag is now False'},
+    {html:'&nbsp;&nbsp;<span class="fn">screen.fill(BG)</span> + <span class="fn">pygame.display.flip()</span> → last frame drawn'},
+    {html:'&nbsp;&nbsp;<span class="fn">clock.tick(8)</span> → sleep. Frame complete.'},
+    {html:'<span class="hi">Check condition again:</span> <code>running</code> = <span class="no">False</span> → <strong>exit loop</strong>'},
+    {html:'<span class="fn">pygame.quit()</span> runs → window closes. Done ✓'}
+  ];
+  var idx=0,lines=[];
+  var trace=document.getElementById('loop-trace');
+  var stepBtn=document.getElementById('loop-step-btn');
+  var resetBtn=document.getElementById('loop-reset-btn');
+  function update(){
+    if(idx>=steps.length){stepBtn.disabled=true;return;}
+    lines.push(steps[idx].html);
+    trace.innerHTML=lines.join('<br>');
+    idx++;
+    if(idx>=steps.length) stepBtn.textContent='✓ Done';
+  }
+  function reset(){idx=0;lines=[];trace.innerHTML='Click "Next frame" to start.';stepBtn.disabled=false;stepBtn.textContent='▶ Next frame';}
+  stepBtn.addEventListener('click',update);
+  resetBtn.addEventListener('click',reset);
+})();
+
+/* ══ EVENT QUEUE SIMULATOR ══ */
+(function(){
+  var events=[
+    {id:'ev0',msg:'<b>KEYDOWN K_UP</b> → no handler yet (added Step 3) → skip',act:false},
+    {id:'ev1',msg:'<b>KEYDOWN K_RIGHT</b> → no handler yet → skip',act:false},
+    {id:'ev2',msg:'<b>QUIT</b> → matches <code>pygame.QUIT</code> → <code>running = False</code>',act:true}
+  ];
+  var idx=0;
+  var btn=document.getElementById('evt-btn');
+  var rbtn=document.getElementById('evt-reset');
+  var hbox=document.getElementById('evt-handler-box');
+  var htxt=document.getElementById('evt-handler-text');
+  function process(){
+    if(idx>=events.length){btn.disabled=true;return;}
+    var ev=events[idx];
+    var el=document.getElementById(ev.id);
+    el.classList.add('active');
+    setTimeout(function(){
+      el.classList.remove('active');
+      el.classList.add('processed');
+      hbox.style.display='block';
+      htxt.innerHTML=ev.msg;
+      idx++;
+      if(idx>=events.length){btn.disabled=true;btn.textContent='✓ Queue empty';}
+    },600);
+  }
+  function reset(){
+    idx=0;btn.disabled=false;btn.textContent='▶ Process next event';
+    hbox.style.display='none';
+    events.forEach(function(ev){
+      var el=document.getElementById(ev.id);
+      el.classList.remove('active','processed');
+    });
+  }
+  btn.addEventListener('click',process);
+  rbtn.addEventListener('click',reset);
+})();
+
+/* ══ FPS CANVAS ══ */
+(function(){
+  var canvas=document.getElementById('fps-canvas');
+  if(!canvas) return;
+  var ctx=canvas.getContext('2d');
+  var slider=document.getElementById('fps-slider');
+  var disp=document.getElementById('fps-display');
+  var phase=0,frameId;
+
+  function draw(fps){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    var W=canvas.width,H=canvas.height;
+    var spacing=Math.max(4,Math.floor(W/fps));
+    var dotR=Math.min(10,Math.max(3,spacing/2-2));
+    // timeline
+    ctx.strokeStyle='rgba(255,255,255,.1)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(0,H/2);ctx.lineTo(W,H/2);ctx.stroke();
+    // dots
+    for(var i=0;i<fps;i++){
+      var x=spacing/2+i*spacing;
+      if(x>W) break;
+      var active=Math.floor(phase/4)===i;
+      ctx.beginPath();ctx.arc(x,H/2,dotR,0,Math.PI*2);
+      ctx.fillStyle=active?'#02ADA5':'rgba(2,173,165,.35)';
+      ctx.fill();
+    }
+    // label
+    ctx.fillStyle='rgba(255,255,255,.5)';ctx.font='11px monospace';ctx.textAlign='left';
+    ctx.fillText('1 second = '+fps+' frames',8,H-8);
+  }
+
+  function animate(){
+    var fps=+slider.value;
+    draw(fps);
+    phase=(phase+1)%(fps*4);
+    frameId=requestAnimationFrame(animate);
+  }
+
+  slider.addEventListener('input',function(){
+    disp.textContent=slider.value;
+  });
+  animate();
+})();
+
+/* ══ ANIMATED GAME LOOP ══ */
+(function(){
+  var canvas=document.getElementById('loop-canvas');
+  if(!canvas) return;
+  var ctx=canvas.getContext('2d');
+  var W=canvas.width,H=canvas.height;
+  var NODES=['① Handle\nEvents','② Update\nState','③ Draw\nScreen','④ Tick\nClock'];
+  var COLORS=['#0D55A7','#02ADA5','#4CAF50','#F5A21D'];
+  var active=0,t=0,paused=false,frameId;
+  var btn=document.getElementById('anim-toggle');
+
+  function drawNode(i,highlight){
+    var total=NODES.length;
+    var cx=(i+0.5)*(W/total);
+    var cy=H*0.42;
+    var r=36;
+    // circle
+    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);
+    ctx.fillStyle=highlight?COLORS[i]:'rgba(255,255,255,.07)';
+    ctx.fill();
+    ctx.strokeStyle=highlight?COLORS[i]:'rgba(255,255,255,.15)';
+    ctx.lineWidth=2;ctx.stroke();
+    // label
+    ctx.fillStyle=highlight?'#fff':'rgba(255,255,255,.45)';
+    ctx.font='bold 11.5px system-ui,sans-serif';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    var lines=NODES[i].split('\n');
+    if(lines.length===2){
+      ctx.fillText(lines[0],cx,cy-8);
+      ctx.fillText(lines[1],cx,cy+9);
+    } else {ctx.fillText(lines[0],cx,cy);}
+  }
+
+  function drawArrow(fromI,toI,highlight){
+    var total=NODES.length;
+    var x1=(fromI+0.5)*(W/total)+36+4;
+    var x2=(toI+0.5)*(W/total)-36-4;
+    var y=H*0.42;
+    ctx.beginPath();ctx.moveTo(x1,y);ctx.lineTo(x2,y);
+    ctx.strokeStyle=highlight?'rgba(255,255,255,.7)':'rgba(255,255,255,.15)';
+    ctx.lineWidth=highlight?2:1;ctx.stroke();
+    // arrowhead
+    ctx.beginPath();ctx.moveTo(x2,y);ctx.lineTo(x2-8,y-5);ctx.lineTo(x2-8,y+5);ctx.closePath();
+    ctx.fillStyle=highlight?'rgba(255,255,255,.7)':'rgba(255,255,255,.15)';ctx.fill();
+  }
+
+  function drawLoop(highlight){
+    // curved arrow back from node 3 to node 0
+    var total=NODES.length;
+    var x0=0.5*(W/total);
+    var x3=3.5*(W/total);
+    var y=H*0.42;
+    var bott=H-22;
+    ctx.beginPath();
+    ctx.moveTo(x3+36,y);ctx.lineTo(x3+36,bott);
+    ctx.lineTo(x0-36,bott);ctx.lineTo(x0-36,y);
+    ctx.strokeStyle=highlight?'#02ADA5':'rgba(2,173,165,.2)';
+    ctx.lineWidth=highlight?2:1;ctx.stroke();
+    ctx.beginPath();ctx.moveTo(x0-36,y);ctx.lineTo(x0-44,y-6);ctx.lineTo(x0-44,y+6);ctx.closePath();
+    ctx.fillStyle=highlight?'#02ADA5':'rgba(2,173,165,.2)';ctx.fill();
+    // label
+    ctx.fillStyle=highlight?'#02ADA5':'rgba(2,173,165,.3)';
+    ctx.font='bold 12px monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('↺ loop',W/2,bott+12);
+  }
+
+  function render(){
+    ctx.clearRect(0,0,W,H);
+    // background
+    ctx.fillStyle='#0F1B22';ctx.fillRect(0,0,W,H);
+    // frame counter
+    ctx.fillStyle='rgba(255,255,255,.25)';ctx.font='12px monospace';ctx.textAlign='right';ctx.textBaseline='top';
+    ctx.fillText('frame '+Math.floor(t/30+1),W-12,10);
+    // arrows
+    for(var i=0;i<NODES.length-1;i++){
+      drawArrow(i,i+1,active===i+1&&t%30<15);
+    }
+    drawLoop(active===0&&t>30);
+    // nodes
+    for(var j=0;j<NODES.length;j++) drawNode(j,j===active);
+    // current action label
+    var labels=['Checking events (pygame.event.get())','Moving snake → checking collisions (Steps 3+)',
+      'screen.fill(BG) + pygame.display.flip()','clock.tick('+8+') → sleep ~125ms'];
+    ctx.fillStyle='rgba(255,255,255,.55)';ctx.font='13px system-ui,sans-serif';ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.fillText(labels[active],W/2,10);
+  }
+
+  function loop(){
+    if(!paused){
+      t++;
+      if(t%30===0) active=(active+1)%NODES.length;
+      render();
+    }
+    frameId=requestAnimationFrame(loop);
+  }
+  loop();
+
+  btn.addEventListener('click',function(){
+    paused=!paused;
+    btn.textContent=paused?'▶ Play':'⏸ Pause';
+  });
+})();
+
+/* ══ QUICK CHECK QUIZ ══ */
+(function(){
+  var answered={1:false,2:false,3:false};
+  var score=0;
+  var fb={
+    1:{ok:'<strong>Correct!</strong> The flag lets the <em>current frame</em> complete (draw, flip, tick) before the condition is re-checked and the loop ends.',
+       bad:'Not quite. <code>running = False</code> sets a flag — the loop body finishes its current frame before checking the condition again.'},
+    2:{ok:'<strong>Correct!</strong> <code>clock.tick(8)</code> sleeps for however long it takes to make each frame at least 1/8 second (125 ms) long.',
+       bad:'Not quite. <code>clock.tick(8)</code> means &ldquo;cap at 8 FPS&rdquo; — it pauses (sleeps) when a frame finishes too quickly.'},
+    3:{ok:'<strong>Correct!</strong> Events &rarr; Update &rarr; Draw &rarr; Tick. This order is used in every real-time game ever made.',
+       bad:'Not quite. The correct order is: <strong>Events</strong> first (handle input) &rarr; <strong>Update</strong> state &rarr; <strong>Draw</strong> the result &rarr; <strong>Tick</strong> the clock to wait.'}
+  };
+  document.querySelectorAll('.qc-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var q=+btn.getAttribute('data-q');
+      if(answered[q]) return;
+      answered[q]=true;
+      var isOk=btn.getAttribute('data-ok')==='1';
+      if(isOk) score++;
+      btn.classList.add(isOk?'qc-correct':'qc-wrong');
+      if(!isOk){
+        btn.closest('.qc-opts').querySelectorAll('[data-ok="1"]').forEach(function(b){b.classList.add('qc-correct');});
+      }
+      btn.closest('.qc-item').querySelectorAll('.qc-btn').forEach(function(b){b.disabled=true;});
+      var fbEl=document.getElementById('qcfb'+q);
+      fbEl.innerHTML=fb[q][isOk?'ok':'bad'];
+      fbEl.className='qc-feedback '+(isOk?'qc-correct':'qc-wrong');
+      if(answered[1]&&answered[2]&&answered[3]){
+        var res=document.getElementById('qcheck-result');
+        var msg=document.getElementById('qcheck-msg');
+        res.hidden=false;
+        if(score===3) msg.textContent='🎉 Perfect — 3/3! You’re fully ready for the activities.';
+        else if(score>=2) msg.textContent='👍 '+score+'/3 — Good! Review the feedback above, then start the activities.';
+        else msg.textContent='💡 '+score+'/3 — Re-read the sections above before starting. The activities will reinforce everything.';
+        res.scrollIntoView({behavior:'smooth',block:'nearest'});
+      }
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

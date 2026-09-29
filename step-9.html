@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Step 9 — OOP Refactor | Snake Game Tutorial</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.ct-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(13,85,167,.1);border:1px solid rgba(13,85,167,.3);border-radius:20px;padding:4px 12px;font-size:12.5px;font-weight:700;color:var(--blue);letter-spacing:.04em;margin:3px 4px 3px 0}
+.ct-badge.teal{background:rgba(2,173,165,.1);border-color:rgba(2,173,165,.3);color:var(--teal-dark)}
+.ct-badge.orange{background:rgba(245,162,29,.12);border-color:rgba(245,162,29,.4);color:#8a5c00}
+.ct-badge.red{background:rgba(200,0,0,.08);border-color:rgba(200,0,0,.25);color:var(--red)}
+.ct-spot{background:rgba(13,85,167,.05);border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0}
+.ct-spot h4{margin:0 0 6px;color:var(--blue);font-size:15px}.ct-spot p{margin:0;font-size:14.5px}
+.ct-spot.teal{background:rgba(2,173,165,.05);border-color:var(--teal)}.ct-spot.teal h4{color:var(--teal)}
+.ct-spot.orange{background:rgba(245,162,29,.05);border-color:#B87708}.ct-spot.orange h4{color:#B87708}
+/* UML class card */
+.uml-card{background:var(--code-bg);border-radius:12px;overflow:hidden;margin:14px 0;max-width:360px}
+.uml-header{background:var(--blue);color:#fff;padding:10px 16px;font-family:monospace;font-weight:700;font-size:15px}
+.uml-section{padding:10px 16px;border-top:1px solid rgba(255,255,255,.08)}
+.uml-attr{font-family:monospace;font-size:13px;color:#79C0FF;padding:2px 0}
+.uml-method{font-family:monospace;font-size:13px;color:#56d364;padding:2px 0}
+.uml-attr::before{content:"− "}
+.uml-method::before{content:"+ "}
+
+/* ── Common Mistakes ── */
+.mistake-grid{display:flex;flex-direction:column;gap:18px;margin:16px 0}
+.mistake-card{border-radius:12px;overflow:hidden;border:1.5px solid var(--line)}
+.mistake-hdr{padding:11px 16px;font-weight:700;font-size:14px}
+.mistake-hdr.err{background:rgba(200,0,0,.08);color:var(--red);border-bottom:1px solid rgba(200,0,0,.2)}
+.mistake-hdr.warn{background:rgba(245,162,29,.1);color:#8a5c00;border-bottom:1px solid rgba(245,162,29,.3)}
+.mistake-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.mistake-result{background:rgba(200,0,0,.06);border-left:3px solid var(--red);border-radius:0 8px 8px 0;
+  padding:10px 14px;font-size:13.5px;color:var(--ink)}
+pre.code.bad{border:1.5px solid rgba(200,0,0,.3)!important;margin:0!important}
+pre.code.good{border:1.5px solid rgba(86,211,100,.4)!important;margin:0!important}
+/* ── Quick Check ── */
+.qc-item{background:var(--card);border:1.5px solid var(--line);border-radius:12px;
+  padding:16px;margin-bottom:14px}
+.qc-q{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:12px;line-height:1.5}
+.qc-num{display:inline-flex;align-items:center;justify-content:center;
+  background:var(--teal);color:#fff;border-radius:50%;width:24px;height:24px;
+  font-size:13px;font-weight:800;margin-right:8px;flex-shrink:0;vertical-align:middle}
+.qc-opts{display:flex;flex-direction:column;gap:8px}
+.qc-btn{text-align:left;background:rgba(0,0,0,.04);border:1.5px solid var(--line);
+  border-radius:8px;padding:10px 14px;font-size:14px;cursor:pointer;
+  font-family:inherit;color:var(--ink);transition:border-color .15s,background .15s;line-height:1.5}
+.qc-btn:hover:not(:disabled){border-color:var(--teal);background:rgba(2,173,165,.05)}
+.qc-btn.qc-correct{background:rgba(86,211,100,.12);border-color:#56d364;color:#1a4a1e}
+.qc-btn.qc-wrong{background:rgba(200,0,0,.08);border-color:var(--red);color:#5a1010}
+.qc-feedback{margin-top:10px;font-size:14px;padding:10px 14px;border-radius:8px;display:none;line-height:1.5}
+.qc-feedback.qc-correct{background:rgba(86,211,100,.12);border:1px solid #56d364;color:#1a4a1e;display:block}
+.qc-feedback.qc-wrong{background:rgba(200,0,0,.08);border:1px solid var(--red);color:#5a1010;display:block}
+
+/* ── OOP blueprint/instance visualizer ── */
+.oop-wrap{background:#0F1B22;border-radius:14px;padding:20px 16px;margin:14px 0}
+.oop-stage{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;align-items:flex-start;margin-bottom:14px}
+.oop-card{border-radius:10px;border:2px solid;padding:12px 14px;min-width:170px;font:13px/1.5 monospace;transition:all .35s;position:relative}
+.oop-card.blueprint{border-color:#79C0FF;background:rgba(121,192,255,.07)}
+.oop-card.instance{border-color:#56d364;background:rgba(86,211,100,.07);animation:instIn .3s ease}
+.oop-card .oop-badge{font:700 10px system-ui;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:20px;display:inline-block;margin-bottom:8px}
+.oop-card.blueprint .oop-badge{background:rgba(121,192,255,.15);color:#79C0FF}
+.oop-card.instance .oop-badge{background:rgba(86,211,100,.15);color:#56d364}
+.oop-card .oop-name{color:#D2A8FF;font-weight:700;font-size:15px;margin-bottom:8px}
+.oop-card .oop-attr{color:#E6EDF3;margin:2px 0}
+.oop-card .oop-attr .lbl{color:#A5D6FF}.oop-card .oop-attr .val{color:#F5A21D}
+.oop-card .oop-attr .tmpl{color:#5b7284;font-style:italic}
+.oop-card .oop-method{color:#aaa;font-size:11px;margin-top:8px;border-top:1px solid rgba(255,255,255,.1);padding-top:6px}
+.oop-arrow{font-size:26px;color:#F5A21D;display:flex;align-items:center;opacity:.5;transition:opacity .3s}
+.oop-arrow.active{opacity:1;animation:pulse-arr .4s 2}
+@keyframes instIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes pulse-arr{0%{transform:scale(1)}50%{transform:scale(1.25)}100%{transform:scale(1)}}
+.self-vis{border-radius:8px;background:rgba(245,162,29,.07);border:1.5px solid rgba(245,162,29,.3);padding:12px 14px;margin:10px 0;font:13px/1.7 monospace}
+.self-vis .sw-title{color:#F5A21D;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.self-vis .sw-ptr{color:#F5A21D}
+.self-vis .sw-code{color:#E6EDF3}
+.oop-info{min-height:46px;padding:10px 14px;border-radius:8px;background:rgba(255,255,255,.04);color:#E6EDF3;font:13px/1.6 monospace;margin:8px 0}
+.oop-info .kw{color:#FF7B72}.oop-info .cl{color:#D2A8FF}.oop-info .ok{color:#56d364}
+.oop-btns{display:flex;gap:8px;flex-wrap:wrap}
+.oop-btn{padding:7px 16px;border-radius:7px;border:none;cursor:pointer;font:600 13px system-ui;background:#02ADA5;color:#fff;transition:opacity .2s}
+.oop-btn:disabled{opacity:.35;cursor:default}
+.oop-btn.reset{background:#5b7284}
+.instances-area{display:flex;gap:12px;flex-wrap:wrap;min-height:60px;justify-content:center}
+</style>
+</head>
+<body>
+<div class="chev" id="chev"><span id="see-box">See</span><span>Think</span><span>Explore</span><span>Marvel</span></div>
+<nav class="sitenav"><div class="wrap">
+  <a class="brand" href="index.html">Snake Game <span>Python Tutorial</span></a>
+  <details class="navsel"><summary>Steps</summary><div class="navmenu" role="menu">
+      <a href="step-1.html"><b>Step 1</b>: Variables &amp; Setup</a>
+      <a href="step-2.html"><b>Step 2</b>: Loop &amp; Events</a>
+      <a href="step-3.html"><b>Step 3</b>: Direction Control</a>
+      <a href="step-4.html"><b>Step 4</b>: Snake Body ⭐</a>
+      <a href="step-5.html"><b>Step 5</b>: Bonus Food 🌟</a>
+      <a href="step-6.html"><b>Step 6</b>: Functions</a>
+      <a href="step-7.html"><b>Step 7</b>: Wrap-Around ⭐</a>
+      <a href="step-8.html"><b>Step 8</b>: Save High Score</a>
+      <a href="step-9.html" aria-current="page"><b>Step 9</b>: OOP Refactor</a>
+      <a href="step-10.html"><b>Step 10</b>: ML Extension</a>
+    </div></details>
+  <a class="nl" href="index.html">Home</a>
+</div></nav>
+<header class="hero"><div class="wrap">
+  <p class="eyebrow">UMPSA STEM LAB · Step 9 of 10</p>
+  <h1>Step 9 — OOP Refactor</h1>
+  <p class="sub">Reorganise the entire game into Python classes — <code>Snake</code>, <code>Food</code>, and <code>Game</code>. Learn encapsulation, <code>__init__</code>, <code>self</code>, and methods.</p>
+  <div class="pills"><span class="pill">class</span><span class="pill">__init__</span><span class="pill">self</span><span class="pill">methods</span><span class="pill">encapsulation</span></div>
+</div></header>
+<div class="progress-bar"><div class="wrap"><div class="track"><i style="width:89%"></i></div><b>Step 9 / 10</b></div></div>
+<div class="wrap">
+
+<section>
+  <h2>What is OOP?</h2>
+  <p class="lede">Object-Oriented Programming groups related <em>data</em> (attributes) and <em>behaviour</em> (methods) into a single unit called a <strong>class</strong>. A class is a blueprint; an <strong>object</strong> (instance) is a specific copy of that blueprint.</p>
+
+  <div class="ct-spot">
+    <h4>💡 Abstraction — bundling data and behaviour</h4>
+    <p>Currently, the snake's data (the list) is separate from its behaviour (insert/pop, draw). OOP bundles them: <code>my_snake.move()</code> and <code>my_snake.draw()</code> are <em>part of</em> the snake object. This matches how we think about real things — a snake <em>is</em> something that moves and draws itself, not just a list of positions.</p>
+  </div>
+
+  <div class="grid2">
+    <div class="mini"><h4>Procedural (Steps 1–7)</h4>
+      <pre style="font-size:12px;margin:4px 0;padding:8px;background:rgba(255,255,255,.04);border-radius:6px;overflow-x:auto">snake = [(10,7),(9,7),(8,7)]  # data
+def update_game(snake,...):   # behaviour
+    snake.insert(...)
+    snake.pop()
+# data and behaviour are SEPARATED</pre>
+    </div>
+    <div class="mini"><h4>OOP (Step 9)</h4>
+      <pre style="font-size:12px;margin:4px 0;padding:8px;background:rgba(86,211,100,.06);border-radius:6px;overflow-x:auto">class Snake:
+    def __init__(self):
+        self.body = [(10,7),(9,7),(8,7)]
+    def move(self, direction):
+        self.body.insert(...)
+# data and behaviour TOGETHER</pre>
+    </div>
+  </div>
+</section>
+
+
+<section>
+  <h2>&#128247; Blueprint vs Object — Interactive</h2>
+  <p>A <strong>class</strong> is just a blueprint — it describes what a snake <em>could</em> look like. An <strong>object</strong> (instance) is a real snake created from that blueprint, with actual data filled in. Click to create objects:</p>
+
+  <div class="oop-wrap">
+    <div class="oop-stage">
+      <div class="oop-card blueprint">
+        <div class="oop-badge">Class (Blueprint)</div>
+        <div class="oop-name">Snake</div>
+        <div class="oop-attr"><span class="lbl">body</span> = <span class="tmpl">?</span></div>
+        <div class="oop-attr"><span class="lbl">direction</span> = <span class="tmpl">?</span></div>
+        <div class="oop-attr"><span class="lbl">score</span> = <span class="tmpl">?</span></div>
+        <div class="oop-method">def move(self) → ...<br>def grow(self) → ...<br>def draw(self, screen) → ...</div>
+      </div>
+      <div class="oop-arrow" id="oop-arr">→</div>
+      <div style="flex:1;min-width:180px">
+        <div style="color:#56d364;font:700 11px system-ui;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;text-align:center">Instances (Objects)</div>
+        <div class="instances-area" id="oop-instances">
+          <div style="color:#5b7284;font:12px monospace;margin:auto">(no objects yet)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="self-vis" id="self-vis" style="display:none">
+      <div class="sw-title">What does <code>self</code> refer to?</div>
+      <div class="sw-code" id="self-explain">—</div>
+    </div>
+
+    <div class="oop-info" id="oop-info">Press <strong>Create Snake()</strong> to instantiate a new Snake object.</div>
+    <div class="oop-btns">
+      <button class="oop-btn" id="oop-create">+ Create Snake()</button>
+      <button class="oop-btn" style="background:#6f42c1" id="oop-call" disabled>Call snake1.move()</button>
+      <button class="oop-btn reset" id="oop-reset">↺ Clear</button>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>The Snake Class</h2>
+
+  <div class="uml-card">
+    <div class="uml-header">🐍 Snake</div>
+    <div class="uml-section">
+      <div class="uml-attr">body: list[(int,int)]</div>
+      <div class="uml-attr">direction: str</div>
+      <div class="uml-attr">alive: bool</div>
+    </div>
+    <div class="uml-section">
+      <div class="uml-method">__init__(start_pos)</div>
+      <div class="uml-method">move(grid_cols, grid_rows) → bool</div>
+      <div class="uml-method">grow()</div>
+      <div class="uml-method">set_direction(key)</div>
+      <div class="uml-method">draw(screen)</div>
+      <div class="uml-method">head() → tuple</div>
+    </div>
+  </div>
+
+  <pre class="code">import pygame, random
+
+CELL_SIZE = 30
+GREEN = (0, 200, 80); DKGREEN = (0, 160, 50)
+MOVES = {"RIGHT":(1,0),"LEFT":(-1,0),"UP":(0,-1),"DOWN":(0,1)}
+OPPOSITES = {"RIGHT":"LEFT","LEFT":"RIGHT","UP":"DOWN","DOWN":"UP"}
+
+class Snake:
+    def __init__(self, start=(10, 7)):
+        """Initialise the snake with a 3-cell body at start position."""
+        self.body = [start, (start[0]-1, start[1]), (start[0]-2, start[1])]
+        self.direction = "RIGHT"
+        self.alive = True
+        self._grow_next = False   # flag: grow on next move
+
+    def head(self):
+        """Return the head position (first element)."""
+        return self.body[0]
+
+    def set_direction(self, key):
+        """Change direction from keyboard key, ignoring reversal."""
+        key_map = {
+            pygame.K_UP: "UP", pygame.K_DOWN: "DOWN",
+            pygame.K_LEFT: "LEFT", pygame.K_RIGHT: "RIGHT"
+        }
+        new_dir = key_map.get(key)
+        if new_dir and new_dir != OPPOSITES[self.direction]:
+            self.direction = new_dir
+
+    def move(self, grid_cols, grid_rows):
+        """Move one step. Returns True if still alive."""
+        dx, dy = MOVES[self.direction]
+        hx, hy = self.head()
+        new_head = ((hx + dx) % grid_cols, (hy + dy) % grid_rows)
+        if new_head in self.body[1:]:   # self-collision
+            self.alive = False; return False
+        self.body.insert(0, new_head)
+        if self._grow_next:
+            self._grow_next = False   # consumed — don't pop tail
+        else:
+            self.body.pop()
+        return True
+
+    def grow(self):
+        """Schedule the snake to grow on the next move."""
+        self._grow_next = True
+
+    def draw(self, screen):
+        """Draw every segment to the screen surface."""
+        for i, (cx, cy) in enumerate(self.body):
+            colour = DKGREEN if i == 0 else GREEN
+            pygame.draw.rect(screen, colour,
+                pygame.Rect(cx*CELL_SIZE, cy*CELL_SIZE,
+                            CELL_SIZE-2, CELL_SIZE-2), border_radius=4)</pre>
+</section>
+
+<section>
+  <h2>The Food Class</h2>
+
+  <div class="uml-card">
+    <div class="uml-header">🍎 Food</div>
+    <div class="uml-section">
+      <div class="uml-attr">pos: tuple(int,int)</div>
+      <div class="uml-attr">value: int</div>
+    </div>
+    <div class="uml-section">
+      <div class="uml-method">__init__(grid_cols, grid_rows, avoid)</div>
+      <div class="uml-method">respawn(grid_cols, grid_rows, avoid)</div>
+      <div class="uml-method">draw(screen)</div>
+    </div>
+  </div>
+
+  <pre class="code">RED = (220, 50, 50)
+
+class Food:
+    def __init__(self, grid_cols, grid_rows, avoid=None):
+        """Spawn food at a random cell, not inside avoid (snake body)."""
+        self.value = 1
+        self.respawn(grid_cols, grid_rows, avoid or [])
+
+    def respawn(self, grid_cols, grid_rows, avoid):
+        """Move food to a random empty cell."""
+        while True:
+            self.pos = (random.randint(0, grid_cols-1),
+                        random.randint(0, grid_rows-1))
+            if self.pos not in avoid:   # fix the Step 4 bug!
+                break
+
+    def draw(self, screen):
+        fx, fy = self.pos
+        pygame.draw.circle(screen, RED,
+            (fx*CELL_SIZE + CELL_SIZE//2,
+             fy*CELL_SIZE + CELL_SIZE//2), CELL_SIZE//3)</pre>
+</section>
+
+<section>
+  <h2>The Game Class</h2>
+  <p class="lede">The <code>Game</code> class owns everything — it creates the Snake and Food, runs the loop, and updates them each frame.</p>
+
+  <pre class="code">WHITE = (255, 255, 255); BG = (30, 30, 30)
+GRID_COLS = 20; GRID_ROWS = 15; SNAKE_SPEED = 8
+
+class Game:
+    def __init__(self):
+        pygame.init()
+        self.screen = pygame.display.set_mode(
+            (GRID_COLS*CELL_SIZE, GRID_ROWS*CELL_SIZE))
+        pygame.display.set_caption("Snake OOP")
+        self.font = pygame.font.SysFont(None, 28)
+        self.clock = pygame.time.Clock()
+        self.reset()
+
+    def reset(self):
+        """Restart game state."""
+        self.snake = Snake()
+        self.food  = Food(GRID_COLS, GRID_ROWS, self.snake.body)
+        self.score = 0
+        self.running = True
+
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT: self.running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE: self.running = False
+                self.snake.set_direction(event.key)
+
+    def update(self):
+        if not self.snake.move(GRID_COLS, GRID_ROWS):
+            self.running = False; return
+        if self.snake.head() == self.food.pos:
+            self.score += self.food.value
+            self.snake.grow()
+            self.food.respawn(GRID_COLS, GRID_ROWS, self.snake.body)
+
+    def draw(self):
+        self.screen.fill(BG)
+        self.snake.draw(self.screen)
+        self.food.draw(self.screen)
+        self.screen.blit(
+            self.font.render(f"Score: {self.score}", True, WHITE),
+            (8, 6))
+        pygame.display.flip()
+
+    def run(self):
+        while self.running:
+            self.handle_events()
+            self.update()
+            self.draw()
+            self.clock.tick(SNAKE_SPEED)
+        pygame.quit()
+
+# Entry point
+if __name__ == "__main__":
+    Game().run()</pre>
+
+  <div class="ct-spot red">
+    <h4>📋 Algorithm Design — the game loop as a method</h4>
+    <p><code>Game.run()</code> contains the exact same game loop as always: handle events → update → draw. But now it's a method of <code>Game</code>, which means the game owns its own loop. You could create two games: <code>game1 = Game(); game2 = Game()</code> — each with its own state. This is what game engines like Unity do: every Scene is its own "Game" object.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Understanding <code>self</code></h2>
+  <p class="lede"><code>self</code> is how an instance refers to its own attributes. It's the first parameter of every method but you never pass it yourself — Python passes it automatically.</p>
+
+  <table>
+    <thead><tr><th>Write this</th><th>Python sees this</th></tr></thead>
+    <tbody>
+      <tr><td><code>snake.move(GRID_COLS, GRID_ROWS)</code></td><td><code>Snake.move(snake, GRID_COLS, GRID_ROWS)</code></td></tr>
+      <tr><td><code>self.body</code> (inside a method)</td><td>This instance's <code>body</code> attribute</td></tr>
+      <tr><td><code>self.grow()</code> (inside a method)</td><td>Call <em>this instance's</em> grow method</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Try It — Exercises</h2>
+  <div class="step"><div class="idx">1</div><div class="body">
+    <h4>Add a speed attribute <span class="ct-badge" style="vertical-align:middle">💡 Abstraction</span></h4>
+    <p>Add <code>self.speed = SNAKE_SPEED</code> to <code>Game.__init__</code>. Every time the snake eats food, increase <code>self.speed</code> by 0.5. Use <code>self.clock.tick(self.speed)</code>. The game gets harder as you score!</p>
+  </div></div>
+  <div class="step"><div class="idx">2</div><div class="body">
+    <h4>Add a Scoreboard class <span class="ct-badge red" style="vertical-align:middle">📋 Algorithm</span></h4>
+    <p>Create a <code>Scoreboard</code> class with <code>load()</code>, <code>save(score)</code>, and <code>is_record(score)</code> methods. Use it inside <code>Game.run()</code> after the loop ends.</p>
+  </div></div>
+  <div class="step"><div class="idx">3</div><div class="body">
+    <h4>Inheritance: BonusFood <span class="ct-badge teal" style="vertical-align:middle">🔄 Pattern</span></h4>
+    <p>Create <code>class BonusFood(Food):</code> that inherits from Food. Override <code>__init__</code> to set <code>self.value = 3</code> and add <code>self.timer = 180</code>. Add a <code>tick()</code> method that counts down and returns False when expired.</p>
+  </div></div>
+</section>
+
+
+
+<!-- ══ Common Mistakes ══ -->
+<section>
+  <h2>&#9888;&#65039; Common Mistakes &#x2014; Spot These Before You Start</h2>
+  <p class="lede">These are the errors beginners make most often in Step 9. Read them now so you can recognise them in your own code.</p>
+  <div class="mistake-grid">
+<div class="mistake-card">
+      <div class="mistake-hdr err">&#10007; Mistake 1: Forgetting <code>self</code> as the first parameter</div>
+      <div class="mistake-body">
+        <pre class="code bad">class Snake:
+    def move(direction):    # missing self!
+        ...</pre>
+        <div class="mistake-result">&#x1F41E; Calling <code>my_snake.move(direction)</code> passes <code>my_snake</code> as the first argument, but the function only has one parameter (<code>direction</code>). Python raises <code>TypeError: move() takes 1 positional argument but 2 were given</code>.</div>
+        <pre class="code good">class Snake:
+    def move(self, direction):   # self = the object being called
+        ...</pre>
+      </div>
+    </div>
+    <div class="mistake-card">
+      <div class="mistake-hdr err">&#10007; Mistake 2: Calling a method without parentheses</div>
+      <div class="mistake-body">
+        <pre class="code bad">my_snake.move    # just references the method &#x2014; doesn't call it!</pre>
+        <div class="mistake-result">&#x1F41E; Without <code>()</code>, Python evaluates the expression as the method object itself &#x2014; no code runs. The snake never moves. No error is raised either, so this bug is hard to spot.</div>
+        <pre class="code good">my_snake.move(direction)   # parentheses = call it</pre>
+      </div>
+    </div>
+    <div class="mistake-card">
+      <div class="mistake-hdr warn">&#9889; Mistake 3: Confusing the class with an instance</div>
+      <div class="mistake-body">
+        <pre class="code bad">Snake.move(direction)   # calling on the class, not an object!</pre>
+        <div class="mistake-result">&#x26A1; <code>Snake</code> is a blueprint; <code>my_snake = Snake()</code> creates a real object. Methods must be called on the object &#x2014; only the object has actual data (<code>self.body</code>, etc.).</div>
+        <pre class="code good">my_snake = Snake()          # create an instance
+my_snake.move(direction)    # call method on the instance</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ Quick Check ══ -->
+<section>
+  <h2>&#9989; Quick Check &#x2014; Are You Ready?</h2>
+  <p class="lede">Three questions &#x2014; not graded. They help you spot gaps before the activities.</p>
+  <div id="qcheck">
+    <div class="qc-item">
+      <div class="qc-q"><span class="qc-num">1</span> What does <code>self</code> refer to inside a class method?</div>
+      <div class="qc-opts">
+        <button class="qc-btn" data-q="1" data-ok="1">The specific instance (object) the method was called on &#x2014; it gives the method access to that object's own data.</button>
+        <button class="qc-btn" data-q="1" data-ok="0">The class itself &#x2014; <code>self</code> is a reference to <code>Snake</code> as a whole.</button>
+        <button class="qc-btn" data-q="1" data-ok="0">The class itself &#x2014; <code>self</code> is a reference to <code>Snake</code> as a whole.</button>
+      </div>
+      <div class="qc-feedback" id="qcfb1"></div>
+    </div>
+    <div class="qc-item">
+      <div class="qc-q"><span class="qc-num">2</span> What runs automatically when you write <code>my_snake = Snake()</code>?</div>
+      <div class="qc-opts">
+        <button class="qc-btn" data-q="2" data-ok="1">The <code>__init__</code> method &#x2014; it sets up the object's initial state (body list, direction, etc.).</button>
+        <button class="qc-btn" data-q="2" data-ok="0">The <code>move</code> method &#x2014; the snake starts moving as soon as the object is created.</button>
+        <button class="qc-btn" data-q="2" data-ok="0">The <code>move</code> method &#x2014; the snake starts moving as soon as the object is created.</button>
+      </div>
+      <div class="qc-feedback" id="qcfb2"></div>
+    </div>
+    <div class="qc-item">
+      <div class="qc-q"><span class="qc-num">3</span> What is the difference between <code>Snake</code> (capital S) and <code>my_snake</code>?</div>
+      <div class="qc-opts">
+        <button class="qc-btn" data-q="3" data-ok="1"><code>Snake</code> is the class (blueprint). <code>my_snake</code> is one instance (object) created from that blueprint with <code>my_snake = Snake()</code>.</button>
+        <button class="qc-btn" data-q="3" data-ok="0">They are the same thing &#x2014; just different naming conventions.</button>
+        <button class="qc-btn" data-q="3" data-ok="0">They are the same thing &#x2014; just different naming conventions.</button>
+      </div>
+      <div class="qc-feedback" id="qcfb3"></div>
+    </div>
+  </div>
+
+  <div id="qcheck-result" hidden style="margin-top:20px;text-align:center;padding:18px;border-radius:12px;background:rgba(2,173,165,.08);border:1.5px solid var(--teal)">
+    <p style="margin:0;font-size:17px;font-weight:700;color:var(--teal-dark)" id="qcheck-msg"></p>
+  </div>
+
+</section>
+
+<div style="margin:40px 0 20px;text-align:center">
+  <p style="font-size:15px;color:var(--muted);margin-bottom:16px">You've covered all the concepts for Step 9. Time to apply them.</p>
+  <a href="step-9-activity.html" style="display:inline-flex;align-items:center;gap:10px;background:var(--teal);color:#fff;font-weight:700;font-size:16px;padding:14px 32px;border-radius:10px;text-decoration:none;transition:opacity .2s;box-shadow:0 4px 14px rgba(2,173,165,.35)" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+    Start Activities &rarr;
+    <span style="font-size:12px;font-weight:400;opacity:.85">Tier 1 &rarr; 2 &rarr; 3 &rarr; 4</span>
+  </a>
+</div>
+
+<div class="stepnav">
+  <a href="step-8.html"><small>Previous</small><b>← Save High Score</b></a>
+  <a href="step-10.html" class="next"><small>Next</small><b>Step 10: ML Extension →</b></a>
+</div>
+</div>
+<div id="teacher-reveal" hidden style="position:fixed;bottom:24px;right:24px;background:#08312F;color:#B9E4E1;border-radius:10px;padding:14px 18px;font-size:14px;z-index:999;border:1px solid rgba(255,255,255,.2);box-shadow:0 8px 24px rgba(0,0,0,.4)">
+  🔑 Teacher access: <a href="teacher-9.html" style="color:#8FD9D5">Open Teacher Notes →</a>
+</div>
+<footer><div class="wrap"><p><strong>See · Think · Explore · Marvel</strong><br>UMPSA STEM LAB · Snake Game Python Tutorial</p></div>  <p style="margin-top:10px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-weight:400">
+    <span>© 2026 Nurul Hazlina Noordin · UMPSA STEM Lab Engineering Education Initiative</span>
+    <a href="https://ee.ump.edu.my/hazlina/#research" target="_blank" rel="noopener"
+       title="Visit research page" aria-label="Research website"
+       style="color:var(--teal);display:inline-flex;align-items:center;transition:opacity .15s"
+       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="2" y1="12" x2="22" y2="12"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    </a>
+    <a href="mailto:hazlina@umpsa.edu.my"
+       title="hazlina@umpsa.edu.my" aria-label="Email Dr Nurul Hazlina"
+       style="color:var(--teal);display:inline-flex;align-items:center;transition:opacity .15s"
+       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true">
+        <rect x="2" y="4" width="20" height="16" rx="2"/>
+        <polyline points="2,4 12,13 22,4"/>
+      </svg>
+    </a>
+  </p>
+</footer>
+<script>
+document.querySelectorAll('.tabs').forEach(function(tb){tb.querySelectorAll('button').forEach(function(btn){btn.addEventListener('click',function(){tb.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-selected','false');});btn.setAttribute('aria-selected','true');var sec=tb.closest('section')||tb.parentElement;sec.querySelectorAll('.panel').forEach(function(p){p.hidden=true;});var t=sec.querySelector('#'+btn.dataset.tab);if(t)t.hidden=false;});});});
+(function(){var clicks=0,timer,box=document.getElementById('see-box');if(!box)return;box.style.cursor='pointer';box.addEventListener('click',function(){clicks++;clearTimeout(timer);timer=setTimeout(function(){clicks=0;},1500);if(clicks>=3){clicks=0;var el=document.getElementById('teacher-reveal');if(el)el.hidden=false;}});})();
+document.querySelectorAll('pre.code').forEach(function(pre){var lines=pre.textContent.split('\n');if(lines.length&&lines[lines.length-1].trim()==='')lines.pop();pre.innerHTML=lines.map(function(line,i){var ln=String(i+1).padStart(3,' ');var esc=line.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');return '<span class="code-ln">'+ln+'</span>'+esc;}).join('\n');});
+
+/* ══ QUICK CHECK QUIZ ══ */
+(function(){
+  var answered={};
+  var score=0;
+  var total=0;
+  document.querySelectorAll('#qcheck .qc-item').forEach(function(item,i){total++;answered[i]=false;});
+  document.querySelectorAll('#qcheck .qc-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var q=+btn.getAttribute('data-q');
+      if(answered[q]) return;
+      answered[q]=true;
+      var isOk=btn.getAttribute('data-ok')==='1';
+      if(isOk) score++;
+      btn.classList.add(isOk?'qc-correct':'qc-wrong');
+      var item=btn.closest('.qc-item');
+      // show correct answer if wrong
+      if(!isOk){
+        item.querySelectorAll('[data-ok="1"]').forEach(function(b){b.classList.add('qc-correct');});
+      }
+      // disable all buttons in this question
+      item.querySelectorAll('.qc-btn').forEach(function(b){b.disabled=true;});
+      // set feedback text
+      var fbEl=document.getElementById('qcfb'+q);
+      if(fbEl){
+        if(isOk){
+          fbEl.innerHTML='&#10003; Correct!';
+        } else {
+          var okBtn=item.querySelector('[data-ok="1"]');
+          var okLabel=okBtn?okBtn.textContent.trim():'';
+          fbEl.innerHTML='&#10007; Not quite. The right answer: <strong>'+okLabel+'</strong>';
+        }
+        fbEl.className='qc-feedback '+(isOk?'qc-correct':'qc-wrong');
+      }
+      // check if all answered
+      var allDone=true;
+      for(var k in answered){if(!answered[k]){allDone=false;break;}}
+      if(allDone){
+        var res=document.getElementById('qcheck-result');
+        var msg=document.getElementById('qcheck-msg');
+        if(res&&msg){
+          res.hidden=false;
+          var pct=Math.round(score/total*100);
+          if(pct===100) msg.textContent='Perfect — '+score+'/'+total+'! You are ready to move on. 🚀';
+          else if(pct>=67) msg.textContent='Good — '+score+'/'+total+'. Review the misses above, then continue.';
+          else msg.textContent=''+score+'/'+total+' — re-read the sections above, then try again.';
+        }
+      }
+    });
+  });
+})();
+
+/* ══ OOP BLUEPRINT / INSTANCE VISUALIZER ══ */
+(function(){
+  var instancesEl=document.getElementById('oop-instances');
+  var infoEl=document.getElementById('oop-info');
+  var arrEl=document.getElementById('oop-arr');
+  var selfVis=document.getElementById('self-vis');
+  var selfExp=document.getElementById('self-explain');
+  var createBtn=document.getElementById('oop-create');
+  var callBtn=document.getElementById('oop-call');
+  var resetBtn=document.getElementById('oop-reset');
+  if(!instancesEl) return;
+
+  var count=0;
+  var STARTS=[
+    {body:'[(10,7),(9,7),(8,7)]',dir:'RIGHT',score:0},
+    {body:'[(3,2),(2,2)]',dir:'DOWN',score:15},
+    {body:'[(6,5),(6,4),(6,3),(6,2)]',dir:'UP',score:30}
+  ];
+  var COLORS=['#56d364','#79C0FF','#FF7B72'];
+
+  function pulse(el){el.classList.remove('active');void el.offsetWidth;el.classList.add('active');}
+
+  createBtn.addEventListener('click',function(){
+    if(count>=3){infoEl.innerHTML='<span style="color:#5b7284">Maximum 3 instances shown. Press ↺ to reset.</span>';return;}
+    var idx=count;
+    var d=STARTS[idx];
+    var col=COLORS[idx];
+    var card=document.createElement('div');
+    card.className='oop-card instance';
+    card.style.borderColor=col;
+    card.style.background='rgba('+hexToRgb(col)+',.07)';
+    var name='snake'+(idx+1);
+    card.innerHTML='<div class="oop-badge" style="background:rgba('+hexToRgb(col)+',.18);color:'+col+'">Object #'+(idx+1)+'</div>'
+      +'<div class="oop-name" style="color:'+col+'">'+name+'</div>'
+      +'<div class="oop-attr"><span class="lbl">body</span> = <span class="val">'+d.body+'</span></div>'
+      +'<div class="oop-attr"><span class="lbl">direction</span> = <span class="val">"'+d.dir+'"</span></div>'
+      +'<div class="oop-attr"><span class="lbl">score</span> = <span class="val">'+d.score+'</span></div>'
+      +'<div class="oop-method">methods from Snake class<br>+ THIS object\'s data</div>';
+    if(instancesEl.querySelector('[style*="no objects"]')) instancesEl.innerHTML='';
+    instancesEl.appendChild(card);
+    pulse(arrEl);
+    count++;
+    if(count===1){
+      infoEl.innerHTML='<span class="ok">✓</span> <span class="cl">snake1</span> = Snake()  — <span class="kw">__init__</span> ran, filled in real data.\nEach object has its OWN copy of body, direction, score.';
+      callBtn.disabled=false;
+    } else if(count===2){
+      infoEl.innerHTML='<span class="ok">✓</span> <span class="cl">snake2</span> = Snake()  — a SECOND, SEPARATE object!\nsnake1 and snake2 share the same methods but have different data.';
+    } else {
+      infoEl.innerHTML='3 snake objects — all from the same blueprint. Each is independent.';
+      createBtn.disabled=true;
+    }
+    selfVis.style.display='none';
+  });
+
+  callBtn.addEventListener('click',function(){
+    selfVis.style.display='block';
+    selfExp.innerHTML='<span class="sw-ptr">self</span> → snake1 object when you call snake1.move()\n\nPython translates:\n  <span style="color:#D2A8FF">snake1.move()</span>\ninto:\n  <span style="color:#D2A8FF">Snake.move(snake1)</span>  ← self IS snake1\n\nInside move(), <span class="sw-ptr">self.body</span> updates <em>snake1\'s</em> body, not any other snake.';
+    infoEl.innerHTML='<span class="kw">self</span> always refers to the specific object the method was called on.\nsnake1.move() → self = snake1\nsnake2.move() → self = snake2';
+  });
+
+  resetBtn.addEventListener('click',function(){
+    count=0;
+    instancesEl.innerHTML='<div style="color:#5b7284;font:12px monospace;margin:auto">(no objects yet)</div>';
+    infoEl.textContent='Press Create Snake() to instantiate a new Snake object.';
+    selfVis.style.display='none';
+    createBtn.disabled=false;
+    callBtn.disabled=true;
+  });
+
+  function hexToRgb(hex){
+    var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+    return r+','+g+','+b;
+  }
+})();
+
+</script>
+</body>
+</html>

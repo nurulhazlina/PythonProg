@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>UMPSA Snake — Bulk Student Simulator</title>
+<style>
+  body{font-family:system-ui,sans-serif;max-width:780px;margin:40px auto;padding:0 20px;background:#0f172a;color:#e2e8f0}
+  h1{color:#38bdf8;margin-bottom:4px}
+  p{color:#94a3b8;margin:4px 0 20px}
+  button#runBtn{background:#10b981;color:#fff;border:none;padding:14px 32px;font-size:1.1rem;border-radius:8px;cursor:pointer;font-weight:600}
+  button#runBtn:hover{background:#059669}
+  button#runBtn:disabled{background:#374151;cursor:default}
+  #progress{margin-top:24px}
+  .phase{font-weight:700;color:#38bdf8;margin:14px 0 6px;font-size:.95rem;text-transform:uppercase;letter-spacing:.04em}
+  .row{font-family:monospace;font-size:.82rem;padding:3px 8px;border-radius:4px;margin:2px 0}
+  .ok{color:#86efac;background:#052e16}
+  .err{color:#fca5a5;background:#2d1515}
+  .info{color:#7dd3fc;background:#0c2338}
+  #summary{margin-top:24px;background:#1e293b;border-radius:10px;padding:20px;display:none}
+  #summary h2{color:#38bdf8;margin:0 0 12px}
+  table{width:100%;border-collapse:collapse;font-size:.88rem}
+  th{text-align:left;color:#94a3b8;font-weight:600;padding:6px 8px;border-bottom:1px solid #334155}
+  td{padding:6px 8px;border-bottom:1px solid #1e293b}
+  .gain{color:#86efac;font-weight:700}
+</style>
+</head>
+<body>
+<h1>🐍 UMPSA Snake — Student Data Simulator</h1>
+<p>Simulates 5 student personas completing the full tutorial flow and posts their data to Google Sheets.<br>
+Open your Google Sheet in another tab, then click <strong>Run Simulation</strong> and watch it fill up.</p>
+<button id="runBtn" onclick="runAll()">▶ Run Simulation (5 students × full flow)</button>
+<div id="progress"></div>
+<div id="summary">
+  <h2>✅ Simulation Complete</h2>
+  <table id="summaryTable">
+    <thead><tr><th>Matric</th><th>Name</th><th>Background</th><th>Pre-Test</th><th>Post-Test</th><th>Gain</th></tr></thead>
+    <tbody></tbody>
+  </table>
+</div>
+<script>
+const URL = "https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec";
+const STUDENTS = [
+  {matric:"SA001",name:"Sara Ahmad", gender:"Female",age:"19",mykid:"041215-06-5678",state:"Pahang",        school_code:"BEE",phone:"0123456789",cls:"CS101",email:"sara@edu.my",  bg:"O-Level",preAcc:.58,postAcc:.78,prof:{conf:3,pred:65,t2:2,t3:2,t4:1,ca:2,cp:80, d:"medium"}},
+  {matric:"PE002",name:"Peter Lim",  gender:"Male",  age:"20",mykid:"031008-07-1234",state:"Selangor",      school_code:"BEE",phone:"0198765432",cls:"CS101",email:"peter@edu.my", bg:"A-Level",preAcc:.74,postAcc:.90,prof:{conf:4,pred:78,t2:1,t3:1,t4:1,ca:1,cp:100,d:"high"}},
+  {matric:"JA003",name:"Jane Tan",   gender:"Female",age:"19",mykid:"041231-14-9012",state:"Johor",         school_code:"BCl",phone:"0167894563",cls:"CS101",email:"jane@edu.my",  bg:"SPM",    preAcc:.55,postAcc:.74,prof:{conf:2,pred:58,t2:3,t3:3,t4:2,ca:2,cp:80, d:"medium"}},
+  {matric:"JU004",name:"Julia Wong", gender:"Female",age:"20",mykid:"031118-12-3456",state:"Kuala Lumpur",  school_code:"BEE",phone:"0134567890",cls:"CS101",email:"julia@edu.my", bg:"STPM",   preAcc:.70,postAcc:.88,prof:{conf:4,pred:75,t2:1,t3:1,t4:1,ca:1,cp:100,d:"high"}},
+  {matric:"KI005",name:"Kimi Hassan",gender:"Male",  age:"14",mykid:"120505-06-7890",state:"Pahang",        school_code:"SMK",phone:"01112345678",cls:"CS101",email:"kimi@edu.my", bg:"Form2",  preAcc:.38,postAcc:.62,prof:{conf:1,pred:45,t2:3,t3:4,t4:3,ca:3,cp:60, d:"low"}},
+];
+const PRE_POST = [
+  {opts:["var score = 0","score = 0","int score = 0","declare score = 0"],ans:1},
+  {opts:["Stores 'Hello' in memory","Displays Hello on the screen","Creates a variable","Imports a module"],ans:1},
+  {opts:["2snake","snake_speed","snake-speed","snake space"],ans:1},
+  {opts:["x + 5","10","15","Error"],ans:2},
+  {opts:["Installs pygame on your computer","Creates a game window","Loads the pygame library into your script","Starts the game loop"],ans:2},
+  {opts:["To end the game automatically","To continuously update game state and render graphics","To load images from disk","To define variables"],ans:1},
+  {opts:["A loop that runs exactly once","A loop that runs forever until a break or exit","A conditional statement","A function definition"],ans:1},
+  {opts:["The current score","The game window object","A list of all events that occurred since last call","The player's position"],ans:2},
+  {opts:["File Processing System","Frames Per Second","Function Processing Speed","Frame Print Size"],ans:1},
+  {opts:["Close the terminal window","Press any key","Call pygame.quit() and sys.exit()","Delete the Python file"],ans:2},
+  {opts:["Scrolling the window up","The UP arrow keyboard key","Increasing game speed","A mouse click event"],ans:1},
+  {opts:["A for loop","A while loop","An if-elif-else chain","A try-except block"],ans:2},
+  {opts:["Up","Down","Left","Right itself"],ans:2},
+  {opts:["else if — an additional condition branch","end if loop","else is false","extended if statement"],ans:0},
+  {opts:["big","five","small","Error"],ans:1},
+  {opts:["math","random","pygame","sys"],ans:1},
+  {opts:["snake_head == food_position","snake.eat(food)","collision.check()","if snake > food"],ans:0},
+  {opts:["A decimal between 0 and 10","Always 5","A random whole number from 0 to 10 inclusive","An error"],ans:2},
+  {opts:["It bounces back","Nothing happens","The game ends (Game Over)","It teleports to the other side"],ans:2},
+  {opts:["snake_x > 0","snake_x == W","snake_x < 0 or snake_x >= W","snake_x != W"],ans:2},
+  {opts:["score = 10","score + 10","score += 10","score = score + score"],ans:2},
+  {opts:["print('Score: score')","print('Score: ' + score)","print('Score: ' + str(score))","print(Score, 25)"],ans:2},
+  {opts:["Every real-time second","When the player presses L","When the score reaches a set threshold","At the very start of the game"],ans:2},
+  {opts:["Deletes the score from memory","Initialises the score so it can be incremented later","Displays 0 on screen","Causes an error"],ans:1},
+  {opts:["speed = speed","Decrease the clock.tick() delay (smaller number = faster)","speed = 0","Doubling speed"],ans:1},
+  {opts:["function","def","func","define"],ans:1},
+  {opts:["Ends the whole program","Prints a value to the screen","Sends a value back to wherever the function was called","Creates a new loop"],ans:2},
+  {opts:["The function's name","A value passed into the function when it is called","The value the function sends back","A variable created after the function runs"],ans:1},
+  {opts:["'a + b'","7","3","4"],ans:1},
+  {opts:["Functions always run faster","Functions make code reusable and easier to maintain","Functions delete variables automatically","Python requires them for all programs"],ans:1},
+  {opts:["my_list = {}","my_list = []","my_list = ()","my_list = \"\""],ans:1},
+  {opts:["Removes 5 from the list","Creates a new list with just 5","Adds 5 to the end of the list","Sorts the list"],ans:2},
+  {opts:["(1,0)","(0,0)","(2,0)","Error"],ans:1},
+  {opts:["By duplicating the entire list","By appending a new segment position to the list","By creating a new variable","By copying the tail"],ans:1},
+  {opts:["Deletes the first segment","Clears the entire list","Removes the last segment","Sorts the list"],ans:2},
+  {opts:["The code logic is wrong","A variable or name was used before being defined","Indentation is incorrect","A module could not be found"],ans:1},
+  {opts:["Using the wrong function name","Accessing a list index that does not exist","Forgetting a colon at the end of a line","Using the wrong variable type"],ans:1},
+  {opts:["The program's logic produces the wrong result","The code violates Python's grammar rules","A file is missing","The program crashed at runtime"],ans:1},
+  {opts:["Rewrite the entire program from scratch","Read the error message and traceback carefully","Delete the file and start over","Run the program again and hope it works"],ans:1},
+  {opts:["It automatically fixes the error","It shows the variable's actual value at each iteration","It deletes the variable","It creates a new variable"],ans:1},
+  {opts:["Making code longer and more detailed","Making code run faster or use less memory without changing its behaviour","Adding more features","Removing all functions"],ans:1},
+  {opts:["Creating a brand-new list every frame","Using snake.pop() or del snake[-1]","Rewriting the entire loop","Restarting the game"],ans:1},
+  {opts:["A variable that changes every frame","A hard-coded literal number with no explanation of what it means","A special built-in function","A randomly generated value"],ans:1},
+  {opts:["Python requires it","It makes code readable and means you only update one place","Constants run faster than literals","Literals cause runtime errors"],ans:1},
+  {opts:["Deleting old code permanently","Adding new game features","Restructuring existing code without changing what it does","Fixing syntax errors"],ans:2},
+  {opts:["Writing all the code at once before testing","Breaking the project into small, testable pieces","Copying someone else's solution","Skipping the planning stage"],ans:1},
+  {opts:["The draw_snake() function","The event loop / event handler","The score variable","The food class"],ans:1},
+  {opts:["To display graphics only","To organise the game's overall flow and call other functions","To import all modules","To create lists"],ans:1},
+  {opts:["Rewrite the game from scratch","Try to reproduce the bug consistently, then trace the logic","Ignore it — it's probably fine","Ask Python to fix it automatically"],ans:1},
+  {opts:["Being very long and detailed","Having no comments at all","Being readable, well-organised, and using named constants","Running as fast as possible"],ans:2},
+];
+const STEP_CHECK = {
+  1:[{opts:["42","True","\"snake\"","3.14"],ans:2},{opts:["A function called WIN_WIDTH","A named constant storing 600","A loop that runs 600 times","An import statement"],ans:1},{opts:["3","x + 1","4","Error"],ans:2},{opts:["include pygame","import pygame","use pygame","load pygame"],ans:1},{opts:["Creates a display window","Imports the pygame module","Initialises all pygame subsystems (sound, display, etc.)","Starts the game loop immediately"],ans:2}],
+  2:[{opts:["The current score","The frame rate — how fast the loop runs","Which keys are pressed","The window size"],ans:1},{opts:["pygame.KEYDOWN","pygame.QUIT","pygame.MOUSEMOVE","pygame.KEYUP"],ans:1},{opts:["Loading files from disk","Reading input, updating state, and drawing — every frame","Defining global variables","Creating new functions"],ans:1},{opts:["Exactly once","Ten times","Until break or sys.exit() is called","It never starts"],ans:2},{opts:["None","False","An empty list []","An error"],ans:2}],
+  3:[{opts:["As a boolean True/False","As a string like 'UP' or a tuple like (0,-1)","As a floating-point number","As a pygame event"],ans:1},{opts:["Checking the score","Comparing the requested direction to the opposite of the current one","Checking the window boundary","Comparing speed values"],ans:1},{opts:["A mouse click","Whether a keyboard key was pressed this frame","Whether the window was resized","A timer event"],ans:1},{opts:["(0, 1)","(-1, 0)","(1, 0)","(0, -1)"],ans:2},{opts:["The snake speeds up","The input is ignored — opposite direction blocked","The game ends immediately","The snake teleports"],ans:1}],
+  4:[{opts:["To give the food a random colour","To snap food positions to the grid","To hide the food","To increase the score"],ans:1},{opts:["A timer firing every 5 seconds","The player pressing F","The snake head position equalling the food position","The player clicking the mouse"],ans:2},{opts:["The snake hits the window wall","The snake's head touches one of its own body segments","Two food items overlap","The score overflows"],ans:1},{opts:["A circle","A text label","A filled rectangle","A straight line"],ans:2},{opts:["food = 'center'","food = (rand_col, rand_row)","food.position()","food = []"],ans:1}],
+  5:[{opts:["To copy the score","Because the + operator needs both sides to be the same type (string)","To sort the score","To double the score"],ans:1},{opts:["score = 1","Subtract 1 from score","Add 1 to score","Multiply score by 1"],ans:2},{opts:["score equals 5 only","score is exactly divisible by 5","score is greater than 5","Always — every frame"],ans:1},{opts:["if event.key == pygame.K_r: reset_game()","restart = True","score = 1","while r:"],ans:0},{opts:["More keys can be pressed per second","A smaller clock.tick() argument (higher FPS cap)","The snake grows larger","The screen gets bigger"],ans:1}],
+  6:[{opts:["The function's return value","A parameter — a value passed in when the function is called","A global variable","A module import"],ans:1},{opts:["An error","The number 0","None","True"],ans:2},{opts:["It makes the program faster","To keep the code DRY — reuse logic without repeating it","Python disallows inline code","Inline code is harder to read only for beginners"],ans:1},{opts:["The screen resolution","The region of code where a variable can be read or written","How quickly a variable is computed","The number of times a variable is used"],ans:1},{opts:["The head position","A string","True or False (bool)","The body list"],ans:2}],
+  7:[{opts:["(5,5)","(4,5)","(3,5)","Error"],ans:1},{opts:["All segments jump to new random positions","A new head is inserted at front; last segment is removed from back","The tail creates new segments","Positions are shuffled randomly"],ans:1},{opts:["Removes the tail segment","Adds new_head at position 0 (the front of the list)","Replaces all existing segments","Sorts the list by x-coordinate"],ans:1},{opts:["The snake's x position","The last element in the list","The total number of body segments","The snake's current speed"],ans:2},{opts:["The first element","A random element","The last element","All elements"],ans:2}],
+  8:[{opts:["Wrong variable name used","You tried to add an integer and a string directly","A colon is missing","A list index is out of range"],ans:1},{opts:["Python reads code backwards","The most specific error information appears at the bottom","The top line is always wrong","Tracebacks work differently in pygame"],ans:1},{opts:["It automatically fixes list errors","You can see the exact state of the list each frame","It stops the loop when something goes wrong","It changes the score"],ans:1},{opts:["You used the wrong variable name","Python found inconsistent or unexpected indentation","A bracket is missing","Too many functions are defined"],ans:1},{opts:["Using a special debugging IDE plugin","Explaining your code line-by-line (even to an inanimate object) to spot logic errors","Restarting the Python interpreter","Removing all print statements"],ans:1}],
+  9:[{opts:["It makes the program run faster","You only need to change one line to update all usages","Python requires uppercase for numbers","It creates a list automatically"],ans:1},{opts:["A syntax error Python will catch","A note marking work planned for the future","A function definition","An import shortcut"],ans:1},{opts:["Adding a new game feature","Refactoring — isolating responsibility into a dedicated function","Debugging a crash","Creating an infinite loop"],ans:1},{opts:["It slows the game slightly for safety","It converts coordinates in one place and can be called anywhere","It creates new global variables","It handles keyboard events"],ans:1},{opts:["Easier to read code","Single place to update a value","Slightly faster execution","Self-documenting — the name explains the number"],ans:2}],
+  10:[{opts:["Most Valuable Player","The simplest working version you can build and test first","Maximum Video Processing","Minimum Variable Program"],ans:1},{opts:["Plan the logic on paper","Write pseudocode","Write all the code at once before planning","Identify what the feature needs to know and do"],ans:2},{opts:["Keeping all code inside one giant function","Splitting input, logic update, and drawing into separate functions/sections","Using only global variables","Never using functions"],ans:1},{opts:["The snake's body list positions","Different game modes: PLAYING, PAUSED, GAME_OVER","Food random positions","Screen background colours"],ans:1},{opts:["Writing everything in one long file","No comments — 'clean' code explains itself","Named constants, clear function names, and organised structure","Running at maximum possible speed"],ans:2}],
+};
+function seededRng(seed){let s=seed;return()=>{s=s*16807%2147483647;return(s-1)/2147483646};}
+function mkAnswers(acc,seed){
+  const r=seededRng(seed);
+  return PRE_POST.map(q=>{
+    if(r()<acc) return q.opts[q.ans];
+    const wrong=q.opts.filter((_,i)=>i!==q.ans);
+    return wrong[Math.floor(r()*wrong.length)];
+  });
+}
+function score(ansTexts){
+  const correct=ansTexts.filter((a,i)=>a===PRE_POST[i].opts[PRE_POST[i].ans]).length;
+  return Math.round(correct/50*100);
+}
+function cans(step,pct){
+  const qs=STEP_CHECK[step];
+  const nCorrect=Math.round(pct/100*5);
+  return qs.map((q,i)=>{
+    if(i<nCorrect) return {answer:q.opts[q.ans],correct:1};
+    const wrong=q.opts.filter((_,j)=>j!==q.ans);
+    return {answer:wrong[0],correct:0};
+  });
+}
+const TOPICS=["setting up Pygame","variables and grid","drawing and colours","snake body with lists","snake movement","keyboard input","food and collisions","game over and scoring","sound and timing","the complete game"];
+function jrn(d,t){
+  if(d==="high") return [`Learned how ${t} works in a real game context.`,`Hardest: connecting ${t} to full logic.`,"Write code first next time.",`Can apply ${t} to other projects.`,"Confidence: 4/5."];
+  if(d==="medium") return [`Learned about ${t} today.`,`Code was tricky for ${t}.`,"Ask for help earlier.","Maybe use in project.","Confidence improved."];
+  return [`Learned ${t}.`,"Difficult.","Need more practice.","",""];
+}
+function iso(m=0){const d=new Date(Date.now()+m*60000);const kl=new Date(d.getTime()+8*60*60*1000);return kl.toISOString().replace("Z","+08:00");}
+async function postData(payload){
+  try{await fetch(URL,{method:'POST',body:JSON.stringify(payload),mode:'no-cors',headers:{'Content-Type':'application/json'}});return true;}catch(e){return false;}
+}
+function log(msg,cls='info'){const d=document.getElementById('progress');const el=document.createElement('div');el.className='row '+cls;el.textContent=msg;d.appendChild(el);el.scrollIntoView({block:'nearest'});}
+function phase(msg){const d=document.getElementById('progress');const el=document.createElement('div');el.className='phase';el.textContent=msg;d.appendChild(el);}
+async function runAll(){
+  document.getElementById('runBtn').disabled=true;
+  document.getElementById('progress').innerHTML='';
+  phase('📋 Phase 1 — Student Registrations');
+  for(let i=0;i<STUDENTS.length;i++){
+    const s=STUDENTS[i];
+    await postData({
+        type:'student_reg',
+        student_matric:      s.matric,
+        student_name:        s.name,
+        student_gender:      s.gender,
+        student_age:         s.age,
+        student_mykid:       s.mykid,
+        student_state:       s.state,
+        student_class:       s.cls,
+        student_school_code: s.school_code,
+        student_phone:       s.phone,
+        student_email:       s.email,
+        registered_at:       iso(i),
+        submitted_iso:       iso(i)
+      });
+    log(`  ✓ Registered ${s.name} (${s.bg})`,'ok');
+    await new Promise(r=>setTimeout(r,800));
+  }
+  phase('📝 Phase 2 — Pre-Tests (Pre-Survey)');
+  const preScores={};
+  for(let i=0;i<STUDENTS.length;i++){
+    const s=STUDENTS[i];
+    const ans=mkAnswers(s.preAcc,i*7+1);
+    const sc=score(ans);
+    preScores[s.matric]=sc;
+    await postData({type:'pretest',matric:s.matric,name:s.name,
+      gender:s.gender,age:s.age,mykid:s.mykid,home_state:s.state,
+      school_code:s.school_code,phone:s.phone,email:s.email,
+      class:s.cls,submitted_iso:iso(5+i),score:sc,answers:ans});
+    log(`  ✓ Pre-test: ${s.name} → ${sc}% (${Math.round(sc/2)}/50 correct)`,'ok');
+    await new Promise(r=>setTimeout(r,800));
+  }
+  for(let act=1;act<=10;act++){
+    phase(`🎮 Phase 3.${act} — Activity ${act}: ${TOPICS[act-1]}`);
+    for(let i=0;i<STUDENTS.length;i++){
+      const s=STUDENTS[i];const p=s.prof;
+      const pred=p.pred+(act-1);const actual=Math.min(100,pred+8);
+      const j=jrn(p.d,TOPICS[act-1]);
+      const conceptAns=cans(act,p.cp);
+      const nC=conceptAns.filter(a=>a.correct).length;
+      await postData({type:`act_${act}`,matric:s.matric,name:s.name,
+        gender:s.gender,age:s.age,mykid:s.mykid,home_state:s.state,
+        school_code:s.school_code,phone:s.phone,email:s.email,
+        class:s.cls,step:act,
+        submitted_iso:iso(20+act*10+i),cal_confidence:p.conf,cal_predicted:pred,
+        cal_reflection:`I think ${TOPICS[act-1]} will be ${p.conf>=3?'manageable':'challenging'}.`,
+        t1_score_pct:100,t2_attempts:p.t2,
+        refl2_text:`The video on ${TOPICS[act-1]} was ${p.conf>=3?'clear and helpful':'a bit hard to follow'}.`,
+        t3_attempts:p.t3,t4_attempts:p.t4,
+        concept_answers:conceptAns,concept_score_pct:p.cp,concept_passed:p.cp>=80,concept_attempts:p.ca,
+        jr1:j[0],jr2:j[1],jr3:j[2],jr4:j[3],jr5:j[4],
+        post_confidence:Math.min(5,p.conf+1),post_actual:String(actual),
+        post_r1:`Expected ${pred}%, achieved ~${actual}%. ${Math.abs(actual-pred)<=10?'Prediction was close.':'Off by more than expected.'}`,
+        post_r2:p.conf<=2?'I asked my peers and lecturer for help.':'I worked through it mostly independently.',
+        calibration_index:actual-pred});
+      log(`  ✓ Act ${act}: ${s.name} — concept ${nC}/5 correct`,'ok');
+      await new Promise(r=>setTimeout(r,600));
+    }
+  }
+  phase('🏁 Phase 4 — Post-Tests (Post-Survey)');
+  const postScores={};
+  for(let i=0;i<STUDENTS.length;i++){
+    const s=STUDENTS[i];
+    const ans=mkAnswers(s.postAcc,100+i*7);
+    const sc=score(ans);
+    postScores[s.matric]=sc;
+    await postData({type:'posttest',matric:s.matric,name:s.name,
+      gender:s.gender,age:s.age,mykid:s.mykid,home_state:s.state,
+      school_code:s.school_code,phone:s.phone,email:s.email,
+      class:s.cls,submitted_iso:iso(350+i),score:sc,answers:ans});
+    log(`  ✓ Post-test: ${s.name} → ${sc}% (${Math.round(sc/2)}/50 correct)`,'ok');
+    await new Promise(r=>setTimeout(r,800));
+  }
+  phase('✅ Complete!');
+  const tbody=document.querySelector('#summaryTable tbody');
+  for(const s of STUDENTS){
+    const pre=preScores[s.matric],post=postScores[s.matric],gain=post-pre;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${s.matric}</td><td>${s.name}</td><td>${s.bg}</td><td>${pre}%</td><td>${post}%</td><td class="gain">+${gain}%</td>`;
+    tbody.appendChild(tr);
+  }
+  document.getElementById('summary').style.display='block';
+  document.getElementById('runBtn').disabled=false;
+  document.getElementById('runBtn').textContent='▶ Run Again';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Snake Game Python Tutorial — UMPSA STEM LAB</title>
+<link rel="stylesheet" href="style.css">
+<style>
+/* ── CT activity styles ── */
+.ct-section{background:linear-gradient(135deg,rgba(2,173,165,.06) 0%,rgba(13,85,167,.06) 100%);
+  border:1px solid rgba(2,173,165,.2);border-radius:14px;padding:24px 24px 20px;margin:28px 0}
+.ct-label{display:inline-flex;align-items:center;gap:7px;background:var(--teal);color:#fff;
+  border-radius:20px;padding:4px 14px;font-size:12px;font-weight:800;letter-spacing:.06em;
+  text-transform:uppercase;margin-bottom:12px}
+.ct-label.algo{background:var(--blue)}
+.ct-label.patt{background:#7B3FA0}
+.decomp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:14px}
+.dc-card{border:2px solid var(--line);border-radius:12px;padding:14px 14px 12px;cursor:pointer;
+  transition:border-color .2s,box-shadow .2s;text-align:center;background:var(--card)}
+.dc-card:hover{border-color:var(--teal);box-shadow:0 2px 12px rgba(2,173,165,.15)}
+.dc-card.revealed{border-color:var(--teal);background:rgba(2,173,165,.06)}
+.dc-card .icon{font-size:28px;margin-bottom:6px}
+.dc-card h4{margin:0 0 4px;font-size:14px;font-weight:700}
+.dc-card .hint{font-size:12.5px;color:var(--muted);margin:0}
+.dc-reveal{font-size:13px;color:var(--teal-dark);margin-top:8px;display:none;text-align:left;
+  border-top:1px solid rgba(2,173,165,.2);padding-top:8px;line-height:1.55}
+.dc-card.revealed .dc-reveal{display:block}
+.dc-card.revealed .hint{display:none}
+/* ── algorithm sequencer ── */
+.seq-wrap{margin-top:16px}
+.seq-tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.seq-tab{padding:6px 14px;border-radius:20px;border:2px solid var(--line);font-size:13.5px;
+  font-weight:600;cursor:pointer;transition:all .15s;background:var(--card)}
+.seq-tab.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.seq-panel{display:none}
+.seq-panel.active{display:block}
+.seq-intro{font-size:14.5px;color:var(--muted);margin-bottom:14px}
+.seq-steps{display:grid;gap:8px}
+.seq-step{display:flex;align-items:flex-start;gap:12px;border:2px solid var(--line);border-radius:10px;
+  padding:11px 14px;cursor:pointer;transition:all .18s;background:var(--card);font-size:14px}
+.seq-step.placed{border-color:var(--blue);background:rgba(13,85,167,.06)}
+.seq-step.correct{border-color:#00C06A;background:rgba(0,192,106,.08)}
+.seq-step.wrong{border-color:var(--red);background:rgba(200,0,0,.07)}
+.seq-num{flex:0 0 26px;height:26px;border-radius:50%;background:var(--line);color:var(--muted);
+  display:grid;place-items:center;font-size:12px;font-weight:800;transition:all .18s}
+.seq-step.placed .seq-num{background:var(--blue);color:#fff}
+.seq-step.correct .seq-num{background:#00C06A;color:#fff}
+.seq-step.wrong .seq-num{background:var(--red);color:#fff}
+.seq-text{flex:1;line-height:1.45}
+.seq-text code{font-size:12.5px;background:rgba(2,173,165,.1);border-radius:4px;padding:1px 5px;color:var(--teal-dark)}
+.seq-actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.seq-btn{padding:8px 18px;border-radius:8px;border:none;font-size:14px;font-weight:600;cursor:pointer;transition:.15s}
+.seq-btn.check{background:var(--blue);color:#fff}
+.seq-btn.check:hover{filter:brightness(1.1)}
+.seq-btn.reset{background:var(--line);color:var(--text)}
+.seq-feedback{margin-top:12px;font-size:14px;font-weight:600;display:none}
+.seq-feedback.ok{color:#00A857}
+.seq-feedback.bad{color:var(--red)}
+/* ── annotated canvas labels ── */
+.dc-lbl{position:absolute;pointer-events:all;border:none;border-radius:20px;
+  padding:5px 13px;font-size:12.5px;font-weight:700;color:#fff;cursor:pointer;
+  white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.35);
+  transition:transform .12s,box-shadow .12s;letter-spacing:.02em}
+.dc-lbl:hover{transform:scale(1.08);box-shadow:0 4px 14px rgba(0,0,0,.4)}
+.dc-lbl.active{outline:3px solid #fff;outline-offset:2px}
+
+/* ── bonus food badge ── */
+.bonus-legend{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:10px;font-size:13.5px}
+.bl-item{display:flex;align-items:center;gap:7px}
+.bl-dot{width:14px;height:14px;border-radius:50%}
+/* ── score badge ── */
+#live-score{font-family:monospace;font-size:13.5px;color:var(--muted);text-align:center;margin-top:4px}
+</style>
+</head>
+<body>
+<div class="chev" id="chev">
+  <span id="see-box">See</span>
+  <span>Think</span>
+  <span>Explore</span>
+  <span>Marvel</span>
+</div>
+<nav class="sitenav"><div class="wrap">
+  <a class="brand" href="index.html">Snake Game <span>Python Tutorial</span></a>
+  <details class="navsel">
+    <summary>Steps</summary>
+    <div class="navmenu" role="menu">
+      <a href="step-1.html"><b>Step 1</b>: Variables &amp; Setup</a>
+      <a href="step-2.html"><b>Step 2</b>: Loop &amp; Events</a>
+      <a href="step-3.html"><b>Step 3</b>: Direction Control</a>
+      <a href="step-4.html"><b>Step 4</b>: Snake Body ⭐</a>
+      <a href="step-5.html"><b>Step 5</b>: Bonus Food 🌟</a>
+      <a href="step-6.html"><b>Step 6</b>: Functions</a>
+      <a href="step-7.html"><b>Step 7</b>: Wrap-Around ⭐</a>
+      <a href="step-8.html"><b>Step 8</b>: Save High Score</a>
+      <a href="step-9.html"><b>Step 9</b>: OOP Refactor</a>
+      <a href="step-10.html"><b>Step 10</b>: ML Extension</a>
+    </div>
+  </details>
+  <a class="nl" href="index.html" aria-current="page">Home</a>
+  <a class="nl" href="#concept-map">Concept Map</a>
+  <a class="nl" href="student-register.html" style="background:rgba(2,173,165,.18);border-radius:6px;padding:4px 12px;font-weight:700">📋 Register</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <p class="eyebrow">UMPSA STEM LAB · Game Development with Python</p>
+  <h1>Build a Snake Game in Python</h1>
+  <p class="sub">Learn programming concepts step by step — from variables to machine learning — through a real Pygame project.</p>
+</div></header>
+<div style="background:var(--teal-dark);padding:0 0 24px"><div class="wrap">
+  <div class="hero-cta">
+    <a class="cta" href="student-register.html" style="background:#fff;color:var(--teal-dark)">📋 Register First</a>
+    <a class="cta" href="step-1.html">&#9654; Start Step 1</a>
+    <a class="cta alt" href="#demo">&#127918; Play the Demo</a>
+  </div>
+</div></div>
+<!-- ═══ RESEARCH PRE-SURVEY BANNER ═══ -->
+<div style="background:linear-gradient(90deg,#0B4F4B 0%,#064440 100%);padding:18px 0;border-top:2px solid rgba(2,173,165,.4)">
+  <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:12px;color:#B9E4E1">
+      <span style="font-size:22px">&#128203;</span>
+      <div>
+        <div style="font-weight:800;font-size:15px;color:#fff">Research Study &mdash; Complete the Pre-Survey First</div>
+        <div style="font-size:13px;opacity:.8">Takes ~18 min &nbsp;&middot;&nbsp; 70 questions &nbsp;&middot;&nbsp; Saved automatically</div>
+      </div>
+    </div>
+    <a href="survey-pre.html"
+       style="background:var(--teal);color:#fff;border-radius:9px;padding:11px 24px;font-size:14px;
+              font-weight:700;text-decoration:none;white-space:nowrap;transition:background .15s;
+              display:inline-flex;align-items:center;gap:7px"
+       onmouseover="this.style.background='#02C4BB'" onmouseout="this.style.background='var(--teal)'">
+      Start Pre-Survey &#8594;
+    </a>
+  </div>
+</div>
+
+
+<div class="wrap">
+
+
+<!-- ═══════════════════════════════════════════════
+     WELCOME NOTE
+════════════════════════════════════════════════ -->
+<section id="welcome" style="padding-bottom:8px">
+  <div style="border-left:4px solid var(--teal,#0A8F8A);padding:4px 0 4px 20px">
+    <h2 style="margin-bottom:10px">Welcome</h2>
+    <p class="lede" style="margin-bottom:10px">Welcome to the <strong>UMPSA STEM Lab Learning Module on Python Programming</strong>. In this module, you will learn core programming concepts not through abstract exercises, but by building something real — the classic <strong>Snake game</strong>.</p>
+    <p style="color:var(--muted,#64748b);font-size:15px;line-height:1.7;margin-bottom:10px">Along the way, you will also develop <strong>Computational Thinking</strong> skills — learning how to break problems into parts, spot patterns, and design step-by-step solutions. These are the same skills professional programmers use every day.</p>
+    <p style="color:var(--muted,#64748b);font-size:15px;line-height:1.7;margin:0">The Python foundation you build here will carry directly into your next challenge: applying these skills to <strong>Raspberry Pi IoT projects</strong>, where your code controls real-world hardware.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     DEMO
+════════════════════════════════════════════════ -->
+<section id="demo">
+  <h2>The finished game</h2>
+  <p class="lede">This is what you will build. The AI snake runs automatically — use arrow keys or click the button to take control. <strong>Collect bonus food ⭐ for 3× points!</strong></p>
+  <div style="text-align:center;margin:18px 0">
+    <canvas id="snake-canvas" width="500" height="375"
+      style="border-radius:10px;display:block;margin:0 auto;cursor:pointer;max-width:100%"></canvas>
+    <div id="live-score">Score: 0 &nbsp;|&nbsp; High Score: 0</div>
+    <button id="demo-toggle" style="margin-top:10px;background:var(--teal);color:#fff;
+      border:none;border-radius:8px;padding:10px 22px;font-size:15px;font-weight:600;cursor:pointer">
+      Play yourself
+    </button>
+  </div>
+  <div class="bonus-legend">
+    <div class="bl-item"><div class="bl-dot" style="background:#FF3030"></div> Regular food — 1 point</div>
+    <div class="bl-item"><div class="bl-dot" style="background:#FFD700;box-shadow:0 0 6px #FFD700"></div> Bonus food ⭐ — 3 points, disappears after 4 s</div>
+  </div>
+  <div class="cal tip" style="margin-top:14px"><b>Tip</b>Arrow keys to play. Click canvas after Game Over to restart. Click "Watch AI" to hand back control.</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     CT ACTIVITY 1 — DECOMPOSE
+════════════════════════════════════════════════ -->
+<section id="ct1">
+  <div class="ct-section">
+    <div class="ct-label">🗂 CT Activity 1 — Decompose</div>
+    <h2 style="margin:8px 0 4px">What are the parts of the Snake game?</h2>
+    <p class="lede" style="margin-top:0">Before writing any code, a programmer <em>decomposes</em> the problem — breaks it into smaller, manageable pieces. Click each game component below to discover what Python concept it maps to.</p>
+
+    <!-- Annotated canvas -->
+    <div style="position:relative;display:inline-block;width:100%;max-width:540px;
+                margin:18px auto 6px;display:block">
+      <canvas id="dc-canvas" width="500" height="300"
+        style="border-radius:10px;display:block;margin:0 auto;max-width:100%;
+               border:2px solid rgba(2,173,165,.25)"></canvas>
+      <!-- Label bubbles — absolutely positioned over canvas -->
+      <div id="dc-labels" style="position:absolute;top:0;left:50%;transform:translateX(-50%);
+                                  width:500px;max-width:100%;height:300px;pointer-events:none">
+        <!-- Score -->
+        <button class="dc-lbl" data-key="score"
+          style="top:8px;left:8px;background:#7B4FA0">Score</button>
+        <!-- Food -->
+        <button class="dc-lbl" data-key="food"
+          style="top:44px;right:60px;background:#C0392B">Food</button>
+        <!-- Bonus Food -->
+        <button class="dc-lbl" data-key="bonus"
+          style="top:100px;right:20px;background:#B8860B">Bonus ⭐</button>
+        <!-- Snake Head -->
+        <button class="dc-lbl" data-key="head"
+          style="top:148px;left:48%;background:#0B8A60">Snake Head</button>
+        <!-- Snake Body -->
+        <button class="dc-lbl" data-key="body"
+          style="top:148px;left:22%;background:#0D9970">Snake Body</button>
+        <!-- Direction -->
+        <button class="dc-lbl" data-key="direction"
+          style="top:148px;right:16px;background:#C07800">Direction</button>
+        <!-- Grid -->
+        <button class="dc-lbl" data-key="grid"
+          style="bottom:32px;left:50%;transform:translateX(-50%);background:#0D55A7">Grid</button>
+        <!-- Clock -->
+        <button class="dc-lbl" data-key="clock"
+          style="bottom:32px;left:8px;background:#555">Clock ⏱</button>
+      </div>
+    </div>
+    <!-- Tooltip -->
+    <div id="dc-tooltip" style="display:none;margin:0 auto 16px;max-width:480px;
+      background:var(--card);border:2px solid var(--teal);border-radius:10px;
+      padding:12px 16px;font-size:14px;line-height:1.55"></div>
+
+    <div class="decomp-grid">
+      <div class="dc-card" data-key="head">
+        <div class="icon">🐍</div>
+        <h4>Snake Head</h4>
+        <p class="hint">Where is it on the grid?</p>
+        <div class="dc-reveal"><strong>Tuple</strong> — <code>(col, row)</code><br>A pair of integers stored in round brackets. Tuples are fixed — the head position is replaced each move, never modified in place.</div>
+      </div>
+      <div class="dc-card" data-key="body">
+        <div class="icon">🟩</div>
+        <h4>Snake Body</h4>
+        <p class="hint">How is the full snake stored?</p>
+        <div class="dc-reveal"><strong>List of Tuples</strong> — <code>[(col,row), …]</code><br>A list grows with <code>insert(0, head)</code> and shrinks with <code>pop()</code>. Lists are perfect here because the snake's length changes constantly.</div>
+      </div>
+      <div class="dc-card" data-key="food">
+        <div class="icon">🍎</div>
+        <h4>Regular Food</h4>
+        <p class="hint">How does it appear randomly?</p>
+        <div class="dc-reveal"><strong>Tuple + random</strong> — <code>(randint(…), randint(…))</code><br>A random column and row are generated with <code>random.randint()</code> and stored as a tuple. Worth <strong>1 point</strong>.</div>
+      </div>
+      <div class="dc-card" data-key="bonus">
+        <div class="icon">⭐</div>
+        <h4>Bonus Food</h4>
+        <p class="hint">How does it appear periodically?</p>
+        <div class="dc-reveal"><strong>List + Timer</strong> — <code>[(col, row, timer), …]</code><br>A list of bonus items, each with a countdown timer. The modulo operator <code>frame_count % 300 == 0</code> triggers spawning every 300 frames. Worth <strong>3 points</strong>, disappears when timer hits 0.</div>
+      </div>
+      <div class="dc-card" data-key="score">
+        <div class="icon">🏆</div>
+        <h4>Score</h4>
+        <p class="hint">What kind of value is it?</p>
+        <div class="dc-reveal"><strong>Integer variable</strong> — <code>score = 0</code><br>Starts at 0, increases by 1 for regular food and 3 for bonus food. In later steps stored in a <strong>dictionary</strong> alongside the high score.</div>
+      </div>
+      <div class="dc-card" data-key="grid">
+        <div class="icon">⬛</div>
+        <h4>Grid</h4>
+        <p class="hint">How is the game board defined?</p>
+        <div class="dc-reveal"><strong>Constants</strong> — <code>GRID_COLS = 20</code>, <code>GRID_ROWS = 15</code>, <code>CELL_SIZE = 25</code><br>Written in UPPER_CASE by convention. Set once at the start, never changed during the game.</div>
+      </div>
+      <div class="dc-card" data-key="direction">
+        <div class="icon">➡️</div>
+        <h4>Direction</h4>
+        <p class="hint">How does the snake know which way to go?</p>
+        <div class="dc-reveal"><strong>String</strong> — <code>"RIGHT"</code>, <code>"LEFT"</code>, <code>"UP"</code>, <code>"DOWN"</code><br>Updated when arrow keys are pressed. In Step 7 replaced by a <strong>dictionary</strong>: <code>MOVES = {"RIGHT":(1,0), …}</code> — cleaner and faster.</div>
+      </div>
+      <div class="dc-card" data-key="clock">
+        <div class="icon">⏱️</div>
+        <h4>Game Clock</h4>
+        <p class="hint">How does the game control speed?</p>
+        <div class="dc-reveal"><strong>Frame counter + interval</strong> — <code>frame_count += 1</code><br>The game loop runs every ~16 ms (60 fps). Movement only happens every 120 ms. <code>frame_count % N == 0</code> triggers periodic events like bonus food spawning.</div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--muted);margin-top:14px;text-align:center">
+      ✅ Click all 8 components — then discuss: <em>which components depend on each other?</em>
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     CT ACTIVITY 2 — ALGORITHM
+════════════════════════════════════════════════ -->
+<section id="ct2">
+  <div class="ct-section">
+    <div class="ct-label algo">📋 CT Activity 2 — Algorithm</div>
+    <h2 style="margin:8px 0 4px">Describe the flow — put the steps in order</h2>
+    <p class="lede" style="margin-top:0">An <em>algorithm</em> is a precise sequence of steps. For each function below, click the steps in the correct order (1 → 2 → 3 …). Then check your answer.</p>
+
+    <div class="seq-wrap">
+      <div class="seq-tabs">
+        <button class="seq-tab active" data-panel="p1">🔄 Game Loop</button>
+        <button class="seq-tab" data-panel="p2">🍎 Eating Food</button>
+        <button class="seq-tab" data-panel="p3">⭐ Bonus Food</button>
+        <button class="seq-tab" data-panel="p4">💥 Collision</button>
+      </div>
+
+      <!-- Panel 1: Game Loop -->
+      <div class="seq-panel active" id="p1">
+        <p class="seq-intro">The <strong>game loop</strong> runs every frame. What order do these steps happen in? Click them 1 → 2 → 3 → 4 → 5 → 6.</p>
+        <div class="seq-steps" id="steps-p1">
+          <div class="seq-step" data-correct="4">
+            <div class="seq-num">?</div>
+            <div class="seq-text">Check if the snake's head position matches a food position → update score, spawn new food</div>
+          </div>
+          <div class="seq-step" data-correct="1">
+            <div class="seq-num">?</div>
+            <div class="seq-text">Read keyboard events — if an arrow key is pressed, update the <code>direction</code> variable</div>
+          </div>
+          <div class="seq-step" data-correct="6">
+            <div class="seq-num">?</div>
+            <div class="seq-text">Wait ~120 ms before the next frame (controls the snake's speed)</div>
+          </div>
+          <div class="seq-step" data-correct="5">
+            <div class="seq-num">?</div>
+            <div class="seq-text">Draw the grid, snake body, food and score onto the canvas</div>
+          </div>
+          <div class="seq-step" data-correct="2">
+            <div class="seq-num">?</div>
+            <div class="seq-text">Calculate the new head position: <code>new_head = (head_x + dx, head_y + dy)</code></div>
+          </div>
+          <div class="seq-step" data-correct="3">
+            <div class="seq-num">?</div>
+            <div class="seq-text">Check if the new head position overlaps the snake body → Game Over if it does</div>
+          </div>
+        </div>
+        <div class="seq-actions">
+          <button class="seq-btn check" data-panel="p1">✔ Check my order</button>
+          <button class="seq-btn reset" data-panel="p1">↺ Reset</button>
+        </div>
+        <div class="seq-feedback" id="fb-p1"></div>
+      </div>
+
+      <!-- Panel 2: Eating Food -->
+      <div class="seq-panel" id="p2">
+        <p class="seq-intro">What exactly happens when the snake <strong>eats regular food</strong>? Click the steps in order.</p>
+        <div class="seq-steps" id="steps-p2">
+          <div class="seq-step" data-correct="3">
+            <div class="seq-num">?</div>
+            <div class="seq-text">Do NOT call <code>snake.pop()</code> — the tail stays, making the snake one cell longer</div>
+          </div>
+          <div class="seq-step" data-correct="4">
+            <div class="seq-num">?</div>
+            <div class="seq-text">Call <code>spawn_food()</code> to place new food at a random empty cell</div>
+          </div>
+          <div class="seq-step" data-correct="1">
+            <div class="seq-num">?</div>
+            <div class="seq-text">The new head position equals the food's <code>(col, row)</code></div>
+          </div>
+          <div class="seq-step" data-correct="2">
+            <div class="seq-num">?</div>
+            <div class="seq-text">Add 1 to <code>score</code> and insert the new head at position 0 of the body list</div>
+          </div>
+          <div class="seq-step" data-correct="5">
+            <div class="seq-num">?</div>
+            <div class="seq-text">Check if <code>score &gt; high_score</code> — if so, update and save the high score</div>
+          </div>
+        </div>
+        <div class="seq-actions">
+          <button class="seq-btn check" data-panel="p2">✔ Check my order</button>
+          <button class="seq-btn reset" data-panel="p2">↺ Reset</button>
+        </div>
+        <div class="seq-feedback" id="fb-p2"></div>
+      </div>
+
+      <!-- Panel 3: Bonus Food -->
+      <div class="seq-panel" id="p3">
+        <p class="seq-intro">The <strong>bonus food</strong> spawns periodically and disappears. Describe its lifecycle in order.</p>
+        <div class="seq-steps" id="steps-p3">
+          <div class="seq-step" data-correct="2">
+            <div class="seq-num">?</div>
+            <div class="seq-text">A new bonus food tuple <code>(col, row, 240)</code> is appended to the <code>bonus_foods</code> list</div>
+          </div>
+          <div class="seq-step" data-correct="4">
+            <div class="seq-num">?</div>
+            <div class="seq-text">If the timer reaches 0, remove that bonus food from the list (it "expired")</div>
+          </div>
+          <div class="seq-step" data-correct="5">
+            <div class="seq-num">?</div>
+            <div class="seq-text">If the snake head hits a bonus food, add 3 to score and remove it from the list</div>
+          </div>
+          <div class="seq-step" data-correct="1">
+            <div class="seq-num">?</div>
+            <div class="seq-text"><code>frame_count % 300 == 0</code> evaluates to True — it's time to spawn a new bonus food</div>
+          </div>
+          <div class="seq-step" data-correct="3">
+            <div class="seq-num">?</div>
+            <div class="seq-text">Every frame, subtract 1 from each bonus food's timer: <code>for bf in bonus_foods: bf[2] -= 1</code></div>
+          </div>
+        </div>
+        <div class="seq-actions">
+          <button class="seq-btn check" data-panel="p3">✔ Check my order</button>
+          <button class="seq-btn reset" data-panel="p3">↺ Reset</button>
+        </div>
+        <div class="seq-feedback" id="fb-p3"></div>
+      </div>
+
+      <!-- Panel 4: Collision -->
+      <div class="seq-panel" id="p4">
+        <p class="seq-intro">How does the game detect a <strong>self-collision</strong> (snake hits its own body)?</p>
+        <div class="seq-steps" id="steps-p4">
+          <div class="seq-step" data-correct="3">
+            <div class="seq-num">?</div>
+            <div class="seq-text">Loop through every segment in the body list: <code>for segment in snake_body[1:]:</code></div>
+          </div>
+          <div class="seq-step" data-correct="1">
+            <div class="seq-num">?</div>
+            <div class="seq-text">Calculate the new head position after moving one step in the current direction</div>
+          </div>
+          <div class="seq-step" data-correct="5">
+            <div class="seq-num">?</div>
+            <div class="seq-text">Set <code>running = False</code> — the game loop exits on the next frame</div>
+          </div>
+          <div class="seq-step" data-correct="2">
+            <div class="seq-num">?</div>
+            <div class="seq-text">Apply wrap-around: <code>new_x = new_x % GRID_COLS</code> so the snake crosses the wall instead of dying</div>
+          </div>
+          <div class="seq-step" data-correct="4">
+            <div class="seq-num">?</div>
+            <div class="seq-text">If <code>segment == new_head</code>, a collision is detected</div>
+          </div>
+        </div>
+        <div class="seq-actions">
+          <button class="seq-btn check" data-panel="p4">✔ Check my order</button>
+          <button class="seq-btn reset" data-panel="p4">↺ Reset</button>
+        </div>
+        <div class="seq-feedback" id="fb-p4"></div>
+      </div>
+    </div><!-- /seq-wrap -->
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     YOUR LEARNING JOURNEY
+════════════════════════════════════════════════ -->
+<section>
+  <h2>Your Learning Journey</h2>
+  <p class="lede">Ten milestones from zero to a machine-learning snake. Each step builds on the last.</p>
+  <div class="actlist">
+    <a class="act" href="step-1.html"><div class="n">1</div><div class="t"><b>Variables &amp; Setup</b><small>Constants, tuples, colours, Pygame window</small></div></a>
+    <a class="act" href="step-2.html"><div class="n">2</div><div class="t"><b>Loop &amp; Events</b><small>while loop, clock, event queue</small></div></a>
+    <a class="act" href="step-3.html"><div class="n">3</div><div class="t"><b>Direction &amp; Movement</b><small>Conditionals, if/elif, keyboard input</small></div></a>
+    <a class="act" href="step-4.html"><div class="n">4</div><div class="t"><b>Snake Body ⭐</b><small>Lists, insert(), pop(), random, collision</small></div></a>
+    <a class="act" href="step-5.html"><div class="n">5</div><div class="t"><b>Bonus Food 🌟</b><small>for loops, range(), append(), timers</small></div></a>
+    <a class="act" href="step-6.html"><div class="n">6</div><div class="t"><b>Functions</b><small>def, parameters, return, DRY principle</small></div></a>
+    <a class="act" href="step-7.html"><div class="n">7</div><div class="t"><b>Wrap-Around ⭐</b><small>Modulo operator %, direction dictionary</small></div></a>
+    <a class="act" href="step-8.html"><div class="n">8</div><div class="t"><b>Save High Score</b><small>File I/O, try/except, f-strings, JSON</small></div></a>
+    <a class="act" href="step-9.html"><div class="n">9</div><div class="t"><b>OOP Refactor</b><small>Classes, __init__, self, encapsulation</small></div></a>
+    <a class="act" href="step-10.html"><div class="n">10</div><div class="t"><b>ML Extension</b><small>Q-Learning, Bellman equation, AI agent</small></div></a>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════
+     PROGRAMMING CONCEPT MAPPING
+════════════════════════════════════════════════ -->
+<section id="concept-map" style="padding:0">
+  <div style="background:#0f172a;border-radius:12px;padding:28px 24px 20px;margin-top:8px">
+    <h2 style="color:#e2e8f0;margin:0 0 4px">Programming Concept Mapping</h2>
+    <p style="color:#94a3b8;margin:0 0 20px;font-size:14px">Which concept is first introduced at each step — and where it reappears.</p>
+
+    <!-- Legend -->
+    <div style="display:flex;flex-wrap:wrap;gap:14px 24px;margin-bottom:20px;font-size:13px;color:#cbd5e1">
+      <div style="display:flex;align-items:center;gap:7px"><span style="color:#2dd4bf;font-size:18px;line-height:1">★</span> Introduced (core)</div>
+      <div style="display:flex;align-items:center;gap:7px"><span style="color:#f59e0b;font-size:18px;line-height:1">★</span> Introduced (boundary / modulo)</div>
+      <div style="display:flex;align-items:center;gap:7px"><span style="color:#a78bfa;font-size:18px;line-height:1">★</span> Introduced (OOP / sets)</div>
+      <div style="display:flex;align-items:center;gap:7px"><span style="color:#f87171;font-size:18px;line-height:1">★</span> Introduced (ML)</div>
+      <div style="display:flex;align-items:center;gap:7px"><span style="color:#475569;font-size:14px">●</span> Applied / reinforced</div>
+    </div>
+
+    <!-- Table -->
+    <div style="overflow-x:auto;border-radius:8px">
+      <table style="border-collapse:collapse;min-width:860px;width:100%;font-size:13px">
+        <thead>
+          <tr style="background:#1e3a3a">
+            <th style="text-align:left;padding:10px 16px;color:#5eead4;font-weight:700;letter-spacing:.04em;font-size:11px;text-transform:uppercase;white-space:nowrap;min-width:190px;position:sticky;left:0;background:#1e3a3a;border-right:2px solid #0f766e">STEP</th>
+            <th style="padding:8px 10px;color:#94a3b8;font-weight:600;letter-spacing:.04em;font-size:11px;text-transform:uppercase;text-align:center;white-space:nowrap">Variables</th>
+            <th style="padding:8px 10px;color:#94a3b8;font-weight:600;letter-spacing:.04em;font-size:11px;text-transform:uppercase;text-align:center;white-space:nowrap">Tuples</th>
+            <th style="padding:8px 10px;color:#94a3b8;font-weight:600;letter-spacing:.04em;font-size:11px;text-transform:uppercase;text-align:center;white-space:nowrap">Conditionals</th>
+            <th style="padding:8px 10px;color:#94a3b8;font-weight:600;letter-spacing:.04em;font-size:11px;text-transform:uppercase;text-align:center;white-space:nowrap">Loops</th>
+            <th style="padding:8px 10px;color:#94a3b8;font-weight:600;letter-spacing:.04em;font-size:11px;text-transform:uppercase;text-align:center;white-space:nowrap">Lists</th>
+            <th style="padding:8px 10px;color:#94a3b8;font-weight:600;letter-spacing:.04em;font-size:11px;text-transform:uppercase;text-align:center;white-space:nowrap">Functions</th>
+            <th style="padding:8px 10px;color:#94a3b8;font-weight:600;letter-spacing:.04em;font-size:11px;text-transform:uppercase;text-align:center;white-space:nowrap">Classes&nbsp;/ OOP</th>
+            <th style="padding:8px 10px;color:#94a3b8;font-weight:600;letter-spacing:.04em;font-size:11px;text-transform:uppercase;text-align:center;white-space:nowrap">Sets</th>
+            <th style="padding:8px 10px;color:#94a3b8;font-weight:600;letter-spacing:.04em;font-size:11px;text-transform:uppercase;text-align:center;white-space:nowrap">Dicts</th>
+            <th style="padding:8px 10px;color:#94a3b8;font-weight:600;letter-spacing:.04em;font-size:11px;text-transform:uppercase;text-align:center;white-space:nowrap">Modulo&nbsp;%</th>
+            <th style="padding:8px 10px;color:#94a3b8;font-weight:600;letter-spacing:.04em;font-size:11px;text-transform:uppercase;text-align:center;white-space:nowrap">File&nbsp;I/O</th>
+            <th style="padding:8px 10px;color:#94a3b8;font-weight:600;letter-spacing:.04em;font-size:11px;text-transform:uppercase;text-align:center;white-space:nowrap">Try / Except</th>
+            <th style="padding:8px 10px;color:#94a3b8;font-weight:600;letter-spacing:.04em;font-size:11px;text-transform:uppercase;text-align:center;white-space:nowrap">f-strings</th>
+            <th style="padding:8px 10px;color:#94a3b8;font-weight:600;letter-spacing:.04em;font-size:11px;text-transform:uppercase;text-align:center;white-space:nowrap">Random</th>
+            <th style="padding:8px 10px;color:#94a3b8;font-weight:600;letter-spacing:.04em;font-size:11px;text-transform:uppercase;text-align:center;white-space:nowrap">numpy&nbsp;/ ML</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:#0f172a">
+            <td style="padding:9px 16px;font-weight:600;color:#e2e8f0;white-space:nowrap;position:sticky;left:0;background:#0f172a;border-right:2px solid #0f766e"><a href="step-1.html" style="color:#e2e8f0;text-decoration:none">1 · Variables &amp; Setup</a></td>
+            <td style="text-align:center;padding:7px"><span style="color:#2dd4bf;font-size:18px;line-height:1" title="Introduced (core)">★</span></td><td></td><td></td><td style="text-align:center;padding:7px"><span style="color:#2dd4bf;font-size:18px;line-height:1" title="Introduced (core)">★</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr style="background:#1e293b">
+            <td style="padding:9px 16px;font-weight:600;color:#e2e8f0;white-space:nowrap;position:sticky;left:0;background:#1e293b;border-right:2px solid #0f766e"><a href="step-2.html" style="color:#e2e8f0;text-decoration:none">2 · Loop &amp; Events</a></td>
+            <td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#2dd4bf;font-size:18px;line-height:1" title="Introduced (core)">★</span></td><td></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr style="background:#0f172a">
+            <td style="padding:9px 16px;font-weight:600;color:#e2e8f0;white-space:nowrap;position:sticky;left:0;background:#0f172a;border-right:2px solid #0f766e"><a href="step-3.html" style="color:#e2e8f0;text-decoration:none">3 · Direction &amp; Movement</a></td>
+            <td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#2dd4bf;font-size:18px;line-height:1" title="Introduced (core)">★</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr style="background:#1e293b">
+            <td style="padding:9px 16px;font-weight:600;color:#e2e8f0;white-space:nowrap;position:sticky;left:0;background:#1e293b;border-right:2px solid #0f766e"><a href="step-4.html" style="color:#e2e8f0;text-decoration:none">4 · Snake Body ⭐</a></td>
+            <td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#2dd4bf;font-size:18px;line-height:1" title="Introduced (core)">★</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr style="background:#0f172a">
+            <td style="padding:9px 16px;font-weight:600;color:#e2e8f0;white-space:nowrap;position:sticky;left:0;background:#0f172a;border-right:2px solid #0f766e"><a href="step-5.html" style="color:#e2e8f0;text-decoration:none">5 · Bonus Food 🌟</a></td>
+            <td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td style="text-align:center;padding:7px"><span style="color:#2dd4bf;font-size:18px;line-height:1" title="Introduced (core)">★</span></td><td></td>
+          </tr>
+          <tr style="background:#1e293b">
+            <td style="padding:9px 16px;font-weight:600;color:#e2e8f0;white-space:nowrap;position:sticky;left:0;background:#1e293b;border-right:2px solid #0f766e"><a href="step-6.html" style="color:#e2e8f0;text-decoration:none">6 · Functions</a></td>
+            <td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#2dd4bf;font-size:18px;line-height:1" title="Introduced (core)">★</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td></td>
+          </tr>
+          <tr style="background:#0f172a">
+            <td style="padding:9px 16px;font-weight:600;color:#e2e8f0;white-space:nowrap;position:sticky;left:0;background:#0f172a;border-right:2px solid #0f766e"><a href="step-7.html" style="color:#e2e8f0;text-decoration:none">7 · Wrap-Around ⭐</a></td>
+            <td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td></td><td></td><td style="text-align:center;padding:7px"><span style="color:#2dd4bf;font-size:18px;line-height:1" title="Introduced (core)">★</span></td><td style="text-align:center;padding:7px"><span style="color:#f59e0b;font-size:18px;line-height:1" title="Introduced (boundary/modulo)">★</span></td><td></td><td></td><td></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td></td>
+          </tr>
+          <tr style="background:#1e293b">
+            <td style="padding:9px 16px;font-weight:600;color:#e2e8f0;white-space:nowrap;position:sticky;left:0;background:#1e293b;border-right:2px solid #0f766e"><a href="step-8.html" style="color:#e2e8f0;text-decoration:none">8 · Save High Score</a></td>
+            <td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td></td><td></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#2dd4bf;font-size:18px;line-height:1" title="Introduced (core)">★</span></td><td style="text-align:center;padding:7px"><span style="color:#2dd4bf;font-size:18px;line-height:1" title="Introduced (core)">★</span></td><td style="text-align:center;padding:7px"><span style="color:#2dd4bf;font-size:18px;line-height:1" title="Introduced (core)">★</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td></td>
+          </tr>
+          <tr style="background:#0f172a">
+            <td style="padding:9px 16px;font-weight:600;color:#e2e8f0;white-space:nowrap;position:sticky;left:0;background:#0f172a;border-right:2px solid #0f766e"><a href="step-9.html" style="color:#e2e8f0;text-decoration:none">9 · OOP Refactor</a></td>
+            <td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#a78bfa;font-size:18px;line-height:1" title="Introduced (OOP/sets)">★</span></td><td style="text-align:center;padding:7px"><span style="color:#a78bfa;font-size:18px;line-height:1" title="Introduced (OOP/sets)">★</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td></td>
+          </tr>
+          <tr style="background:#1e293b">
+            <td style="padding:9px 16px;font-weight:600;color:#e2e8f0;white-space:nowrap;position:sticky;left:0;background:#1e293b;border-right:2px solid #0f766e"><a href="step-10.html" style="color:#e2e8f0;text-decoration:none">10 · ML Extension 🤖</a></td>
+            <td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td></td><td></td><td></td><td style="text-align:center;padding:7px"><span style="color:#475569;font-size:13px" title="Applied/reinforced">●</span></td><td style="text-align:center;padding:7px"><span style="color:#f87171;font-size:18px;line-height:1" title="Introduced (ML)">★</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:12px;color:#475569;margin-top:10px">Scroll right to see all concepts. ★ = first time this concept appears.</p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════
+     BEFORE YOU START
+════════════════════════════════════════════════ -->
+<section>
+  <h2>Before You Start</h2>
+  <p class="lede">Make sure your computer is ready.</p>
+  <div class="step">
+    <div class="idx">1</div>
+    <div class="body">
+      <h4>Install Python 3</h4>
+      <p>Download from <a href="https://python.org" target="_blank">python.org</a> and run the installer. Tick "Add Python to PATH".</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="idx">2</div>
+    <div class="body">
+      <h4>Install Pygame</h4>
+      <p>Open a terminal (or Thonny's Shell) and type: <code>pip install pygame</code></p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="idx">3</div>
+    <div class="body">
+      <h4>Open Thonny</h4>
+      <p>Thonny is a beginner-friendly Python editor. Download from <a href="https://thonny.org" target="_blank">thonny.org</a> if not already installed.</p>
+    </div>
+  </div>
+  <div class="cal tip"><b>Ready?</b> Once you can run <code>import pygame; print(pygame.version.ver)</code> without errors, you are set!</div>
+</section>
+
+</div><!-- /wrap -->
+
+<div id="teacher-reveal" hidden style="position:fixed;bottom:24px;right:24px;background:#08312F;
+  color:#B9E4E1;border-radius:10px;padding:14px 18px;font-size:14px;z-index:999;
+  border:1px solid rgba(255,255,255,.2);box-shadow:0 8px 24px rgba(0,0,0,.4)">
+  🔑 Teacher access: <a href="teacher-index.html" style="color:#8FD9D5">Open Teacher Index →</a>
+</div>
+
+<footer><div class="wrap">
+  <p><strong>See · Think · Explore · Marvel</strong><br>UMPSA STEM LAB · Snake Game Python Tutorial</p>
+  <p>
+    <a href="index.html">Home</a> ·
+    <a href="step-1.html">Step 1</a> · <a href="step-2.html">Step 2</a> ·
+    <a href="step-3.html">Step 3</a> · <a href="step-4.html">Step 4</a> ·
+    <a href="step-5.html">Step 5</a> · <a href="step-6.html">Step 6</a> ·
+    <a href="step-7.html">Step 7</a> · <a href="step-8.html">Step 8</a> ·
+    <a href="step-9.html">Step 9</a> · <a href="step-10.html">Step 10</a>
+  </p>
+  <p style="margin-top:10px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-weight:400">
+    <span>© 2026 Nurul Hazlina Noordin · UMPSA STEM Lab Engineering Education Initiative</span>
+    <a href="https://ee.ump.edu.my/hazlina/#research" target="_blank" rel="noopener"
+       title="Visit research page" aria-label="Research website"
+       style="color:var(--teal);display:inline-flex;align-items:center;transition:opacity .15s"
+       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="2" y1="12" x2="22" y2="12"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    </a>
+    <a href="mailto:hazlina@umpsa.edu.my"
+       title="hazlina@umpsa.edu.my" aria-label="Email Dr Nurul Hazlina"
+       style="color:var(--teal);display:inline-flex;align-items:center;transition:opacity .15s"
+       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true">
+        <rect x="2" y="4" width="20" height="16" rx="2"/>
+        <polyline points="2,4 12,13 22,4"/>
+      </svg>
+    </a>
+  </p>
+</div></footer>
+
+<!-- ═══════════════════════════════════════════════════════
+     SNAKE DEMO  (with bonus food)
+══════════════════════════════════════════════════════ -->
+<script>
+(function(){
+  var canvas = document.getElementById('snake-canvas');
+  if(!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var COLS=20, ROWS=15, CS=25;
+  var BG='#0F1B22', SNAKE_C='#00C850', HEAD_C='#00FF7F',
+      FOOD_C='#FF3030', BONUS_C='#FFD700', GRID_C='rgba(255,255,255,0.03)';
+
+  var snake, food, bonusFoods, dir, score, highScore, running, aiMode, animId;
+  var frameCount = 0, BONUS_INTERVAL = 300, BONUS_TIMER = 240;
+
+  function rand(n){ return Math.floor(Math.random()*n); }
+
+  function occupied(x, y){
+    return snake.some(function(s){ return s.x===x && s.y===y; });
+  }
+  function spawnFood(){
+    var p;
+    do { p = {x:rand(COLS), y:rand(ROWS)}; } while(occupied(p.x, p.y));
+    return p;
+  }
+  function spawnBonus(){
+    var p;
+    var tries = 0;
+    do {
+      p = {x:rand(COLS), y:rand(ROWS), t:BONUS_TIMER};
+      tries++;
+    } while(tries < 30 && (occupied(p.x, p.y) ||
+            bonusFoods.some(function(b){ return b.x===p.x && b.y===p.y; }) ||
+            (food.x===p.x && food.y===p.y)));
+    bonusFoods.push(p);
+  }
+
+  function init(){
+    snake = [{x:10,y:7},{x:9,y:7},{x:8,y:7}];
+    dir = {x:1, y:0};
+    bonusFoods = [];
+    food = spawnFood();
+    score = 0; running = true; aiMode = true; frameCount = 0;
+    if(!highScore) highScore = 0;
+    if(animId) cancelAnimationFrame(animId);
+    loop();
+  }
+
+  function aiStep(){
+    var head = snake[0];
+    var targets = [{x:food.x, y:food.y, w:1}];
+    bonusFoods.forEach(function(b){ targets.push({x:b.x, y:b.y, w:3}); });
+    // pick best target (bonus preferred)
+    targets.sort(function(a,b){ return (b.w - a.w); });
+    var tgt = targets[0];
+
+    var options = [{x:1,y:0},{x:-1,y:0},{x:0,y:1},{x:0,y:-1}];
+    var valid = options.filter(function(d){
+      if(d.x===-dir.x && d.y===-dir.y) return false;
+      var nx=(head.x+d.x+COLS)%COLS, ny=(head.y+d.y+ROWS)%ROWS;
+      return !snake.some(function(s){ return s.x===nx && s.y===ny; });
+    });
+    if(!valid.length) return;
+    valid.sort(function(a,b){
+      var ax=Math.abs((head.x+a.x+COLS)%COLS - tgt.x)+Math.abs((head.y+a.y+ROWS)%ROWS - tgt.y);
+      var bx=Math.abs((head.x+b.x+COLS)%COLS - tgt.x)+Math.abs((head.y+b.y+ROWS)%ROWS - tgt.y);
+      return ax-bx;
+    });
+    dir = valid[0];
+  }
+
+  function step(){
+    frameCount++;
+    if(aiMode) aiStep();
+    var head = snake[0];
+    var nx=(head.x+dir.x+COLS)%COLS, ny=(head.y+dir.y+ROWS)%ROWS;
+    if(snake.some(function(s){ return s.x===nx && s.y===ny; })){ running=false; return; }
+    snake.unshift({x:nx, y:ny});
+    var ate = false;
+    if(nx===food.x && ny===food.y){ score+=1; food=spawnFood(); ate=true; }
+    // bonus food
+    bonusFoods = bonusFoods.filter(function(b){
+      if(b.x===nx && b.y===ny){ score+=3; ate=true; return false; }
+      b.t--;
+      return b.t > 0;
+    });
+    if(!ate) snake.pop();
+    // spawn bonus periodically
+    if(frameCount % BONUS_INTERVAL === 0) spawnBonus();
+    if(score > highScore) highScore = score;
+    updateScoreDisplay();
+  }
+
+  function updateScoreDisplay(){
+    var el = document.getElementById('live-score');
+    if(el) el.textContent = 'Score: ' + score + '  |  High Score: ' + highScore;
+  }
+
+  function draw(){
+    ctx.fillStyle = BG; ctx.fillRect(0,0,canvas.width,canvas.height);
+    // grid
+    ctx.strokeStyle = GRID_C; ctx.lineWidth = 1;
+    for(var c=0;c<=COLS;c++){ ctx.beginPath();ctx.moveTo(c*CS,0);ctx.lineTo(c*CS,canvas.height);ctx.stroke(); }
+    for(var r=0;r<=ROWS;r++){ ctx.beginPath();ctx.moveTo(0,r*CS);ctx.lineTo(canvas.width,r*CS);ctx.stroke(); }
+    // regular food
+    ctx.fillStyle = FOOD_C;
+    ctx.beginPath();
+    ctx.arc(food.x*CS+CS/2, food.y*CS+CS/2, CS/2-3, 0, Math.PI*2);
+    ctx.fill();
+    // bonus foods
+    bonusFoods.forEach(function(b){
+      var alpha = Math.max(0.4, b.t / BONUS_TIMER);
+      // glow
+      ctx.save();
+      ctx.globalAlpha = alpha * 0.35;
+      ctx.fillStyle = BONUS_C;
+      ctx.beginPath();
+      ctx.arc(b.x*CS+CS/2, b.y*CS+CS/2, CS/2+2, 0, Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+      // star shape
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = BONUS_C;
+      ctx.font = 'bold ' + (CS-4) + 'px serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('⭐', b.x*CS+CS/2, b.y*CS+CS/2+1);
+      ctx.restore();
+    });
+    // snake
+    snake.forEach(function(s,i){
+      ctx.fillStyle = i===0 ? HEAD_C : SNAKE_C;
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(s.x*CS+1, s.y*CS+1, CS-2, CS-2, 4);
+      else ctx.rect(s.x*CS+1, s.y*CS+1, CS-2, CS-2);
+      ctx.fill();
+    });
+    // score overlay
+    ctx.fillStyle = '#8FD9D5'; ctx.font = 'bold 13px monospace'; ctx.textAlign = 'left';
+    ctx.fillText('Score: ' + score, 8, 18);
+    if(!running){
+      ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle = '#fff'; ctx.font = 'bold 22px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('Game Over — Score: ' + score, canvas.width/2, canvas.height/2-14);
+      ctx.font = '14px sans-serif'; ctx.fillStyle = '#FFD700';
+      ctx.fillText('High Score: ' + highScore, canvas.width/2, canvas.height/2+12);
+      ctx.fillStyle = '#8FD9D5';
+      ctx.fillText('Click the canvas to restart', canvas.width/2, canvas.height/2+36);
+      ctx.textAlign = 'left';
+    }
+  }
+
+  var last=0, INTERVAL=120;
+  function loop(ts){
+    if(!running){ draw(); return; }
+    if(ts-last > INTERVAL){ step(); last=ts; }
+    draw();
+    animId = requestAnimationFrame(loop);
+  }
+
+  canvas.addEventListener('click', function(){ if(!running) init(); });
+  var keyMap = {ArrowUp:{x:0,y:-1},ArrowDown:{x:0,y:1},ArrowLeft:{x:-1,y:0},ArrowRight:{x:1,y:0}};
+  document.addEventListener('keydown', function(e){
+    if(keyMap[e.key]){
+      var d = keyMap[e.key];
+      if(d.x !== -dir.x || d.y !== -dir.y) dir = d;
+      aiMode = false;
+      e.preventDefault();
+    }
+  });
+  var btn = document.getElementById('demo-toggle');
+  if(btn){
+    btn.addEventListener('click', function(){
+      aiMode = !aiMode;
+      btn.textContent = aiMode ? 'Play yourself' : 'Watch AI';
+      if(!running) init();
+    });
+  }
+  highScore = 0;
+  init();
+})();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════
+     CT ACTIVITY 1 — Decompose cards
+══════════════════════════════════════════════════════ -->
+<script>
+(function(){
+  document.querySelectorAll('.dc-card').forEach(function(card){
+    card.addEventListener('click', function(){
+      card.classList.toggle('revealed');
+    });
+  });
+})();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════
+     CT ACTIVITY 2 — Algorithm sequencer
+══════════════════════════════════════════════════════ -->
+<script>
+(function(){
+  // Tab switching
+  document.querySelectorAll('.seq-tab').forEach(function(tab){
+    tab.addEventListener('click', function(){
+      document.querySelectorAll('.seq-tab').forEach(function(t){ t.classList.remove('active'); });
+      document.querySelectorAll('.seq-panel').forEach(function(p){ p.classList.remove('active'); });
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.panel).classList.add('active');
+    });
+  });
+
+  // Sequencer logic per panel
+  function initPanel(panelId){
+    var panel = document.getElementById(panelId);
+    if(!panel) return;
+    var steps = panel.querySelectorAll('.seq-step');
+    var counter = 0;
+
+    steps.forEach(function(step){
+      step.addEventListener('click', function(){
+        if(step.classList.contains('placed') || step.classList.contains('correct') || step.classList.contains('wrong')) return;
+        counter++;
+        step.classList.add('placed');
+        step.querySelector('.seq-num').textContent = counter;
+        step.dataset.assigned = counter;
+      });
+    });
+
+    var checkBtn = panel.querySelector('.seq-btn.check');
+    var resetBtn = panel.querySelector('.seq-btn.reset');
+    var fb = document.getElementById('fb-' + panelId);
+
+    if(checkBtn){
+      checkBtn.addEventListener('click', function(){
+        var allPlaced = true;
+        steps.forEach(function(s){ if(!s.dataset.assigned) allPlaced = false; });
+        if(!allPlaced){ fb.style.display='block'; fb.className='seq-feedback bad'; fb.textContent='Place all steps first!'; return; }
+        var correct = 0;
+        steps.forEach(function(s){
+          var assigned = parseInt(s.dataset.assigned);
+          var expected = parseInt(s.dataset.correct);
+          s.classList.remove('placed','correct','wrong');
+          if(assigned === expected){ s.classList.add('correct'); correct++; }
+          else { s.classList.add('wrong'); }
+          s.querySelector('.seq-num').textContent = assigned;
+        });
+        fb.style.display = 'block';
+        if(correct === steps.length){
+          fb.className = 'seq-feedback ok';
+          fb.textContent = '✅ Perfect! You got the correct order.';
+        } else {
+          fb.className = 'seq-feedback bad';
+          fb.textContent = '❌ ' + correct + ' of ' + steps.length + ' correct. Red = wrong position. Try again!';
+        }
+      });
+    }
+
+    if(resetBtn){
+      resetBtn.addEventListener('click', function(){
+        counter = 0;
+        steps.forEach(function(s){
+          s.classList.remove('placed','correct','wrong');
+          s.querySelector('.seq-num').textContent = '?';
+          delete s.dataset.assigned;
+        });
+        if(fb){ fb.style.display='none'; fb.textContent=''; }
+      });
+    }
+  }
+
+  ['p1','p2','p3','p4'].forEach(initPanel);
+})();
+</script>
+
+<!-- Decompose canvas -->
+<script>
+(function(){
+  var cv = document.getElementById('dc-canvas');
+  if(!cv) return;
+  var ctx = cv.getContext('2d');
+  var W=500, H=300, CS=25, COLS=20, ROWS=12;
+
+  // Fixed scene
+  var snake = [{x:11,y:6},{x:10,y:6},{x:9,y:6},{x:8,y:6},{x:7,y:6}];
+  var food  = {x:16,y:3};
+  var bonus = {x:17,y:5};
+
+  function drawScene(){
+    // bg
+    ctx.fillStyle='#0F1B22'; ctx.fillRect(0,0,W,H);
+    // grid
+    ctx.strokeStyle='rgba(255,255,255,0.04)'; ctx.lineWidth=1;
+    for(var c=0;c<=COLS;c++){ctx.beginPath();ctx.moveTo(c*CS,0);ctx.lineTo(c*CS,H);ctx.stroke();}
+    for(var r=0;r<=ROWS;r++){ctx.beginPath();ctx.moveTo(0,r*CS);ctx.lineTo(W,r*CS);ctx.stroke();}
+    // food
+    ctx.fillStyle='#FF3030';
+    ctx.beginPath();ctx.arc(food.x*CS+CS/2,food.y*CS+CS/2,CS/2-3,0,Math.PI*2);ctx.fill();
+    // bonus food star
+    ctx.save();
+    ctx.fillStyle='rgba(255,215,0,0.25)';
+    ctx.beginPath();ctx.arc(bonus.x*CS+CS/2,bonus.y*CS+CS/2,CS/2+2,0,Math.PI*2);ctx.fill();
+    ctx.font='bold 18px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillStyle='#FFD700';
+    ctx.fillText('⭐',bonus.x*CS+CS/2,bonus.y*CS+CS/2+1);
+    ctx.restore();
+    // snake
+    snake.forEach(function(s,i){
+      ctx.fillStyle = i===0 ? '#00FF7F' : '#00C850';
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(s.x*CS+1,s.y*CS+1,CS-2,CS-2,4);
+      else ctx.rect(s.x*CS+1,s.y*CS+1,CS-2,CS-2);
+      ctx.fill();
+    });
+    // score text
+    ctx.fillStyle='#8FD9D5'; ctx.font='bold 13px monospace'; ctx.textAlign='left';
+    ctx.fillText('Score: 3', 8, 18);
+  }
+  drawScene();
+
+  // Tooltip content map
+  var tips = {
+    score:    '<strong>🏆 Score — Integer variable</strong><br>Starts at 0, increases by 1 (regular food) or 3 (bonus food). Stored as <code>score = 0</code> and updated each time the snake eats.',
+    food:     '<strong>🍎 Regular Food — Tuple + random</strong><br>Position stored as <code>(col, row)</code>. Generated with <code>random.randint(0, GRID_COLS-1)</code>. Worth <strong>1 point</strong>.',
+    bonus:    '<strong>⭐ Bonus Food — List + Timer</strong><br>Stored in a list of tuples <code>(col, row, timer)</code>. Spawns every 300 frames via <code>frame_count % 300 == 0</code>. Worth <strong>3 points</strong>, expires when timer hits 0.',
+    head:     '<strong>🐍 Snake Head — Tuple</strong><br>The leading cell: <code>(col, row)</code>. Each frame a new head is calculated from the current direction and inserted at index 0 of the body list.',
+    body:     '<strong>🟩 Snake Body — List of Tuples</strong><br><code>snake = [(col,row), (col,row), …]</code>. Grows with <code>snake.insert(0, new_head)</code>. Shrinks with <code>snake.pop()</code> when no food is eaten.',
+    direction:'<strong>➡️ Direction — String (→ Dictionary)</strong><br>Initially a string: <code>"RIGHT"</code>. In Step 7 replaced by a dictionary <code>MOVES={"RIGHT":(1,0),…}</code> — one lookup replaces four if/elif branches.',
+    grid:     '<strong>⬛ Grid — Constants</strong><br><code>GRID_COLS=20</code>, <code>GRID_ROWS=12</code>, <code>CELL_SIZE=25</code>. Written UPPER_CASE by convention. The entire game board is defined by these three numbers.',
+    clock:    '<strong>⏱️ Game Clock — Frame counter</strong><br><code>frame_count += 1</code> every loop. Speed is controlled by waiting ~120 ms between moves. <code>frame_count % N == 0</code> triggers periodic events like bonus food.',
+  };
+
+  var activeBtn = null;
+  var tooltip = document.getElementById('dc-tooltip');
+
+  document.querySelectorAll('.dc-lbl').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var key = btn.dataset.key;
+      if(activeBtn === btn){
+        btn.classList.remove('active');
+        tooltip.style.display='none';
+        activeBtn=null;
+        return;
+      }
+      if(activeBtn) activeBtn.classList.remove('active');
+      btn.classList.add('active');
+      activeBtn=btn;
+      tooltip.innerHTML = tips[key] || '';
+      tooltip.style.display='block';
+    });
+  });
+})();
+</script>
+
+<!-- Teacher easter egg -->
+<script>
+(function(){
+  var clicks=0, timer;
+  var box=document.getElementById('see-box');
+  if(!box) return;
+  box.addEventListener('click',function(){
+    clicks++;
+    clearTimeout(timer);
+    timer=setTimeout(function(){clicks=0;},3000);
+    if(clicks>=3){
+      clicks=0;
+      box.style.opacity='0.5';
+      setTimeout(function(){ window.location.href='teacher-index.html'; }, 200);
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

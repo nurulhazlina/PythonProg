@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning Journal — Snake Game Python Tutorial</title>
+<link rel="stylesheet" href="style.css">
+<style>
+/* ── Journal-specific styles ── */
+.journal-wrap { max-width: 760px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+.journal-hero {
+  background: linear-gradient(135deg, #1a4a3a 0%, #0d2d24 100%);
+  color: #fff; padding: 3rem 2rem 2.5rem; text-align: center; margin-bottom: 0;
+}
+.journal-hero h1 { font-size: 2rem; margin: 0 0 .4rem; }
+.journal-hero p  { margin: 0; opacity: .75; font-size: .95rem; }
+
+.student-chip {
+  background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 8px;
+  padding: .6rem 1.2rem; margin: 1.5rem 0; font-size: .9rem; color: #2e7d32;
+  display: flex; align-items: center; gap: .5rem;
+}
+.student-chip span { font-weight: 600; }
+
+.step-tabs {
+  display: flex; flex-wrap: wrap; gap: .4rem; margin: 1.5rem 0 .5rem;
+}
+.step-tab {
+  padding: .4rem .9rem; border-radius: 20px; border: 2px solid #ccc;
+  background: #fff; cursor: pointer; font-size: .85rem; transition: all .2s;
+  color: #555;
+}
+.step-tab:hover  { border-color: #2e7d32; color: #2e7d32; }
+.step-tab.active { background: #2e7d32; border-color: #2e7d32; color: #fff; font-weight: 600; }
+.step-tab.done   { background: #e8f5e9; border-color: #a5d6a7; color: #388e3c; }
+
+.journal-card {
+  background: #fff; border: 1px solid #e0e0e0; border-radius: 12px;
+  padding: 1.5rem; margin-top: 1rem;
+}
+.journal-card h3 { margin: 0 0 .3rem; color: #1a4a3a; font-size: 1.05rem; }
+.prompt-label { font-size: .8rem; text-transform: uppercase; letter-spacing: .06em;
+  color: #888; margin: 1.2rem 0 .4rem; font-weight: 600; }
+
+.prompt-box {
+  background: #f8fdf9; border: 1px solid #c8e6c9; border-radius: 8px;
+  padding: .9rem 1rem; margin-bottom: 1rem; font-size: .92rem; color: #37474f;
+  line-height: 1.5;
+}
+
+textarea {
+  width: 100%; box-sizing: border-box; min-height: 130px;
+  border: 1.5px solid #ccc; border-radius: 8px; padding: .75rem 1rem;
+  font-size: .95rem; font-family: inherit; resize: vertical; line-height: 1.5;
+  transition: border-color .2s;
+}
+textarea:focus { outline: none; border-color: #2e7d32; }
+
+.char-hint { font-size: .8rem; color: #aaa; text-align: right; margin-top: .3rem; }
+
+.submit-row { display: flex; gap: 1rem; align-items: center; margin-top: 1.2rem; flex-wrap: wrap; }
+.btn-submit {
+  background: #2e7d32; color: #fff; border: none; border-radius: 8px;
+  padding: .7rem 1.8rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background .2s;
+}
+.btn-submit:hover    { background: #1b5e20; }
+.btn-submit:disabled { background: #a5d6a7; cursor: not-allowed; }
+
+.msg { padding: .6rem 1rem; border-radius: 6px; font-size: .9rem; }
+.msg.ok  { background: #e8f5e9; color: #2e7d32; }
+.msg.err { background: #ffebee; color: #c62828; }
+
+.history-section { margin-top: 2rem; }
+.history-section h4 { color: #555; font-size: .85rem; text-transform: uppercase;
+  letter-spacing: .06em; margin: 0 0 .7rem; }
+.history-entry {
+  border-left: 3px solid #a5d6a7; padding: .6rem .9rem; margin-bottom: .7rem;
+  background: #f9f9f9; border-radius: 0 6px 6px 0; font-size: .88rem;
+}
+.history-entry .he-step { font-weight: 700; color: #2e7d32; margin-bottom: .2rem; }
+.history-entry .he-text { color: #444; line-height: 1.4; }
+.history-entry .he-time { font-size: .76rem; color: #999; margin-top: .2rem; }
+
+@media (prefers-color-scheme: dark) {
+  .journal-card  { background: #1e1e1e; border-color: #333; }
+  .student-chip  { background: #1b2e1b; border-color: #3a5c3a; color: #81c784; }
+  textarea       { background: #2a2a2a; border-color: #444; color: #ddd; }
+  .step-tab      { background: #2a2a2a; border-color: #555; color: #aaa; }
+  .step-tab.done { background: #1b2e1b; border-color: #3a5c3a; color: #81c784; }
+  .prompt-box    { background: #1b2e1b; border-color: #3a5c3a; color: #ccc; }
+  .history-entry { background: #1e1e1e; }
+  .history-entry .he-text { color: #bbb; }
+}
+</style>
+</head>
+<body>
+
+<!-- Registration gate -->
+<script>
+(function(){
+  try {
+    var s = JSON.parse(localStorage.getItem('umpsa_snake_student') || 'null');
+    if (!s || !s.matric) window.location.replace('student-register.html');
+  } catch(e) {}
+})();
+</script>
+
+<nav class="sitenav"><div class="wrap">
+  <a class="brand" href="index.html">Snake Game <span>Python Tutorial</span></a>
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="journal.html" class="active">Journal</a></li>
+  </ul>
+</div></nav>
+
+<div class="journal-hero">
+  <h1>📓 Learning Journal</h1>
+  <p>Reflect on each step · Record your thinking · Track your growth</p>
+</div>
+
+<div class="journal-wrap">
+
+  <div class="student-chip" id="student-chip">
+    👤 Registered as <span id="chip-name">—</span> &nbsp;·&nbsp; <span id="chip-matric">—</span>
+  </div>
+
+  <!-- Step tabs -->
+  <div class="step-tabs" id="step-tabs"></div>
+
+  <!-- Journal entry card -->
+  <div class="journal-card" id="journal-card">
+    <h3 id="card-title">Select a step above to begin</h3>
+    <div id="card-body"></div>
+  </div>
+
+  <!-- History -->
+  <div class="history-section" id="history-section" style="display:none">
+    <h4>Your entries this session</h4>
+    <div id="history-list"></div>
+  </div>
+
+</div>
+
+<script>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec';
+const LS_KEY = 'umpsa_snake_student';
+const JOURNAL_LS = 'umpsa_journal_entries';
+
+// Prompts per step
+const PROMPTS = [
+  { step: 1, title: "Step 1 – Setting Up",        prompt: "What did you learn about setting up a Python environment? Was anything confusing or surprising? How did you solve it?" },
+  { step: 2, title: "Step 2 – Drawing the Board",  prompt: "How does Pygame draw shapes on the screen? Describe how the game window works in your own words." },
+  { step: 3, title: "Step 3 – Moving the Snake",   prompt: "What concept controls the snake's movement? What happened when you tested it, and what did you change?" },
+  { step: 4, title: "Step 4 – Keyboard Control",   prompt: "How do event listeners work? How did you connect the keys to the snake's direction?" },
+  { step: 5, title: "Step 5 – Spawning Food",      prompt: "How did you generate a random position for the food? What would happen if the food appeared on the snake?" },
+  { step: 6, title: "Step 6 – Eating & Growing",   prompt: "Explain the logic for growing the snake. What data structure stores the snake's body, and why?" },
+  { step: 7, title: "Step 7 – Collision Detection",prompt: "What are the two types of collisions in Snake? How did you detect each one in code?" },
+  { step: 8, title: "Step 8 – Score & Display",    prompt: "How did you display the score on screen? What other information could you add to the HUD?" },
+  { step: 9, title: "Step 9 – Game Over Screen",   prompt: "Describe the game loop and how the game-over state is handled. What restarts the game?" },
+  { step:10, title: "Step 10 – Final Game",         prompt: "Looking at your complete Snake game, what are you most proud of? What would you improve if you had more time?" },
+];
+
+// Load student
+let student = {};
+try { student = JSON.parse(localStorage.getItem(LS_KEY) || '{}'); } catch(e) {}
+document.getElementById('chip-name').textContent   = student.name   || '—';
+document.getElementById('chip-matric').textContent = student.matric || '—';
+
+// Load saved entries
+let entries = [];
+try { entries = JSON.parse(localStorage.getItem(JOURNAL_LS) || '[]'); } catch(e) {}
+
+let currentStep = null;
+
+// Build tabs
+const tabsEl = document.getElementById('step-tabs');
+PROMPTS.forEach(p => {
+  const done = entries.some(e => e.step === p.step);
+  const btn = document.createElement('button');
+  btn.className = 'step-tab' + (done ? ' done' : '');
+  btn.textContent = 'Step ' + p.step + (done ? ' ✓' : '');
+  btn.dataset.step = p.step;
+  btn.addEventListener('click', () => selectStep(p.step));
+  tabsEl.appendChild(btn);
+});
+
+function selectStep(n) {
+  currentStep = n;
+  const p = PROMPTS[n - 1];
+  // Update tabs
+  tabsEl.querySelectorAll('.step-tab').forEach(b => b.classList.toggle('active', +b.dataset.step === n));
+  // Existing entry?
+  const existing = entries.find(e => e.step === n);
+  const cardTitle = document.getElementById('card-title');
+  const cardBody  = document.getElementById('card-body');
+  cardTitle.textContent = p.title;
+
+  if (existing) {
+    cardBody.innerHTML = `
+      <div class="prompt-label">Prompt</div>
+      <div class="prompt-box">${p.prompt}</div>
+      <div class="prompt-label">Your response</div>
+      <div class="history-entry" style="border-left:3px solid #2e7d32">
+        <div class="he-text">${existing.response.replace(/\n/g,'<br>')}</div>
+        <div class="he-time">Submitted ${new Date(existing.submitted_iso).toLocaleString()}</div>
+      </div>
+      <div style="margin-top:1rem">
+        <button class="btn-submit" onclick="editEntry(${n})">✏️ Edit response</button>
+      </div>`;
+  } else {
+    renderForm(p);
+  }
+}
+
+function renderForm(p) {
+  const cardBody = document.getElementById('card-body');
+  cardBody.innerHTML = `
+    <div class="prompt-label">Prompt</div>
+    <div class="prompt-box">${p.prompt}</div>
+    <div class="prompt-label">Your reflection</div>
+    <textarea id="response-box" placeholder="Write your thoughts here…" oninput="updateChar()"></textarea>
+    <div class="char-hint"><span id="char-count">0</span> characters</div>
+    <div class="submit-row">
+      <button class="btn-submit" id="submit-btn" onclick="submitEntry()">Save &amp; Submit</button>
+      <div class="msg" id="status-msg" style="display:none"></div>
+    </div>`;
+}
+
+function editEntry(n) {
+  const idx = entries.findIndex(e => e.step === n);
+  if (idx >= 0) entries.splice(idx, 1);
+  saveEntries();
+  // re-render as blank form
+  const tab = tabsEl.querySelector(`[data-step="${n}"]`);
+  if (tab) { tab.classList.remove('done'); tab.textContent = 'Step ' + n; }
+  renderForm(PROMPTS[n - 1]);
+}
+
+function updateChar() {
+  const ta = document.getElementById('response-box');
+  if (ta) document.getElementById('char-count').textContent = ta.value.length;
+}
+
+function showMsg(text, type) {
+  const el = document.getElementById('status-msg');
+  if (!el) return;
+  el.style.display = '';
+  el.className = 'msg ' + type;
+  el.textContent = text;
+}
+
+function submitEntry() {
+  const ta  = document.getElementById('response-box');
+  const btn = document.getElementById('submit-btn');
+  if (!ta || !ta.value.trim()) { showMsg('Please write something before submitting.', 'err'); return; }
+  if (ta.value.trim().length < 20) { showMsg('Please write at least a sentence or two.', 'err'); return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+
+  const p = PROMPTS[currentStep - 1];
+  const entry = {
+    step: currentStep,
+    prompt: p.prompt,
+    response: ta.value.trim(),
+    submitted_iso: new Date().toISOString(),
+  };
+
+  // Save locally first
+  entries.push(entry);
+  saveEntries();
+
+  // POST to Google Sheets
+  const payload = {
+    type: 'journal',
+    matric: student.matric || '',
+    name:   student.name   || '',
+    class:  student.class  || '',
+    entries: [entry],
+  };
+  try {
+    fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+  } catch(e) { console.warn('Journal POST failed:', e); }
+
+  showMsg('✓ Journal saved!', 'ok');
+  btn.textContent = 'Saved ✓';
+
+  // Update tab
+  const tab = tabsEl.querySelector(`[data-step="${currentStep}"]`);
+  if (tab) { tab.classList.add('done'); tab.classList.remove('active'); tab.textContent = 'Step ' + currentStep + ' ✓'; }
+
+  // Refresh card to show saved view
+  setTimeout(() => selectStep(currentStep), 1200);
+  renderHistory();
+}
+
+function saveEntries() {
+  try { localStorage.setItem(JOURNAL_LS, JSON.stringify(entries)); } catch(e) {}
+}
+
+function renderHistory() {
+  const sec  = document.getElementById('history-section');
+  const list = document.getElementById('history-list');
+  if (!entries.length) { sec.style.display = 'none'; return; }
+  sec.style.display = '';
+  list.innerHTML = entries.map(e => `
+    <div class="history-entry">
+      <div class="he-step">Step ${e.step}</div>
+      <div class="he-text">${e.response.substring(0,200).replace(/\n/g,'<br>')}${e.response.length>200?'…':''}</div>
+      <div class="he-time">${new Date(e.submitted_iso).toLocaleString()}</div>
+    </div>`).join('');
+}
+
+renderHistory();
+</script>
+
+<footer style="text-align:center;padding:2rem 1rem;color:#888;font-size:.85rem;border-top:1px solid #eee;margin-top:2rem">
+  © 2026 Nurul Hazlina Noordin · UMPSA STEM Lab Engineering Education Initiative
+</footer>
+</body>
+</html>

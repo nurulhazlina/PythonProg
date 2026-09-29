@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Facilitator Notes — Step 8 | Snake Tutorial</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+/* ── LIGHT-MODE TEACHER PAGE ── independent of style.css ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F0F4F8;
+  --surface:#FFFFFF;
+  --surface2:#F7FAFC;
+  --teal:#0A8F8A;
+  --teal-dark:#076862;
+  --teal-light:#E6F6F5;
+  --ink:#1A2332;
+  --body:#374151;
+  --muted:#6B7A8D;
+  --border:#D6E0EA;
+  --amber:#D97706;
+  --amber-bg:#FFFBEB;
+  --amber-border:#FCD34D;
+  --green-bg:#F0FDF4;
+  --green-border:#86EFAC;
+  --green-ink:#166534;
+  --red-bg:#FEF2F2;
+  --red-border:#FCA5A5;
+  --red-ink:#991B1B;
+  --code-bg:#F1F5F9;
+  --code-fg:#1E293B;
+  --radius:10px;
+  --shadow:0 1px 4px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.05);
+}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg);
+  color:var(--body);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  line-height:1.65;
+}
+
+/* ── NAV ── */
+.sitenav{
+  background:var(--teal-dark);
+  color:#fff;
+  padding:0 24px;
+  display:flex;
+  align-items:center;
+  gap:20px;
+  min-height:56px;
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+.sitenav .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;font-weight:700;font-size:15px}
+.sitenav .brand img{display:none}
+.sitenav a.nl{color:rgba(255,255,255,.8);text-decoration:none;font-size:14px;padding:4px 8px;border-radius:6px;transition:background .15s}
+.sitenav a.nl:hover{background:rgba(255,255,255,.15)}
+details.navsel{margin-left:auto;position:relative}
+details.navsel summary{
+  list-style:none;cursor:pointer;color:rgba(255,255,255,.9);
+  font-size:14px;font-weight:600;padding:6px 12px;
+  border-radius:6px;transition:background .15s;
+}
+details.navsel summary:hover{background:rgba(255,255,255,.15)}
+details.navsel summary::-webkit-details-marker{display:none}
+.navmenu{
+  position:absolute;right:0;top:calc(100% + 8px);
+  background:#fff;color:var(--ink);
+  border:1px solid var(--border);border-radius:var(--radius);
+  min-width:300px;box-shadow:var(--shadow);
+  overflow:hidden;z-index:200;
+}
+.navmenu a{
+  display:block;padding:10px 16px;font-size:13.5px;
+  text-decoration:none;color:var(--body);
+  border-bottom:1px solid var(--border);transition:background .12s;
+}
+.navmenu a:last-child{border-bottom:none}
+.navmenu a:hover{background:var(--teal-light)}
+.navmenu a[aria-current="page"]{background:var(--teal-light);color:var(--teal-dark);font-weight:700}
+
+/* ── GATE ── */
+.gate{
+  max-width:520px;margin:80px auto;padding:40px 36px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;box-shadow:var(--shadow);text-align:center;
+}
+.gate h2{font-size:24px;color:var(--ink);margin-bottom:12px}
+.gate p{color:var(--muted);margin-bottom:16px;font-size:15px}
+.gate a{color:var(--teal);text-decoration:none;font-size:14px}
+.gate a:hover{text-decoration:underline}
+.lock-icon{font-size:48px;margin-bottom:16px}
+
+/* ── HERO ── */
+.t-hero{
+  background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal) 100%);
+  color:#fff;padding:40px 24px 36px;
+}
+.t-hero .wrap{max-width:900px;margin:0 auto}
+.t-hero .eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.75;margin-bottom:8px}
+.t-hero h1{font-size:clamp(22px,4vw,32px);font-weight:800;line-height:1.2;margin-bottom:8px}
+.t-hero .meta{font-size:14px;opacity:.8;margin-bottom:20px}
+.t-cta-row{display:flex;flex-wrap:wrap;gap:10px}
+.t-cta-row a{
+  display:inline-block;padding:8px 18px;border-radius:8px;
+  font-size:13px;font-weight:600;text-decoration:none;
+  background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);
+  transition:background .15s;
+}
+.t-cta-row a:hover{background:rgba(255,255,255,.28)}
+
+/* ── LAYOUT ── */
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+.page-body{padding:36px 20px 60px;max-width:900px;margin:0 auto}
+
+/* ── BANNER ── */
+.tbanner{
+  background:var(--amber-bg);border:1px solid var(--amber-border);
+  color:#78350F;border-radius:8px;padding:12px 16px;
+  font-size:13.5px;margin-bottom:28px;
+}
+.tbanner b{color:#92400E}
+
+/* ── SECTIONS ── */
+.t-section{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:28px 28px;margin-bottom:24px;
+  box-shadow:var(--shadow);
+}
+.t-section h2{
+  font-size:18px;font-weight:700;color:var(--ink);
+  padding-bottom:10px;margin-bottom:16px;
+  border-bottom:2px solid var(--teal);display:flex;align-items:center;gap:8px;
+}
+.t-section h2 .sec-icon{font-size:20px}
+.t-section h3{font-size:15px;font-weight:700;color:var(--teal-dark);margin:16px 0 8px}
+.t-section p{margin-bottom:10px;font-size:15px}
+.t-section ul{padding-left:20px;margin-bottom:12px}
+.t-section li{margin-bottom:6px;font-size:15px}
+.t-section strong{color:var(--ink)}
+
+/* ── TABLES ── */
+.t-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+.t-table thead th{
+  background:var(--teal);color:#fff;padding:10px 14px;
+  text-align:left;font-weight:600;font-size:13px;letter-spacing:.02em;
+}
+.t-table thead th:first-child{border-radius:8px 0 0 0}
+.t-table thead th:last-child{border-radius:0 8px 0 0}
+.t-table tbody tr:nth-child(even){background:var(--surface2)}
+.t-table tbody td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+.t-table td code{font-size:12.5px;background:var(--bg);padding:1px 5px;border-radius:4px;color:var(--ink)}
+.sev-low{color:#065F46;font-weight:600}
+.sev-med{color:#92400E;font-weight:600}
+.sev-high{color:#991B1B;font-weight:600}
+
+/* ── CODE ── */
+.codebox{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:12px 0;position:relative}
+.codebox pre{padding:20px;overflow-x:auto}
+.codebox code{color:var(--code-fg);font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13.5px;line-height:1.6}
+.copybtn{
+  position:absolute;top:10px;right:10px;
+  background:var(--border);color:var(--ink);
+  border:none;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;
+  transition:background .15s;
+}
+.copybtn:hover{background:rgba(255,255,255,.22)}
+.copybtn.copied{background:rgba(134,239,172,.25);color:#86EFAC}
+code{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13px;background:var(--bg);padding:1px 5px;border-radius:4px;color:var(--ink)}
+
+/* ── DEMO CARDS ── */
+.demo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:12px}
+.demo-card{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;padding:18px;border-top:3px solid var(--teal);
+}
+.demo-card .demo-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--teal);margin-bottom:6px}
+.demo-card h3{font-size:15px;font-weight:700;color:var(--ink);margin:0 0 8px}
+.demo-card p{font-size:13.5px;color:var(--body);margin:0 0 10px}
+.demo-card .demo-tip{
+  font-size:12.5px;color:var(--muted);padding:8px 10px;
+  background:var(--teal-light);border-radius:6px;
+  border-left:3px solid var(--teal);
+}
+.demo-card .demo-tip strong{color:var(--teal-dark)}
+
+/* ── ANSWER CARD ── */
+.answer-card{
+  background:var(--green-bg);border:1px solid var(--green-border);
+  border-radius:8px;padding:14px 18px;margin:12px 0;
+}
+.answer-card .answer-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--green-ink);margin-bottom:4px}
+
+/* ── CALLOUT ── */
+.callout{
+  display:flex;gap:12px;padding:14px 16px;border-radius:8px;
+  border:1px solid var(--border);background:var(--surface2);margin:12px 0;
+  font-size:14px;align-items:flex-start;
+}
+.callout-icon{font-size:22px;flex-shrink:0;line-height:1.2}
+.callout p{margin:0}
+
+/* ── STEM BRAND BAR ── */
+.stem-brand-bar{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  width:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+.stem-brand-bar .sb{
+  display:flex;align-items:center;justify-content:center;
+  padding:6px 8px;font-size:12px;font-weight:800;
+  letter-spacing:.12em;color:#fff;text-transform:uppercase;
+}
+.sb-see{background:#2E5FAF}
+.sb-think{background:#B82828}
+.sb-explore{background:#D99A10}
+.sb-marvel{background:#1FA898}
+
+/* ── FOOTER ── */
+footer{
+  background:#1C5C54;color:rgba(255,255,255,.78);
+  text-align:center;padding:20px 20px;font-size:13px;margin-top:40px;
+  display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+}
+footer a{color:rgba(255,255,255,.85);text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+footer a:hover{color:#fff}
+
+/* ── BUTTON ── */
+.cta-btn{
+  display:inline-block;padding:12px 28px;border-radius:9px;
+  font-size:15px;font-weight:700;border:none;cursor:pointer;
+  background:var(--teal);color:#fff;
+  box-shadow:0 4px 14px rgba(10,143,138,.3);
+  transition:background .15s,transform .1s;
+}
+.cta-btn:hover{background:var(--teal-dark);transform:translateY(-1px)}
+.cta-btn:active{transform:translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .t-section{padding:20px 16px}
+  .t-hero{padding:28px 16px 24px}
+  .t-cta-row a{font-size:12px;padding:6px 12px}
+  .demo-grid{grid-template-columns:1fr}
+  .t-table{font-size:13px}
+  .sitenav{padding:0 14px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── STEM BRAND BAR ── -->
+<div class="stem-brand-bar" aria-label="UMPSA STEM Lab">
+  <div class="sb sb-see">SEE</div>
+  <div class="sb sb-think">THINK</div>
+  <div class="sb sb-explore">EXPLORE</div>
+  <div class="sb sb-marvel">MARVEL</div>
+</div>
+
+<!-- ── NAV ── -->
+<nav class="sitenav">
+  <a class="brand" href="index.html">
+    <img src="stemlogo.png" alt="UMPSA STEM LAB">
+    <span>UMPSA STEM Lab Python Module</span>
+  </a>
+  <a class="nl" href="index.html">Home</a>
+  <details class="navsel">
+    <summary>Facilitator Notes &#9662;</summary>
+    <div class="navmenu">
+      <a href="teacher-1.html"><b>Step 1</b>: Variables &amp; Setup</a>
+      <a href="teacher-2.html"><b>Step 2</b>: Loop &amp; Events</a>
+      <a href="teacher-3.html"><b>Step 3</b>: Direction &amp; Movement</a>
+      <a href="teacher-4.html"><b>Step 4</b>: Snake Body &#11088;</a>
+      <a href="teacher-5.html"><b>Step 5</b>: Bonus Food</a>
+      <a href="teacher-6.html"><b>Step 6</b>: Functions</a>
+      <a href="teacher-7.html"><b>Step 7</b>: Wrap-Around &#11088;</a>
+      <a href="teacher-8.html" aria-current="page"><b>Step 8</b>: Save High Score</a>
+      <a href="teacher-9.html"><b>Step 9</b>: OOP Refactor</a>
+      <a href="teacher-10.html"><b>Step 10</b>: ML Extension</a>
+    </div>
+  </details>
+</nav>
+
+<!-- ── GATE ── -->
+<div class="gate" id="gate">
+  <div class="lock-icon">&#128274;</div>
+  <h2>Facilitator Notes</h2>
+  <p>This page contains exercise answers and teaching guidance for<br>
+  <strong>Step 8 &mdash; Save High Score</strong>.<br>
+  Not linked from the student pages.</p>
+  <p style="margin-bottom:24px"><strong>Students: please go back and try the activities first.</strong></p>
+  <button class="cta-btn" id="gatebtn" type="button">I&#39;m a facilitator &mdash; show the notes</button>
+  <p style="margin-top:20px"><a href="step-8.html">&#8592; Back to student page</a></p>
+</div>
+
+<!-- ── MAIN CONTENT ── -->
+<div id="tcontent" hidden>
+
+<div class="t-hero">
+  <div class="wrap">
+    <p class="eyebrow">STEP 8 OF 10 &nbsp;&middot;&nbsp; FACILITATOR NOTES</p>
+    <h1>Save High Score</h1>
+    <p class="meta">Core concepts: file I/O &nbsp;&middot;&nbsp; open() &nbsp;&middot;&nbsp; try/except &nbsp;&middot;&nbsp; f-strings &nbsp;&middot;&nbsp; leaderboard dictionary</p>
+    <div class="t-cta-row">
+      <a href="teacher-7.html">&#8592; Step 7</a>
+      <a href="step-8.html">Student Page</a>
+      <a href="teacher-9.html">Step 9 &#8594;</a>
+    </div>
+  </div>
+</div>
+
+<div class="page-body">
+
+  <div class="tbanner">
+    &#9201; <b>Suggested pace: 25&ndash;30 minutes</b> &nbsp;&middot;&nbsp; File I/O and try/except are the two new Python concepts &mdash; let students break the program first (delete the save file) to motivate the error handling.
+  </div>
+
+  <!-- ── SECTION 1 · Learning Objectives ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#127919;</span> Learning Objectives</h2>
+    <ul>
+      <li>Use <code>open()</code> with modes <code>"r"</code> and <code>"w"</code> to read and write text files</li>
+      <li>Handle <code>FileNotFoundError</code> with <code>try / except</code></li>
+      <li>Use f-strings to format strings with embedded values</li>
+      <li>Build a simple leaderboard using a dictionary</li>
+    </ul>
+  </div>
+
+  <!-- ── SECTION 2 · The Big Idea ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#128161;</span> The Big Idea &mdash; Annotated Code</h2>
+
+    <div class="codebox">
+      <button class="copybtn" type="button">Copy</button>
+      <pre><code>SCORE_FILE = "high_score.txt"
+
+# ── Load high score from file ──
+try:
+    with open(SCORE_FILE, "r") as f:
+        high_score = int(f.read().strip())  # strip() removes newline
+except FileNotFoundError:
+    high_score = 0   # first time running — file doesn&#39;t exist yet
+except ValueError:
+    high_score = 0   # file exists but content is not an integer
+
+# ── Save high score to file ──
+def save_score(score, high_score):
+    if score &gt; high_score:
+        high_score = score
+        with open(SCORE_FILE, "w") as f:
+            f.write(str(high_score))
+    return high_score
+
+# ── f-string formatting ──
+name = "Nurul"
+score = 42
+print(f"Player: {name} — Score: {score:04d}")  # → "Player: Nurul — Score: 0042"
+pygame.display.set_caption(f"Snake — Score: {score}  Best: {high_score}")
+
+# ── Leaderboard (dictionary) ──
+leaderboard = {}   # {"PlayerName": best_score}
+
+def update_leaderboard(name, score):
+    if name not in leaderboard or score &gt; leaderboard[name]:
+        leaderboard[name] = score</code></pre>
+    </div>
+
+    <h3>Key concept explanations</h3>
+    <ul>
+      <li><strong><code>with open(path, mode) as f:</code></strong> &mdash; the <code>with</code> statement ensures the file is closed even if an error occurs. <code>"r"</code> = read, <code>"w"</code> = write (overwrites), <code>"a"</code> = append.</li>
+      <li><strong><code>try / except</code></strong> &mdash; <code>try</code> runs code that might fail; <code>except ExceptionType:</code> catches a specific error type. Always catch the most specific exception you can.</li>
+      <li><strong><code>FileNotFoundError</code></strong> &mdash; raised when <code>open()</code> is called on a file that doesn&#39;t exist. Common in file I/O &mdash; always handle it.</li>
+      <li><strong><code>.strip()</code></strong> &mdash; removes leading/trailing whitespace including <code>
+</code> (newline). A file read with <code>f.read()</code> often ends with a newline.</li>
+      <li><strong>f-strings</strong> <code>f"..."</code> &mdash; embed expressions directly in strings with <code>{variable}</code>. <code>{score:04d}</code> formats as a 4-digit integer with leading zeros.</li>
+    </ul>
+  </div>
+
+  <!-- ── SECTION 3 · Activity Answers ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#128290;</span> Activity Answers</h2>
+
+    <h3>Tier 1 &mdash; Check Understanding</h3>
+    <table class="t-table">
+      <thead><tr><th>Question</th><th>Accepted answer</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>What does <code>open(file, "w")</code> do if the file already exists?</td>
+          <td>Overwrites it completely &mdash; the old content is lost.</td>
+        </tr>
+        <tr>
+          <td>Why use <code>try / except FileNotFoundError</code>?</td>
+          <td>The file won&#39;t exist on the first run. Without the try/except, the program crashes immediately.</td>
+        </tr>
+        <tr>
+          <td>What does <code>.strip()</code> remove?</td>
+          <td>Whitespace at the start and end of a string &mdash; including spaces, tabs, and newlines (<code>
+</code>).</td>
+        </tr>
+        <tr>
+          <td>What does the <code>f</code> in <code>f"Score: {score}"</code> do?</td>
+          <td>Creates an f-string &mdash; Python replaces <code>{score}</code> with the variable&#39;s value.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Tier 2 &mdash; Fix the Bug</h3>
+    <p><strong>Bug:</strong> <code>high_score = int(f.read())</code> without <code>.strip()</code> &mdash; crashes if file has a trailing newline.</p>
+    <p><strong>Error:</strong> <code>ValueError: invalid literal for int() with base 10: &#39;42
+&#39;</code></p>
+    <p><strong>Fix:</strong> <code>high_score = int(f.read().strip())</code></p>
+
+    <h3>Tier 3 &mdash; Extend: Save the leaderboard to a CSV file</h3>
+    <div class="codebox">
+      <button class="copybtn" type="button">Copy</button>
+      <pre><code>import csv
+
+def save_leaderboard(leaderboard, filename="leaderboard.csv"):
+    with open(filename, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["Name", "Score"])
+        for name, score in sorted(leaderboard.items(), key=lambda x: -x[1]):
+            writer.writerow([name, score])
+
+def load_leaderboard(filename="leaderboard.csv"):
+    scores = {}
+    try:
+        with open(filename, "r") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                scores[row["Name"]] = int(row["Score"])
+    except FileNotFoundError:
+        pass
+    return scores</code></pre>
+    </div>
+
+    <h3>Tier 4 &mdash; New Task: Ask the player&#39;s name at game over and add to leaderboard</h3>
+    <div class="codebox">
+      <button class="copybtn" type="button">Copy</button>
+      <pre><code>import pygame
+# After running = False (game over):
+pygame.event.clear()
+font = pygame.font.SysFont("monospace", 24)
+player_name = ""
+asking = True
+while asking:
+    for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RETURN:
+                asking = False
+            elif event.key == pygame.K_BACKSPACE:
+                player_name = player_name[:-1]
+            elif len(player_name) &lt; 10:
+                player_name += event.unicode
+    screen.fill(BG)
+    prompt = font.render(f"Enter name: {player_name}_", True, WHITE)
+    screen.blit(prompt, (20, WINDOW_H // 2))
+    pygame.display.flip()
+
+if player_name:
+    update_leaderboard(player_name, score)
+    save_leaderboard(leaderboard)</code></pre>
+    </div>
+
+    <h3>Reflective Journal &mdash; Suggested Strong Answers</h3>
+    <table class="t-table">
+      <thead><tr><th>Prompt</th><th>Key ideas a strong answer contains</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>1. What happens to data when a program ends?</td>
+          <td>Variables in RAM are lost. Only data written to a file (or database) persists.</td>
+        </tr>
+        <tr>
+          <td>2. What is a file "mode"?</td>
+          <td>The string passed to <code>open()</code> that specifies how to open the file: <code>"r"</code> = read, <code>"w"</code> = write, <code>"a"</code> = append.</td>
+        </tr>
+        <tr>
+          <td>3. When should you use try/except?</td>
+          <td>When an operation might fail for predictable reasons &mdash; file not found, network error, invalid input. Handle specific exceptions, not bare <code>except:</code>.</td>
+        </tr>
+        <tr>
+          <td>4. What is an f-string?</td>
+          <td>A string literal prefixed with <code>f</code> that allows Python expressions inside <code>{}</code> to be evaluated and embedded.</td>
+        </tr>
+        <tr>
+          <td>5. Explain file I/O to a classmate</td>
+          <td>"Reading a file is like opening a book; writing is like printing on a page. The <code>with</code> statement is like using a bookmark &mdash; it keeps your place and closes the book when done."</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── SECTION 4 · Mistakes ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#9888;&#65039;</span> Mistakes Students Actually Make</h2>
+    <table class="t-table">
+      <thead>
+        <tr>
+          <th>What they did</th>
+          <th>What they see</th>
+          <th>What to say</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>open(file, "w")</code> to read</td>
+          <td>File is silently overwritten with nothing &mdash; old high score lost</td>
+          <td>"<code>"w"</code> is write mode &mdash; it DESTROYS existing content. Use <code>"r"</code> to read."</td>
+        </tr>
+        <tr>
+          <td>No <code>.strip()</code> on <code>f.read()</code></td>
+          <td><code>ValueError</code> &mdash; the integer string has a trailing newline</td>
+          <td>"Files often end with <code>
+</code>. <code>.strip()</code> removes it. Always strip before converting to int."</td>
+        </tr>
+        <tr>
+          <td><code>except:</code> (bare)</td>
+          <td>Catches everything including <code>KeyboardInterrupt</code> and <code>SystemExit</code></td>
+          <td>"Always specify the exception: <code>except FileNotFoundError:</code>. Bare <code>except:</code> is a bad habit that hides real errors."</td>
+        </tr>
+        <tr>
+          <td>Forgot <code>str()</code> in <code>f.write(score)</code></td>
+          <td><code>TypeError: write() argument must be str, not int</code></td>
+          <td>"<code>f.write()</code> takes a string. Convert first: <code>f.write(str(high_score))</code> or use an f-string."</td>
+        </tr>
+        <tr>
+          <td><code>f"Score: " + score</code></td>
+          <td><code>TypeError: can only concatenate str (not "int") to str</code></td>
+          <td>"Inside an f-string, put the variable in braces: <code>f"Score: {score}"</code>. Don&#39;t use <code>+</code> with <code>f"..."</code> &mdash; it defeats the purpose."</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── SECTION 5 · Teaching Notes ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#128483;&#65039;</span> Teaching &amp; Facilitation Notes</h2>
+
+    <h3>Opening hook</h3>
+    <p>"What happens to your high score if the power goes out?" For students who&#39;ve played arcade games, this is intuitive. File I/O is how software remembers things beyond a single session.</p>
+
+    <h3>Motivating try/except</h3>
+    <p>Before explaining it, ask students to delete <code>high_score.txt</code> (or pretend they&#39;re running for the first time) and run the code without the try/except. They&#39;ll see the crash. Now add try/except and show it works. Failure first, solution second &mdash; the most memorable teaching sequence.</p>
+
+    <h3>The "with" statement</h3>
+    <p>Emphasise that <code>with open(...) as f:</code> automatically closes the file. Without it, forgetting <code>f.close()</code> can cause data loss or file locks. "It&#39;s like a responsible borrower &mdash; it returns the book before walking out the door."</p>
+
+    <h3>f-strings vs % formatting</h3>
+    <p>Some students may have seen <code>"Score: %d" % score</code> in older tutorials. f-strings are the modern, readable standard &mdash; steer students toward them.</p>
+
+    <h3>CT connection &mdash; Persistence</h3>
+    <div class="callout">
+      <span class="callout-icon">&#128172;</span>
+      <p>Ask: "What other game data might you want to persist across sessions? Player settings? Unlocked levels? Items? What file format would you use?" This opens the door to JSON and databases.</p>
+    </div>
+  </div>
+
+</div><!-- /page-body -->
+</div><!-- /tcontent -->
+
+<!-- ── SCRIPTS ── -->
+<script>
+(function(){
+  var b = document.getElementById('gatebtn');
+  if(!b) return;
+  b.addEventListener('click', function(){
+    document.getElementById('gate').hidden = true;
+    document.getElementById('tcontent').hidden = false;
+  });
+})();
+</script>
+<script>
+document.querySelectorAll('.copybtn').forEach(function(b){
+  b.addEventListener('click', function(){
+    var t = b.parentElement.querySelector('code').textContent;
+    navigator.clipboard.writeText(t).then(function(){
+      b.textContent = 'Copied!';
+      b.classList.add('copied');
+      setTimeout(function(){ b.textContent = 'Copy'; b.classList.remove('copied'); }, 2000);
+    }).catch(function(){
+      /* fallback — silently ignore */
+    });
+  });
+});
+</script>
+
+
+  <!-- CONCEPT_CHECK_ADDED -->
+  <!-- ══ CONCEPT CHECK ANSWER KEY ══ -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#x1F9E0;</span> Concept Check &mdash; Answer Key (Step 8)</h2>
+    <p>These 5 questions appear in the activity page <strong>after Tier 4</strong> (post-calibration gate).
+    Pass mark is <strong>4&nbsp;of&nbsp;5&nbsp;(80%)</strong>. Students who fail may retry; the system records attempts and final score in Google Sheets.</p>
+    <table class="t-table">
+      <thead><tr><th style="width:65%">Question (displayed to student)</th><th>Correct Answer</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Q1: TypeError: 'int' and 'str' operands — usually means:</td>
+          <td class="sev-low">&#10003; You tried to add an integer and a string directly</td>
+        </tr>
+        <tr>
+          <td>Q2: Why read a Python traceback from the bottom up?</td>
+          <td class="sev-low">&#10003; The most specific error information appears at the bottom</td>
+        </tr>
+        <tr>
+          <td>Q3: Adding print(snake_body) inside the game loop helps because:</td>
+          <td class="sev-low">&#10003; You can see the exact state of the list each frame</td>
+        </tr>
+        <tr>
+          <td>Q4: IndentationError means:</td>
+          <td class="sev-low">&#10003; Python found inconsistent or unexpected indentation</td>
+        </tr>
+        <tr>
+          <td>Q5: 'Rubber-duck debugging' means:</td>
+          <td class="sev-low">&#10003; Explaining your code line-by-line to spot logic errors</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:14px">
+      <span class="callout-icon">&#x1F4CA;</span>
+      <p><strong>Recorded in Google Sheet (Act_8 tab):</strong>
+      <code>concept_q1</code>&ndash;<code>concept_q5</code> (student&rsquo;s 0-based answer index),
+      <code>concept_score_pct</code>, <code>concept_passed</code> (1&nbsp;=&nbsp;pass, 0&nbsp;=&nbsp;fail),
+      <code>concept_attempts</code> (retry count).</p>
+    </div>
+  </div>
+
+  <!-- ══ GOOGLE SHEETS DATA STRUCTURE ══ -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#x1F4CA;</span> Google Sheets &mdash; Data Collected (Act_8)</h2>
+    <p>Every submission to this step writes one row to the <strong>Act_8</strong> tab in the research spreadsheet. All 13 tabs (Student_Reg, Pre_Test, Post_Test, Act_1&ndash;Act_10) share the same student identity columns.</p>
+    <table class="t-table" style="font-size:13px">
+      <thead><tr><th style="width:36%">Column</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">STUDENT IDENTITY (10 fields)</td></tr>
+        <tr><td><code>matric</code></td><td>Matric / student ID</td></tr>
+        <tr><td><code>name</code></td><td>Full name</td></tr>
+        <tr><td><code>gender</code></td><td>Gender (Female / Male / Other)</td></tr>
+        <tr><td><code>age</code></td><td>Age in years</td></tr>
+        <tr><td><code>mykid</code></td><td>MyKid / IC number</td></tr>
+        <tr><td><code>home_state</code></td><td>Home state in Malaysia</td></tr>
+        <tr><td><code>class</code></td><td>Class or cohort code</td></tr>
+        <tr><td><code>school_code</code></td><td>School or programme code</td></tr>
+        <tr><td><code>phone</code></td><td>Phone number</td></tr>
+        <tr><td><code>email</code></td><td>Email address</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">SUBMISSION</td></tr>
+        <tr><td><code>step</code></td><td>Step number (8)</td></tr>
+        <tr><td><code>submitted_iso</code></td><td>KL timestamp (UTC+8, ISO&nbsp;8601)</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">PRE-CALIBRATION</td></tr>
+        <tr><td><code>cal_confidence</code></td><td>Self-confidence before activity (1&ndash;5 scale)</td></tr>
+        <tr><td><code>cal_predicted</code></td><td>Predicted score before activity (%)</td></tr>
+        <tr><td><code>cal_reflection</code></td><td>Free-text: what will be hard?</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">ACTIVITY TIERS</td></tr>
+        <tr><td><code>t1_score_pct</code></td><td>Tier&nbsp;1 Fill-in-Blanks score (%)</td></tr>
+        <tr><td><code>t2_attempts</code></td><td>Tier&nbsp;2 Debug — number of attempts</td></tr>
+        <tr><td><code>refl2_text</code></td><td>Tier&nbsp;2 reflection free text</td></tr>
+        <tr><td><code>t3_attempts</code></td><td>Tier&nbsp;3 Complete-Code attempts</td></tr>
+        <tr><td><code>t4_attempts</code></td><td>Tier&nbsp;4 New Task attempts</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">CONCEPT CHECK</td></tr>
+        <tr><td><code>concept_q1</code>&ndash;<code>concept_q5</code></td><td>Student answer index (0-based) per question</td></tr>
+        <tr><td><code>concept_score_pct</code></td><td>Percentage correct (0&ndash;100)</td></tr>
+        <tr><td><code>concept_passed</code></td><td>1 = passed (&ge;80%), 0 = failed</td></tr>
+        <tr><td><code>concept_attempts</code></td><td>Total retries</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">REFLECTIVE JOURNAL</td></tr>
+        <tr><td><code>jr1</code>&ndash;<code>jr5</code></td><td>Journal prompts 1&ndash;5 free-text responses</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">POST-CALIBRATION</td></tr>
+        <tr><td><code>post_confidence</code></td><td>Confidence rating after activity (1&ndash;5)</td></tr>
+        <tr><td><code>post_actual</code></td><td>Self-reported actual score (%)</td></tr>
+        <tr><td><code>post_r1</code></td><td>Reflection: how accurate was the prediction?</td></tr>
+        <tr><td><code>post_r2</code></td><td>Reflection: what would you do differently?</td></tr>
+        <tr><td><code>calibration_index</code></td><td>post_actual &minus; cal_predicted (negative = overconfident)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+<footer>
+  <span>&copy; 2026 Nurul Hazlina Noordin · UMPSA STEM Lab Engineering Education Initiative</span>
+  <a href="https://www.umpsa.edu.my" target="_blank" rel="noopener" aria-label="UMPSA website">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+  </a>
+  <a href="mailto:hazlina@umpsa.edu.my" aria-label="Email facilitator">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+  </a>
+</footer>
+
+</body>
+</html>

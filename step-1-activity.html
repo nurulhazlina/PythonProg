@@ -1,0 +1,1807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Step 1 — Variables &amp; Setup | Snake Game Tutorial</title>
+<link rel="stylesheet" href="style.css">
+<style>
+/* ── pixel grid explorer ── */
+#grid-canvas{display:block;max-width:100%;border-radius:8px;cursor:crosshair}
+.grid-info{margin-top:10px;background:var(--code-bg);color:#E6EDF3;border-radius:8px;
+  padding:10px 14px;font-family:monospace;font-size:14px;min-height:44px;line-height:1.6}
+.grid-info .hi{color:#79C0FF}.grid-info .px{color:#A5D6FF}.grid-info .py{color:#FF7B72}
+
+/* ── animated output window ── */
+.pygame-window{position:relative;max-width:420px;margin:18px auto}
+.pygame-titlebar{background:#2a2a2a;border-radius:8px 8px 0 0;padding:6px 12px;
+  display:flex;align-items:center;gap:8px;border:1px solid #444;border-bottom:none}
+.pygame-titlebar .dots{display:flex;gap:5px}
+.pygame-titlebar .dot{width:10px;height:10px;border-radius:50%}
+.dot-r{background:#FF5F57}.dot-y{background:#FFBD2E}.dot-g{background:#28C840}
+.pygame-titlebar .title-text{color:#ccc;font-size:12px;font-family:monospace;margin:0 auto}
+#pygame-canvas{display:block;width:100%;border:1px solid #444;border-radius:0 0 8px 8px}
+.replay-btn{display:block;margin:8px auto 0;background:none;border:1px solid var(--line);
+  color:var(--muted);border-radius:6px;padding:5px 14px;cursor:pointer;font-size:13px}
+.replay-btn:hover{border-color:var(--teal);color:var(--teal)}
+
+/* ── RGB mixer ── */
+.rgb-mixer{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+@media(max-width:600px){.rgb-mixer{grid-template-columns:1fr}}
+.rgb-sliders label{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:15px}
+.rgb-sliders label span{width:1.4em;font-weight:700}
+.rgb-sliders input[type=range]{flex:1;accent-color:var(--teal);height:6px}
+.rgb-sliders .val{width:2.4em;text-align:right;font-family:monospace;color:var(--muted);font-size:14px}
+.colour-swatch{border-radius:12px;height:120px;border:1px solid var(--line);
+  transition:background .12s;display:flex;align-items:flex-end}
+.swatch-label{width:100%;text-align:center;padding:8px;font-family:monospace;
+  font-size:13px;font-weight:700;background:rgba(0,0,0,.35);border-radius:0 0 11px 11px;color:#fff}
+.preset-swatches{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.preset-btn{border:none;border-radius:8px;padding:6px 12px;font-size:13px;font-family:monospace;
+  cursor:pointer;font-weight:600;transition:transform .1s;color:#fff}
+.preset-btn:hover{transform:scale(1.06)}
+
+/* ── data type cards ── */
+.type-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:12px}
+.type-card{border-radius:10px;padding:14px 16px;border:2px solid}
+.type-card h4{margin:0 0 6px;font-size:15px}
+.type-card p{margin:0;font-size:13.5px;color:var(--muted)}
+.type-card code{display:block;margin-top:8px;font-size:13px;padding:5px 8px;border-radius:6px;background:rgba(0,0,0,.08)}
+.tc-int{border-color:var(--blue);background:rgba(13,85,167,.07)}
+.tc-int h4{color:var(--blue)}
+.tc-tuple{border-color:var(--teal);background:rgba(2,173,165,.07)}
+.tc-tuple h4{color:var(--teal)}
+.tc-str{border-color:var(--orange);background:rgba(245,162,29,.09)}
+.tc-str h4{color:#B87708}
+
+/* ── memory box diagram ── */
+.mem-row{display:flex;align-items:center;gap:0;margin:6px 0;flex-wrap:wrap;gap:6px}
+.mem-name{font-family:monospace;font-size:13.5px;font-weight:700;color:var(--muted);
+  min-width:7em;text-align:right;padding-right:8px}
+.mem-arrow{color:var(--teal);font-size:18px;line-height:1}
+.mem-box{background:var(--code-bg);color:#E6EDF3;border-radius:8px;padding:5px 12px;
+  font-family:monospace;font-size:13.5px;border:2px solid rgba(255,255,255,.1)}
+.mem-box.int-box{border-color:#79C0FF}
+.mem-box.tuple-box{border-color:#A5D6FF}
+.mem-swatch{width:18px;height:18px;border-radius:4px;display:inline-block;
+  vertical-align:middle;margin-left:6px;border:1px solid rgba(255,255,255,.2)}
+.mem-type{font-size:11.5px;color:var(--muted);margin-left:6px;letter-spacing:.04em}
+
+/* ── connection table ── */
+.connect-row{display:flex;gap:10px;align-items:flex-start;padding:10px 0;
+  border-top:1px solid var(--line);flex-wrap:wrap}
+.connect-row:first-of-type{border-top:none}
+.connect-var{font-family:monospace;font-size:13.5px;font-weight:700;color:var(--teal);
+  min-width:9em;padding-top:2px}
+.connect-arrow{color:var(--muted);padding-top:2px}
+.connect-desc{flex:1;font-size:14.5px}
+.connect-desc small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+
+/* ── calibration gate ── */
+.cal-gate{background:linear-gradient(135deg,rgba(11,79,75,.12) 0%,rgba(2,173,165,.06) 100%);border:2px solid var(--teal);border-radius:12px;margin-bottom:24px;overflow:hidden}
+.cal-gate-header{background:linear-gradient(90deg,rgba(2,173,165,.2),transparent);padding:12px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cal-gate-body{padding:18px}
+.cal-label{font-weight:700;font-size:14px;margin-bottom:6px;display:block;line-height:1.5}
+.cal-sub{font-size:13px;color:var(--muted);margin-bottom:10px;display:block}
+.conf-slider-wrap{display:flex;align-items:center;gap:10px;margin:8px 0 16px}
+.conf-slider-wrap input[type=range]{flex:1;accent-color:var(--teal)}
+.conf-val{min-width:2em;font-family:monospace;font-weight:800;font-size:20px;color:var(--teal);text-align:center}
+.pred-input{background:var(--code-bg);border:1px solid var(--line);border-radius:6px;color:var(--fg);font-family:monospace;font-size:16px;padding:8px 12px;width:110px;text-align:center;font-weight:700}
+.pred-input:focus{outline:none;border-color:var(--teal)}
+/* ── reflection gate cards ── */
+.refl-gate{border:1.5px solid rgba(13,85,167,.4);border-radius:12px;margin-bottom:20px;overflow:hidden;background:rgba(13,85,167,.04)}
+.refl-gate.{opacity:.45;pointer-events:none}
+.refl-gate:not(.){opacity:1;pointer-events:auto}
+.refl-gate-header{background:linear-gradient(90deg,rgba(13,85,167,.15),transparent);padding:12px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.refl-badge{font-size:11px;font-weight:700;letter-spacing:.06em;padding:3px 8px;border-radius:20px;background:var(--blue);color:#fff;white-space:nowrap}
+.refl-gate-body{padding:18px}
+.cal-tip{background:rgba(2,173,165,.08);border-left:3px solid var(--teal);border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:16px;font-size:13px;line-height:1.6}
+
+  /* ── Hero banner ─────────────────────────────────── */
+  section.hero{background:linear-gradient(135deg,var(--teal-dark,#0b4f4b) 0%,#063f3b 100%);color:#fff;padding:32px 0 24px;margin:0}
+  .hero-title{font-size:clamp(22px,4vw,30px);font-weight:800;margin:0 0 8px;line-height:1.2}
+  .hero-sub{font-size:15px;margin:0;opacity:.85;line-height:1.5}
+  .step-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:rgba(255,255,255,.15);border-radius:20px;padding:4px 12px;margin-bottom:10px}
+
+  /* ── Hero nav buttons ─────────────────────────────── */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--teal);color:#fff;font-weight:700;font-size:14px;padding:10px 22px;border-radius:8px;text-decoration:none;border:none;cursor:pointer;transition:opacity .15s;white-space:nowrap;line-height:1;font-family:inherit}
+  .btn:hover{opacity:.85}
+  .btn-outline{background:transparent;border:2px solid rgba(255,255,255,.55);color:#fff}
+  .btn-outline:hover{background:rgba(255,255,255,.1);opacity:1}
+
+  /* ── Site header ─────────────────────────────────── */
+  .site-header{background:var(--teal-dark);color:#fff;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.28)}
+  .header-inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:52px;gap:16px}
+  .logo{color:#fff;text-decoration:none;font-weight:800;font-size:17px;white-space:nowrap;letter-spacing:-.01em}
+  .logo:hover{opacity:.85}
+  .step-nav{display:flex;gap:3px;align-items:center;flex-wrap:wrap}
+  .step-nav a{color:rgba(255,255,255,.75);text-decoration:none;font-size:13px;font-weight:600;padding:5px 9px;border-radius:6px;transition:background .15s,color .15s;line-height:1}
+  .step-nav a:hover{background:rgba(255,255,255,.15);color:#fff}
+  .step-nav a.active{background:rgba(255,255,255,.22);color:#fff;font-weight:800}
+
+  .container{max-width:1100px;margin:0 auto;padding:0 20px}
+  .main-content{padding:28px 0 64px}
+
+/* ── Quick Re-ID Modal ── */
+#qrid-overlay{position:fixed;inset:0;background:rgba(15,23,42,.72);
+  display:flex;align-items:center;justify-content:center;z-index:9999;
+  backdrop-filter:blur(4px);padding:16px}
+#qrid-box{background:var(--card,#fff);border-radius:16px;padding:32px 28px;
+  max-width:420px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.35)}
+#qrid-box h2{margin:0 0 4px;font-size:1.25rem;color:var(--text,#1e293b)}
+#qrid-box p{margin:0 0 20px;font-size:.875rem;color:var(--muted,#64748b);line-height:1.5}
+.qrid-field{margin-bottom:14px}
+.qrid-field label{display:block;font-size:.8rem;font-weight:600;
+  color:var(--text,#1e293b);margin-bottom:4px;letter-spacing:.02em}
+.qrid-field input,.qrid-field select{width:100%;box-sizing:border-box;
+  border:1.5px solid var(--line,#e2e8f0);border-radius:8px;
+  padding:9px 12px;font-size:.95rem;background:var(--bg,#f8fafc);
+  color:var(--text,#1e293b);outline:none;transition:border-color .2s}
+.qrid-field input:focus,.qrid-field select:focus{
+  border-color:var(--teal,#02ada5);box-shadow:0 0 0 3px rgba(2,173,165,.15)}
+#qrid-submit{width:100%;margin-top:6px;padding:11px;border:none;border-radius:8px;
+  background:var(--teal,#02ada5);color:#fff;font-size:1rem;font-weight:700;
+  cursor:pointer;transition:opacity .2s}
+#qrid-submit:hover{opacity:.88}
+#qrid-err{color:#e53e3e;font-size:.82rem;margin-top:8px;display:none}
+
+</style>
+
+<style>
+/* Concept Check Component */
+.concept-check-inner { padding:4px 0; }
+.concept-desc { font-size:14px; color:var(--text-muted,#666); margin-bottom:12px; }
+.concept-q { background:var(--code-bg); border:1px solid var(--line); border-radius:8px; padding:14px 16px; margin-bottom:14px; color:var(--fg); }
+.concept-q-text { margin:0 0 10px; font-size:15px; line-height:1.5; color:var(--fg); font-weight:500; }
+.concept-opts { display:flex; flex-direction:column; gap:8px; }
+.concept-opt { display:flex; align-items:flex-start; gap:10px; cursor:pointer; font-size:14px; line-height:1.4; color:var(--fg); }
+.concept-opt span { color:var(--fg); }
+.concept-opt input[type=radio] { margin-top:3px; flex-shrink:0; cursor:pointer; }
+.concept-desc { font-size:14px; color:var(--muted); margin-bottom:12px; font-style:italic; }
+.concept-feedback { font-size:14px; font-weight:600; margin-top:8px; padding:6px 10px; border-radius:6px; background:rgba(0,0,0,0.05); }
+.concept-done .concept-q { opacity:.85; }
+</style>
+
+<script>
+var STEP_CHECK_QUESTIONS={1:[
+  {q:"Which of these is a string (text) value in Python?",opts:["42","True","\"snake\"","3.14"],ans:2},
+  {q:"What does WIN_WIDTH = 600 create?",opts:["A function called WIN_WIDTH","A named constant storing 600","A loop that runs 600 times","An import statement"],ans:1},
+  {q:"What will this print?\n  x = 3\n  x = x + 1\n  print(x)",opts:["3","x + 1","4","Error"],ans:2},
+  {q:"Which line correctly imports the pygame library?",opts:["include pygame","import pygame","use pygame","load pygame"],ans:1},
+  {q:"What does pygame.init() do?",opts:["Creates a display window","Imports the pygame module","Initialises all pygame subsystems (sound, display, etc.)","Starts the game loop immediately"],ans:2}
+]};
+
+/* === Concept Check Component (inlined) === */
+function initConceptCheck(opts){
+  var step=opts.step;
+  var wrap=document.getElementById(opts.containerId||'concept-check-wrap');
+  if(!wrap)return;
+  var questions=STEP_CHECK_QUESTIONS[step];
+  if(!questions||!questions.length)return;
+  var d=lmsGet();
+  if(d.concept_step&&d.concept_step.submitted){renderSubmittedFull(wrap,d.concept_step,questions);_unlockJournal();return;}
+  var html='<div class="concept-check-inner"><p class="concept-desc">Answer all 5 questions to unlock the Reflective Journal.</p>';
+  questions.forEach(function(q,qi){
+    html+='<div class="concept-q" id="cq-'+qi+'">';
+    html+='<p class="concept-q-text"><strong>'+(qi+1)+'.</strong> '+q.q.replace(/\n/g,'<br>')+'</p>';
+    html+='<div class="concept-opts">';
+    q.opts.forEach(function(opt,oi){
+      var id='cq'+qi+'_'+oi;
+      html+='<label class="concept-opt" for="'+id+'"><input type="radio" name="cq'+qi+'" id="'+id+'" value="'+oi+'"><span>'+opt+'</span></label>';
+    });
+    html+='</div><div class="concept-feedback" id="cfb-'+qi+'" hidden></div></div>';
+  });
+  html+='<div id="concept-global-fb" style="margin-top:10px"></div>';
+  html+='<button class="tier-btn" id="concept-submit" style="margin-top:12px">Submit Answers &amp; Unlock Journal</button></div>';
+  wrap.innerHTML=html;
+  document.getElementById('concept-submit').addEventListener('click',function(){submitConceptCheck(step,questions,wrap);});
+}
+function submitConceptCheck(step,questions,wrap){
+  var answers=[];var allAnswered=true;
+  questions.forEach(function(q,qi){
+    var sel=wrap.querySelector('input[name="cq'+qi+'"]:checked');
+    if(!sel){allAnswered=false;answers.push(null);return;}
+    answers.push({answer:parseInt(sel.value,10),correct:(parseInt(sel.value,10)===q.ans)});
+  });
+  if(!allAnswered){
+    var gfb=document.getElementById('concept-global-fb');
+    gfb.textContent='Please answer all 5 questions before submitting.';
+    gfb.style.color='var(--red,#c0392b)';gfb.removeAttribute('hidden');return;
+  }
+  questions.forEach(function(q,qi){
+    var fb=document.getElementById('cfb-'+qi);var a=answers[qi];fb.removeAttribute('hidden');
+    if(a&&a.correct){fb.textContent='\u2713 Correct!';fb.style.color='var(--green,#27ae60)';}
+    else{fb.textContent='\u2717 Correct answer: '+q.opts[q.ans];fb.style.color='var(--red,#c0392b)';}
+    wrap.querySelectorAll('input[name="cq'+qi+'"]').forEach(function(r){r.disabled=true;});
+  });
+  var correct=answers.filter(function(a){return a&&a.correct;}).length;
+  var pct=Math.round((correct/questions.length)*100);
+  var btn=document.getElementById('concept-submit');btn.disabled=true;btn.textContent='Answers submitted \u2713';
+  var gfb=document.getElementById('concept-global-fb');gfb.removeAttribute('hidden');
+  gfb.innerHTML='<strong>Score: '+correct+' / '+questions.length+' ('+pct+'%).</strong> The Reflective Journal is now unlocked!';
+  gfb.style.color=pct>=60?'var(--green,#27ae60)':'var(--orange,#e67e22)';
+  var d=lmsGet();d.concept_step={submitted:true,answers:answers,score_pct:pct,ts:Date.now()};lmsSet(d);
+  try{postToSheets({type:'concept',step:step,test_type:'step',answers:answers.map(function(a,i){return{answer:questions[i].opts[a?a.answer:0],correct:a?(a.correct?1:0):0};}),score_pct:pct});}catch(e){}
+  _unlockJournal();
+}
+function _unlockJournal(){
+  var jc=document.getElementById('tierJ');
+  if(jc){jc.classList.remove('tier-locked');jc.removeAttribute('aria-disabled');
+    var li=jc.querySelector('.lock-icon');if(li)li.textContent='\uD83D\uDCD6';}
+  var tj=document.getElementById('tj-submit');if(tj)tj.disabled=false;
+  setTimeout(function(){var jc=document.getElementById('tierJ');if(jc)jc.scrollIntoView({behavior:'smooth',block:'nearest'});},400);
+}
+function renderSubmittedFull(wrap,saved,questions){
+  var sc=saved.score_pct!==undefined?saved.score_pct:'--';
+  var html='<div class="concept-check-inner concept-done"><p><strong>\u2713 Concept check completed.</strong> Score: <strong>'+sc+'%</strong></p>';
+  if(saved.answers&&questions){
+    saved.answers.forEach(function(a,qi){
+      var q=questions[qi];if(!q||a===null)return;
+      html+='<div class="concept-q"><p class="concept-q-text"><strong>'+(qi+1)+'.</strong> '+q.q.replace(/\n/g,'<br>')+'</p>';
+      html+='<div class="concept-feedback" style="color:'+(a&&a.correct?'var(--green,#27ae60)':'var(--red,#c0392b)')+';font-size:14px">';
+      html+=a&&a.correct?'\u2713 '+(q.opts[a.answer]||''):'\u2717 Your answer: '+(q.opts[a.answer]||'?')+' \u2014 Correct: '+q.opts[q.ans];
+      html+='</div></div>';
+    });
+  }
+  html+='</div>';wrap.innerHTML=html;
+}
+
+</script>
+
+<style>
+/* ── Student Identity Block ── */
+.id-block{background:linear-gradient(135deg,#08312F,#0a3d39);border-radius:12px;padding:20px 22px;margin-bottom:22px;border:2px solid rgba(2,173,165,.3)}
+.id-block.id-confirmed{border-color:#02ADA5;background:linear-gradient(135deg,#052e16,#073d2e)}
+.id-block-title{font-weight:800;font-size:15px;color:#fff;display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.id-required-badge{background:#02ADA5;color:#fff;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;letter-spacing:.05em;flex-shrink:0}
+.id-subtitle{font-weight:400;font-size:13px;color:rgba(255,255,255,.6)}
+.id-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px 12px;align-items:end}
+.id-field{display:flex;flex-direction:column;gap:5px}
+.id-field.id-w2{grid-column:span 2}
+.id-field label{font-size:11px;font-weight:700;color:rgba(255,255,255,.65);letter-spacing:.06em;text-transform:uppercase}
+.id-req{color:#f5a21d;margin-left:2px}
+.id-field input,.id-field select{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);border-radius:7px;padding:9px 12px;color:#fff;font-size:13px;font-family:inherit;width:100%;box-sizing:border-box;transition:border-color .2s}
+.id-field select{cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,.5)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.id-field select option{background:#0a3d39;color:#fff}
+.id-field input:focus,.id-field select:focus{outline:none;border-color:#02ADA5;background:rgba(2,173,165,.12)}
+.id-field input::placeholder{color:rgba(255,255,255,.3)}
+.id-save-btn{background:#02ADA5;color:#fff;border:none;border-radius:8px;padding:11px 22px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;transition:opacity .2s;width:100%;margin-top:14px}
+.id-save-btn:hover{opacity:.88}
+.id-confirmed-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.id-confirmed-name{font-weight:700;font-size:16px;color:#fff}
+.id-confirmed-meta{color:rgba(255,255,255,.65);font-size:13px}
+.id-edit-btn{background:transparent;border:1.5px solid rgba(255,255,255,.35);color:rgba(255,255,255,.75);border-radius:6px;padding:5px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+.id-edit-btn:hover{border-color:#fff;color:#fff}
+.id-notice{background:rgba(245,162,29,.12);border:1.5px solid rgba(245,162,29,.45);border-radius:8px;padding:9px 14px;color:#f5a21d;font-size:13px;font-weight:600;margin-top:12px;display:none}
+</style>
+
+</head>
+<body>
+<script>
+/* Registration gate */
+/* qrid-modal handles registration */
+</script>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="index.html">🐍 Snake Tutorial</a>
+    <nav class="step-nav">
+      <a href="step-1-activity.html" class="active">1</a>
+      <a href="step-2-activity.html">2</a>
+      <a href="step-3-activity.html">3</a>
+      <a href="step-4-activity.html">4</a>
+      <a href="step-5-activity.html">5</a>
+      <a href="step-6-activity.html">6</a>
+      <a href="step-7-activity.html">7</a>
+      <a href="step-8-activity.html">8</a>
+      <a href="step-9-activity.html">9</a>
+      <a href="step-10-activity.html">10</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero" style="padding:32px 0 24px">
+  <div class="container">
+    <div class="step-badge">Step 1 — Activity</div>
+    <h1 class="hero-title">Variables &amp; Setup</h1>
+    <p class="hero-sub">variables &bull; data types &bull; pygame.init()</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+      <a class="btn btn-outline" href="step-1.html">&#128214; Concept Page</a>
+      <a class="btn" href="step-2-activity.html">Step 2 &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<main class="main-content">
+<div class="container">
+
+<div class="tier-progress" id="tier-progress" aria-label="Activity progress">
+    <div class="tier-step active" id="tp0"><span class="tier-num">&#127919;</span><span class="tier-label">Calibrate</span></div>
+    <div class="tier-connector" id="tc01"></div>
+    <div class="tier-step locked" id="tp1"><span class="tier-num">1</span><span class="tier-label">Workout</span></div>
+    <div class="tier-connector" id="tc12"></div>
+    <div class="tier-step locked" id="tp2"><span class="tier-num">2</span><span class="tier-label">Debug</span></div>
+    <div class="tier-connector" id="tc23"></div>
+    <div class="tier-step locked" id="tp3"><span class="tier-num">3</span><span class="tier-label">Complete</span></div>
+    <div class="tier-connector" id="tc34"></div>
+    <div class="tier-step locked" id="tp4"><span class="tier-num">4</span><span class="tier-label">Create</span></div>
+    <div class="tier-connector" id="tc4c"></div>
+    <div class="tier-step locked" id="tpc"><span class="tier-num">&#129504;</span><span class="tier-label">Concept</span></div>
+    <div class="tier-connector" id="tccj"></div>
+    <div class="tier-step locked" id="tpj"><span class="tier-num">&#128211;</span><span class="tier-label">Reflect</span></div>
+  </div>
+
+  <!-- ── STUDENT IDENTITY ── -->
+<div class="id-block" id="idBlock">
+  <div class="id-block-title">
+    &#x1F464; Your Details
+    <span class="id-required-badge">REQUIRED</span>
+    <span class="id-subtitle">&#8212; fill in before you begin (<span style="color:#f5a21d">&#9733;</span> = required)</span>
+  </div>
+  <div id="idForm">
+    <div class="id-grid">
+      <div class="id-field id-w2">
+        <label>Full Name <span class="id-req">&#9733;</span></label>
+        <input type="text" id="id-name" placeholder="Ahmad bin Ali" autocomplete="name">
+      </div>
+      <div class="id-field">
+        <label>Matric No. <span class="id-req">&#9733;</span></label>
+        <input type="text" id="id-matric" placeholder="RE25001" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>Class <span class="id-req">&#9733;</span></label>
+        <input type="text" id="id-class" placeholder="01A" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>Gender <span class="id-req">&#9733;</span></label>
+        <select id="id-gender">
+          <option value="">-- select --</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Prefer not to say</option>
+        </select>
+      </div>
+      <div class="id-field">
+        <label>Age <span class="id-req">&#9733;</span></label>
+        <input type="number" id="id-age" min="10" max="30" placeholder="e.g. 19" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>Home State</label>
+        <select id="id-state">
+          <option value="">-- select --</option>
+          <option>Johor</option><option>Kedah</option><option>Kelantan</option>
+          <option>Melaka</option><option>Negeri Sembilan</option><option>Pahang</option>
+          <option>Perak</option><option>Perlis</option><option>Pulau Pinang</option>
+          <option>Sabah</option><option>Sarawak</option><option>Selangor</option>
+          <option>Terengganu</option><option>Kuala Lumpur</option><option>Labuan</option>
+          <option>Putrajaya</option>
+        </select>
+      </div>
+      <div class="id-field id-w2">
+        <label>IC / MyKid No.</label>
+        <input type="text" id="id-mykid" placeholder="e.g. 050101-01-1234" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>School Code</label>
+        <input type="text" id="id-school" placeholder="e.g. JBA0001" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>Phone</label>
+        <input type="tel" id="id-phone" placeholder="0123456789" autocomplete="tel">
+      </div>
+      <div class="id-field id-w2">
+        <label>Email</label>
+        <input type="email" id="id-email" placeholder="name@example.com" autocomplete="email">
+      </div>
+    </div>
+    <div class="id-notice" id="idNotice"></div>
+    <button class="id-save-btn" onclick="saveIdentity()">&#10003; Confirm My Details</button>
+  </div>
+  <div id="idConfirmed" style="display:none">
+    <div class="id-confirmed-row">
+      <span style="font-size:20px">&#9989;</span>
+      <div>
+        <div class="id-confirmed-name" id="idConfName"></div>
+        <div class="id-confirmed-meta" id="idConfMeta"></div>
+      </div>
+      <button class="id-edit-btn" onclick="editIdentity()">Edit</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CALIBRATION GATE (Layer 2 — task-level metacognition) ═══ -->
+  <div class="cal-gate" id="calGate">
+    <div class="cal-gate-header">
+      <span class="tier-badge" style="background:#0B4F4B">&#127919; Before You Begin</span>
+      <span class="tier-title">Calibration Check</span>
+      <span class="tier-desc">2 questions + 1 reflection &mdash; unlocks Tier 1</span>
+    </div>
+    <div class="cal-gate-body">
+      <div class="cal-tip">These questions measure <strong>metacognitive calibration</strong> &mdash; how well your confidence matches your actual performance. Answer honestly; there are no right or wrong answers here.</div>
+
+      <div style="margin-bottom:20px">
+        <span class="cal-label">1. How confident are you about completing Step 1? <em style="font-weight:400;color:var(--muted)">(1&nbsp;=&nbsp;not at all confident, 10&nbsp;=&nbsp;very confident)</em></span>
+        <div class="conf-slider-wrap">
+          <span style="font-size:13px;color:var(--muted)">1</span>
+          <input type="range" id="cal-conf" min="1" max="10" value="5" step="1">
+          <span style="font-size:13px;color:var(--muted)">10</span>
+          <span class="conf-val" id="cal-conf-val">5</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom:20px">
+        <span class="cal-label">2. What percentage of Tier 1 blanks do you predict you will get correct on your <em>first attempt</em>? <em style="font-weight:400;color:var(--muted)">(0&ndash;100)</em></span>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+          <input type="number" id="cal-pred" class="pred-input" min="0" max="100" placeholder="e.g. 80">
+          <span style="font-size:14px;color:var(--muted)">%</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px">
+        <label for="cal-r1" class="cal-label">3. <span style="color:var(--teal)">&#129504; Reflection 1</span> &mdash; What do you think will be the hardest part of Step 1, and why?</label>
+        <span class="cal-sub">Write at least 2&ndash;3 sentences. This is your own thinking &mdash; there are no wrong answers.</span>
+        <textarea class="tier-textarea" id="cal-r1" rows="4" placeholder="I think the hardest part will be..."></textarea>
+      </div>
+
+      <div id="cal-feedback" class="tier-feedback" hidden></div>
+      <div class="tier-actions">
+        <button class="tier-btn" id="cal-submit" style="background:var(--teal-dark)">Start Tier 1 &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIER 1 -->
+  <div class="tier-card tier-locked" id="tier1">
+    <div class="tier-header t1-header">
+      <span class="tier-badge">Tier 1</span>
+      <span class="tier-title">Workout Programming</span>
+      <span class="tier-desc">Guided — fill in the blanks and run</span>
+    </div>
+    <div class="tier-body">
+      <p>The Step 1 program is almost complete. The <span style="background:#1a3a2a;border:2px solid #02ADA5;border-radius:4px;color:#7fffcf;font-family:monospace;padding:1px 8px;font-size:13px">?</span> boxes are where you type. Click each one and fill in the correct value, then click <strong>Submit Tier 1</strong>.</p>
+      <div style="background:rgba(2,173,165,.1);border:1px solid var(--teal);border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:12px">
+        <b>How to fill in:</b>
+        <ul style="margin:6px 0 0 18px;line-height:1.8">
+          <li>Click a <span style="background:#1a3a2a;border:2px solid #02ADA5;border-radius:4px;color:#7fffcf;font-family:monospace;padding:1px 6px">?</span> box in the code below</li>
+          <li>Type the correct value (e.g. <code>20</code> for GRID_COLS)</li>
+          <li>Fill all 7 boxes, then click <strong>Submit Tier 1</strong></li>
+          <li>Green = correct &nbsp;·&nbsp; Red = wrong — fix and resubmit</li>
+        </ul>
+      </div>
+      <div class="code-fill-wrap">
+        <pre class="code code-fill" id="t1-code">import pygame
+pygame.init()
+
+# Grid constants
+GRID_COLS  = <input type="text" class="blank" id="b1" placeholder="?" size="4" autocomplete="off">        # 20 columns
+GRID_ROWS  = <input type="text" class="blank" id="b2" placeholder="?" size="4" autocomplete="off">        # 15 rows
+CELL_SIZE  = <input type="text" class="blank" id="b3" placeholder="?" size="4" autocomplete="off">        # 30x30 pixels per cell
+SNAKE_SPEED = 8
+
+# Colour constants - RGB tuples
+WHITE   = <input type="text" class="blank blank-wide" id="b4" placeholder="(?, ?, ?)" size="16" autocomplete="off">
+GREEN   = (  0, 200,  80)
+DKGREEN = (  0, 160,  50)
+RED     = <input type="text" class="blank blank-wide" id="b5" placeholder="(?, ?, ?)" size="16" autocomplete="off">
+BG      = ( 30,  30,  30)
+
+# Calculate window size in pixels
+WINDOW_W = <input type="text" class="blank blank-mid" id="b6" placeholder="?" size="10" autocomplete="off"> * CELL_SIZE
+WINDOW_H = GRID_ROWS * <input type="text" class="blank blank-mid" id="b7" placeholder="?" size="10" autocomplete="off">
+
+screen = pygame.display.set_mode((WINDOW_W, WINDOW_H))
+pygame.display.set_caption("Snake")
+
+screen.fill(BG)
+pygame.display.flip()
+pygame.time.wait(3000)
+pygame.quit()</pre>
+      </div>
+      <div id="t1-feedback" class="tier-feedback" hidden></div>
+      <div class="tier-actions">
+        <span id="t1-attempts" class="attempt-count"></span>
+        <button class="tier-btn" id="t1-submit">Submit Tier 1</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIER 2 -->
+  <div class="tier-card tier-locked" id="tier2">
+    <div class="tier-header t2-header">
+      <span class="tier-badge">Tier 2</span>
+      <span class="tier-title">Debugging &mdash; Find &amp; Fix</span>
+      <span class="tier-desc">Spot each bug and explain the fix</span>
+      <span class="lock-icon">&#128274;</span>
+    </div>
+    <div class="tier-body" id="tier2-body">
+      <p>The code below has <strong>3 deliberate bugs</strong>. Each will cause a crash or wrong behaviour. For each bug: identify the variable name, explain what is wrong, and write the corrected line.</p>
+      <pre class="code">import pygame
+pygame.init()
+
+GRID_COLS   = 20
+GRID_ROWS   = 15
+CELL_SIZE   = "30"          # <span style="color:var(--orange)">&#9888; Bug 1 near here</span>
+SNAKE_SPEED = 8
+
+WHITE   = (255, 255, 255)
+GREEN   = [0, 200, 80]      # <span style="color:var(--orange)">&#9888; Bug 2 near here</span>
+DKGREEN = (  0, 160,  50)
+RED     = (220,  50,  50)
+BG      = ( 30,  30,  30)
+
+WINDOW_W = GRID_COLS + CELL_SIZE   # <span style="color:var(--orange)">&#9888; Bug 3 near here</span>
+WINDOW_H = GRID_ROWS * CELL_SIZE
+
+screen = pygame.display.set_mode((WINDOW_W, WINDOW_H))
+pygame.display.set_caption("Snake")
+screen.fill(BG)
+pygame.display.flip()
+pygame.time.wait(3000)
+pygame.quit()</pre>
+
+      <div class="bug-forms">
+        <div class="bug-form">
+          <h4>Bug 1</h4>
+          <label>Which variable? <input type="text" class="bug-input" id="bug1-var" placeholder="variable name" autocomplete="off"></label>
+          <label>What is wrong and what should it be?<textarea class="bug-textarea" id="bug1-why" rows="2" placeholder="Explain the problem..."></textarea></label>
+          <label>Corrected line:<input type="text" class="bug-input bug-wide" id="bug1-fix" placeholder="VARNAME = ..." autocomplete="off"></label>
+        </div>
+        <div class="bug-form">
+          <h4>Bug 2</h4>
+          <label>Which variable? <input type="text" class="bug-input" id="bug2-var" placeholder="variable name" autocomplete="off"></label>
+          <label>What is wrong and what should it be?<textarea class="bug-textarea" id="bug2-why" rows="2" placeholder="Explain the problem..."></textarea></label>
+          <label>Corrected line:<input type="text" class="bug-input bug-wide" id="bug2-fix" placeholder="VARNAME = ..." autocomplete="off"></label>
+        </div>
+        <div class="bug-form">
+          <h4>Bug 3</h4>
+          <label>Which variable? <input type="text" class="bug-input" id="bug3-var" placeholder="variable name" autocomplete="off"></label>
+          <label>What is wrong? (check the operator)<textarea class="bug-textarea" id="bug3-why" rows="2" placeholder="Explain the problem..."></textarea></label>
+          <label>Corrected line:<input type="text" class="bug-input bug-wide" id="bug3-fix" placeholder="VARNAME = ..." autocomplete="off"></label>
+        </div>
+      </div>
+      <div id="t2-feedback" class="tier-feedback" hidden></div>
+      <div class="tier-actions">
+        <span id="t2-attempts" class="attempt-count"></span>
+        <button class="tier-btn" id="t2-submit">Submit Tier 2</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ REFLECTION GATE 2 (Layer 3 — between Tier 2 and Tier 3) ═══ -->
+  <div class="refl-gate tier-locked" id="refl2">
+    <div class="refl-gate-header">
+      <span class="refl-badge">&#129504; Reflection 2</span>
+      <span class="tier-title" style="font-size:14px">Mid-Point Check-In</span>
+      <span class="tier-desc">Required before Tier 3 unlocks</span>
+      <span class="lock-icon">&#128274;</span>
+    </div>
+    <div class="refl-gate-body">
+      <label for="refl2-text" style="display:block;font-weight:600;font-size:14px;margin-bottom:6px;line-height:1.5">Is your current approach working? What is your evidence?</label>
+      <span style="display:block;font-size:13px;color:var(--muted);margin-bottom:10px">Reflect on how Tiers 1 and 2 went. Write at least 2&ndash;3 sentences.</span>
+      <textarea class="tier-textarea" id="refl2-text" rows="4" placeholder="My approach is working / not working because..."></textarea>
+      <div id="refl2-feedback" class="tier-feedback" hidden></div>
+      <div class="tier-actions" style="margin-top:12px">
+        <button class="tier-btn" id="refl2-submit" disabled style="background:var(--blue)">Save &amp; Unlock Tier 3 &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIER 3 -->
+  <div class="tier-card tier-locked" id="tier3">
+    <div class="tier-header t3-header">
+      <span class="tier-badge">Tier 3</span>
+      <span class="tier-title">Semi-Completed Task</span>
+      <span class="tier-desc">No bugs &mdash; write the missing logic</span>
+      <span class="lock-icon">&#128274;</span>
+    </div>
+    <div class="tier-body" id="tier3-body">
+      <p>The skeleton below is ~50% complete. Write <strong>every missing line</strong> to make a working Step 1 program. No bugs here &mdash; this is a writing task.</p>
+      <pre class="code"><span style="color:#94a3b8"># skeleton — gaps marked with ___</span>
+import pygame
+pygame.init()
+
+<span style="color:#94a3b8"># Write all four grid constants:</span>
+GRID_COLS  = ___
+GRID_ROWS  = ___
+CELL_SIZE  = ___
+SNAKE_SPEED = ___
+
+<span style="color:#94a3b8"># Write the five colour constants as RGB tuples:</span>
+WHITE   = ___
+GREEN   = ___
+DKGREEN = ___
+RED     = ___
+BG      = ___
+
+<span style="color:#94a3b8"># Calculate window dimensions from the constants:</span>
+WINDOW_W = ___
+WINDOW_H = ___
+
+<span style="color:#94a3b8"># These lines are given:</span>
+screen = pygame.display.set_mode((WINDOW_W, WINDOW_H))
+pygame.display.set_caption("Snake")
+
+<span style="color:#94a3b8"># Write three display lines: fill, flip, wait</span>
+___
+___
+___
+pygame.quit()</pre>
+
+      <label style="display:block;margin-top:14px;font-weight:600;font-size:14px">Your complete Step 1 code:</label>
+      <textarea class="tier-textarea" id="t3-code" rows="28" placeholder="# Write the complete program here"></textarea>
+      <div id="t3-feedback" class="tier-feedback" hidden></div>
+      <div class="tier-actions">
+        <span id="t3-attempts" class="attempt-count"></span>
+        <button class="tier-btn" id="t3-submit">Submit Tier 3</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIER 4 -->
+  <div class="tier-card tier-locked" id="tier4">
+    <div class="tier-header t4-header">
+      <span class="tier-badge">Tier 4 &#9733;</span>
+      <span class="tier-title">New Programming Task</span>
+      <span class="tier-desc">Assessed by the Code Product Rubric</span>
+      <span class="lock-icon">&#128274;</span>
+    </div>
+    <div class="tier-body" id="tier4-body">
+      <div class="cal tip" style="margin-bottom:14px"><b>Task prompt</b><br>
+        Add two new colour constants to Step 1: <code>GOLD = (255, 200, 0)</code> for a future bonus food item, and a <code>BORDER_COLOUR</code> of your own choice. Then, after all your constants are defined, use <code>print()</code> to display the name and Python type of each colour constant (WHITE, GREEN, DKGREEN, RED, BG, GOLD, and BORDER_COLOUR). Run your program in Thonny and paste the full code and terminal output below.
+      </div>
+      <label style="display:block;margin-bottom:6px;font-weight:600;font-size:14px">Your code:</label>
+      <textarea class="tier-textarea" id="t4-code" rows="30" placeholder="# Your complete Step 1 program with GOLD, BORDER_COLOUR, and print statements"></textarea>
+      <label style="display:block;margin:12px 0 6px;font-weight:600;font-size:14px">Terminal output (copy from Thonny's Shell):</label>
+      <textarea class="tier-textarea" id="t4-output" rows="10" placeholder="Paste what Python printed here..."></textarea>
+      <div id="t4-feedback" class="tier-feedback" hidden></div>
+      <div class="tier-actions">
+        <span id="t4-attempts" class="attempt-count"></span>
+        <button class="tier-btn" id="t4-submit">Submit Tier 4</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ REFLECTION GATE 3 (Layer 3 — after Tier 4, before Journal) ═══ -->
+  <!-- ─── Per-Step Concept Check ───────────────────────────── -->
+<div class="refl-gate tier-locked" id="concept-check-gate">
+  <div class="refl-gate-header">
+    <span class="refl-badge">&#129504; Concept Check</span>
+    <span class="tier-title" style="font-size:14px">Test Your Understanding</span>
+    <span class="tier-desc">5 quick questions — required before the Reflective Journal</span>
+    <span class="lock-icon">&#128274;</span>
+  </div>
+  <div class="refl-gate-body">
+    <div id="concept-check-wrap" data-step="1">
+<div class="concept-check-inner">
+<p class="concept-desc">Answer all 5 questions, then the Reflective Journal will unlock.</p>
+
+<div class="concept-q" id="cq-0">
+<p class="concept-q-text"><strong>1.</strong> Which of these is a string (text) value in Python?</p>
+<div class="concept-opts">
+  <label class="concept-opt"><input type="radio" name="cq0" value="0"><span>42</span></label>
+  <label class="concept-opt"><input type="radio" name="cq0" value="1"><span>True</span></label>
+  <label class="concept-opt"><input type="radio" name="cq0" value="2"><span>"snake"</span></label>
+  <label class="concept-opt"><input type="radio" name="cq0" value="3"><span>3.14</span></label>
+</div>
+<div class="concept-feedback" id="cfb-0" hidden></div>
+</div>
+
+<div class="concept-q" id="cq-1">
+<p class="concept-q-text"><strong>2.</strong> What does <code>WIN_WIDTH = 600</code> create?</p>
+<div class="concept-opts">
+  <label class="concept-opt"><input type="radio" name="cq1" value="0"><span>A function called WIN_WIDTH</span></label>
+  <label class="concept-opt"><input type="radio" name="cq1" value="1"><span>A named constant storing 600</span></label>
+  <label class="concept-opt"><input type="radio" name="cq1" value="2"><span>A loop that runs 600 times</span></label>
+  <label class="concept-opt"><input type="radio" name="cq1" value="3"><span>An import statement</span></label>
+</div>
+<div class="concept-feedback" id="cfb-1" hidden></div>
+</div>
+
+<div class="concept-q" id="cq-2">
+<p class="concept-q-text"><strong>3.</strong> What will this print?<br><code>&nbsp;&nbsp;x = 3<br>&nbsp;&nbsp;x = x + 1<br>&nbsp;&nbsp;print(x)</code></p>
+<div class="concept-opts">
+  <label class="concept-opt"><input type="radio" name="cq2" value="0"><span>3</span></label>
+  <label class="concept-opt"><input type="radio" name="cq2" value="1"><span>x + 1</span></label>
+  <label class="concept-opt"><input type="radio" name="cq2" value="2"><span>4</span></label>
+  <label class="concept-opt"><input type="radio" name="cq2" value="3"><span>Error</span></label>
+</div>
+<div class="concept-feedback" id="cfb-2" hidden></div>
+</div>
+
+<div class="concept-q" id="cq-3">
+<p class="concept-q-text"><strong>4.</strong> Which line correctly imports the pygame library?</p>
+<div class="concept-opts">
+  <label class="concept-opt"><input type="radio" name="cq3" value="0"><span>include pygame</span></label>
+  <label class="concept-opt"><input type="radio" name="cq3" value="1"><span>import pygame</span></label>
+  <label class="concept-opt"><input type="radio" name="cq3" value="2"><span>use pygame</span></label>
+  <label class="concept-opt"><input type="radio" name="cq3" value="3"><span>load pygame</span></label>
+</div>
+<div class="concept-feedback" id="cfb-3" hidden></div>
+</div>
+
+<div class="concept-q" id="cq-4">
+<p class="concept-q-text"><strong>5.</strong> What does <code>pygame.init()</code> do?</p>
+<div class="concept-opts">
+  <label class="concept-opt"><input type="radio" name="cq4" value="0"><span>Creates a display window</span></label>
+  <label class="concept-opt"><input type="radio" name="cq4" value="1"><span>Imports the pygame module</span></label>
+  <label class="concept-opt"><input type="radio" name="cq4" value="2"><span>Initialises all pygame subsystems (sound, display, etc.)</span></label>
+  <label class="concept-opt"><input type="radio" name="cq4" value="3"><span>Starts the game loop immediately</span></label>
+</div>
+<div class="concept-feedback" id="cfb-4" hidden></div>
+</div>
+
+<div id="concept-global-fb" style="margin-top:10px"></div>
+<button class="tier-btn" id="concept-submit" style="margin-top:12px">Submit Answers &amp; Unlock Journal</button>
+</div>
+    </div>
+  </div>
+</div>
+
+<div class="tier-card tier-locked" id="tierJ">
+    <div class="tier-header tj-header">
+      <span class="tier-badge" style="font-size:16px;padding:2px 6px">&#128211;</span>
+      <span class="tier-title">Reflective Journal</span>
+      <span class="tier-desc">5 prompts &mdash; required before Step 1 is marked complete</span>
+      <span class="lock-icon">&#128274;</span>
+    </div>
+    <div class="tier-body" id="tierJ-body">
+      <p>Answer each prompt thoughtfully. There are no right or wrong answers &mdash; this is your own reflection.</p>
+      <div class="journal-prompt">
+        <label for="jr1"><span class="jp-num">1</span> What was the most confusing part of Step 1, and what helped you understand it?</label>
+        <textarea class="tier-textarea" id="jr1" rows="4" placeholder="Write at least 2-3 sentences..."></textarea>
+      </div>
+      <div class="journal-prompt">
+        <label for="jr2"><span class="jp-num">2</span> Why do programmers write constant names in UPPER_CASE? What does it communicate to someone reading the code?</label>
+        <textarea class="tier-textarea" id="jr2" rows="4" placeholder="Write at least 2-3 sentences..."></textarea>
+      </div>
+      <div class="journal-prompt">
+        <label for="jr3"><span class="jp-num">3</span> Why is a <strong>tuple</strong> a better choice than a list for storing an RGB colour? Give a reason based on the game.</label>
+        <textarea class="tier-textarea" id="jr3" rows="4" placeholder="Write at least 2-3 sentences..."></textarea>
+      </div>
+      <div class="journal-prompt">
+        <label for="jr4"><span class="jp-num">4</span> If you changed <code>CELL_SIZE</code> from 30 to 20, what would happen to the game window and why? Predict before testing.</label>
+        <textarea class="tier-textarea" id="jr4" rows="4" placeholder="Write at least 2-3 sentences..."></textarea>
+      </div>
+      <div class="journal-prompt">
+        <label for="jr5"><span class="jp-num">5</span> <span style="color:var(--teal)">&#129504; Reflection 4</span> &mdash; How would you explain Step 1 to a classmate who is stuck? Describe what variables, data types, and window setup mean in plain language.</label>
+        <textarea class="tier-textarea" id="jr5" rows="4" placeholder="Write at least 2-3 sentences..."></textarea>
+      </div>
+      <div id="tj-feedback" class="tier-feedback" hidden></div>
+      <div class="tier-actions">
+        <button class="tier-btn tj-btn" id="tj-submit">Submit Reflective Journal &#10003;</button>
+      </div>    </div>
+  </div>
+
+<div class="refl-gate tier-locked" id="refl3">
+  <div class="refl-gate-header">
+    <span class="refl-badge">&#127919; Post-Activity Check-In</span>
+    <span class="tier-title" style="font-size:14px">After Completing All Tiers</span>
+    <span class="tier-desc">Complete after the Reflective Journal to finish this step</span>
+    <span class="lock-icon">&#128274;</span>
+  </div>
+  <div class="refl-gate-body">
+
+    <!-- 1. Post-confidence slider -->
+    <div style="margin-bottom:18px">
+      <span class="cal-label">1. How confident do you feel about this step&#8217;s concepts <em>now</em>?
+        <em style="font-weight:400;color:var(--muted)">(1&nbsp;=&nbsp;not confident, 10&nbsp;=&nbsp;very confident)</em>
+      </span>
+      <div class="conf-slider-wrap">
+        <span style="font-size:13px;color:var(--muted)">1</span>
+        <input type="range" id="post-conf" min="1" max="10" value="5" step="1">
+        <span style="font-size:13px;color:var(--muted)">10</span>
+        <span class="conf-val" id="post-conf-val">5</span>
+      </div>
+    </div>
+
+    <!-- 2. Actual Tier 1 first-attempt score (auto-filled) -->
+    <div style="margin-bottom:18px">
+      <span class="cal-label">2. Your Tier 1 first-attempt score <em style="font-weight:400;color:var(--muted)">(auto-filled)</em></span>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+        <input type="number" id="post-actual" class="pred-input" min="0" max="100"
+               placeholder="&#8212;" readonly style="background:var(--surface,#f0f4f0);cursor:default">
+        <span style="font-size:14px;color:var(--muted)">%</span>
+      </div>
+      <span class="cal-sub" id="post-actual-hint" style="display:block;margin-top:4px"></span>
+    </div>
+
+    <!-- 3. Reflection: prediction vs actual -->
+    <div style="margin-bottom:14px">
+      <label for="refl3-text" class="cal-label">3. How did your actual performance compare to your prediction?
+        <span class="cal-sub">Write at least 2&#8211;3 sentences.</span>
+      </label>
+      <textarea class="tier-textarea" id="refl3-text" rows="4"
+        placeholder="I predicted __% but I actually got __% because&#8230;"></textarea>
+    </div>
+
+    <!-- 4. Reflection: hardest part -->
+    <div style="margin-bottom:14px">
+      <label for="post-r2" class="cal-label">4. What was the hardest part, and how did you handle it?
+        <span class="cal-sub">Write at least 2&#8211;3 sentences.</span>
+      </label>
+      <textarea class="tier-textarea" id="post-r2" rows="4"
+        placeholder="The hardest part was&#8230; I handled it by&#8230;"></textarea>
+    </div>
+
+    <div id="refl3-feedback" style="margin-top:8px"></div>
+    <div class="tier-actions" style="margin-top:12px">
+      <button class="tier-btn" id="refl3-submit" disabled>Save &amp; Complete Step 1 &#10003;</button>
+    </div>
+  <div id="step-complete-banner" class="step-complete" hidden>
+        <span>&#10003; Step 1 Complete!</span>
+        <a href="step-2.html" class="next-step-link">Continue to Step 2 &rarr;</a>
+      </div>
+  </div>
+</div>
+
+<style>
+.tier-progress{display:flex;align-items:center;margin:20px 0 28px;flex-wrap:wrap;gap:4px}
+.tier-step{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:60px}
+.tier-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;border:2px solid var(--line);transition:all .3s}
+.tier-label{font-size:10px;color:var(--muted);text-align:center}
+.tier-step.active .tier-num{background:var(--teal);color:#fff;border-color:var(--teal)}
+.tier-step.active .tier-label{color:var(--teal);font-weight:600}
+.tier-step.done .tier-num{background:#22c55e;color:#fff;border-color:#22c55e}
+.tier-step.done .tier-label{color:#22c55e}
+.tier-step.locked .tier-num{background:var(--bg);color:var(--muted)}
+.tier-connector{flex:1;height:2px;background:var(--line);min-width:16px;transition:background .4s}
+.tier-connector.done{background:#22c55e}
+.tier-card{border:1px solid var(--line);border-radius:12px;margin-bottom:20px;overflow:hidden;transition:opacity .3s}
+.{opacity:.45;pointer-events:none}
+.tier-card:not(.){opacity:1;pointer-events:auto}
+.tier-header{display:flex;align-items:center;gap:10px;padding:12px 18px;flex-wrap:wrap}
+.t1-header{background:linear-gradient(90deg,rgba(2,173,165,.15),transparent)}
+.t2-header{background:linear-gradient(90deg,rgba(245,162,29,.15),transparent)}
+.t3-header{background:linear-gradient(90deg,rgba(13,85,167,.15),transparent)}
+.t4-header{background:linear-gradient(90deg,rgba(200,0,0,.15),transparent)}
+.tj-header{background:linear-gradient(90deg,rgba(100,100,180,.15),transparent)}
+.tier-badge{font-size:11px;font-weight:700;letter-spacing:.06em;padding:3px 8px;border-radius:20px;background:var(--teal);color:#fff;white-space:nowrap}
+.t2-header .tier-badge{background:var(--orange)}
+.t3-header .tier-badge{background:var(--blue)}
+.t4-header .tier-badge{background:var(--red)}
+.tier-title{font-weight:700;font-size:15px}
+.tier-desc{font-size:12px;color:var(--muted)}
+.lock-icon{margin-left:auto;font-size:16px}
+.tier-body{padding:18px}
+.code-fill-wrap{overflow-x:auto;border-radius:8px;background:var(--code-bg)}
+.code-fill{background:transparent;padding:18px}
+.blank{background:#fefce8;border:2px solid #f59e0b;border-radius:5px;color:#78350f;font-family:monospace;font-size:13px;padding:3px 10px;outline:none;transition:all .2s;cursor:text;min-width:44px;font-weight:700}
+.blank:focus{border-color:#d97706;background:#fef3c7;box-shadow:0 0 0 3px rgba(245,158,11,.3)}
+.blank.correct{border-color:#22c55e;background:rgba(34,197,94,.2);color:#86efac;box-shadow:0 0 0 2px rgba(34,197,94,.25)}
+.blank.wrong{border-color:#ef4444;background:rgba(239,68,68,.2);color:#fca5a5;animation:shake .3s;box-shadow:0 0 0 2px rgba(239,68,68,.25)}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.bug-forms{display:flex;flex-direction:column;gap:16px;margin-top:16px}
+.bug-form{background:rgba(245,162,29,.06);border:1px solid rgba(245,162,29,.25);border-radius:8px;padding:14px}
+.bug-form h4{margin:0 0 10px;color:var(--orange);font-size:14px}
+.bug-form label{display:flex;flex-direction:column;gap:4px;font-size:13px;margin-bottom:10px}
+.bug-input{background:var(--code-bg);border:1px solid var(--line);border-radius:6px;color:var(--fg);font-family:monospace;font-size:13px;padding:6px 10px;width:100%;box-sizing:border-box}
+.bug-textarea{background:var(--code-bg);border:1px solid var(--line);border-radius:6px;color:var(--fg);font-family:inherit;font-size:13px;padding:8px;width:100%;box-sizing:border-box;resize:vertical}
+.tier-textarea{width:100%;box-sizing:border-box;background:var(--code-bg);border:1px solid var(--line);border-radius:8px;color:var(--fg);font-family:monospace;font-size:13px;padding:12px;resize:vertical;line-height:1.5}
+.tier-textarea:focus{outline:none;border-color:var(--teal)}
+.journal-prompt{margin-bottom:18px}
+.journal-prompt label{display:flex;flex-direction:column;gap:6px;font-size:14px;line-height:1.5}
+.jp-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--teal);color:#fff;font-weight:700;font-size:12px;margin-right:6px;flex-shrink:0}
+.tier-actions{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
+.tier-btn{padding:9px 22px;border:none;border-radius:8px;background:var(--teal);color:#fff;font-weight:700;font-size:14px;cursor:pointer;transition:opacity .2s}
+.tier-btn:hover:not(:disabled){opacity:.85}
+.tier-btn:disabled{opacity:.4;cursor:not-allowed}
+.tj-btn{background:var(--teal-dark)}
+.attempt-count{font-size:12px;color:var(--muted)}
+.tier-feedback{padding:10px 14px;border-radius:8px;font-size:13px;margin-top:10px}
+.tier-feedback.success{background:rgba(34,197,94,.12);border:1px solid #22c55e;color:#86efac}
+.tier-feedback.error{background:rgba(239,68,68,.10);border:1px solid #ef4444;color:#fca5a5}
+.tier-feedback.partial{background:rgba(245,162,29,.10);border:1px solid var(--orange);color:#fde68a}
+.blank-hint{color:var(--teal);font-weight:600}
+.step-complete{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:18px;padding:16px 20px;background:linear-gradient(90deg,rgba(34,197,94,.12),rgba(2,173,165,.08));border:1px solid #22c55e;border-radius:10px;font-size:16px;font-weight:700;color:#86efac}
+.next-step-link{padding:8px 18px;background:var(--teal);color:#fff;border-radius:8px;text-decoration:none;font-size:14px}
+.next-step-link:hover{opacity:.85}
+</style>
+
+<script>
+(function(){
+'use strict';
+var LMS_KEY='lms_step1';
+function lmsGet(){try{return JSON.parse(localStorage.getItem(LMS_KEY)||'{}')}catch(e){return{}}}
+function lmsSet(d){try{localStorage.setItem(LMS_KEY,JSON.stringify(d))}catch(e){}}
+function lmsLog(ev,val){var d=lmsGet();if(!d[ev])d[ev]=[];d[ev].push({ts:Date.now(),v:val!==undefined?val:null});lmsSet(d);}
+lmsLog('page_opened');
+var stepN=1;
+var state={cal:false,t1:false,t2:false,refl2:false,t3:false,t4:false,refl3:false,tj:false};
+var attempts={t1:0,t2:0,t3:0,t4:0,tj:0};
+var firstAttemptScore=null; /* % correct on T1 first try — for calibration index */
+function norm(s){return String(s).replace(/\s+/g,' ').trim().toLowerCase();}
+function normCode(s){return String(s).replace(/\s+/g,'').toLowerCase();}
+function showFeedback(id,msg,type){var el=document.getElementById(id);el.hidden=false;el.className='tier-feedback '+type;el.innerHTML=msg;}
+function setAttempts(id,n){var el=document.getElementById(id);if(el)el.textContent=n>0?'Attempts: '+n:'';}
+function markDone(tpId){var el=document.getElementById(tpId);if(el)el.className='tier-step done';}
+function unlockTier(key){
+  var cards={2:'tier2',3:'tier3',4:'tier4',J:'tierJ'};
+  var tps={2:'tp2',3:'tp3',4:'tp4',J:'tpj'};
+  var btns={2:'t2-submit',3:'t3-submit',4:'t4-submit',J:'tj-submit'};
+  var card=document.getElementById(cards[key]);
+  if(card){card.classList.remove('tier-locked');card.removeAttribute('aria-disabled');}
+  var tp=document.getElementById(tps[key]);if(tp)tp.className='tier-step active';
+  var btn=document.getElementById(btns[key]);if(btn)btn.disabled=false;
+}
+function checkBlank(id,answers){
+  var el=document.getElementById(id);
+  var v=normCode(el?el.value.trim():'');
+  var ok=answers.some(function(a){return normCode(a)===v;});
+  if(el){el.classList.toggle('correct',ok);el.classList.toggle('wrong',!ok);}
+  return ok;
+}
+/* TIER 1 */
+var T1={b1:['20'],b2:['15'],b3:['30'],b4:['(255,255,255)','255,255,255'],b5:['(220,50,50)','220,50,50'],b6:['grid_cols'],b7:['cell_size']};
+document.getElementById('t1-submit').addEventListener('click',function(){
+  if(state.t1)return;
+  attempts.t1++;lmsLog('t1_attempt',attempts.t1);setAttempts('t1-attempts',attempts.t1);
+  var ok=Object.keys(T1).map(function(k){return checkBlank(k,T1[k]);});
+  var correct=ok.filter(Boolean).length;
+  /* Track first-attempt score for calibration index */
+  if(attempts.t1===1){firstAttemptScore=Math.round(correct/ok.length*100);var fd=lmsGet();fd.t1_first_attempt_pct=firstAttemptScore;lmsSet(fd);}
+  if(correct===ok.length){
+    state.t1=true;lmsLog('t1_submitted',{attempts:attempts.t1,ts:Date.now()});
+    postToSheets({type:'tier',tier:'T1',step:stepN,score:firstAttemptScore,attempts:attempts.t1});
+    showFeedback('t1-feedback','All blanks correct! Tier 2 is now unlocked.','success');
+    document.getElementById('t1-submit').disabled=true;
+    markDone('tp1');document.getElementById('tc12').classList.add('done');unlockTier(2);
+  } else {
+    showFeedback('t1-feedback',(ok.length-correct)+' blank(s) incorrect — check highlighted fields and try again.','error');
+  }
+});
+/* TIER 2 */
+document.getElementById('t2-submit').addEventListener('click',function(){
+  if(state.t2)return;
+  attempts.t2++;lmsLog('t2_attempt',attempts.t2);setAttempts('t2-attempts',attempts.t2);
+  var v1=normCode(document.getElementById('bug1-var').value);
+  var f1=normCode(document.getElementById('bug1-fix').value);
+  var w1=document.getElementById('bug1-why').value.trim();
+  var v2=normCode(document.getElementById('bug2-var').value);
+  var f2=normCode(document.getElementById('bug2-fix').value);
+  var w2=document.getElementById('bug2-why').value.trim();
+  var v3=normCode(document.getElementById('bug3-var').value);
+  var f3=normCode(document.getElementById('bug3-fix').value);
+  var w3=document.getElementById('bug3-why').value.trim();
+  var ok1=(v1==='cell_size')&&(f1.includes('cell_size=30'))&&w1.length>10;
+  var ok2=(v2==='green')&&(f2.includes('green=(0,200,80)'))&&w2.length>10;
+  var ok3=(v3==='window_w')&&f3.includes('*')&&w3.length>10;
+  if(ok1&&ok2&&ok3){
+    state.t2=true;lmsLog('t2_submitted',{attempts:attempts.t2,ts:Date.now()});
+    
+    var _atd=lmsGet();_atd.t2_attempts_count=attempts.t2;lmsSet(_atd);/*t2_attempts_count_saved*/
+    postToSheets({type:'tier',tier:'T2',step:stepN,attempts:attempts.t2});
+    showFeedback('t2-feedback','All 3 bugs found and fixed! Complete the mid-point reflection below to unlock Tier 3.','success');
+    document.getElementById('t2-submit').disabled=true;
+    markDone('tp2');document.getElementById('tc23').classList.add('done');
+    /* Unlock Reflection 2 gate — Tier 3 unlocks after reflection */
+    var r2c=document.getElementById('refl2');
+    r2c.classList.remove('tier-locked');r2c.removeAttribute('aria-disabled');
+    document.getElementById('refl2-submit').disabled=false;
+    setTimeout(function(){r2c.scrollIntoView({behavior:'smooth',block:'nearest'});},200);
+  } else {
+    var m=[];
+    if(!ok1)m.push('Bug 1: variable is CELL_SIZE — the value "30" has the wrong type');
+    if(!ok2)m.push('Bug 2: variable is GREEN — tuples use () not []');
+    if(!ok3)m.push('Bug 3: variable is WINDOW_W — should multiply, not add');
+    if(w1.length<=10||w2.length<=10||w3.length<=10)m.push('Write fuller explanations');
+    showFeedback('t2-feedback',m.join(' &middot; '),'error');
+  }
+});
+/* TIER 3 */
+document.getElementById('t3-submit').addEventListener('click',function(){
+  if(state.t3)return;
+  attempts.t3++;lmsLog('t3_attempt',attempts.t3);setAttempts('t3-attempts',attempts.t3);
+  var c=normCode(document.getElementById('t3-code').value);
+  var checkList=[
+    {ok:c.includes('importpygame'),          hint:'import pygame'},
+    {ok:c.includes('pygame.init()'),         hint:'pygame.init()'},
+    {ok:c.includes('grid_cols=20'),          hint:'grid_cols = 20'},
+    {ok:c.includes('grid_rows=15'),          hint:'grid_rows = 15'},
+    {ok:c.includes('cell_size=30'),          hint:'cell_size = 30'},
+    {ok:c.includes('(255,255,255)'),         hint:'WHITE = (255, 255, 255)'},
+    {ok:c.includes('(0,200,80)'),            hint:'GREEN = (0, 200, 80)'},
+    {ok:c.includes('(0,160,50)'),            hint:'DARK_GREEN = (0, 160, 50)'},
+    {ok:c.includes('(220,50,50)'),           hint:'RED = (220, 50, 50)'},
+    {ok:c.includes('(30,30,30)'),            hint:'BG = (30, 30, 30)'},
+    {ok:c.includes('*cell_size')||c.includes('20*30'), hint:'WIN_WIDTH = grid_cols * cell_size'},
+    {ok:c.includes('grid_rows*')||c.includes('15*30'), hint:'WIN_HEIGHT = grid_rows * cell_size'},
+    {ok:c.includes('set_mode'),              hint:'pygame.display.set_mode(...)'},
+    {ok:c.includes('set_caption'),           hint:'pygame.display.set_caption(...)'},
+    {ok:c.includes('screen.fill'),           hint:'screen.fill(BG)'},
+    {ok:c.includes('display.flip'),          hint:'pygame.display.flip()'},
+    {ok:c.includes('time.wait'),             hint:'pygame.time.wait(...)'},
+    {ok:c.includes('pygame.quit()'),         hint:'pygame.quit()'}
+  ];
+  var n=checkList.filter(function(x){return x.ok;}).length;
+  var missing=checkList.filter(function(x){return !x.ok;}).map(function(x){return x.hint;});
+  if(n>=checkList.length-2){
+    state.t3=true;lmsLog('t3_submitted',{attempts:attempts.t3,ts:Date.now()});
+    var _atd=lmsGet();_atd.t3_attempts_count=attempts.t3;lmsSet(_atd);/*t3_attempts_count_saved*/
+    postToSheets({type:'tier',tier:'T3',step:stepN,attempts:attempts.t3});
+    showFeedback('t3-feedback','✅ Program complete ('+n+'/'+checkList.length+' checks). Tier 4 unlocked!','success');
+    document.getElementById('t3-submit').disabled=true;
+    markDone('tp3');document.getElementById('tc34').classList.add('done');unlockTier(4);
+  } else {
+    var msg=n+'/'+checkList.length+' checks passed.';
+    if(missing.length) msg+=' Missing or incorrect: '+missing.join(' · ');
+    showFeedback('t3-feedback',msg,'partial');
+  }
+});
+/* TIER 4 */
+document.getElementById('t4-submit').addEventListener('click',function(){
+  if(state.t4)return;
+  attempts.t4++;lmsLog('t4_attempt',attempts.t4);setAttempts('t4-attempts',attempts.t4);
+  var c=normCode(document.getElementById('t4-code').value);
+  var o=document.getElementById('t4-output').value.trim();
+  var hasGold=c.includes('gold')&&(c.includes('255,200,0'));
+  var hasBorder=c.includes('border_colour')||c.includes('border_color');
+  var hasPrint=c.includes('print(type(');
+  var hasOutput=o.length>20;
+  if(hasGold&&hasBorder&&hasPrint&&hasOutput){
+    state.t4=true;
+    var d=lmsGet();
+    function dur(a,b){var s=d[a],e=d[b];if(!s||!s.length||!e||!e.length)return null;return e[e.length-1].ts-s[0].ts;}
+    var dt1=dur('t1_attempt','t1_submitted'),
+        dt2=dur('t2_attempt','t2_submitted'),
+        dt3=dur('t3_attempt','t3_submitted'),
+        dt4=dur('t4_attempt','t4_submitted');
+    var ratio=dt1&&dt4&&dt1>0?(dt4/dt1).toFixed(2):null;
+    lmsLog('t4_submitted',{attempts:attempts.t4,ts:Date.now()});
+    
+    var _atd=lmsGet();_atd.t4_attempts_count=attempts.t4;lmsSet(_atd);/*t4_attempts_count_saved*/
+    postToSheets({type:'tier',tier:'T4',step:stepN,attempts:attempts.t4});
+    lmsLog('effort_index',{t1_ms:dt1,t2_ms:dt2,t3_ms:dt3,t4_ms:dt4,ratio:ratio});
+    showFeedback('t4-feedback','Tier 4 complete!'+(ratio?' Effort index: '+ratio+'.':'')+'  Complete the concept check below to unlock the journal.','success');
+    document.getElementById('t4-submit').disabled=true;
+    markDone('tp4');document.getElementById('tc4j').classList.add('done');
+    /* Unlock Concept Check gate */
+    (function(){
+      var cg=document.getElementById('concept-check-gate');
+      if(cg){
+        cg.classList.remove('tier-locked');
+        cg.removeAttribute('aria-disabled');
+        var li=cg.querySelector('.lock-icon');
+        if(li)li.textContent='\u2705';
+        initConceptCheck({step:stepN,containerId:'concept-check-wrap'});
+      }
+    })();
+    setTimeout(function(){document.getElementById('concept-check-gate').scrollIntoView({behavior:'smooth',block:'nearest'});},200);
+  } else {
+    var m=[];
+    if(!hasGold)m.push('GOLD = (255, 200, 0) not found');
+    if(!hasBorder)m.push('BORDER_COLOUR missing');
+    if(!hasPrint)m.push('print(type(...)) statements missing');
+    if(!hasOutput)m.push('paste terminal output from Thonny');
+    showFeedback('t4-feedback',m.join(' &middot; '),'error');
+  }
+});
+/* JOURNAL */
+document.getElementById('tj-submit').addEventListener('click',function(){
+  if(state.tj)return;
+  attempts.tj++;lmsLog('tj_attempt',attempts.tj);
+  var short=['jr1','jr2','jr3','jr4','jr5'].filter(function(id){
+    return document.getElementById(id).value.trim().split(/\s+/).length<15;
+  });
+  if(short.length>0){
+    showFeedback('tj-feedback','Please write more for prompt '+short.map(function(id){return id.replace('jr','');}).join(', ')+' (aim for 15+ words each).','error');
+    return;
+  }
+  state.tj=true;
+  var jText={jr1:document.getElementById('jr1').value,jr2:document.getElementById('jr2').value,jr3:document.getElementById('jr3').value,jr4:document.getElementById('jr4').value,jr5:document.getElementById('jr5').value};
+  /* ── Calibration index: predicted_score − first_attempt_pct ── */
+  var jd=lmsGet();
+  if(jd.cal&&jd.cal.predicted_score!==undefined&&jd.t1_first_attempt_pct!==undefined){
+    jd.calibration_index=jd.cal.predicted_score-jd.t1_first_attempt_pct;
+    jd.calibration_confidence=jd.cal.confidence;
+    lmsSet(jd);
+    lmsLog('calibration_index',{predicted:jd.cal.predicted_score,actual:jd.t1_first_attempt_pct,index:jd.calibration_index,confidence:jd.calibration_confidence});
+  }
+  lmsLog('tj_submitted',{ts:Date.now(),responses:jText});postJournalToSheets(1, jText);  showFeedback('tj-feedback','Reflection complete! Post-activity check-in is now unlocked.','success');
+  document.getElementById('tj-submit').disabled=true;
+  markDone('tpj');
+  /* Unlock Post-Cal (refl3) */
+  (function(){
+    var r3c=document.getElementById('refl3');
+    if(r3c){
+      r3c.classList.remove('tier-locked');r3c.removeAttribute('aria-disabled');
+      document.getElementById('refl3-submit').disabled=false;
+      var d2=lmsGet();
+      var pct=d2.t1_first_attempt_pct;
+      var el=document.getElementById('post-actual');
+      if(el&&pct!==undefined){
+        el.value=pct;
+        var pred=d2.cal&&d2.cal.predicted_score!==undefined?d2.cal.predicted_score:'--';
+        var hint=document.getElementById('post-actual-hint');
+        if(hint) hint.textContent='Your first-attempt score: '+pct+'%. Your prediction was: '+pred+'%.';
+      }
+      setTimeout(function(){r3c.scrollIntoView({behavior:'smooth',block:'nearest'});},200);
+    }
+  })();
+});
+/* ═══════════════════════════════════════
+   STUDENT IDENTITY GATE
+═══════════════════════════════════════ */
+var ID_KEY = 'umpsa_snake_student';
+var _idConfirmed = false;
+
+function _setIdentityConfirmed(st) {
+  _idConfirmed = true;
+  var block = document.getElementById('idBlock');
+  var form  = document.getElementById('idForm');
+  var conf  = document.getElementById('idConfirmed');
+  var nameEl = document.getElementById('idConfName');
+  var metaEl = document.getElementById('idConfMeta');
+  if (block) block.classList.add('id-confirmed');
+  if (form)  form.style.display  = 'none';
+  if (conf)  conf.style.display  = '';
+  if (nameEl) nameEl.textContent = st.name || '';
+  var gLabel = {male:'Male', female:'Female', other:'N/A'}[st.gender] || st.gender || '';
+  var parts = [st.matric, st.class, gLabel, st.age ? 'Age '+st.age : ''].filter(Boolean);
+  if (metaEl) metaEl.textContent = parts.join('  ·  ');
+}
+
+function saveIdentity() {
+  var nameVal   = ((document.getElementById('id-name')   ||{}).value||'').trim();
+  var matricVal = ((document.getElementById('id-matric') ||{}).value||'').trim();
+  var classVal  = ((document.getElementById('id-class')  ||{}).value||'').trim();
+  var genderVal = ((document.getElementById('id-gender') ||{}).value||'').trim();
+  var ageVal    = ((document.getElementById('id-age')    ||{}).value||'').trim();
+  var notice    = document.getElementById('idNotice');
+  if (!nameVal || !matricVal || !classVal || !genderVal || !ageVal) {
+    if (notice) { notice.style.display=''; notice.textContent='⚠ Please fill in all required fields (★): Name, Matric No., Class, Gender and Age.'; }
+    return;
+  }
+  var st = {
+    name: nameVal, matric: matricVal, class: classVal,
+    gender: genderVal, age: ageVal,
+    mykid:       ((document.getElementById('id-mykid')  ||{}).value||'').trim(),
+    home_state:  ((document.getElementById('id-state')  ||{}).value||'').trim(),
+    school_code: ((document.getElementById('id-school') ||{}).value||'').trim(),
+    phone:       ((document.getElementById('id-phone')  ||{}).value||'').trim(),
+    email:       ((document.getElementById('id-email')  ||{}).value||'').trim()
+  };
+  try { localStorage.setItem(ID_KEY, JSON.stringify(st)); } catch(e) {}
+  if (notice) notice.style.display = 'none';
+  _setIdentityConfirmed(st);
+}
+
+function editIdentity() {
+  _idConfirmed = false;
+  var block = document.getElementById('idBlock');
+  var form  = document.getElementById('idForm');
+  var conf  = document.getElementById('idConfirmed');
+  if (block) block.classList.remove('id-confirmed');
+  if (form)  form.style.display = '';
+  if (conf)  conf.style.display = 'none';
+}
+
+(function _initIdentity() {
+  try {
+    var st = JSON.parse(localStorage.getItem(ID_KEY) || '{}');
+    if (st.name) {
+      var map = {
+        'id-name': st.name, 'id-matric': st.matric, 'id-class': st.class,
+        'id-gender': st.gender, 'id-age': st.age, 'id-mykid': st.mykid,
+        'id-state': st.home_state, 'id-school': st.school_code,
+        'id-phone': st.phone, 'id-email': st.email
+      };
+      Object.keys(map).forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el && map[id]) el.value = map[id];
+      });
+      if (st.name && st.matric && st.class && st.gender && st.age) _setIdentityConfirmed(st);
+    }
+  } catch(e) {}
+  var calBtn = document.getElementById('cal-submit');
+  if (calBtn) {
+    calBtn.addEventListener('click', function(e) {
+      if (!_idConfirmed) {
+        e.stopImmediatePropagation();
+        var notice = document.getElementById('idNotice');
+        if (notice) { notice.style.display=''; notice.textContent='⚠ Please fill in and confirm your details above before starting.'; }
+        var block = document.getElementById('idBlock');
+        if (block) block.scrollIntoView({behavior:'smooth',block:'start'});
+      }
+    }, false);
+  }
+})();
+
+/* ═══ CALIBRATION GATE ═══ */
+(function(){
+  var confEl=document.getElementById('cal-conf');
+  var confVal=document.getElementById('cal-conf-val');
+  if(confEl)confEl.addEventListener('input',function(){confVal.textContent=confEl.value;});
+  document.getElementById('cal-submit').addEventListener('click',function(){
+    if(state.cal)return;
+    var conf=+document.getElementById('cal-conf').value;
+    var predRaw=document.getElementById('cal-pred').value.trim();
+    var r1=document.getElementById('cal-r1').value.trim();
+    if(predRaw===''||isNaN(+predRaw)||+predRaw<0||+predRaw>100){
+      showFeedback('cal-feedback','Please enter a predicted score between 0 and 100.','error');return;
+    }
+    if(r1.split(/\s+/).filter(Boolean).length<10){
+      showFeedback('cal-feedback','Please write a bit more for the reflection (aim for 10+ words).','error');return;
+    }
+    state.cal=true;
+    var pred=+predRaw;
+    var calData={confidence:conf,predicted_score:pred,reflection_1:r1,ts:Date.now()};
+    var d=lmsGet();d.cal=calData;lmsSet(d);
+    lmsLog('cal_submitted',{confidence:conf,predicted_score:pred,ts:Date.now()});
+  postToSheets({type:'pre_cal',step:stepN,confidence:conf,predicted_score:pred,what_hardest:r1});
+    showFeedback('cal-feedback','Calibration saved! Tier 1 is now unlocked. Good luck!','success');
+    document.getElementById('cal-submit').disabled=true;
+    markDone('tp0');document.getElementById('tc01').classList.add('done');
+    var t1c=document.getElementById('tier1');
+    t1c.classList.remove('tier-locked');t1c.removeAttribute('aria-disabled');
+    document.getElementById('tp1').className='tier-step active';
+    document.getElementById('t1-submit').disabled=false;
+  });
+})();
+/* ═══ REFLECTION GATE 2 ═══ */
+document.getElementById('refl2-submit').addEventListener('click',function(){
+  if(state.refl2)return;
+  var txt=document.getElementById('refl2-text').value.trim();
+  if(txt.split(/\s+/).filter(Boolean).length<10){
+    showFeedback('refl2-feedback','Please write more (aim for 10+ words).','error');return;
+  }
+  state.refl2=true;
+  var d=lmsGet();d.reflection_2={text:txt,ts:Date.now()};lmsSet(d);
+  lmsLog('refl2_submitted',{ts:Date.now()});
+  postToSheets({type:'refl2',step:stepN,text:txt});
+  showFeedback('refl2-feedback','Reflection saved! Tier 3 is now unlocked.','success');
+  document.getElementById('refl2-submit').disabled=true;
+  unlockTier(3);
+});
+/* ═══ REFLECTION GATE 3 ═══ */
+document.getElementById('refl3-submit').addEventListener('click',function(){
+  if(state.refl3)return;
+  var r1txt=document.getElementById('refl3-text').value.trim();
+  var r2txt=document.getElementById('post-r2').value.trim();
+  var minWords=10;
+  if(r1txt.split(/[\s]+/).filter(Boolean).length<minWords){
+    showFeedback('refl3-feedback','Please write more for question 3 (aim for 10+ words).','error');return;
+  }
+  if(r2txt.split(/[\s]+/).filter(Boolean).length<minWords){
+    showFeedback('refl3-feedback','Please write more for question 4 (aim for 10+ words).','error');return;
+  }
+  state.refl3=true;
+  var postConf=+(document.getElementById('post-conf').value||5);
+  var postActual=document.getElementById('post-actual').value;
+  var d=lmsGet();
+  d.post_cal={post_confidence:postConf,actual_pct:postActual,r1:r1txt,r2:r2txt,ts:Date.now()};
+  lmsSet(d);
+  lmsLog('post_cal_submitted',{step:1,post_confidence:postConf,actual_pct:postActual,r1:r1txt,r2:r2txt,ts:Date.now()});
+  /* Post to Google Sheets */
+  (function(){
+    try{
+      var APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec';
+      var st={};
+      try{st=JSON.parse(localStorage.getItem('umpsa_snake_student')||'{}');}catch(e){}
+      var pl={
+        type:'post_cal',
+        matric:st.matric||'',
+        name:st.name||'',
+        class:st.class||'',
+        step:1,
+        post_confidence:postConf,
+        actual_pct:postActual,
+        r1:r1txt,
+        r2:r2txt,
+        submitted_iso:new Date().toISOString()
+      };
+      fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify(pl)});
+    }catch(err){console.warn('PostCal POST error:',err);}
+  })();
+  showFeedback('refl3-feedback','Post check-in saved! Step complete!','success');
+  sendActivityRecord(1);
+  document.getElementById('refl3-submit').disabled=true;
+  document.getElementById('step-complete-banner').hidden=false;
+  var d=lmsGet();d.complete=true;d.complete_ts=Date.now();lmsSet(d);
+});
+/* JOURNAL & REFLECTION AUTO-SAVE — save text to localStorage on each keystroke */
+['jr1','jr2','jr3','jr4','jr5','cal-r1','refl2-text','refl3-text','post-r2'].forEach(function(id){
+  var el=document.getElementById(id);if(!el)return;
+  /* restore previously saved text */
+  var d=lmsGet();
+  if(d.journal_text&&d.journal_text[id])el.value=d.journal_text[id];
+  el.addEventListener('input',function(){
+    var d=lmsGet();if(!d.journal_text)d.journal_text={};
+    d.journal_text[id]=el.value;lmsSet(d);
+  });
+});
+/* Restore progress */
+(function(){
+  var d=lmsGet();
+  /* ── Restore calibration gate ── */
+  if(d.cal){
+    state.cal=true;
+    document.getElementById('cal-submit').disabled=true;
+    markDone('tp0');document.getElementById('tc01').classList.add('done');
+    var t1c=document.getElementById('tier1');
+    t1c.classList.remove('tier-locked');t1c.removeAttribute('aria-disabled');
+    document.getElementById('tp1').className='tier-step active';
+    document.getElementById('t1-submit').disabled=false;
+    if(d.cal.confidence!==undefined){var cce=document.getElementById('cal-conf');if(cce){cce.value=d.cal.confidence;document.getElementById('cal-conf-val').textContent=d.cal.confidence;}}
+    if(d.cal.predicted_score!==undefined){var cpe=document.getElementById('cal-pred');if(cpe)cpe.value=d.cal.predicted_score;}
+    showFeedback('cal-feedback','Calibration saved (confidence: '+d.cal.confidence+'/10, predicted: '+d.cal.predicted_score+'%).','success');
+  }
+  /* ── Restore T1 ── */
+  if(d.t1_submitted){state.t1=true;unlockTier(2);markDone('tp1');document.getElementById('tc12').classList.add('done');document.getElementById('t1-submit').disabled=true;}
+  /* ── Restore T2 + Reflection 2 gate ── */
+  if(d.t2_submitted){
+    state.t2=true;markDone('tp2');document.getElementById('tc23').classList.add('done');document.getElementById('t2-submit').disabled=true;
+    var r2c=document.getElementById('refl2');r2c.classList.remove('tier-locked');r2c.removeAttribute('aria-disabled');
+    if(d.reflection_2){
+      state.refl2=true;document.getElementById('refl2-submit').disabled=true;
+      showFeedback('refl2-feedback','Reflection saved.','success');
+      unlockTier(3);
+    } else {document.getElementById('refl2-submit').disabled=false;}
+  }
+  /* ── Restore T3 ── */
+  if(d.t3_submitted){state.t3=true;unlockTier(4);markDone('tp3');document.getElementById('tc34').classList.add('done');document.getElementById('t3-submit').disabled=true;}
+  /* ── Restore T4 + Concept Check ── */
+  if(d.t4_submitted){
+    state.t4=true;markDone('tp4');document.getElementById('tc4j').classList.add('done');document.getElementById('t4-submit').disabled=true;
+    (function(){
+      var cg=document.getElementById('concept-check-gate');
+      if(cg){cg.classList.remove('tier-locked');cg.removeAttribute('aria-disabled');
+        var li=cg.querySelector('.lock-icon');if(li)li.textContent='\u2705';}
+      initConceptCheck({step:stepN,containerId:'concept-check-wrap'});
+      if(d.concept_step&&d.concept_step.submitted){
+        var jc=document.getElementById('tierJ');
+        if(jc){jc.classList.remove('tier-locked');jc.removeAttribute('aria-disabled');}
+        var tj=document.getElementById('tj-submit');if(tj)tj.disabled=false;
+      }
+    })();
+  }
+  /* ── Restore Journal ── */
+  if(d.tj_submitted){state.tj=true;markDone('tpj');document.getElementById('tj-submit').disabled=true;
+    var r3c=document.getElementById('refl3');
+    if(r3c){r3c.classList.remove('tier-locked');r3c.removeAttribute('aria-disabled');}
+    document.getElementById('refl3-submit').disabled=false;
+    if(d.post_cal){
+      state.refl3=true;document.getElementById('refl3-submit').disabled=true;
+      showFeedback('refl3-feedback','Post check-in saved.','success');
+      document.getElementById('step-complete-banner').hidden=false;
+    }
+  }
+
+/* ── EXPORT PANEL (?export=1) ──────────────────────────────────────────── */
+(function(){
+  if(!/[?&]export=1/.test(location.search))return;
+  var raw=localStorage.getItem(LMS_KEY)||'{}';
+  var d;try{d=JSON.parse(raw);}catch(e){d={};}
+  var pretty=JSON.stringify(d,null,2);
+  var panel=document.createElement('div');
+  panel.style.cssText='position:fixed;top:16px;right:16px;z-index:99999;background:#0F1B22;color:#B9E4E1;border:1.5px solid #02ADA5;border-radius:10px;padding:20px;width:min(440px,90vw);font-family:monospace;font-size:12px;box-shadow:0 8px 32px rgba(0,0,0,.6)';
+  panel.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><strong style="font-size:13px;color:#02ADA5">LMS Export — Step 1</strong><span style="font-size:11px;color:#8FD9D5">lms_step1</span></div>'
+    +'<pre id="exp-pre" style="overflow:auto;max-height:260px;margin:0 0 12px;background:#0B1820;padding:10px;border-radius:6px;white-space:pre-wrap;word-break:break-all">'+pretty.replace(/</g,'&lt;')+'</pre>'
+    +'<div style="display:flex;gap:8px;flex-wrap:wrap">'
+    +'<button id="exp-copy" style="padding:6px 14px;background:#02ADA5;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:12px;font-family:inherit">Copy JSON</button>'
+    +'<button id="exp-dl-json" style="padding:6px 14px;background:#1e3a36;color:#B9E4E1;border:1px solid #02ADA5;border-radius:6px;cursor:pointer;font-size:12px;font-family:inherit">Download JSON</button>'
+    +'<button id="exp-dl-csv" style="padding:6px 14px;background:#1e3a36;color:#B9E4E1;border:1px solid #02ADA5;border-radius:6px;cursor:pointer;font-size:12px;font-family:inherit">Download CSV</button>'
+    +'<button id="exp-close" style="margin-left:auto;padding:6px 14px;background:transparent;color:#94a3b8;border:1px solid #94a3b8;border-radius:6px;cursor:pointer;font-size:12px;font-family:inherit">Close</button>'
+    +'</div>';
+  document.body.appendChild(panel);
+  document.getElementById('exp-copy').addEventListener('click',function(){
+    navigator.clipboard.writeText(pretty).then(function(){document.getElementById('exp-copy').textContent='Copied!';setTimeout(function(){document.getElementById('exp-copy').textContent='Copy JSON';},2000);});
+  });
+  function dlFile(content,name,mime){var a=document.createElement('a');a.href='data:'+mime+';charset=utf-8,'+encodeURIComponent(content);a.download=name;a.click();}
+  document.getElementById('exp-dl-json').addEventListener('click',function(){dlFile(pretty,'lms_step1.json','application/json');});
+  document.getElementById('exp-dl-csv').addEventListener('click',function(){
+    /* Flatten to key/value rows for spreadsheet import */
+    var rows=[['event','index','ts_ms','ts_iso','value']];
+    function addRows(key,arr){
+      if(!Array.isArray(arr)){rows.push([key,'','','',JSON.stringify(arr)]);return;}
+      arr.forEach(function(item,i){
+        var ts=item&&item.ts?item.ts:'';
+        var iso=ts?new Date(ts).toISOString():'';
+        var v=item&&item.v!==undefined?JSON.stringify(item.v):'';
+        rows.push([key,i,ts,iso,v]);
+      });
+    }
+    Object.keys(d).forEach(function(k){if(k==='complete'||k==='complete_ts')rows.push([k,'','','',JSON.stringify(d[k])]);else addRows(k,d[k]);});
+    var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c===null||c===undefined?'':c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+    dlFile(csv,'lms_step1.csv','text/csv');
+  });
+  document.getElementById('exp-close').addEventListener('click',function(){panel.remove();});
+})();
+})();
+})();
+</script>
+<div class="stepnav" style="max-width:680px;margin-left:auto;margin-right:auto">
+  <a href="step-1.html" class="prev"><small>Previous</small><b>&larr; Step 1: Concept</b></a>
+  <a href="step-2.html" class="next"><small>Next</small><b>Step 2: Loop &amp; Events &rarr;</b></a>
+</div>
+</div>
+</main>
+
+
+<div id="teacher-reveal" hidden style="position:fixed;bottom:24px;right:24px;background:#08312F;
+  color:#B9E4E1;border-radius:10px;padding:14px 18px;font-size:14px;z-index:999;
+  border:1px solid rgba(255,255,255,.2);box-shadow:0 8px 24px rgba(0,0,0,.4)">
+  🔑 Teacher access: <a href="teacher-1.html" style="color:#8FD9D5">Open Teacher Notes →</a>
+</div>
+
+<footer>
+  <div class="wrap" style="text-align:center">
+    <p><strong>See · Think · Explore · Marvel</strong><br>UMPSA STEM LAB · Snake Game Python Tutorial</p>
+    <p>
+      <a href="index.html">Home</a> · <a href="step-1.html">Step 1</a> · <a href="step-2.html">Step 2</a> · <a href="step-3.html">Step 3</a> · <a href="step-4.html">Step 4</a> · <a href="step-5.html">Step 5</a> · <a href="step-6.html">Step 6</a> · <a href="step-7.html">Step 7</a> · <a href="step-8.html">Step 8</a> · <a href="step-9.html">Step 9</a> · <a href="step-10.html">Step 10</a></p>
+      <p style="margin-top:10px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-weight:400">
+    <span>© 2026 Nurul Hazlina Noordin · UMPSA STEM Lab Engineering Education Initiative</span>
+    <a href="https://ee.ump.edu.my/hazlina/#research" target="_blank" rel="noopener"
+       title="Visit research page" aria-label="Research website"
+       style="color:var(--teal);display:inline-flex;align-items:center;transition:opacity .15s"
+       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="2" y1="12" x2="22" y2="12"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    </a>
+    <a href="mailto:hazlina@umpsa.edu.my"
+       title="hazlina@umpsa.edu.my" aria-label="Email Dr Nurul Hazlina"
+       style="color:var(--teal);display:inline-flex;align-items:center;transition:opacity .15s"
+       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true">
+        <rect x="2" y="4" width="20" height="16" rx="2"/>
+        <polyline points="2,4 12,13 22,4"/>
+      </svg>
+    </a>
+  </p>
+  </div>
+</footer>
+
+<script>
+/* ── Tab switching ── */
+document.querySelectorAll('.tabs').forEach(function(tb){
+  tb.querySelectorAll('button').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      tb.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-selected','false');});
+      btn.setAttribute('aria-selected','true');
+      var sec=tb.closest('section')||tb.parentElement;
+      sec.querySelectorAll('.panel').forEach(function(p){p.hidden=true;});
+      var t=sec.querySelector('#'+btn.dataset.tab);
+      if(t) t.hidden=false;
+    });
+  });
+});
+
+/* ── Teacher easter egg ── */
+(function(){
+  var clicks=0,timer;
+  var box=document.getElementById('see-box');
+  if(!box)return;
+  box.style.cursor='pointer';
+  box.addEventListener('click',function(){
+    clicks++;clearTimeout(timer);
+    timer=setTimeout(function(){clicks=0;},1500);
+    if(clicks>=3){clicks=0;var el=document.getElementById('teacher-reveal');
+      if(el){el.hidden=false;box.style.outline='2px solid #fff';}}
+  });
+})();
+
+/* ── Line numbers ── */
+document.querySelectorAll('pre.code:not(.code-fill)').forEach(function(pre){
+  var lines=pre.textContent.split('\n');
+  if(lines.length&&lines[lines.length-1].trim()==='')lines.pop();
+  pre.innerHTML=lines.map(function(line,i){
+    var ln=String(i+1).padStart(3,' ');
+    var esc=line.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return '<span class="code-ln">'+ln+'</span>'+esc;
+  }).join('\n');
+});
+
+/* ══ PIXEL GRID EXPLORER ══ */
+(function(){
+  var canvas=document.getElementById('grid-canvas');
+  if(!canvas)return;
+  var ctx=canvas.getContext('2d');
+  var COLS=20,ROWS=15,CELL=22,PAD=30;
+  var W=canvas.width,H=canvas.height;
+  var hovCol=-1,hovRow=-1;
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // axes labels
+    ctx.fillStyle='#5B7284';ctx.font='11px monospace';ctx.textAlign='center';
+    for(var c=0;c<COLS;c+=5){
+      ctx.fillText(c,PAD+c*CELL+CELL/2,16);
+    }
+    ctx.textAlign='right';
+    for(var r=0;r<ROWS;r+=3){
+      ctx.fillText(r,PAD-4,PAD+r*CELL+CELL/2+4);
+    }
+    // label axis
+    ctx.fillStyle='#79C0FF';ctx.font='bold 11px monospace';ctx.textAlign='center';
+    ctx.fillText('col (x)',PAD+COLS*CELL/2,H-4);
+    ctx.save();ctx.translate(10,PAD+ROWS*CELL/2);ctx.rotate(-Math.PI/2);
+    ctx.fillStyle='#FF7B72';ctx.fillText('row (y)',0,0);ctx.restore();
+
+    // grid cells
+    for(var row=0;row<ROWS;row++){
+      for(var col=0;col<COLS;col++){
+        var px=PAD+col*CELL,py=PAD+row*CELL;
+        var isHov=(col===hovCol&&row===hovRow);
+        // snake demo cells
+        var isSnake=(row===7&&col>=8&&col<=10);
+        var isHead=(row===7&&col===10);
+        var isFood=(row===4&&col===15);
+        ctx.fillStyle=isHov?'rgba(2,173,165,.4)':isHead?'#02806A':isSnake?'#02ADA5':isFood?'#C80000':'#182429';
+        ctx.strokeStyle=isHov?'#02ADA5':'#2B3A41';
+        ctx.lineWidth=isHov?1.5:0.5;
+        ctx.beginPath();ctx.roundRect(px+1,py+1,CELL-2,CELL-2,3);
+        ctx.fill();ctx.stroke();
+        // coord label in hovered cell
+        if(isHov){
+          ctx.fillStyle='#fff';ctx.font='bold 9px monospace';ctx.textAlign='center';
+          ctx.fillText('('+col+','+row+')',px+CELL/2,py+CELL/2+3);
+        }
+      }
+    }
+    // axis arrows
+    ctx.strokeStyle='#79C0FF';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(PAD,H-20);ctx.lineTo(PAD+COLS*CELL,H-20);ctx.stroke();
+    ctx.strokeStyle='#FF7B72';
+    ctx.beginPath();ctx.moveTo(12,PAD);ctx.lineTo(12,PAD+ROWS*CELL);ctx.stroke();
+  }
+
+  canvas.addEventListener('mousemove',function(e){
+    var r=canvas.getBoundingClientRect();
+    var scale=canvas.width/r.width;
+    var mx=(e.clientX-r.left)*scale,my=(e.clientY-r.top)*scale;
+    var c=Math.floor((mx-PAD)/CELL),row=Math.floor((my-PAD)/CELL);
+    if(c>=0&&c<COLS&&row>=0&&row<ROWS){
+      hovCol=c;hovRow=row;
+      var px=c*30,py=row*30;
+      document.getElementById('grid-info').innerHTML=
+        'Grid cell: <span class="hi">(col='+c+', row='+row+')</span> → '+
+        'Pixel x = col × 30 = <span class="px">'+px+'</span>, '+
+        'Pixel y = row × 30 = <span class="py">'+py+'</span>';
+    } else {hovCol=-1;hovRow=-1;}
+    draw();
+  });
+  canvas.addEventListener('mouseleave',function(){hovCol=-1;hovRow=-1;draw();
+    document.getElementById('grid-info').innerHTML=
+      '👆 Hover over a cell to see its <span class="hi">grid position</span> and <span class="px">pixel x</span> / <span class="py">pixel y</span>';
+  });
+  draw();
+})();
+
+/* ══ ANIMATED PYGAME WINDOW ══ */
+(function(){
+  var canvas=document.getElementById('pygame-canvas');
+  if(!canvas)return;
+  var ctx=canvas.getContext('2d');
+  var W=canvas.width,H=canvas.height;
+  var phase=0,frameId;
+
+  function animate(ts){
+    ctx.clearRect(0,0,W,H);
+    var prog=Math.min(phase/60,1); // 0→1 over 60 frames
+    // background fills in
+    var alpha=prog;
+    ctx.fillStyle='rgb(30,30,30)';
+    ctx.fillRect(0,0,W*prog,H);
+    // grid lines appear after bg
+    if(prog>0.4){
+      var gridAlpha=(prog-0.4)/0.6*0.15;
+      ctx.strokeStyle='rgba(255,255,255,'+gridAlpha+')';
+      ctx.lineWidth=0.5;
+      var CELL=30;
+      for(var x=0;x<=W;x+=CELL){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+      for(var y=0;y<=H;y+=CELL){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    }
+    // pixel size label
+    if(prog>0.7){
+      var la=(prog-0.7)/0.3;
+      ctx.fillStyle='rgba(2,173,165,'+la+')';
+      ctx.font='bold 13px monospace';ctx.textAlign='left';
+      ctx.fillText('600 px',10,H-10);
+      ctx.save();ctx.translate(W-10,H/2);ctx.rotate(-Math.PI/2);
+      ctx.fillText('450 px',0,0);ctx.restore();
+    }
+    phase++;
+    if(phase<120) frameId=requestAnimationFrame(animate);
+  }
+
+  function start(){phase=0;cancelAnimationFrame(frameId);animate(0);}
+  start();
+  document.getElementById('replay-btn').addEventListener('click',start);
+})();
+
+/* ══ RGB MIXER ══ */
+(function(){
+  var slR=document.getElementById('sl-r');
+  if(!slR)return;
+  var slG=document.getElementById('sl-g');
+  var slB=document.getElementById('sl-b');
+  var vr=document.getElementById('vr');
+  var vg=document.getElementById('vg');
+  var vb=document.getElementById('vb');
+  var swatch=document.getElementById('swatch');
+  var label=document.getElementById('swatch-label');
+  var tupleD=document.getElementById('tuple-display');
+
+  function pad(n){return String(n).padStart(3,' ');}
+  function update(){
+    var r=+slR.value,g=+slG.value,b=+slB.value;
+    vr.textContent=r;vg.textContent=g;vb.textContent=b;
+    var col='rgb('+r+','+g+','+b+')';
+    swatch.style.background=col;
+    label.textContent=col;
+    tupleD.textContent='('+pad(r)+','+pad(g)+','+pad(b)+')';
+    // text contrast
+    var lum=0.299*r+0.587*g+0.114*b;
+    label.style.color=lum>128?'#111':'#fff';
+  }
+  [slR,slG,slB].forEach(function(s){s.addEventListener('input',update);});
+
+  document.querySelectorAll('.preset-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var parts=btn.dataset.rgb.split(',').map(Number);
+      slR.value=parts[0];slG.value=parts[1];slB.value=parts[2];update();
+    });
+  });
+  update();
+})();
+
+/* ── Google Sheets: journal POST ── */
+function postJournalToSheets(stepNum, jText) {
+  try {
+    var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec';
+    var student = {};
+    try { student = JSON.parse(localStorage.getItem('umpsa_snake_student') || '{}'); } catch(e) {}
+    var entries = Object.keys(jText).map(function(k) {
+      return { prompt_id: k, response: jText[k] };
+    });
+    var payload = {
+      type: 'journal',
+      matric: student.matric || '',
+      name:   student.name   || '',
+      class:  student.class  || '',
+      step:   stepNum,
+      entries: entries,
+      submitted_iso: new Date().toISOString()
+    };
+    fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+  } catch(err) { console.warn('Journal POST error:', err); }
+}
+
+/* ─── Generic Sheets poster ─────────────────────────────────── */
+
+/* === sendActivityRecord: bundle full activity data -> Sheets === */
+function sendActivityRecord(stepNum) {
+  try {
+    var APPS_URL = 'https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec';
+    var st = {}; try { st = JSON.parse(localStorage.getItem('umpsa_snake_student')||'{}'); } catch(e) {}
+    var d = lmsGet();
+    var cal = d.cal || {}; var refl2 = d.reflection_2 || {}; var cs = d.concept_step || {}; var pc = d.post_cal || {};
+    function jv(id) { var el=document.getElementById(id); if(el&&el.value) return el.value; return (d.journal_text&&d.journal_text[id])?d.journal_text[id]:''; }
+    function pv(id,lk) { var el=document.getElementById(id); if(el&&el.value) return el.value; return pc[lk]!==undefined?pc[lk]:''; }
+    var payload = {
+      type: 'act_'+stepNum, matric:st.matric||'', name:st.name||'', class:st.class||'', step:stepNum,
+      submitted_iso: new Date().toISOString(),
+      cal_confidence: cal.confidence!==undefined?cal.confidence:'',
+      cal_predicted:  cal.predicted_score!==undefined?cal.predicted_score:'',
+      cal_reflection: cal.what_hardest||'',
+      t1_score_pct:  d.t1_first_attempt_pct!==undefined?d.t1_first_attempt_pct:'',
+      t2_attempts:   d.t2_attempts_count!==undefined?d.t2_attempts_count:'',
+      refl2_text:    refl2.text||'',
+      t3_attempts:   d.t3_attempts_count!==undefined?d.t3_attempts_count:'',
+      t4_attempts:   d.t4_attempts_count!==undefined?d.t4_attempts_count:'',
+      concept_answers: cs.answers||[], concept_score_pct: cs.score_pct!==undefined?cs.score_pct:'',
+      concept_passed:  cs.submitted?1:0, concept_attempts: d.concept_attempts!==undefined?d.concept_attempts:'',
+      jr1:jv('jr1'),jr2:jv('jr2'),jr3:jv('jr3'),jr4:jv('jr4'),jr5:jv('jr5'),
+      post_confidence: pv('post-conf','post_confidence'), post_actual: pv('post-actual','actual_pct'),
+      post_r1: pv('refl3-text','r1'), post_r2: pv('post-r2','r2'),
+      calibration_index: d.calibration_index!==undefined?d.calibration_index:''
+    };
+    fetch(APPS_URL, {method:'POST',mode:'no-cors',body:JSON.stringify(payload)});
+  } catch(err) { console.warn('sendActivityRecord error:',err); }
+}
+
+function postToSheets(payload){
+  try{
+    var st={};
+    try{st=JSON.parse(localStorage.getItem('umpsa_snake_student')||'{}');}catch(e){}
+    payload.matric = payload.matric || st.matric || '';
+    payload.name   = payload.name   || st.name   || '';
+    payload.class  = payload.class  || st.class  || '';
+    payload.submitted_iso = payload.submitted_iso || new Date().toISOString();
+    fetch('https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec',{method:'POST',mode:'no-cors',body:JSON.stringify(payload)});
+  }catch(err){console.warn('postToSheets error:',err);}
+}
+</script>
+
+<script>
+/* DEV MODE: all gates open + render concept MCQ */
+document.addEventListener('DOMContentLoaded', function() {
+  /* Wire up hardcoded concept-submit button */
+  var csBtn = document.getElementById('concept-submit');
+  if (csBtn && !csBtn._wired) {
+    csBtn._wired = true;
+    var q1 = [
+      {ans:2, opts:["42","True","'snake'","3.14"]},
+      {ans:1, opts:["A function called WIN_WIDTH","A named constant storing 600","A loop that runs 600 times","An import statement"]},
+      {ans:2, opts:["3","x + 1","4","Error"]},
+      {ans:1, opts:["include pygame","import pygame","use pygame","load pygame"]},
+      {ans:2, opts:["Creates a display window","Imports the pygame module","Initialises all pygame subsystems (sound, display, etc.)","Starts the game loop immediately"]}
+    ];
+    csBtn.addEventListener('click', function() {
+      var allAnswered = true, correct = 0;
+      for (var i = 0; i < 5; i++) {
+        var sel = document.querySelector('input[name="cq'+i+'"]:checked');
+        var fb = document.getElementById('cfb-'+i);
+        if (!sel) { allAnswered = false; break; }
+        var chosen = parseInt(sel.value, 10);
+        fb.removeAttribute('hidden');
+        if (chosen === q1[i].ans) {
+          fb.textContent = '✓ Correct!'; fb.style.color = 'var(--green,#27ae60)'; correct++;
+        } else {
+          fb.textContent = '✗ Correct answer: ' + q1[i].opts[q1[i].ans]; fb.style.color = 'var(--red,#c0392b)';
+        }
+        document.querySelectorAll('input[name="cq'+i+'"]').forEach(function(r){r.disabled=true;});
+      }
+      if (!allAnswered) {
+        var gfb = document.getElementById('concept-global-fb');
+        gfb.textContent = 'Please answer all 5 questions before submitting.';
+        gfb.style.color = 'var(--red,#c0392b)'; gfb.removeAttribute('hidden'); return;
+      }
+      var pct = Math.round(correct/5*100);
+      csBtn.disabled = true; csBtn.textContent = 'Answers submitted ✓';
+      var gfb = document.getElementById('concept-global-fb');
+      gfb.removeAttribute('hidden');
+      gfb.innerHTML = '<strong>Score: '+correct+' / 5 ('+pct+'%).</strong> The Reflective Journal is now unlocked!';
+      gfb.style.color = pct>=60 ? 'var(--green,#27ae60)' : 'var(--orange,#e67e22)';
+      _unlockJournal();
+    });
+  }
+  /* Fix lock icons to show unlocked */
+
+  /* === Concept soft gate step 1: 3 attempts -> Continue anyway === */
+  (function() {
+    var csb = document.getElementById('concept-submit');
+    if (!csb || csb._sg) return;
+    csb._sg = true;
+    var cAttempts = 0;
+    csb.addEventListener('click', function() {
+      var d = lmsGet();
+      if (d.concept_step && d.concept_step.submitted) return;
+      var checked = document.querySelectorAll('input[name^="cq"]:checked').length;
+      if (checked < 5) return;
+      cAttempts++;
+      d.concept_attempts = cAttempts;
+      lmsSet(d);
+      if (cAttempts >= 3 && !document.getElementById('concept-skip')) {
+        var skip = document.createElement('button');
+        skip.id = 'concept-skip';
+        skip.className = 'tier-btn';
+        skip.style.cssText = 'background:var(--blue);margin-top:8px;display:block';
+        skip.textContent = 'Continue anyway →';
+        skip.addEventListener('click', function() {
+          skip.remove();
+          csb.disabled = true; csb.textContent = 'Submitted ✓';
+          var d2 = lmsGet(); if (!d2.concept_step) d2.concept_step = {};
+          d2.concept_step.submitted = true; lmsSet(d2);
+          var jCard = document.getElementById('tierJ');
+          if (jCard) { jCard.classList.remove('tier-locked'); jCard.removeAttribute('aria-disabled'); }
+          var tjBtn = document.getElementById('tj-submit');
+          if (tjBtn) tjBtn.disabled = false;
+        });
+        csb.parentNode.appendChild(skip);
+      }
+    });
+  })();
+
+  document.querySelectorAll('.lock-icon').forEach(function(el) {
+    el.textContent = '✅';
+  });
+});
+</script>
+</body>
+</html>

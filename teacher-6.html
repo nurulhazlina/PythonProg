@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Facilitator Notes &#8212; Step 6 | Snake Tutorial</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+/* ── LIGHT-MODE TEACHER PAGE ── independent of style.css ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F0F4F8;
+  --surface:#FFFFFF;
+  --surface2:#F7FAFC;
+  --teal:#0A8F8A;
+  --teal-dark:#076862;
+  --teal-light:#E6F6F5;
+  --ink:#1A2332;
+  --body:#374151;
+  --muted:#6B7A8D;
+  --border:#D6E0EA;
+  --amber:#D97706;
+  --amber-bg:#FFFBEB;
+  --amber-border:#FCD34D;
+  --green-bg:#F0FDF4;
+  --green-border:#86EFAC;
+  --green-ink:#166534;
+  --red-bg:#FEF2F2;
+  --red-border:#FCA5A5;
+  --red-ink:#991B1B;
+  --code-bg:#F1F5F9;
+  --code-fg:#1E293B;
+  --radius:10px;
+  --shadow:0 1px 4px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.05);
+}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg);
+  color:var(--body);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  line-height:1.65;
+}
+/* ── NAV ── */
+.sitenav{background:var(--teal-dark);color:#fff;padding:0 24px;display:flex;align-items:center;gap:20px;min-height:56px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+.sitenav .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;font-weight:700;font-size:15px}
+.sitenav .brand img{display:none}
+.sitenav a.nl{color:rgba(255,255,255,.8);text-decoration:none;font-size:14px;padding:4px 8px;border-radius:6px;transition:background .15s}
+.sitenav a.nl:hover{background:rgba(255,255,255,.15)}
+details.navsel{margin-left:auto;position:relative}
+details.navsel summary{list-style:none;cursor:pointer;color:rgba(255,255,255,.9);font-size:14px;font-weight:600;padding:6px 12px;border-radius:6px;transition:background .15s;}
+details.navsel summary:hover{background:rgba(255,255,255,.15)}
+details.navsel summary::-webkit-details-marker{display:none}
+.navmenu{position:absolute;right:0;top:calc(100% + 8px);background:#fff;color:var(--ink);border:1px solid var(--border);border-radius:var(--radius);min-width:300px;box-shadow:var(--shadow);overflow:hidden;z-index:200;}
+.navmenu a{display:block;padding:10px 16px;font-size:13.5px;text-decoration:none;color:var(--body);border-bottom:1px solid var(--border);transition:background .12s;}
+.navmenu a:last-child{border-bottom:none}
+.navmenu a:hover{background:var(--teal-light)}
+.navmenu a[aria-current="page"]{background:var(--teal-light);color:var(--teal-dark);font-weight:700}
+/* ── GATE ── */
+.gate{max-width:520px;margin:80px auto;padding:40px 36px;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);text-align:center;}
+.gate h2{font-size:24px;color:var(--ink);margin-bottom:12px}
+.gate p{color:var(--muted);margin-bottom:16px;font-size:15px}
+.gate a{color:var(--teal);text-decoration:none;font-size:14px}
+.gate a:hover{text-decoration:underline}
+.lock-icon{font-size:48px;margin-bottom:16px}
+/* ── HERO ── */
+.t-hero{background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal) 100%);color:#fff;padding:40px 24px 36px;}
+.t-hero .wrap{max-width:900px;margin:0 auto}
+.t-hero .eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.75;margin-bottom:8px}
+.t-hero h1{font-size:clamp(22px,4vw,32px);font-weight:800;line-height:1.2;margin-bottom:8px}
+.t-hero .meta{font-size:14px;opacity:.8;margin-bottom:20px}
+.t-cta-row{display:flex;flex-wrap:wrap;gap:10px}
+.t-cta-row a{display:inline-block;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);transition:background .15s;}
+.t-cta-row a:hover{background:rgba(255,255,255,.28)}
+/* ── LAYOUT ── */
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+.page-body{padding:36px 20px 60px;max-width:900px;margin:0 auto}
+/* ── BANNER ── */
+.tbanner{background:var(--amber-bg);border:1px solid var(--amber-border);color:#78350F;border-radius:8px;padding:12px 16px;font-size:13.5px;margin-bottom:28px;}
+.tbanner b{color:#92400E}
+/* ── SECTIONS ── */
+.t-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px 28px;margin-bottom:24px;box-shadow:var(--shadow);}
+.t-section h2{font-size:18px;font-weight:700;color:var(--ink);padding-bottom:10px;margin-bottom:16px;border-bottom:2px solid var(--teal);display:flex;align-items:center;gap:8px;}
+.t-section h2 .sec-icon{font-size:20px}
+.t-section h3{font-size:15px;font-weight:700;color:var(--teal-dark);margin:16px 0 8px}
+.t-section p{margin-bottom:10px;font-size:15px}
+.t-section ul{padding-left:20px;margin-bottom:12px}
+.t-section li{margin-bottom:6px;font-size:15px}
+.t-section strong{color:var(--ink)}
+/* ── TABLES ── */
+.t-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+.t-table thead th{background:var(--teal);color:#fff;padding:10px 14px;text-align:left;font-weight:600;font-size:13px;letter-spacing:.02em;}
+.t-table thead th:first-child{border-radius:8px 0 0 0}
+.t-table thead th:last-child{border-radius:0 8px 0 0}
+.t-table tbody tr:nth-child(even){background:var(--surface2)}
+.t-table tbody td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+.t-table td code{font-size:12.5px;background:var(--bg);padding:1px 5px;border-radius:4px;color:var(--ink)}
+.sev-low{color:#065F46;font-weight:600}
+.sev-med{color:#92400E;font-weight:600}
+.sev-high{color:#991B1B;font-weight:600}
+/* ── CODE ── */
+.codebox{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:12px 0;position:relative}
+.codebox pre{padding:20px;overflow-x:auto}
+.codebox code{color:var(--code-fg);font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13.5px;line-height:1.6}
+.copybtn{position:absolute;top:10px;right:10px;background:var(--border);color:var(--ink);border:none;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;transition:background .15s;}
+.copybtn:hover{background:rgba(255,255,255,.22)}
+.copybtn.copied{background:rgba(134,239,172,.25);color:#86EFAC}
+code{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13px;background:var(--bg);padding:1px 5px;border-radius:4px;color:var(--ink)}
+/* ── ANSWER CARD ── */
+.answer-card{background:var(--green-bg);border:1px solid var(--green-border);border-radius:8px;padding:14px 18px;margin:12px 0;}
+.answer-card .answer-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--green-ink);margin-bottom:4px}
+/* ── CALLOUT ── */
+.callout{display:flex;gap:12px;padding:14px 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);margin:12px 0;font-size:14px;align-items:flex-start;}
+.callout-icon{font-size:22px;flex-shrink:0;line-height:1.2}
+.callout p{margin:0}
+/* ── STEM BRAND BAR ── */
+.stem-brand-bar{display:grid;grid-template-columns:repeat(4,1fr);width:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
+.stem-brand-bar .sb{display:flex;align-items:center;justify-content:center;padding:6px 8px;font-size:12px;font-weight:800;letter-spacing:.12em;color:#fff;text-transform:uppercase;}
+.sb-see{background:#2E5FAF}
+.sb-think{background:#B82828}
+.sb-explore{background:#D99A10}
+.sb-marvel{background:#1FA898}
+/* ── FOOTER ── */
+footer{background:#1C5C54;color:rgba(255,255,255,.78);text-align:center;padding:20px 20px;font-size:13px;margin-top:40px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;}
+footer a{color:rgba(255,255,255,.85);text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+footer a:hover{color:#fff}
+/* ── BUTTON ── */
+.cta-btn{display:inline-block;padding:12px 28px;border-radius:9px;font-size:15px;font-weight:700;border:none;cursor:pointer;background:var(--teal);color:#fff;box-shadow:0 4px 14px rgba(10,143,138,.3);transition:background .15s,transform .1s;}
+.cta-btn:hover{background:var(--teal-dark);transform:translateY(-1px)}
+.cta-btn:active{transform:translateY(0)}
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .t-section{padding:20px 16px}
+  .t-hero{padding:28px 16px 24px}
+  .t-cta-row a{font-size:12px;padding:6px 12px}
+  .t-table{font-size:13px}
+  .sitenav{padding:0 14px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── STEM BRAND BAR ── -->
+<div class="stem-brand-bar" aria-label="UMPSA STEM Lab">
+  <div class="sb sb-see">SEE</div>
+  <div class="sb sb-think">THINK</div>
+  <div class="sb sb-explore">EXPLORE</div>
+  <div class="sb sb-marvel">MARVEL</div>
+</div>
+
+<!-- ── NAV ── -->
+<nav class="sitenav">
+  <a class="brand" href="index.html">
+    <img src="stemlogo.png" alt="UMPSA STEM LAB">
+    <span>UMPSA STEM Lab Python Module</span>
+  </a>
+  <a class="nl" href="index.html">Home</a>
+  <details class="navsel">
+    <summary>Facilitator Notes &#9662;</summary>
+    <div class="navmenu">
+      <a href="teacher-1.html"><b>Step 1</b>: Variables &amp; Setup</a>
+      <a href="teacher-2.html"><b>Step 2</b>: Loop &amp; Events</a>
+      <a href="teacher-3.html"><b>Step 3</b>: Direction &amp; Movement</a>
+      <a href="teacher-4.html"><b>Step 4</b>: Snake Body &#11088;</a>
+      <a href="teacher-5.html"><b>Step 5</b>: Bonus Food</a>
+      <a href="teacher-6.html" aria-current="page"><b>Step 6</b>: Functions</a>
+      <a href="teacher-7.html"><b>Step 7</b>: Wrap-Around &#11088;</a>
+      <a href="teacher-8.html"><b>Step 8</b>: Save High Score</a>
+      <a href="teacher-9.html"><b>Step 9</b>: OOP Refactor</a>
+      <a href="teacher-10.html"><b>Step 10</b>: ML Extension</a>
+    </div>
+  </details>
+</nav>
+
+<!-- ── GATE ── -->
+<div class="gate" id="gate">
+  <div class="lock-icon">&#128274;</div>
+  <h2>Facilitator Notes</h2>
+  <p>This page contains exercise answers and teaching guidance for<br>
+  <strong>Step 6 &#8212; Functions</strong>.<br>
+  Not linked from the student pages.</p>
+  <p style="margin-bottom:24px"><strong>Students: please go back and try the activities first.</strong></p>
+  <button class="cta-btn" id="gatebtn" type="button">I&#8217;m a facilitator &#8212; show the notes</button>
+  <p style="margin-top:20px"><a href="step-6.html">&#8592; Back to student page</a></p>
+</div>
+
+<!-- ── MAIN CONTENT ── -->
+<div id="tcontent" hidden>
+
+<div class="t-hero">
+  <div class="wrap">
+    <p class="eyebrow">STEP 6 OF 10 &middot; FACILITATOR NOTES</p>
+    <h1>Functions</h1>
+    <p class="meta">Core concepts: def &middot; DRY principle &middot; parameters vs arguments &middot; return values &middot; scope</p>
+    <div class="t-cta-row">
+      <a href="teacher-5.html">&#8592; Step 5</a>
+      <a href="step-6.html">Student Page</a>
+      <a href="teacher-7.html">Step 7 &#8594;</a>
+    </div>
+  </div>
+</div>
+
+<div class="page-body">
+
+  <div class="tbanner">
+    &#9201; Suggested pace: 25&#8211;30 minutes &middot; Show the &#8220;before&#8221; (messy loop) alongside the &#8220;after&#8221; (clean loop with functions) to make DRY concrete.
+  </div>
+
+  <!-- ── SECTION 1 · Learning Objectives ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#127919;</span> Learning Objectives</h2>
+    <ul>
+      <li>Define functions with <code>def</code> and a parameter list</li>
+      <li>Explain the DRY (Don&#8217;t Repeat Yourself) principle with a concrete example</li>
+      <li>Distinguish between parameters (definition) and arguments (call)</li>
+      <li>Understand local vs. global scope</li>
+      <li>Refactor drawing and collision code into three named functions</li>
+    </ul>
+  </div>
+
+  <!-- ── SECTION 2 · The Big Idea ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#128161;</span> The Big Idea &#8212; Annotated Code</h2>
+
+    <div class="codebox">
+      <button class="copybtn" type="button">Copy</button>
+      <pre><code>def draw_snake(surface, snake):
+    """Draw every body segment; head is darker green."""
+    for i, (col, row) in enumerate(snake):
+        colour = DKGREEN if i == 0 else GREEN
+        rect = (col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE - 1, CELL_SIZE - 1)
+        pygame.draw.rect(surface, colour, rect)
+
+def draw_food(surface, food_x, food_y):
+    """Draw the food square."""
+    rect = (food_x * CELL_SIZE, food_y * CELL_SIZE, CELL_SIZE - 1, CELL_SIZE - 1)
+    pygame.draw.rect(surface, RED, rect)
+
+def check_wall_collision(hx, hy):
+    """Return True if the head is outside grid boundaries."""
+    return hx &lt; 0 or hx &gt;= GRID_COLS or hy &lt; 0 or hy &gt;= GRID_ROWS
+
+# ── Main loop &#8212; clean and readable ──
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    screen.fill(BG)
+    draw_snake(screen, snake)
+    draw_food(screen, food_x, food_y)
+    pygame.display.flip()
+    clock.tick(8)
+
+    hx, hy = snake[0]
+    if check_wall_collision(hx, hy) or snake[0] in snake[1:]:
+        running = False</code></pre>
+    </div>
+
+    <h3><code>def function_name(params):</code></h3>
+    <p>Defines the function. The body is indented below.</p>
+
+    <h3>Parameters vs arguments</h3>
+    <p><code>surface</code> and <code>snake</code> are parameters (placeholders in the definition); <code>screen</code> and <code>snake</code> (the actual list) are arguments passed at the call.</p>
+
+    <h3>DRY &#8212; Don&#8217;t Repeat Yourself</h3>
+    <p>Drawing code was scattered through the loop. Functions give it a name &#8212; <code>draw_snake()</code> tells you WHAT it does without reading HOW.</p>
+
+    <h3><code>enumerate(snake)</code></h3>
+    <p>Yields <code>(index, value)</code> pairs &#8212; lets us colour the head (index 0) differently.</p>
+
+    <h3>Docstrings <code>"""..."""</code></h3>
+    <p>The string immediately after <code>def</code> is Python&#8217;s built-in documentation mechanism.</p>
+
+    <h3><code>return</code> value</h3>
+    <p><code>check_wall_collision</code> returns <code>True</code> or <code>False</code> so the caller can decide what to do.</p>
+  </div>
+
+  <!-- ── SECTION 3 · Activity Answers ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#128290;</span> Activity Answers (step-6-activity.html)</h2>
+
+    <h3>Tier 1 &#8212; Check Understanding</h3>
+    <table class="t-table">
+      <thead><tr><th>Question</th><th>Model Answer</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>What keyword defines a function in Python?</td>
+          <td><code>def</code></td>
+        </tr>
+        <tr>
+          <td>What is the DRY principle?</td>
+          <td>Don&#8217;t Repeat Yourself &#8212; if you write the same code more than once, put it in a function.</td>
+        </tr>
+        <tr>
+          <td>Difference between parameter and argument?</td>
+          <td>Parameter = name in the definition (placeholder); argument = actual value passed at the call.</td>
+        </tr>
+        <tr>
+          <td>What does <code>enumerate(snake)</code> return?</td>
+          <td>Pairs of (index, value) for each item &#8212; e.g. <code>(0, (10, 7))</code>, <code>(1, (9, 7))</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Tier 2 &#8212; Fix the Bug</h3>
+    <div class="answer-card">
+      <div class="answer-label">Bug</div>
+      <p><code>def draw_snake(snake):</code> (missing <code>surface</code> parameter), then <code>draw_snake(screen, snake)</code> at call site.</p>
+    </div>
+    <p><strong>Error:</strong> <code>TypeError: draw_snake() takes 1 positional argument but 2 were given</code></p>
+    <p><strong>Fix:</strong> <code>def draw_snake(surface, snake):</code></p>
+
+    <h3>Tier 3 &#8212; Extend</h3>
+    <p>Add <code>draw_score(surface, score)</code> that renders the score as text.</p>
+    <div class="codebox">
+      <button class="copybtn" type="button">Copy</button>
+      <pre><code>def draw_score(surface, score):
+    font = pygame.font.SysFont("monospace", 20)
+    text = font.render(f"Score: {score}", True, WHITE)
+    surface.blit(text, (8, 8))
+
+# In main loop after screen.fill():
+draw_score(screen, score)</code></pre>
+    </div>
+
+    <h3>Tier 4 &#8212; New Task</h3>
+    <p>Create <code>game_over(surface)</code> that displays &#8220;GAME OVER&#8221; centred and waits 2 seconds.</p>
+    <div class="codebox">
+      <button class="copybtn" type="button">Copy</button>
+      <pre><code>def game_over(surface):
+    font = pygame.font.SysFont("monospace", 36, bold=True)
+    msg = font.render("GAME OVER", True, RED)
+    rect = msg.get_rect(center=(WINDOW_W // 2, WINDOW_H // 2))
+    surface.blit(msg, rect)
+    pygame.display.flip()
+    pygame.time.wait(2000)
+
+# After running = False:
+game_over(screen)</code></pre>
+    </div>
+
+    <h3>Reflective Journal &#8212; Suggested Strong Answers</h3>
+    <table class="t-table">
+      <thead><tr><th style="width:30%">Prompt</th><th>Key ideas a strong answer contains</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>1. Why use functions?</td>
+          <td>Avoids repeated code; gives it a readable name; makes main loop shorter; allows reuse.</td>
+        </tr>
+        <tr>
+          <td>2. What is scope?</td>
+          <td>The region where a variable exists. Local = inside the function. Global = outside all functions.</td>
+        </tr>
+        <tr>
+          <td>3. When would a function return a value?</td>
+          <td>When the caller needs a result &#8212; e.g. <code>check_wall_collision()</code> returns True/False for the caller to act on.</td>
+        </tr>
+        <tr>
+          <td>4. What is a docstring?</td>
+          <td>A triple-quoted string immediately after <code>def</code> &#8212; Python&#8217;s built-in documentation.</td>
+        </tr>
+        <tr>
+          <td>5. Explain DRY</td>
+          <td>&#8220;If you write the same code twice, you have to fix bugs twice. Functions mean you fix it once.&#8221;</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── SECTION 4 · Mistakes Students Actually Make ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#9888;&#65039;</span> Mistakes Students Actually Make</h2>
+    <table class="t-table">
+      <thead>
+        <tr>
+          <th>What they did</th>
+          <th>What they see</th>
+          <th>What to say</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Forgot to call the function</td>
+          <td>Code in function never runs</td>
+          <td>&#8220;Defining creates it; calling runs it. Check you have <code>draw_snake(screen, snake)</code> in the loop.&#8221;</td>
+        </tr>
+        <tr>
+          <td>Modified global variable inside function without <code>global</code></td>
+          <td>Change doesn&#8217;t persist after function returns</td>
+          <td>&#8220;Variables inside a function are local. To modify a global, add <code>global variable_name</code> at the top of the function.&#8221;</td>
+        </tr>
+        <tr>
+          <td>Called function before defining it</td>
+          <td><code>NameError: name 'draw_snake' is not defined</code></td>
+          <td>&#8220;Python reads top to bottom. Define functions before the loop that calls them.&#8221;</td>
+        </tr>
+        <tr>
+          <td>Wrong argument order</td>
+          <td>Wrong positions / crash</td>
+          <td>&#8220;Arguments match parameter order. <code>draw_snake(screen, snake)</code> matches <code>def draw_snake(surface, snake)</code>.&#8221;</td>
+        </tr>
+        <tr>
+          <td>Used <code>print()</code> thinking it returns the value</td>
+          <td>Function returns <code>None</code></td>
+          <td>&#8220;<code>print()</code> shows output; <code>return</code> gives a value back to the caller. They&#8217;re different.&#8221;</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── SECTION 5 · Teaching & Facilitation Notes ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#128483;&#65039;</span> Teaching &amp; Facilitation Notes</h2>
+
+    <h3>Opening hook</h3>
+    <p>Display the Step 5 loop (messy, long) next to the Step 6 loop (short, readable). Ask: &#8220;Which is easier to read and debug?&#8221; The visual difference makes DRY concrete without explanation.</p>
+
+    <h3>The recipe analogy</h3>
+    <p>A function is a recipe. Write it once; follow it as many times as needed. The ingredient list = parameters; making the dish = calling the function.</p>
+
+    <h3>Key pedagogical moment &#8212; scope</h3>
+    <p>Demonstrate: define <code>x = 5</code> inside a function, then try to print <code>x</code> outside it &#8594; <code>NameError</code>. Local variables exist only while the function runs.</p>
+
+    <h3>CT connection &#8212; Abstraction</h3>
+    <p>Functions hide complexity behind a name. Ask: &#8220;Now that we have <code>draw_snake()</code>, do you need to know HOW it draws to use it in the loop?&#8221; This is abstraction.</p>
+
+    <h3>Pacing</h3>
+    <p>This step is mostly refactoring &#8212; no new visual features. Students who expect to see something change may feel disappointed. Help them see the value in code organisation: &#8220;Clean code is a gift to your future self.&#8221;</p>
+  </div>
+
+</div><!-- /page-body -->
+</div><!-- /tcontent -->
+
+<!-- ── SCRIPTS ── -->
+<script>
+(function(){
+  var b = document.getElementById('gatebtn');
+  if(!b) return;
+  b.addEventListener('click', function(){
+    document.getElementById('gate').hidden = true;
+    document.getElementById('tcontent').hidden = false;
+  });
+})();
+</script>
+<script>
+document.querySelectorAll('.copybtn').forEach(function(b){
+  b.addEventListener('click', function(){
+    var t = b.parentElement.querySelector('code').textContent;
+    navigator.clipboard.writeText(t).then(function(){
+      b.textContent = 'Copied!';
+      b.classList.add('copied');
+      setTimeout(function(){ b.textContent = 'Copy'; b.classList.remove('copied'); }, 2000);
+    }).catch(function(){
+      /* fallback &#8212; silently ignore */
+    });
+  });
+});
+</script>
+
+
+  <!-- CONCEPT_CHECK_ADDED -->
+  <!-- ══ CONCEPT CHECK ANSWER KEY ══ -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#x1F9E0;</span> Concept Check &mdash; Answer Key (Step 6)</h2>
+    <p>These 5 questions appear in the activity page <strong>after Tier 4</strong> (post-calibration gate).
+    Pass mark is <strong>4&nbsp;of&nbsp;5&nbsp;(80%)</strong>. Students who fail may retry; the system records attempts and final score in Google Sheets.</p>
+    <table class="t-table">
+      <thead><tr><th style="width:65%">Question (displayed to student)</th><th>Correct Answer</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Q1: def draw_snake(body): — what is body in this line?</td>
+          <td class="sev-low">&#10003; A parameter — a value passed in when the function is called</td>
+        </tr>
+        <tr>
+          <td>Q2: What does a function return when it has no return statement?</td>
+          <td class="sev-low">&#10003; None</td>
+        </tr>
+        <tr>
+          <td>Q3: Why call draw_snake(body) instead of pasting drawing code everywhere?</td>
+          <td class="sev-low">&#10003; To keep the code DRY — reuse logic without repeating it</td>
+        </tr>
+        <tr>
+          <td>Q4: What is variable scope?</td>
+          <td class="sev-low">&#10003; The region of code where a variable can be read or written</td>
+        </tr>
+        <tr>
+          <td>Q5: def is_collision(head, body): return head in body — return type?</td>
+          <td class="sev-low">&#10003; True or False (bool)</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:14px">
+      <span class="callout-icon">&#x1F4CA;</span>
+      <p><strong>Recorded in Google Sheet (Act_6 tab):</strong>
+      <code>concept_q1</code>&ndash;<code>concept_q5</code> (student&rsquo;s 0-based answer index),
+      <code>concept_score_pct</code>, <code>concept_passed</code> (1&nbsp;=&nbsp;pass, 0&nbsp;=&nbsp;fail),
+      <code>concept_attempts</code> (retry count).</p>
+    </div>
+  </div>
+
+  <!-- ══ GOOGLE SHEETS DATA STRUCTURE ══ -->
+  <div class="t-section">
+    <h2><span class="sec-icon">&#x1F4CA;</span> Google Sheets &mdash; Data Collected (Act_6)</h2>
+    <p>Every submission to this step writes one row to the <strong>Act_6</strong> tab in the research spreadsheet. All 13 tabs (Student_Reg, Pre_Test, Post_Test, Act_1&ndash;Act_10) share the same student identity columns.</p>
+    <table class="t-table" style="font-size:13px">
+      <thead><tr><th style="width:36%">Column</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">STUDENT IDENTITY (10 fields)</td></tr>
+        <tr><td><code>matric</code></td><td>Matric / student ID</td></tr>
+        <tr><td><code>name</code></td><td>Full name</td></tr>
+        <tr><td><code>gender</code></td><td>Gender (Female / Male / Other)</td></tr>
+        <tr><td><code>age</code></td><td>Age in years</td></tr>
+        <tr><td><code>mykid</code></td><td>MyKid / IC number</td></tr>
+        <tr><td><code>home_state</code></td><td>Home state in Malaysia</td></tr>
+        <tr><td><code>class</code></td><td>Class or cohort code</td></tr>
+        <tr><td><code>school_code</code></td><td>School or programme code</td></tr>
+        <tr><td><code>phone</code></td><td>Phone number</td></tr>
+        <tr><td><code>email</code></td><td>Email address</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">SUBMISSION</td></tr>
+        <tr><td><code>step</code></td><td>Step number (6)</td></tr>
+        <tr><td><code>submitted_iso</code></td><td>KL timestamp (UTC+8, ISO&nbsp;8601)</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">PRE-CALIBRATION</td></tr>
+        <tr><td><code>cal_confidence</code></td><td>Self-confidence before activity (1&ndash;5 scale)</td></tr>
+        <tr><td><code>cal_predicted</code></td><td>Predicted score before activity (%)</td></tr>
+        <tr><td><code>cal_reflection</code></td><td>Free-text: what will be hard?</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">ACTIVITY TIERS</td></tr>
+        <tr><td><code>t1_score_pct</code></td><td>Tier&nbsp;1 Fill-in-Blanks score (%)</td></tr>
+        <tr><td><code>t2_attempts</code></td><td>Tier&nbsp;2 Debug — number of attempts</td></tr>
+        <tr><td><code>refl2_text</code></td><td>Tier&nbsp;2 reflection free text</td></tr>
+        <tr><td><code>t3_attempts</code></td><td>Tier&nbsp;3 Complete-Code attempts</td></tr>
+        <tr><td><code>t4_attempts</code></td><td>Tier&nbsp;4 New Task attempts</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">CONCEPT CHECK</td></tr>
+        <tr><td><code>concept_q1</code>&ndash;<code>concept_q5</code></td><td>Student answer index (0-based) per question</td></tr>
+        <tr><td><code>concept_score_pct</code></td><td>Percentage correct (0&ndash;100)</td></tr>
+        <tr><td><code>concept_passed</code></td><td>1 = passed (&ge;80%), 0 = failed</td></tr>
+        <tr><td><code>concept_attempts</code></td><td>Total retries</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">REFLECTIVE JOURNAL</td></tr>
+        <tr><td><code>jr1</code>&ndash;<code>jr5</code></td><td>Journal prompts 1&ndash;5 free-text responses</td></tr>
+        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">POST-CALIBRATION</td></tr>
+        <tr><td><code>post_confidence</code></td><td>Confidence rating after activity (1&ndash;5)</td></tr>
+        <tr><td><code>post_actual</code></td><td>Self-reported actual score (%)</td></tr>
+        <tr><td><code>post_r1</code></td><td>Reflection: how accurate was the prediction?</td></tr>
+        <tr><td><code>post_r2</code></td><td>Reflection: what would you do differently?</td></tr>
+        <tr><td><code>calibration_index</code></td><td>post_actual &minus; cal_predicted (negative = overconfident)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+<footer>
+  <span>&#169; 2026 Nurul Hazlina Noordin · UMPSA STEM Lab Engineering Education Initiative</span>
+  <a href="https://www.umpsa.edu.my" target="_blank" rel="noopener" aria-label="UMPSA website">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+  </a>
+  <a href="mailto:hazlina@umpsa.edu.my" aria-label="Email facilitator">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+  </a>
+</footer>
+
+</body>
+</html>

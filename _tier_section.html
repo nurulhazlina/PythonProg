@@ -1,0 +1,463 @@
+<!-- ═══ ACTIVITIES — 4-Tier Progressive System ═══ -->
+<section id="activity-section">
+  <h2>Activities — Step 1</h2>
+  <p class="lede">Four tasks, increasing independence. Each tier unlocks when you submit the previous one. Only Tier 4 is assessed by the Code Product Rubric.</p>
+
+  <div class="tier-progress" id="tier-progress" aria-label="Activity progress">
+    <div class="tier-step active" id="tp1"><span class="tier-num">1</span><span class="tier-label">Workout</span></div>
+    <div class="tier-connector" id="tc12"></div>
+    <div class="tier-step locked" id="tp2"><span class="tier-num">2</span><span class="tier-label">Debug</span></div>
+    <div class="tier-connector" id="tc23"></div>
+    <div class="tier-step locked" id="tp3"><span class="tier-num">3</span><span class="tier-label">Complete</span></div>
+    <div class="tier-connector" id="tc34"></div>
+    <div class="tier-step locked" id="tp4"><span class="tier-num">4</span><span class="tier-label">Create</span></div>
+    <div class="tier-connector" id="tc4j"></div>
+    <div class="tier-step locked" id="tpj"><span class="tier-num">&#128211;</span><span class="tier-label">Reflect</span></div>
+  </div>
+
+  <!-- TIER 1 -->
+  <div class="tier-card" id="tier1">
+    <div class="tier-header t1-header">
+      <span class="tier-badge">Tier 1</span>
+      <span class="tier-title">Workout Programming</span>
+      <span class="tier-desc">Guided — fill in the blanks and run</span>
+    </div>
+    <div class="tier-body">
+      <p>The Step 1 program is almost complete. Fill in the <span class="blank-hint">highlighted blanks</span> using what you learned above, then click <strong>Submit Tier 1</strong>.</p>
+      <div class="code-fill-wrap">
+        <pre class="code code-fill" id="t1-code">import pygame
+pygame.init()
+
+# Grid constants
+GRID_COLS  = <input type="text" class="blank" id="b1" placeholder="?" size="4" autocomplete="off">        # 20 columns
+GRID_ROWS  = <input type="text" class="blank" id="b2" placeholder="?" size="4" autocomplete="off">        # 15 rows
+CELL_SIZE  = <input type="text" class="blank" id="b3" placeholder="?" size="4" autocomplete="off">        # 30x30 pixels per cell
+SNAKE_SPEED = 8
+
+# Colour constants - RGB tuples
+WHITE   = <input type="text" class="blank blank-wide" id="b4" placeholder="(?, ?, ?)" size="16" autocomplete="off">
+GREEN   = (  0, 200,  80)
+DKGREEN = (  0, 160,  50)
+RED     = <input type="text" class="blank blank-wide" id="b5" placeholder="(?, ?, ?)" size="16" autocomplete="off">
+BG      = ( 30,  30,  30)
+
+# Calculate window size in pixels
+WINDOW_W = <input type="text" class="blank blank-mid" id="b6" placeholder="?" size="10" autocomplete="off"> * CELL_SIZE
+WINDOW_H = GRID_ROWS * <input type="text" class="blank blank-mid" id="b7" placeholder="?" size="10" autocomplete="off">
+
+screen = pygame.display.set_mode((WINDOW_W, WINDOW_H))
+pygame.display.set_caption("Snake")
+
+screen.fill(BG)
+pygame.display.flip()
+pygame.time.wait(3000)
+pygame.quit()</pre>
+      </div>
+      <div id="t1-feedback" class="tier-feedback" hidden></div>
+      <div class="tier-actions">
+        <span id="t1-attempts" class="attempt-count"></span>
+        <button class="tier-btn" id="t1-submit">Submit Tier 1</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIER 2 -->
+  <div class="tier-card tier-locked" id="tier2" aria-disabled="true">
+    <div class="tier-header t2-header">
+      <span class="tier-badge">Tier 2</span>
+      <span class="tier-title">Debugging &mdash; Find &amp; Fix</span>
+      <span class="tier-desc">Spot each bug and explain the fix</span>
+      <span class="lock-icon">&#128274;</span>
+    </div>
+    <div class="tier-body" id="tier2-body">
+      <p>The code below has <strong>3 deliberate bugs</strong>. Each will cause a crash or wrong behaviour. For each bug: identify the variable name, explain what is wrong, and write the corrected line.</p>
+      <pre class="code">import pygame
+pygame.init()
+
+GRID_COLS   = 20
+GRID_ROWS   = 15
+CELL_SIZE   = "30"          # <span style="color:var(--orange)">&#9888; Bug 1 near here</span>
+SNAKE_SPEED = 8
+
+WHITE   = (255, 255, 255)
+GREEN   = [0, 200, 80]      # <span style="color:var(--orange)">&#9888; Bug 2 near here</span>
+DKGREEN = (  0, 160,  50)
+RED     = (220,  50,  50)
+BG      = ( 30,  30,  30)
+
+WINDOW_W = GRID_COLS + CELL_SIZE   # <span style="color:var(--orange)">&#9888; Bug 3 near here</span>
+WINDOW_H = GRID_ROWS * CELL_SIZE
+
+screen = pygame.display.set_mode((WINDOW_W, WINDOW_H))
+pygame.display.set_caption("Snake")
+screen.fill(BG)
+pygame.display.flip()
+pygame.time.wait(3000)
+pygame.quit()</pre>
+
+      <div class="bug-forms">
+        <div class="bug-form">
+          <h4>Bug 1</h4>
+          <label>Which variable? <input type="text" class="bug-input" id="bug1-var" placeholder="variable name" autocomplete="off"></label>
+          <label>What is wrong and what should it be?<textarea class="bug-textarea" id="bug1-why" rows="2" placeholder="Explain the problem..."></textarea></label>
+          <label>Corrected line:<input type="text" class="bug-input bug-wide" id="bug1-fix" placeholder="VARNAME = ..." autocomplete="off"></label>
+        </div>
+        <div class="bug-form">
+          <h4>Bug 2</h4>
+          <label>Which variable? <input type="text" class="bug-input" id="bug2-var" placeholder="variable name" autocomplete="off"></label>
+          <label>What is wrong and what should it be?<textarea class="bug-textarea" id="bug2-why" rows="2" placeholder="Explain the problem..."></textarea></label>
+          <label>Corrected line:<input type="text" class="bug-input bug-wide" id="bug2-fix" placeholder="VARNAME = ..." autocomplete="off"></label>
+        </div>
+        <div class="bug-form">
+          <h4>Bug 3</h4>
+          <label>Which variable? <input type="text" class="bug-input" id="bug3-var" placeholder="variable name" autocomplete="off"></label>
+          <label>What is wrong? (check the operator)<textarea class="bug-textarea" id="bug3-why" rows="2" placeholder="Explain the problem..."></textarea></label>
+          <label>Corrected line:<input type="text" class="bug-input bug-wide" id="bug3-fix" placeholder="VARNAME = ..." autocomplete="off"></label>
+        </div>
+      </div>
+      <div id="t2-feedback" class="tier-feedback" hidden></div>
+      <div class="tier-actions">
+        <span id="t2-attempts" class="attempt-count"></span>
+        <button class="tier-btn" id="t2-submit" disabled>Submit Tier 2</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIER 3 -->
+  <div class="tier-card tier-locked" id="tier3" aria-disabled="true">
+    <div class="tier-header t3-header">
+      <span class="tier-badge">Tier 3</span>
+      <span class="tier-title">Semi-Completed Task</span>
+      <span class="tier-desc">No bugs &mdash; write the missing logic</span>
+      <span class="lock-icon">&#128274;</span>
+    </div>
+    <div class="tier-body" id="tier3-body">
+      <p>The skeleton below is ~50% complete. Write <strong>every missing line</strong> to make a working Step 1 program. No bugs here &mdash; this is a writing task.</p>
+      <pre class="code"><span style="color:#94a3b8"># skeleton — gaps marked with ___</span>
+import pygame
+pygame.init()
+
+<span style="color:#94a3b8"># Write all four grid constants:</span>
+GRID_COLS  = ___
+GRID_ROWS  = ___
+CELL_SIZE  = ___
+SNAKE_SPEED = ___
+
+<span style="color:#94a3b8"># Write the five colour constants as RGB tuples:</span>
+WHITE   = ___
+GREEN   = ___
+DKGREEN = ___
+RED     = ___
+BG      = ___
+
+<span style="color:#94a3b8"># Calculate window dimensions from the constants:</span>
+WINDOW_W = ___
+WINDOW_H = ___
+
+<span style="color:#94a3b8"># These lines are given:</span>
+screen = pygame.display.set_mode((WINDOW_W, WINDOW_H))
+pygame.display.set_caption("Snake")
+
+<span style="color:#94a3b8"># Write three display lines: fill, flip, wait</span>
+___
+___
+___
+pygame.quit()</pre>
+
+      <label style="display:block;margin-top:14px;font-weight:600;font-size:14px">Your complete Step 1 code:</label>
+      <textarea class="tier-textarea" id="t3-code" rows="28" placeholder="# Write the complete program here"></textarea>
+      <div id="t3-feedback" class="tier-feedback" hidden></div>
+      <div class="tier-actions">
+        <span id="t3-attempts" class="attempt-count"></span>
+        <button class="tier-btn" id="t3-submit" disabled>Submit Tier 3</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIER 4 -->
+  <div class="tier-card tier-locked" id="tier4" aria-disabled="true">
+    <div class="tier-header t4-header">
+      <span class="tier-badge">Tier 4 &#9733;</span>
+      <span class="tier-title">New Programming Task</span>
+      <span class="tier-desc">Assessed by the Code Product Rubric</span>
+      <span class="lock-icon">&#128274;</span>
+    </div>
+    <div class="tier-body" id="tier4-body">
+      <div class="cal tip" style="margin-bottom:14px"><b>Task prompt</b><br>
+        Add two new colour constants to Step 1: <code>GOLD = (255, 200, 0)</code> for a future bonus food item, and a <code>BORDER_COLOUR</code> of your own choice. Then, after all your constants are defined, use <code>print()</code> to display the name and Python type of each colour constant (WHITE, GREEN, DKGREEN, RED, BG, GOLD, and BORDER_COLOUR). Run your program in Thonny and paste the full code and terminal output below.
+      </div>
+      <label style="display:block;margin-bottom:6px;font-weight:600;font-size:14px">Your code:</label>
+      <textarea class="tier-textarea" id="t4-code" rows="30" placeholder="# Your complete Step 1 program with GOLD, BORDER_COLOUR, and print statements"></textarea>
+      <label style="display:block;margin:12px 0 6px;font-weight:600;font-size:14px">Terminal output (copy from Thonny's Shell):</label>
+      <textarea class="tier-textarea" id="t4-output" rows="10" placeholder="Paste what Python printed here..."></textarea>
+      <div id="t4-feedback" class="tier-feedback" hidden></div>
+      <div class="tier-actions">
+        <span id="t4-attempts" class="attempt-count"></span>
+        <button class="tier-btn" id="t4-submit" disabled>Submit Tier 4</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- REFLECTIVE JOURNAL -->
+  <div class="tier-card tier-locked" id="tierJ" aria-disabled="true">
+    <div class="tier-header tj-header">
+      <span class="tier-badge" style="font-size:16px;padding:2px 6px">&#128211;</span>
+      <span class="tier-title">Reflective Journal</span>
+      <span class="tier-desc">4 prompts &mdash; required before Step 1 is marked complete</span>
+      <span class="lock-icon">&#128274;</span>
+    </div>
+    <div class="tier-body" id="tierJ-body">
+      <p>Answer each prompt thoughtfully. There are no right or wrong answers &mdash; this is your own reflection.</p>
+      <div class="journal-prompt">
+        <label for="jr1"><span class="jp-num">1</span> What was the most confusing part of Step 1, and what helped you understand it?</label>
+        <textarea class="tier-textarea" id="jr1" rows="4" placeholder="Write at least 2-3 sentences..."></textarea>
+      </div>
+      <div class="journal-prompt">
+        <label for="jr2"><span class="jp-num">2</span> Why do programmers write constant names in UPPER_CASE? What does it communicate to someone reading the code?</label>
+        <textarea class="tier-textarea" id="jr2" rows="4" placeholder="Write at least 2-3 sentences..."></textarea>
+      </div>
+      <div class="journal-prompt">
+        <label for="jr3"><span class="jp-num">3</span> Why is a <strong>tuple</strong> a better choice than a list for storing an RGB colour? Give a reason based on the game.</label>
+        <textarea class="tier-textarea" id="jr3" rows="4" placeholder="Write at least 2-3 sentences..."></textarea>
+      </div>
+      <div class="journal-prompt">
+        <label for="jr4"><span class="jp-num">4</span> If you changed <code>CELL_SIZE</code> from 30 to 20, what would happen to the game window and why? Predict before testing.</label>
+        <textarea class="tier-textarea" id="jr4" rows="4" placeholder="Write at least 2-3 sentences..."></textarea>
+      </div>
+      <div id="tj-feedback" class="tier-feedback" hidden></div>
+      <div class="tier-actions">
+        <button class="tier-btn tj-btn" id="tj-submit" disabled>Complete Step 1 &#10003;</button>
+      </div>
+      <div id="step-complete-banner" class="step-complete" hidden>
+        <span>&#10003; Step 1 Complete!</span>
+        <a href="step-2.html" class="next-step-link">Continue to Step 2 &rarr;</a>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<style>
+.tier-progress{display:flex;align-items:center;margin:20px 0 28px;flex-wrap:wrap;gap:4px}
+.tier-step{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:60px}
+.tier-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;border:2px solid var(--line);transition:all .3s}
+.tier-label{font-size:10px;color:var(--muted);text-align:center}
+.tier-step.active .tier-num{background:var(--teal);color:#fff;border-color:var(--teal)}
+.tier-step.active .tier-label{color:var(--teal);font-weight:600}
+.tier-step.done .tier-num{background:#22c55e;color:#fff;border-color:#22c55e}
+.tier-step.done .tier-label{color:#22c55e}
+.tier-step.locked .tier-num{background:var(--bg);color:var(--muted)}
+.tier-connector{flex:1;height:2px;background:var(--line);min-width:16px;transition:background .4s}
+.tier-connector.done{background:#22c55e}
+.tier-card{border:1px solid var(--line);border-radius:12px;margin-bottom:20px;overflow:hidden;transition:opacity .3s}
+.tier-locked{opacity:.45;pointer-events:none}
+.tier-card:not(.tier-locked){opacity:1;pointer-events:auto}
+.tier-header{display:flex;align-items:center;gap:10px;padding:12px 18px;flex-wrap:wrap}
+.t1-header{background:linear-gradient(90deg,rgba(2,173,165,.15),transparent)}
+.t2-header{background:linear-gradient(90deg,rgba(245,162,29,.15),transparent)}
+.t3-header{background:linear-gradient(90deg,rgba(13,85,167,.15),transparent)}
+.t4-header{background:linear-gradient(90deg,rgba(200,0,0,.15),transparent)}
+.tj-header{background:linear-gradient(90deg,rgba(100,100,180,.15),transparent)}
+.tier-badge{font-size:11px;font-weight:700;letter-spacing:.06em;padding:3px 8px;border-radius:20px;background:var(--teal);color:#fff;white-space:nowrap}
+.t2-header .tier-badge{background:var(--orange)}
+.t3-header .tier-badge{background:var(--blue)}
+.t4-header .tier-badge{background:var(--red)}
+.tier-title{font-weight:700;font-size:15px}
+.tier-desc{font-size:12px;color:var(--muted)}
+.lock-icon{margin-left:auto;font-size:16px}
+.tier-body{padding:18px}
+.code-fill-wrap{overflow-x:auto;border-radius:8px;background:var(--code-bg)}
+.code-fill{background:transparent;padding:18px}
+.blank{background:rgba(255,255,255,.12);border:1px dashed rgba(2,173,165,.7);border-radius:4px;color:#E8F5F4;font-family:monospace;font-size:inherit;padding:1px 5px;outline:none;transition:border-color .2s}
+.blank:focus{border-color:var(--teal);background:rgba(2,173,165,.15)}
+.blank.correct{border-color:#22c55e;background:rgba(34,197,94,.15);color:#86efac}
+.blank.wrong{border-color:#ef4444;background:rgba(239,68,68,.12);color:#fca5a5;animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.bug-forms{display:flex;flex-direction:column;gap:16px;margin-top:16px}
+.bug-form{background:rgba(245,162,29,.06);border:1px solid rgba(245,162,29,.25);border-radius:8px;padding:14px}
+.bug-form h4{margin:0 0 10px;color:var(--orange);font-size:14px}
+.bug-form label{display:flex;flex-direction:column;gap:4px;font-size:13px;margin-bottom:10px}
+.bug-input{background:var(--code-bg);border:1px solid var(--line);border-radius:6px;color:var(--fg);font-family:monospace;font-size:13px;padding:6px 10px;width:100%;box-sizing:border-box}
+.bug-textarea{background:var(--code-bg);border:1px solid var(--line);border-radius:6px;color:var(--fg);font-family:inherit;font-size:13px;padding:8px;width:100%;box-sizing:border-box;resize:vertical}
+.tier-textarea{width:100%;box-sizing:border-box;background:var(--code-bg);border:1px solid var(--line);border-radius:8px;color:var(--fg);font-family:monospace;font-size:13px;padding:12px;resize:vertical;line-height:1.5}
+.tier-textarea:focus{outline:none;border-color:var(--teal)}
+.journal-prompt{margin-bottom:18px}
+.journal-prompt label{display:flex;flex-direction:column;gap:6px;font-size:14px;line-height:1.5}
+.jp-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--teal);color:#fff;font-weight:700;font-size:12px;margin-right:6px;flex-shrink:0}
+.tier-actions{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
+.tier-btn{padding:9px 22px;border:none;border-radius:8px;background:var(--teal);color:#fff;font-weight:700;font-size:14px;cursor:pointer;transition:opacity .2s}
+.tier-btn:hover:not(:disabled){opacity:.85}
+.tier-btn:disabled{opacity:.4;cursor:not-allowed}
+.tj-btn{background:var(--teal-dark)}
+.attempt-count{font-size:12px;color:var(--muted)}
+.tier-feedback{padding:10px 14px;border-radius:8px;font-size:13px;margin-top:10px}
+.tier-feedback.success{background:rgba(34,197,94,.12);border:1px solid #22c55e;color:#86efac}
+.tier-feedback.error{background:rgba(239,68,68,.10);border:1px solid #ef4444;color:#fca5a5}
+.tier-feedback.partial{background:rgba(245,162,29,.10);border:1px solid var(--orange);color:#fde68a}
+.blank-hint{color:var(--teal);font-weight:600}
+.step-complete{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:18px;padding:16px 20px;background:linear-gradient(90deg,rgba(34,197,94,.12),rgba(2,173,165,.08));border:1px solid #22c55e;border-radius:10px;font-size:16px;font-weight:700;color:#86efac}
+.next-step-link{padding:8px 18px;background:var(--teal);color:#fff;border-radius:8px;text-decoration:none;font-size:14px}
+.next-step-link:hover{opacity:.85}
+</style>
+
+<script>
+(function(){
+'use strict';
+var LMS_KEY='lms_step1';
+function lmsGet(){try{return JSON.parse(localStorage.getItem(LMS_KEY)||'{}')}catch(e){return{}}}
+function lmsSet(d){try{localStorage.setItem(LMS_KEY,JSON.stringify(d))}catch(e){}}
+function lmsLog(ev,val){var d=lmsGet();if(!d[ev])d[ev]=[];d[ev].push({ts:Date.now(),v:val!==undefined?val:null});lmsSet(d);}
+lmsLog('page_opened');
+var state={t1:false,t2:false,t3:false,t4:false,tj:false};
+var attempts={t1:0,t2:0,t3:0,t4:0,tj:0};
+function norm(s){return String(s).replace(/\s+/g,' ').trim().toLowerCase();}
+function normCode(s){return String(s).replace(/\s+/g,'').toLowerCase();}
+function showFeedback(id,msg,type){var el=document.getElementById(id);el.hidden=false;el.className='tier-feedback '+type;el.innerHTML=msg;}
+function setAttempts(id,n){var el=document.getElementById(id);if(el)el.textContent=n>0?'Attempts: '+n:'';}
+function markDone(tpId){var el=document.getElementById(tpId);if(el)el.className='tier-step done';}
+function unlockTier(key){
+  var cards={2:'tier2',3:'tier3',4:'tier4',J:'tierJ'};
+  var tps={2:'tp2',3:'tp3',4:'tp4',J:'tpj'};
+  var btns={2:'t2-submit',3:'t3-submit',4:'t4-submit',J:'tj-submit'};
+  var card=document.getElementById(cards[key]);
+  if(card){card.classList.remove('tier-locked');card.removeAttribute('aria-disabled');}
+  var tp=document.getElementById(tps[key]);if(tp)tp.className='tier-step active';
+  var btn=document.getElementById(btns[key]);if(btn)btn.disabled=false;
+}
+function checkBlank(id,answers){
+  var el=document.getElementById(id);
+  var v=normCode(el?el.value.trim():'');
+  var ok=answers.some(function(a){return normCode(a)===v;});
+  if(el){el.classList.toggle('correct',ok);el.classList.toggle('wrong',!ok);}
+  return ok;
+}
+/* TIER 1 */
+var T1={b1:['20'],b2:['15'],b3:['30'],b4:['(255,255,255)','255,255,255'],b5:['(220,50,50)','220,50,50'],b6:['grid_cols'],b7:['cell_size']};
+document.getElementById('t1-submit').addEventListener('click',function(){
+  if(state.t1)return;
+  attempts.t1++;lmsLog('t1_attempt',attempts.t1);setAttempts('t1-attempts',attempts.t1);
+  var ok=Object.keys(T1).map(function(k){return checkBlank(k,T1[k]);});
+  var correct=ok.filter(Boolean).length;
+  if(correct===ok.length){
+    state.t1=true;lmsLog('t1_submitted',{attempts:attempts.t1,ts:Date.now()});
+    showFeedback('t1-feedback','All blanks correct! Tier 2 is now unlocked.','success');
+    document.getElementById('t1-submit').disabled=true;
+    markDone('tp1');document.getElementById('tc12').classList.add('done');unlockTier(2);
+  } else {
+    showFeedback('t1-feedback',(ok.length-correct)+' blank(s) incorrect — check highlighted fields and try again.','error');
+  }
+});
+/* TIER 2 */
+document.getElementById('t2-submit').addEventListener('click',function(){
+  if(state.t2)return;
+  attempts.t2++;lmsLog('t2_attempt',attempts.t2);setAttempts('t2-attempts',attempts.t2);
+  var v1=normCode(document.getElementById('bug1-var').value);
+  var f1=normCode(document.getElementById('bug1-fix').value);
+  var w1=document.getElementById('bug1-why').value.trim();
+  var v2=normCode(document.getElementById('bug2-var').value);
+  var f2=normCode(document.getElementById('bug2-fix').value);
+  var w2=document.getElementById('bug2-why').value.trim();
+  var v3=normCode(document.getElementById('bug3-var').value);
+  var f3=normCode(document.getElementById('bug3-fix').value);
+  var w3=document.getElementById('bug3-why').value.trim();
+  var ok1=(v1==='cell_size')&&(f1.includes('cell_size=30'))&&w1.length>10;
+  var ok2=(v2==='green')&&(f2.includes('green=(0,200,80)'))&&w2.length>10;
+  var ok3=(v3==='window_w')&&f3.includes('*')&&w3.length>10;
+  if(ok1&&ok2&&ok3){
+    state.t2=true;lmsLog('t2_submitted',{attempts:attempts.t2,ts:Date.now()});
+    showFeedback('t2-feedback','All 3 bugs found and fixed! Tier 3 is now unlocked.','success');
+    document.getElementById('t2-submit').disabled=true;
+    markDone('tp2');document.getElementById('tc23').classList.add('done');unlockTier(3);
+  } else {
+    var m=[];
+    if(!ok1)m.push('Bug 1: variable is CELL_SIZE — the value "30" has the wrong type');
+    if(!ok2)m.push('Bug 2: variable is GREEN — tuples use () not []');
+    if(!ok3)m.push('Bug 3: variable is WINDOW_W — should multiply, not add');
+    if(w1.length<=10||w2.length<=10||w3.length<=10)m.push('Write fuller explanations');
+    showFeedback('t2-feedback',m.join(' &middot; '),'error');
+  }
+});
+/* TIER 3 */
+document.getElementById('t3-submit').addEventListener('click',function(){
+  if(state.t3)return;
+  attempts.t3++;lmsLog('t3_attempt',attempts.t3);setAttempts('t3-attempts',attempts.t3);
+  var c=normCode(document.getElementById('t3-code').value);
+  var checks=[
+    c.includes('importpygame'),c.includes('pygame.init()'),
+    c.includes('grid_cols=20'),c.includes('grid_rows=15'),c.includes('cell_size=30'),
+    c.includes('(255,255,255)'),c.includes('(0,200,80)'),c.includes('(0,160,50)'),
+    c.includes('(220,50,50)'),c.includes('(30,30,30)'),
+    c.includes('*cell_size')||c.includes('20*30'),
+    c.includes('grid_rows*')||c.includes('15*30'),
+    c.includes('set_mode'),c.includes('set_caption'),
+    c.includes('screen.fill'),c.includes('display.flip'),c.includes('time.wait'),c.includes('pygame.quit()')
+  ];
+  var n=checks.filter(Boolean).length;
+  if(n>=checks.length-2){
+    state.t3=true;lmsLog('t3_submitted',{attempts:attempts.t3,ts:Date.now()});
+    showFeedback('t3-feedback','Program complete ('+n+'/'+checks.length+' checks). Tier 4 unlocked!','success');
+    document.getElementById('t3-submit').disabled=true;
+    markDone('tp3');document.getElementById('tc34').classList.add('done');unlockTier(4);
+  } else {
+    showFeedback('t3-feedback',n+'/'+checks.length+' checks passed. Check constants, colours, window setup, fill/flip/wait, and pygame.quit().','partial');
+  }
+});
+/* TIER 4 */
+document.getElementById('t4-submit').addEventListener('click',function(){
+  if(state.t4)return;
+  attempts.t4++;lmsLog('t4_attempt',attempts.t4);setAttempts('t4-attempts',attempts.t4);
+  var c=normCode(document.getElementById('t4-code').value);
+  var o=document.getElementById('t4-output').value.trim();
+  var hasGold=c.includes('gold')&&(c.includes('255,200,0'));
+  var hasBorder=c.includes('border_colour')||c.includes('border_color');
+  var hasPrint=c.includes('print(type(');
+  var hasOutput=o.length>20;
+  if(hasGold&&hasBorder&&hasPrint&&hasOutput){
+    state.t4=true;
+    var d=lmsGet();
+    function dur(a,b){var s=d[a],e=d[b];if(!s||!s.length||!e||!e.length)return null;return e[e.length-1].ts-s[0].ts;}
+    var dt1=dur('t1_attempt','t1_submitted'),dt4=dur('t4_attempt','t4_submitted');
+    var ratio=dt1&&dt4&&dt1>0?(dt4/dt1).toFixed(2):null;
+    lmsLog('t4_submitted',{attempts:attempts.t4,ts:Date.now()});
+    lmsLog('effort_index',{t1_ms:dt1,t4_ms:dt4,ratio:ratio});
+    showFeedback('t4-feedback','Tier 4 complete! Reflection journal unlocked.'+(ratio?' Effort index: '+ratio:''),'success');
+    document.getElementById('t4-submit').disabled=true;
+    markDone('tp4');document.getElementById('tc4j').classList.add('done');unlockTier('J');
+  } else {
+    var m=[];
+    if(!hasGold)m.push('GOLD = (255, 200, 0) not found');
+    if(!hasBorder)m.push('BORDER_COLOUR missing');
+    if(!hasPrint)m.push('print(type(...)) statements missing');
+    if(!hasOutput)m.push('paste terminal output from Thonny');
+    showFeedback('t4-feedback',m.join(' &middot; '),'error');
+  }
+});
+/* JOURNAL */
+document.getElementById('tj-submit').addEventListener('click',function(){
+  if(state.tj)return;
+  attempts.tj++;lmsLog('tj_attempt',attempts.tj);
+  var short=['jr1','jr2','jr3','jr4'].filter(function(id){
+    return document.getElementById(id).value.trim().split(/\s+/).length<15;
+  });
+  if(short.length>0){
+    showFeedback('tj-feedback','Please write more for prompt '+short.map(function(id){return id.replace('jr','');}).join(', ')+' (aim for 15+ words each).','error');
+    return;
+  }
+  state.tj=true;lmsLog('tj_submitted',{ts:Date.now()});lmsLog('step1_complete',{ts:Date.now()});
+  showFeedback('tj-feedback','Reflection complete!','success');
+  document.getElementById('tj-submit').disabled=true;
+  markDone('tpj');
+  document.getElementById('step-complete-banner').hidden=false;
+  var d=lmsGet();d.complete=true;d.complete_ts=Date.now();lmsSet(d);
+});
+/* Restore progress */
+(function(){
+  var d=lmsGet();
+  if(d.t1_submitted){state.t1=true;unlockTier(2);markDone('tp1');document.getElementById('tc12').classList.add('done');document.getElementById('t1-submit').disabled=true;}
+  if(d.t2_submitted){state.t2=true;unlockTier(3);markDone('tp2');document.getElementById('tc23').classList.add('done');document.getElementById('t2-submit').disabled=true;}
+  if(d.t3_submitted){state.t3=true;unlockTier(4);markDone('tp3');document.getElementById('tc34').classList.add('done');document.getElementById('t3-submit').disabled=true;}
+  if(d.t4_submitted){state.t4=true;unlockTier('J');markDone('tp4');document.getElementById('tc4j').classList.add('done');document.getElementById('t4-submit').disabled=true;}
+  if(d.tj_submitted){state.tj=true;markDone('tpj');document.getElementById('tj-submit').disabled=true;document.getElementById('step-complete-banner').hidden=false;}
+})();
+})();
+</script>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Student Registration — Snake Game Python Tutorial</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.reg-hero{background:var(--teal-dark);color:#fff;padding:40px 0 32px;text-align:center}
+.reg-hero h1{font-size:clamp(1.4rem,4vw,2rem);margin:0 0 8px;font-weight:800}
+.reg-hero p{margin:0;opacity:.85;font-size:1rem}
+.reg-wrap{max-width:640px;margin:40px auto 60px;padding:0 20px}
+.reg-card{background:var(--card);border:1px solid var(--line);border-radius:16px;
+  padding:32px 28px;box-shadow:0 4px 24px rgba(0,0,0,.07)}
+.reg-section-title{font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--teal);margin:0 0 18px;padding-bottom:8px;border-bottom:2px solid rgba(2,173,165,.18)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:520px){.form-grid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:5px}
+.field.full{grid-column:1/-1}
+label{font-size:.82rem;font-weight:700;color:var(--ink)}
+label .req{color:var(--red);margin-left:2px}
+input,select{border:1.5px solid var(--line);border-radius:8px;padding:9px 12px;
+  font-size:.93rem;font-family:inherit;color:var(--ink);background:var(--bg);
+  transition:border-color .18s,box-shadow .18s;outline:none;width:100%;box-sizing:border-box}
+input:focus,select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(2,173,165,.15);background:#fff}
+input::placeholder{color:var(--muted);opacity:1}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8z' fill='%235B7284'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.radio-group{display:flex;gap:16px;flex-wrap:wrap}
+.radio-group label{display:flex;align-items:center;gap:7px;font-weight:500;font-size:.9rem;cursor:pointer}
+.radio-group input[type=radio]{width:auto;accent-color:var(--teal)}
+.btn-submit{display:block;width:100%;margin-top:28px;padding:13px;
+  background:linear-gradient(135deg,var(--teal),var(--blue));color:#fff;
+  border:none;border-radius:10px;font-size:1rem;font-weight:700;
+  cursor:pointer;letter-spacing:.03em;transition:opacity .18s,transform .12s}
+.btn-submit:hover{opacity:.92;transform:translateY(-1px)}
+.btn-submit:active{transform:translateY(0)}
+.btn-submit:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.msg{display:none;margin-top:20px;padding:14px 16px;border-radius:10px;
+  font-size:.9rem;font-weight:600;text-align:center}
+.msg.ok{background:rgba(31,157,85,.12);color:#166534;border:1.5px solid rgba(31,157,85,.3);display:block}
+.msg.err{background:rgba(200,0,0,.08);color:#991b1b;border:1.5px solid rgba(200,0,0,.2);display:block}
+.msg.loading{background:rgba(2,173,165,.08);color:var(--teal-dark);border:1.5px solid rgba(2,173,165,.2);display:block}
+.privacy-note{margin-top:20px;font-size:.78rem;color:var(--muted);text-align:center;line-height:1.5}
+.already-done{display:none;background:rgba(31,157,85,.1);border:1.5px solid rgba(31,157,85,.3);
+  border-radius:12px;padding:20px;text-align:center;color:#166534;margin-bottom:24px}
+.already-done h3{margin:0 0 6px;font-size:1.1rem}
+.already-done p{margin:0;font-size:.88rem}
+.already-done a{color:var(--blue);font-weight:600}
+</style>
+</head>
+<body>
+
+<div class="chev" id="chev">
+  <span id="see-box">See</span><span>Think</span><span>Explore</span><span>Marvel</span>
+</div>
+
+<nav class="sitenav"><div class="wrap">
+  <a class="brand" href="student-register.html">Snake Game <span>Python Tutorial</span></a>
+</div></nav>
+
+<div class="reg-hero">
+  <h1>Student Registration</h1>
+  <p>UMPSA STEM Lab &nbsp;·&nbsp; Python Programming Module &nbsp;·&nbsp; 2026</p>
+</div>
+
+<div class="reg-wrap">
+
+  <div class="already-done" id="already-done">
+    <h3>✓ You're already registered!</h3>
+    <p>Registered as <strong id="reg-name-display"></strong> (<span id="reg-matric-display"></span>).<br>
+    <a href="index.html">Continue to Step 1 →</a> &nbsp;|&nbsp;
+    <a href="#" id="re-register-link">Re-register (different device)</a></p>
+  </div>
+
+  <div class="reg-card" id="reg-form-wrap">
+    <p style="margin:0 0 24px;color:var(--muted);font-size:.9rem;line-height:1.6">
+      Please fill in your details below. This information is collected for educational research
+      purposes only and will not be shared outside your institution.
+    </p>
+
+    <form id="reg-form" novalidate>
+
+      <p class="reg-section-title">Personal Details</p>
+      <div class="form-grid">
+
+        <div class="field full">
+          <label for="f-name">Full Name <span class="req">*</span></label>
+          <input id="f-name" name="student_name" type="text"
+            placeholder="As per IC / Student Card" autocomplete="name" required>
+        </div>
+
+        <div class="field">
+          <label>Gender <span class="req">*</span></label>
+          <div class="radio-group" style="margin-top:4px">
+            <label><input type="radio" name="student_gender" value="Male" required> Male</label>
+            <label><input type="radio" name="student_gender" value="Female"> Female</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="f-age">Age <span class="req">*</span></label>
+          <input id="f-age" name="student_age" type="number"
+            placeholder="e.g. 18" min="10" max="30" required>
+        </div>
+
+        <div class="field">
+          <label for="f-mykid">MyKad / MyKid No. <span class="req">*</span></label>
+          <input id="f-mykid" name="student_mykid" type="text"
+            placeholder="000000-00-0000" maxlength="14" required>
+        </div>
+
+        <div class="field">
+          <label for="f-state">Home State <span class="req">*</span></label>
+          <select id="f-state" name="student_state" required>
+            <option value="">— Select State —</option>
+            <option>Johor</option><option>Kedah</option><option>Kelantan</option>
+            <option>Melaka</option><option>Negeri Sembilan</option><option>Pahang</option>
+            <option>Perak</option><option>Perlis</option><option>Pulau Pinang</option>
+            <option>Sabah</option><option>Sarawak</option><option>Selangor</option>
+            <option>Terengganu</option><option>W.P. Kuala Lumpur</option>
+            <option>W.P. Labuan</option><option>W.P. Putrajaya</option>
+          </select>
+        </div>
+
+      </div>
+
+      <p class="reg-section-title" style="margin-top:28px">Academic Details</p>
+      <div class="form-grid">
+
+        <div class="field">
+          <label for="f-matric">Matric No. <span class="req">*</span></label>
+          <input id="f-matric" name="student_matric" type="text"
+            placeholder="e.g. CA23001" required>
+        </div>
+
+        <div class="field">
+          <label for="f-class">Class / Section <span class="req">*</span></label>
+          <input id="f-class" name="student_class" type="text"
+            placeholder="e.g. Section 1 / BEE1">
+        </div>
+
+        <div class="field full">
+          <label for="f-school">School Code <span class="req">*</span></label>
+          <input id="f-school" name="student_school_code" type="text"
+            placeholder="e.g. FKEE / BEE / BCI">
+        </div>
+
+      </div>
+
+      <p class="reg-section-title" style="margin-top:28px">Contact</p>
+      <div class="form-grid">
+
+        <div class="field">
+          <label for="f-phone">Phone No.</label>
+          <input id="f-phone" name="student_phone" type="tel"
+            placeholder="01X-XXXXXXX" autocomplete="tel">
+        </div>
+
+        <div class="field">
+          <label for="f-email">Email <span class="req">*</span></label>
+          <input id="f-email" name="student_email" type="email"
+            placeholder="you@student.ump.edu.my" autocomplete="email" required>
+        </div>
+
+      </div>
+
+      <button type="submit" class="btn-submit" id="btn-submit">
+        Register &amp; Start Module →
+      </button>
+
+      <div class="msg" id="status-msg"></div>
+
+      <p class="privacy-note">
+        Your data is stored securely and accessible only to your instructor.<br>
+        It is used solely for educational research (J3 Study, UMPSA STEM Lab).
+      </p>
+    </form>
+  </div>
+
+</div>
+
+<footer style="background:#1e293b;color:#94a3b8;padding:32px 24px;font-size:13px;text-align:center">
+  <div style="max-width:900px;margin:0 auto">
+    <p>See · Think · Explore · Marvel</p>
+    <p>© 2026 Nurul Hazlina Noordin · UMPSA STEM Lab Engineering Education Initiative</p>
+  </div>
+</footer>
+
+<script>
+// ── CONFIGURATION ────────────────────────────────────────────────
+// After deploying your Apps Script, replace this URL:
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec";
+const LS_KEY = "umpsa_snake_student";
+
+// ── Check if already registered ──────────────────────────────────
+(function() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(LS_KEY) || "null");
+    if (saved && saved.matric) {
+      document.getElementById("already-done").style.display = "block";
+      document.getElementById("reg-form-wrap").style.display = "none";
+      document.getElementById("reg-name-display").textContent  = saved.name   || "";
+      document.getElementById("reg-matric-display").textContent = saved.matric || "";
+    }
+  } catch(e) {}
+  document.getElementById("re-register-link").addEventListener("click", function(ev) {
+    ev.preventDefault();
+    try { localStorage.removeItem(LS_KEY); } catch(e) {}
+    document.getElementById("already-done").style.display  = "none";
+    document.getElementById("reg-form-wrap").style.display = "block";
+  });
+})();
+
+// ── Auto-format MyKad ────────────────────────────────────────────
+document.getElementById("f-mykid").addEventListener("input", function() {
+  let v = this.value.replace(/\D/g,"");
+  if (v.length > 6) v = v.slice(0,6) + "-" + v.slice(6);
+  if (v.length > 9) v = v.slice(0,9) + "-" + v.slice(9);
+  this.value = v.slice(0,14);
+});
+
+// ── Form submit ───────────────────────────────────────────────────
+document.getElementById("reg-form").addEventListener("submit", async function(ev) {
+  ev.preventDefault();
+  const form   = ev.target;
+  const btn    = document.getElementById("btn-submit");
+  const msgBox = document.getElementById("status-msg");
+
+  if (!form.student_gender.value) {
+    showMsg("Please select your gender.", "err"); return;
+  }
+  const required = ["student_name","student_mykid","student_matric","student_email","student_state","student_age"];
+  for (const name of required) {
+    if (!getVal(form, name)) {
+      showMsg("Please fill in all required fields (marked with *).", "err"); return;
+    }
+  }
+
+  btn.disabled = true;
+  showMsg("Registering… please wait.", "loading");
+
+  const payload = {
+    type:                'student_reg',
+    student_name:        getVal(form,"student_name"),
+    student_gender:      getVal(form,"student_gender"),
+    student_mykid:       getVal(form,"student_mykid"),
+    student_matric:      getVal(form,"student_matric"),
+    student_class:       getVal(form,"student_class"),
+    student_school_code: getVal(form,"student_school_code"),
+    student_state:       getVal(form,"student_state"),
+    student_age:         getVal(form,"student_age"),
+    student_phone:       getVal(form,"student_phone"),
+    student_email:       getVal(form,"student_email"),
+  };
+
+  try {
+    // no-cors avoids CORS preflight — Apps Script gets the POST, we can't read the response
+    fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      mode:   "no-cors",
+      body:   JSON.stringify(payload),
+    });
+    saveLocal(payload);
+    showMsg("✓ Registration successful! Redirecting…", "ok");
+    btn.textContent = "Registered!";
+    setTimeout(() => { window.location.href = "index.html"; }, 2000);
+  } catch(err) {
+    showMsg("Could not reach the server. Check your connection.", "err");
+    btn.disabled = false;
+  }
+});
+
+function getVal(form, name) {
+  const el = form.elements[name];
+  if (!el) return "";
+  if (el.type === "radio") {
+    const c = form.querySelector(`input[name="${name}"]:checked`);
+    return c ? c.value : "";
+  }
+  return el.value.trim();
+}
+function showMsg(text, type) {
+  const b = document.getElementById("status-msg");
+  b.textContent = text; b.className = "msg " + type;
+}
+function saveLocal(data) {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({
+      name: data.student_name, matric: data.student_matric,
+      class: data.student_class, email: data.student_email,
+    }));
+  } catch(e) {}
+}
+</script>
+</body>
+</html>

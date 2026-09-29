@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Step 8 — Save High Score | Snake Game Tutorial</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.ct-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(13,85,167,.1);border:1px solid rgba(13,85,167,.3);border-radius:20px;padding:4px 12px;font-size:12.5px;font-weight:700;color:var(--blue);letter-spacing:.04em;margin:3px 4px 3px 0}
+.ct-badge.teal{background:rgba(2,173,165,.1);border-color:rgba(2,173,165,.3);color:var(--teal-dark)}
+.ct-badge.orange{background:rgba(245,162,29,.12);border-color:rgba(245,162,29,.4);color:#8a5c00}
+.ct-badge.red{background:rgba(200,0,0,.08);border-color:rgba(200,0,0,.25);color:var(--red)}
+.ct-spot{background:rgba(13,85,167,.05);border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0}
+.ct-spot h4{margin:0 0 6px;color:var(--blue);font-size:15px}.ct-spot p{margin:0;font-size:14.5px}
+.ct-spot.teal{background:rgba(2,173,165,.05);border-color:var(--teal)}.ct-spot.teal h4{color:var(--teal)}
+.ct-spot.orange{background:rgba(245,162,29,.05);border-color:#B87708}.ct-spot.orange h4{color:#B87708}
+.ct-spot.red{background:rgba(200,0,0,.04);border-color:var(--red)}.ct-spot.red h4{color:var(--red)}
+/* try/except diagram */
+.tryex{display:flex;flex-direction:column;gap:6px;margin:14px 0}
+.tryex-block{border-radius:10px;padding:12px 16px;font-family:monospace;font-size:13.5px}
+.tryex-try{background:rgba(2,173,165,.08);border:1px solid rgba(2,173,165,.3)}
+.tryex-except{background:rgba(245,162,29,.08);border:1px solid rgba(245,162,29,.3)}
+.tryex-finally{background:rgba(13,85,167,.08);border:1px solid rgba(13,85,167,.3)}
+.tryex-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.tryex-try .tryex-label{color:var(--teal)}
+.tryex-except .tryex-label{color:#B87708}
+.tryex-finally .tryex-label{color:var(--blue)}
+/* file IO flow */
+.io-flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:14px 0}
+.io-node{border-radius:8px;padding:10px 14px;font-size:13.5px;font-weight:600;text-align:center}
+.io-prog{background:rgba(13,85,167,.12);border:1px solid var(--blue);color:var(--blue)}
+.io-file{background:rgba(245,162,29,.12);border:1px solid #B87708;color:#8a5c00}
+.io-arrow{color:var(--muted);font-size:20px;font-weight:300}
+
+/* ── Common Mistakes ── */
+.mistake-grid{display:flex;flex-direction:column;gap:18px;margin:16px 0}
+.mistake-card{border-radius:12px;overflow:hidden;border:1.5px solid var(--line)}
+.mistake-hdr{padding:11px 16px;font-weight:700;font-size:14px}
+.mistake-hdr.err{background:rgba(200,0,0,.08);color:var(--red);border-bottom:1px solid rgba(200,0,0,.2)}
+.mistake-hdr.warn{background:rgba(245,162,29,.1);color:#8a5c00;border-bottom:1px solid rgba(245,162,29,.3)}
+.mistake-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.mistake-result{background:rgba(200,0,0,.06);border-left:3px solid var(--red);border-radius:0 8px 8px 0;
+  padding:10px 14px;font-size:13.5px;color:var(--ink)}
+pre.code.bad{border:1.5px solid rgba(200,0,0,.3)!important;margin:0!important}
+pre.code.good{border:1.5px solid rgba(86,211,100,.4)!important;margin:0!important}
+/* ── Quick Check ── */
+.qc-item{background:var(--card);border:1.5px solid var(--line);border-radius:12px;
+  padding:16px;margin-bottom:14px}
+.qc-q{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:12px;line-height:1.5}
+.qc-num{display:inline-flex;align-items:center;justify-content:center;
+  background:var(--teal);color:#fff;border-radius:50%;width:24px;height:24px;
+  font-size:13px;font-weight:800;margin-right:8px;flex-shrink:0;vertical-align:middle}
+.qc-opts{display:flex;flex-direction:column;gap:8px}
+.qc-btn{text-align:left;background:rgba(0,0,0,.04);border:1.5px solid var(--line);
+  border-radius:8px;padding:10px 14px;font-size:14px;cursor:pointer;
+  font-family:inherit;color:var(--ink);transition:border-color .15s,background .15s;line-height:1.5}
+.qc-btn:hover:not(:disabled){border-color:var(--teal);background:rgba(2,173,165,.05)}
+.qc-btn.qc-correct{background:rgba(86,211,100,.12);border-color:#56d364;color:#1a4a1e}
+.qc-btn.qc-wrong{background:rgba(200,0,0,.08);border-color:var(--red);color:#5a1010}
+.qc-feedback{margin-top:10px;font-size:14px;padding:10px 14px;border-radius:8px;display:none;line-height:1.5}
+.qc-feedback.qc-correct{background:rgba(86,211,100,.12);border:1px solid #56d364;color:#1a4a1e;display:block}
+.qc-feedback.qc-wrong{background:rgba(200,0,0,.08);border:1px solid var(--red);color:#5a1010;display:block}
+
+/* ── file I/O simulator ── */
+.fio-wrap{background:#0F1B22;border-radius:14px;padding:20px 16px;margin:14px 0}
+.fio-stage{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.fio-box{border-radius:10px;border:2px solid;padding:12px 14px;min-width:130px;text-align:center;transition:all .4s;font:13px/1.5 monospace}
+.fio-box.ram{border-color:#02ADA5;background:rgba(2,173,165,.1)}
+.fio-box.file{border-color:#F5A21D;background:rgba(245,162,29,.08)}
+.fio-box.ram .bx-title{color:#02ADA5;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.fio-box.file .bx-title{color:#F5A21D;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.fio-box .bx-content{margin-top:6px;color:#E6EDF3;min-height:40px}
+.fio-box .bx-content .gone{color:#5b7284;font-style:italic}
+.fio-arrow{font-size:28px;transition:all .4s;opacity:.3}
+.fio-arrow.active{opacity:1;animation:pulse-arr .5s 2}
+@keyframes pulse-arr{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
+.fio-info{min-height:52px;padding:10px 14px;border-radius:8px;background:rgba(255,255,255,.04);color:#E6EDF3;font:13px/1.6 monospace;margin:10px 0}
+.fio-info .kw{color:#FF7B72}.fio-info .st{color:#A5D6FF}.fio-info .nb{color:#F5A21D}.fio-info .ok{color:#56d364}
+.fio-btns{display:flex;gap:8px;flex-wrap:wrap}
+.fio-btn{padding:7px 16px;border-radius:7px;border:none;cursor:pointer;font:600 13px system-ui;background:#02ADA5;color:#fff;transition:opacity .2s}
+.fio-btn:disabled{opacity:.35;cursor:default}
+.fio-btn.reset{background:#5b7284}
+.fio-file-lines{text-align:left;font-size:11px;line-height:1.6;color:#56d364;min-height:36px}
+</style>
+</head>
+<body>
+<div class="chev" id="chev"><span id="see-box">See</span><span>Think</span><span>Explore</span><span>Marvel</span></div>
+<nav class="sitenav"><div class="wrap">
+  <a class="brand" href="index.html">Snake Game <span>Python Tutorial</span></a>
+  <details class="navsel"><summary>Steps</summary><div class="navmenu" role="menu">
+      <a href="step-1.html"><b>Step 1</b>: Variables &amp; Setup</a>
+      <a href="step-2.html"><b>Step 2</b>: Loop &amp; Events</a>
+      <a href="step-3.html"><b>Step 3</b>: Direction Control</a>
+      <a href="step-4.html"><b>Step 4</b>: Snake Body ⭐</a>
+      <a href="step-5.html"><b>Step 5</b>: Bonus Food 🌟</a>
+      <a href="step-6.html"><b>Step 6</b>: Functions</a>
+      <a href="step-7.html"><b>Step 7</b>: Wrap-Around ⭐</a>
+      <a href="step-8.html" aria-current="page"><b>Step 8</b>: Save High Score</a>
+      <a href="step-9.html"><b>Step 9</b>: OOP Refactor</a>
+      <a href="step-10.html"><b>Step 10</b>: ML Extension</a>
+    </div></details>
+  <a class="nl" href="index.html">Home</a>
+</div></nav>
+<header class="hero"><div class="wrap">
+  <p class="eyebrow">UMPSA STEM LAB · Step 8 of 10</p>
+  <h1>Step 8 — Save High Score</h1>
+  <p class="sub">Make your game remember the high score between sessions using file I/O, try/except error handling, f-strings, and a dictionary to store player scores.</p>
+  <div class="pills"><span class="pill">open()</span><span class="pill">read / write</span><span class="pill">try / except</span><span class="pill">f-string</span><span class="pill">dict</span></div>
+</div></header>
+<div class="progress-bar"><div class="wrap"><div class="track"><i style="width:78%"></i></div><b>Step 8 / 10</b></div></div>
+<div class="wrap">
+
+<section>
+  <h2>The Problem: Data Vanishes When the Program Ends</h2>
+  <p class="lede">Variables live in RAM. When Python exits, they're gone. To make the high score <em>persist</em>, we write it to a file on disk that survives between runs.</p>
+
+  <div class="io-flow">
+    <div class="io-node io-prog">Python program<br><small>score = 42</small></div>
+    <div class="io-arrow">→ write →</div>
+    <div class="io-node io-file">highscore.txt<br><small>"42"</small></div>
+    <div class="io-arrow">← read ←</div>
+    <div class="io-node io-prog">Next run<br><small>best = 42</small></div>
+  </div>
+
+  <div class="ct-spot">
+    <h4>🔄 Pattern Recognition — persistence pattern</h4>
+    <p>This is one of the most common patterns in software: RAM is fast but volatile (disappears on quit), disk is slow but persistent. Every app you use does this: a game saves to a save file, a browser saves bookmarks, a word processor saves documents. The pattern is always: read state from disk at start → modify in RAM → write back to disk on change.</p>
+  </div>
+</section>
+
+<section>
+  <h2>File I/O Basics</h2>
+  <p class="lede">Python's <code>open()</code> function opens a file. The <code>with</code> statement ensures the file is properly closed even if an error occurs.</p>
+
+  <div class="step"><div class="idx">1</div><div class="body">
+    <h4>Writing to a file</h4>
+    <pre class="code">score = 42
+with open("highscore.txt", "w") as f:
+    f.write(str(score))
+# File now contains the text "42"
+# "w" mode: creates file if not exists, overwrites if it does</pre>
+  </div></div>
+
+  <div class="step"><div class="idx">2</div><div class="body">
+    <h4>Reading from a file</h4>
+    <pre class="code">with open("highscore.txt", "r") as f:
+    content = f.read()        # read all text as a string
+    high = int(content)       # convert "42" → 42
+# "r" mode: read-only (file must exist)
+print(f"High score: {high}")  # f-string!</pre>
+  </div></div>
+
+  <div class="step"><div class="idx">3</div><div class="body">
+    <h4>File open modes</h4>
+    <table>
+      <thead><tr><th>Mode</th><th>Meaning</th><th>File missing?</th></tr></thead>
+      <tbody>
+        <tr><td><code>"r"</code></td><td>Read only</td><td>❌ Error!</td></tr>
+        <tr><td><code>"w"</code></td><td>Write (overwrite)</td><td>✅ Creates it</td></tr>
+        <tr><td><code>"a"</code></td><td>Append</td><td>✅ Creates it</td></tr>
+        <tr><td><code>"r+"</code></td><td>Read + write</td><td>❌ Error!</td></tr>
+      </tbody>
+    </table>
+  </div></div>
+</section>
+
+
+<section>
+  <h2>&#127381; Watch File I/O — Interactive Simulator</h2>
+  <p>Press each button in order to see exactly what Python does when it writes to, and then reads from, a file. Notice how RAM is <em>cleared</em> between runs — but the file persists.</p>
+
+  <div class="fio-wrap">
+    <div class="fio-stage">
+      <div class="fio-box ram" id="fio-ram">
+        <div class="bx-title">Python RAM</div>
+        <div class="bx-content" id="fio-ram-content">score = 0<br>high = 0</div>
+      </div>
+      <div class="fio-arrow" id="fio-arr1">→</div>
+      <div class="fio-box file" id="fio-file">
+        <div class="bx-title">💾 highscore.txt</div>
+        <div class="bx-content">
+          <div class="fio-file-lines" id="fio-file-lines"><span style="color:#5b7284">(empty)</span></div>
+        </div>
+      </div>
+      <div class="fio-arrow" id="fio-arr2">→</div>
+      <div class="fio-box ram" id="fio-ram2">
+        <div class="bx-title">Python RAM<br><span style="color:#5b7284;font-size:10px">(next run)</span></div>
+        <div class="bx-content" id="fio-ram2-content"><span style="color:#5b7284">—</span></div>
+      </div>
+    </div>
+    <div class="fio-info" id="fio-info">Press <strong>1. Write score</strong> to begin.</div>
+    <div class="fio-btns">
+      <button class="fio-btn" id="fio-b1">1. Write score</button>
+      <button class="fio-btn" id="fio-b2" disabled>2. End program</button>
+      <button class="fio-btn" id="fio-b3" disabled>3. New game starts</button>
+      <button class="fio-btn" id="fio-b4" disabled>4. Read score</button>
+      <button class="fio-btn reset" id="fio-reset">↺ Restart</button>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>try / except — Handling Errors Gracefully</h2>
+  <p class="lede">What happens the <em>first time</em> you run the game? The highscore file doesn't exist yet. Reading it would crash the program. <code>try/except</code> handles this gracefully.</p>
+
+  <div class="ct-spot red">
+    <h4>📋 Algorithm Design — defensive programming</h4>
+    <p>Professional software assumes things will go wrong: files won't exist, networks will time out, users will enter bad data. <code>try/except</code> is Python's way of making code <em>robust</em> — it tries the risky operation and provides a fallback when it fails. This is called defensive programming, and it's what separates hobby code from production code.</p>
+  </div>
+
+  <div class="tryex">
+    <div class="tryex-block tryex-try">
+      <div class="tryex-label">try — attempt the risky operation</div>
+      <pre style="margin:0;background:none;padding:0;font-family:monospace;font-size:13px;color:#E6EDF3">with open("highscore.txt", "r") as f:
+    best = int(f.read())   # might fail!</pre>
+    </div>
+    <div class="tryex-block tryex-except">
+      <div class="tryex-label">except — runs only if try failed</div>
+      <pre style="margin:0;background:none;padding:0;font-family:monospace;font-size:13px;color:#E6EDF3">except (FileNotFoundError, ValueError):
+    best = 0   # first run, or corrupted file</pre>
+    </div>
+  </div>
+
+  <p><code>FileNotFoundError</code> — file doesn't exist (first run). <code>ValueError</code> — file contains invalid text (corrupted). Both are caught and handled with a sensible default of 0.</p>
+</section>
+
+<section>
+  <h2>f-Strings — Formatted String Literals</h2>
+  <p class="lede">f-strings embed expressions directly inside strings. They're the cleanest way to combine text and variables in Python 3.6+.</p>
+
+  <pre class="code">score = 42; player = "Ahmad"; best = 100
+
+# Old way (clunky)
+msg = "Player " + player + " scored " + str(score)
+
+# f-string (clean)
+msg = f"Player {player} scored {score}"
+
+# f-strings can evaluate expressions!
+msg = f"Score: {score}  Best: {best}  New best: {score > best}"
+# → "Score: 42  Best: 100  New best: False"
+
+msg = f"You scored {score/best*100:.1f}% of the high score"
+# → "You scored 42.0% of the high score"
+# {value:.1f} = format as float with 1 decimal place</pre>
+</section>
+
+<section>
+  <h2>Leaderboard with a Dictionary</h2>
+  <p class="lede">Store scores for multiple players using a dictionary: player name → top score.</p>
+
+  <pre class="code">import json   # for saving/loading dictionaries as text
+
+# Load leaderboard from file
+def load_scores(filename="scores.json"):
+    try:
+        with open(filename, "r") as f:
+            return json.load(f)   # JSON → Python dict
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}   # empty dict on first run
+
+# Save leaderboard to file
+def save_scores(scores, filename="scores.json"):
+    with open(filename, "w") as f:
+        json.dump(scores, f, indent=2)   # Python dict → JSON
+
+# Usage:
+scores = load_scores()
+player = "Ahmad"
+if player not in scores or score &gt; scores[player]:
+    scores[player] = score   # new high score!
+    save_scores(scores)
+
+# scores.json on disk looks like:
+# {
+#   "Ahmad": 42,
+#   "Nurul": 87,
+#   "Zafri": 15
+# }</pre>
+
+  <div class="ct-spot teal">
+    <h4>💡 Abstraction — JSON as a data format</h4>
+    <p>JSON (JavaScript Object Notation) is a text format that looks almost identical to Python dictionaries and lists. It's the universal language of data exchange — REST APIs, config files, and databases all use it. Python's <code>json</code> module converts between Python objects and JSON text.</p>
+  </div>
+</section>
+
+<section>
+  <h2>The Full Step 8 Code</h2>
+  <div class="tabs">
+    <button aria-selected="true"  data-tab="tab-new7">New Functions</button>
+    <button aria-selected="false" data-tab="tab-full7">Full Code</button>
+  </div>
+  <div class="panel" id="tab-new7">
+    <pre class="code">import json   # add to imports at top
+
+# ── New functions (add above the while loop) ───────────────────
+SCORE_FILE = "highscore.txt"
+
+def load_high_score():
+    """Load high score from file. Returns 0 if file doesn't exist."""
+    try:
+        with open(SCORE_FILE, "r") as f:
+            return int(f.read().strip())
+    except (FileNotFoundError, ValueError):
+        return 0
+
+def save_high_score(score):
+    """Save high score to file if it's a new record."""
+    current_best = load_high_score()
+    if score &gt; current_best:
+        with open(SCORE_FILE, "w") as f:
+            f.write(str(score))
+        return True   # new record!
+    return False
+
+# ── Startup ────────────────────────────────────────────────────
+high_score = load_high_score()   # load before the loop
+
+# ── In draw_game() — add high score to display ─────────────────
+screen.blit(font.render(
+    f"Score: {score}  Best: {high_score}", True, WHITE), (8, 6))
+
+# ── After the game loop ends ───────────────────────────────────
+is_new_record = save_high_score(score)
+if is_new_record:
+    print(f"🎉 New high score: {score}!")</pre>
+  </div>
+  <div class="panel" id="tab-full7" hidden>
+    <pre class="code">import pygame, random
+pygame.init()
+GRID_COLS=20; GRID_ROWS=15; CELL_SIZE=30; SNAKE_SPEED=8
+WHITE=(255,255,255); GREEN=(0,200,80); DKGREEN=(0,160,50); RED=(220,50,50); BG=(30,30,30)
+WINDOW_W=GRID_COLS*CELL_SIZE; WINDOW_H=GRID_ROWS*CELL_SIZE
+MOVES={"RIGHT":(1,0),"LEFT":(-1,0),"UP":(0,-1),"DOWN":(0,1)}
+SCORE_FILE="highscore.txt"
+
+def load_high_score():
+    try:
+        with open(SCORE_FILE,"r") as f: return int(f.read().strip())
+    except(FileNotFoundError,ValueError): return 0
+
+def save_high_score(score):
+    best=load_high_score()
+    if score>best:
+        with open(SCORE_FILE,"w") as f: f.write(str(score))
+        return True
+    return False
+
+def draw_game(screen,snake,food,score,high,font):
+    screen.fill(BG)
+    for i,(cx,cy) in enumerate(snake):
+        pygame.draw.rect(screen,DKGREEN if i==0 else GREEN,
+            pygame.Rect(cx*CELL_SIZE,cy*CELL_SIZE,CELL_SIZE-2,CELL_SIZE-2),border_radius=4)
+    fx,fy=food
+    pygame.draw.circle(screen,RED,(fx*CELL_SIZE+CELL_SIZE//2,fy*CELL_SIZE+CELL_SIZE//2),CELL_SIZE//3)
+    screen.blit(font.render(f"Score:{score}  Best:{high}",True,WHITE),(8,6))
+    pygame.display.flip()
+
+def update_game(snake,direction,food,score):
+    hx,hy=snake[0]; dx,dy=MOVES[direction]
+    hx+=dx; hy+=dy; hx%=GRID_COLS; hy%=GRID_ROWS
+    new_head=(hx,hy)
+    if new_head in snake[1:]: return snake,food,score,False
+    ate=new_head==food; snake.insert(0,new_head)
+    if ate: score+=1; food=(random.randint(0,GRID_COLS-1),random.randint(0,GRID_ROWS-1))
+    else: snake.pop()
+    return snake,food,score,True
+
+screen=pygame.display.set_mode((WINDOW_W,WINDOW_H)); pygame.display.set_caption("Snake")
+font=pygame.font.SysFont(None,28); clock=pygame.time.Clock()
+high_score=load_high_score(); running=True; direction="RIGHT"
+snake=[(10,7),(9,7),(8,7)]; food=(random.randint(0,GRID_COLS-1),random.randint(0,GRID_ROWS-1)); score=0
+
+while running:
+    for event in pygame.event.get():
+        if event.type==pygame.QUIT: running=False
+        if event.type==pygame.KEYDOWN:
+            if event.key==pygame.K_ESCAPE: running=False
+            if   event.key==pygame.K_UP and direction!="DOWN": direction="UP"
+            elif event.key==pygame.K_DOWN and direction!="UP": direction="DOWN"
+            elif event.key==pygame.K_LEFT and direction!="RIGHT": direction="LEFT"
+            elif event.key==pygame.K_RIGHT and direction!="LEFT": direction="RIGHT"
+    snake,food,score,running=update_game(snake,direction,food,score)
+    draw_game(screen,snake,food,score,high_score,font)
+    clock.tick(SNAKE_SPEED)
+
+if save_high_score(score): print(f"New high score: {score}!")
+pygame.quit()</pre>
+  </div>
+</section>
+
+<section>
+  <h2>Try It — Exercises</h2>
+  <div class="step"><div class="idx">1</div><div class="body">
+    <h4>Verify persistence <span class="ct-badge teal" style="vertical-align:middle">🔄 Pattern</span></h4>
+    <p>Run the game, get a score of 5, close it. Open <code>highscore.txt</code> in a text editor — what's in it? Run again, get score 3. Does the file change? Get score 10. Does it change now?</p>
+  </div></div>
+  <div class="step"><div class="idx">2</div><div class="body">
+    <h4>Display "NEW RECORD!" <span class="ct-badge red" style="vertical-align:middle">📋 Algorithm</span></h4>
+    <p>In <code>draw_game</code>, add a boolean parameter <code>is_record</code>. If True, draw a flashing "NEW RECORD!" text in gold. Alternate visibility with <code>frame_count % 30 &lt; 15</code>.</p>
+  </div></div>
+  <div class="step"><div class="idx">3</div><div class="body">
+    <h4>Name entry <span class="ct-badge orange" style="vertical-align:middle">💡 Abstraction</span></h4>
+    <p>Ask for the player's name at startup using <code>name = input("Enter your name: ")</code>. Save scores as <code>{"Ahmad":42, "Nurul":87}</code> using the JSON approach. Print the top 3 scores on game over.</p>
+  </div></div>
+</section>
+
+
+
+<!-- ══ Common Mistakes ══ -->
+<section>
+  <h2>&#9888;&#65039; Common Mistakes &#x2014; Spot These Before You Start</h2>
+  <p class="lede">These are the errors beginners make most often in Step 8. Read them now so you can recognise them in your own code.</p>
+  <div class="mistake-grid">
+<div class="mistake-card">
+      <div class="mistake-hdr err">&#10007; Mistake 1: Opening with <code>"w"</code> mode when you want to read</div>
+      <div class="mistake-body">
+        <pre class="code bad">with open("high_score.txt", "w") as f:
+    data = f.read()    # error &#x2014; "w" doesn't allow reading!</pre>
+        <div class="mistake-result">&#x1F41E; Mode <code>"w"</code> opens for writing and <em>immediately erases all existing content</em>. Every run wipes the saved score even before reading it.</div>
+        <pre class="code good">with open("high_score.txt", "r") as f:    # read mode
+    data = f.read()</pre>
+      </div>
+    </div>
+    <div class="mistake-card">
+      <div class="mistake-hdr err">&#10007; Mistake 2: Comparing a string score to an integer</div>
+      <div class="mistake-body">
+        <pre class="code bad">saved = f.read()           # saved = "42" (a string)
+if score > saved:          # comparing int to str &#x2014; TypeError!</pre>
+        <div class="mistake-result">&#x1F41E; Files always return strings. You must convert to int before comparing with the game's integer score.</div>
+        <pre class="code good">saved = int(f.read())      # convert string to int first
+if score > saved:</pre>
+      </div>
+    </div>
+    <div class="mistake-card">
+      <div class="mistake-hdr warn">&#9889; Mistake 3: Forgetting <code>try/except</code> for the first run</div>
+      <div class="mistake-body">
+        <pre class="code bad">with open("high_score.txt", "r") as f:
+    high = int(f.read())    # FileNotFoundError on first run!</pre>
+        <div class="mistake-result">&#x26A1; The file doesn't exist until the game runs at least once. Without <code>try/except</code>, the program crashes on every fresh install.</div>
+        <pre class="code good">try:
+    with open("high_score.txt", "r") as f:
+        high = int(f.read())
+except FileNotFoundError:
+    high = 0    # no file yet &#x2014; start from zero</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ Quick Check ══ -->
+<section>
+  <h2>&#9989; Quick Check &#x2014; Are You Ready?</h2>
+  <p class="lede">Three questions &#x2014; not graded. They help you spot gaps before the activities.</p>
+  <div id="qcheck">
+    <div class="qc-item">
+      <div class="qc-q"><span class="qc-num">1</span> What happens to an existing file when you open it with mode <code>"w"</code>?</div>
+      <div class="qc-opts">
+        <button class="qc-btn" data-q="1" data-ok="1">Its contents are immediately erased &#x2014; the file is truncated to zero bytes before you write anything.</button>
+        <button class="qc-btn" data-q="1" data-ok="0">Nothing &#x2014; mode <code>"w"</code> opens the file and keeps existing content.</button>
+        <button class="qc-btn" data-q="1" data-ok="0">Nothing &#x2014; mode <code>"w"</code> opens the file and keeps existing content.</button>
+      </div>
+      <div class="qc-feedback" id="qcfb1"></div>
+    </div>
+    <div class="qc-item">
+      <div class="qc-q"><span class="qc-num">2</span> Why must you call <code>int(f.read())</code> rather than just <code>f.read()</code>?</div>
+      <div class="qc-opts">
+        <button class="qc-btn" data-q="2" data-ok="1">File reads always return strings. You must convert to int before doing arithmetic or comparison with the game's integer score.</button>
+        <button class="qc-btn" data-q="2" data-ok="0">You don't need to &#x2014; Python automatically converts between strings and integers.</button>
+        <button class="qc-btn" data-q="2" data-ok="0">You don't need to &#x2014; Python automatically converts between strings and integers.</button>
+      </div>
+      <div class="qc-feedback" id="qcfb2"></div>
+    </div>
+    <div class="qc-item">
+      <div class="qc-q"><span class="qc-num">3</span> What does <code>f"Score: {score}"</code> produce when <code>score = 42</code>?</div>
+      <div class="qc-opts">
+        <button class="qc-btn" data-q="3" data-ok="1">The string <code>"Score: 42"</code> &#x2014; the <code>{score}</code> placeholder is replaced with the variable's value.</button>
+        <button class="qc-btn" data-q="3" data-ok="0">The string <code>"Score: {score}"</code> &#x2014; curly braces are printed literally.</button>
+        <button class="qc-btn" data-q="3" data-ok="0">The string <code>"Score: {score}"</code> &#x2014; curly braces are printed literally.</button>
+      </div>
+      <div class="qc-feedback" id="qcfb3"></div>
+    </div>
+  </div>
+
+  <div id="qcheck-result" hidden style="margin-top:20px;text-align:center;padding:18px;border-radius:12px;background:rgba(2,173,165,.08);border:1.5px solid var(--teal)">
+    <p style="margin:0;font-size:17px;font-weight:700;color:var(--teal-dark)" id="qcheck-msg"></p>
+  </div>
+
+</section>
+
+<div style="margin:40px 0 20px;text-align:center">
+  <p style="font-size:15px;color:var(--muted);margin-bottom:16px">You've covered all the concepts for Step 8. Time to apply them.</p>
+  <a href="step-8-activity.html" style="display:inline-flex;align-items:center;gap:10px;background:var(--teal);color:#fff;font-weight:700;font-size:16px;padding:14px 32px;border-radius:10px;text-decoration:none;transition:opacity .2s;box-shadow:0 4px 14px rgba(2,173,165,.35)" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+    Start Activities &rarr;
+    <span style="font-size:12px;font-weight:400;opacity:.85">Tier 1 &rarr; 2 &rarr; 3 &rarr; 4</span>
+  </a>
+</div>
+
+<div class="stepnav">
+  <a href="step-7.html"><small>Previous</small><b>← Wrap-Around</b></a>
+  <a href="step-9.html" class="next"><small>Next</small><b>Step 9: OOP Refactor →</b></a>
+</div>
+</div>
+<div id="teacher-reveal" hidden style="position:fixed;bottom:24px;right:24px;background:#08312F;color:#B9E4E1;border-radius:10px;padding:14px 18px;font-size:14px;z-index:999;border:1px solid rgba(255,255,255,.2);box-shadow:0 8px 24px rgba(0,0,0,.4)">
+  🔑 Teacher access: <a href="teacher-8.html" style="color:#8FD9D5">Open Teacher Notes →</a>
+</div>
+<footer><div class="wrap"><p><strong>See · Think · Explore · Marvel</strong><br>UMPSA STEM LAB · Snake Game Python Tutorial</p></div>  <p style="margin-top:10px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-weight:400">
+    <span>© 2026 Nurul Hazlina Noordin · UMPSA STEM Lab Engineering Education Initiative</span>
+    <a href="https://ee.ump.edu.my/hazlina/#research" target="_blank" rel="noopener"
+       title="Visit research page" aria-label="Research website"
+       style="color:var(--teal);display:inline-flex;align-items:center;transition:opacity .15s"
+       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="2" y1="12" x2="22" y2="12"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    </a>
+    <a href="mailto:hazlina@umpsa.edu.my"
+       title="hazlina@umpsa.edu.my" aria-label="Email Dr Nurul Hazlina"
+       style="color:var(--teal);display:inline-flex;align-items:center;transition:opacity .15s"
+       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true">
+        <rect x="2" y="4" width="20" height="16" rx="2"/>
+        <polyline points="2,4 12,13 22,4"/>
+      </svg>
+    </a>
+  </p>
+</footer>
+<script>
+document.querySelectorAll('.tabs').forEach(function(tb){tb.querySelectorAll('button').forEach(function(btn){btn.addEventListener('click',function(){tb.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-selected','false');});btn.setAttribute('aria-selected','true');var sec=tb.closest('section')||tb.parentElement;sec.querySelectorAll('.panel').forEach(function(p){p.hidden=true;});var t=sec.querySelector('#'+btn.dataset.tab);if(t)t.hidden=false;});});});
+(function(){var clicks=0,timer,box=document.getElementById('see-box');if(!box)return;box.style.cursor='pointer';box.addEventListener('click',function(){clicks++;clearTimeout(timer);timer=setTimeout(function(){clicks=0;},1500);if(clicks>=3){clicks=0;var el=document.getElementById('teacher-reveal');if(el)el.hidden=false;}});})();
+document.querySelectorAll('pre.code').forEach(function(pre){var lines=pre.textContent.split('\n');if(lines.length&&lines[lines.length-1].trim()==='')lines.pop();pre.innerHTML=lines.map(function(line,i){var ln=String(i+1).padStart(3,' ');var esc=line.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');return '<span class="code-ln">'+ln+'</span>'+esc;}).join('\n');});
+
+/* ══ QUICK CHECK QUIZ ══ */
+(function(){
+  var answered={};
+  var score=0;
+  var total=0;
+  document.querySelectorAll('#qcheck .qc-item').forEach(function(item,i){total++;answered[i]=false;});
+  document.querySelectorAll('#qcheck .qc-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var q=+btn.getAttribute('data-q');
+      if(answered[q]) return;
+      answered[q]=true;
+      var isOk=btn.getAttribute('data-ok')==='1';
+      if(isOk) score++;
+      btn.classList.add(isOk?'qc-correct':'qc-wrong');
+      var item=btn.closest('.qc-item');
+      // show correct answer if wrong
+      if(!isOk){
+        item.querySelectorAll('[data-ok="1"]').forEach(function(b){b.classList.add('qc-correct');});
+      }
+      // disable all buttons in this question
+      item.querySelectorAll('.qc-btn').forEach(function(b){b.disabled=true;});
+      // set feedback text
+      var fbEl=document.getElementById('qcfb'+q);
+      if(fbEl){
+        if(isOk){
+          fbEl.innerHTML='&#10003; Correct!';
+        } else {
+          var okBtn=item.querySelector('[data-ok="1"]');
+          var okLabel=okBtn?okBtn.textContent.trim():'';
+          fbEl.innerHTML='&#10007; Not quite. The right answer: <strong>'+okLabel+'</strong>';
+        }
+        fbEl.className='qc-feedback '+(isOk?'qc-correct':'qc-wrong');
+      }
+      // check if all answered
+      var allDone=true;
+      for(var k in answered){if(!answered[k]){allDone=false;break;}}
+      if(allDone){
+        var res=document.getElementById('qcheck-result');
+        var msg=document.getElementById('qcheck-msg');
+        if(res&&msg){
+          res.hidden=false;
+          var pct=Math.round(score/total*100);
+          if(pct===100) msg.textContent='Perfect — '+score+'/'+total+'! You are ready to move on. 🚀';
+          else if(pct>=67) msg.textContent='Good — '+score+'/'+total+'. Review the misses above, then continue.';
+          else msg.textContent=''+score+'/'+total+' — re-read the sections above, then try again.';
+        }
+      }
+    });
+  });
+})();
+
+/* ══ FILE I/O SIMULATOR ══ */
+(function(){
+  var ram1=document.getElementById('fio-ram-content');
+  var ram2=document.getElementById('fio-ram2-content');
+  var lines=document.getElementById('fio-file-lines');
+  var info=document.getElementById('fio-info');
+  var arr1=document.getElementById('fio-arr1');
+  var arr2=document.getElementById('fio-arr2');
+  var b1=document.getElementById('fio-b1');
+  var b2=document.getElementById('fio-b2');
+  var b3=document.getElementById('fio-b3');
+  var b4=document.getElementById('fio-b4');
+  var br=document.getElementById('fio-reset');
+  if(!b1) return;
+
+  function pulse(el){el.classList.remove('active');void el.offsetWidth;el.classList.add('active');}
+
+  b1.addEventListener('click',function(){
+    b1.disabled=true;
+    ram1.innerHTML='score = <span style="color:#F5A21D">42</span><br>high = <span style="color:#F5A21D">42</span>';
+    info.innerHTML='<span class="kw">with open</span>(<span class="st">"highscore.txt"</span>, <span class="st">"w"</span>) <span class="kw">as</span> f:<br>&nbsp;&nbsp;f.write(<span class="st">"42\\n"</span>)<br>Python writes the score to disk.';
+    pulse(arr1);
+    setTimeout(function(){lines.innerHTML='<span style="color:#56d364">42</span>';b2.disabled=false;},600);
+  });
+
+  b2.addEventListener('click',function(){
+    b2.disabled=true;
+    info.innerHTML='Program ends. <span class="kw">All RAM is cleared.</span>\n<span style="color:#5b7284">Variables like score, high no longer exist.\nBut the file stays on disk — it is <em>persistent</em>.</span>';
+    setTimeout(function(){
+      ram1.innerHTML='<span class="gone">— program ended —</span><br><span class="gone">RAM cleared</span>';
+      b3.disabled=false;
+    },400);
+  });
+
+  b3.addEventListener('click',function(){
+    b3.disabled=true;
+    ram2.innerHTML='high = <span style="color:#5b7284">?</span>';
+    info.innerHTML='New game session starts.\n<span class="kw">score</span> = 0  ← fresh start\n<span class="kw">high</span> = ?  ← need to read the file!';
+    b4.disabled=false;
+  });
+
+  b4.addEventListener('click',function(){
+    b4.disabled=true;
+    info.innerHTML='<span class="kw">with open</span>(<span class="st">"highscore.txt"</span>, <span class="st">"r"</span>) <span class="kw">as</span> f:<br>&nbsp;&nbsp;high = <span class="nb">int</span>(f.read())<br>Reading "42" from disk → converting to integer → storing in high.';
+    pulse(arr2);
+    setTimeout(function(){
+      ram2.innerHTML='score = <span style="color:#F5A21D">0</span><br>high = <span style="color:#56d364">42</span> ← loaded!';
+      info.innerHTML='<span class="ok">✓ high score restored!</span>\nThe file bridged the gap between two separate program runs.\nThis is why file I/O matters: <strong>persistence</strong>.';
+    },700);
+  });
+
+  br.addEventListener('click',function(){
+    b1.disabled=false;b2.disabled=true;b3.disabled=true;b4.disabled=true;
+    ram1.innerHTML='score = 0<br>high = 0';
+    ram2.innerHTML='<span style="color:#5b7284">—</span>';
+    lines.innerHTML='<span style="color:#5b7284">(empty)</span>';
+    arr1.classList.remove('active');arr2.classList.remove('active');
+    info.textContent='Press 1. Write score to begin.';
+  });
+})();
+
+</script>
+</body>
+</html>

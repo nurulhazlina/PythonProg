@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Step 10 — ML Extension | Snake Game Tutorial</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.ct-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(13,85,167,.1);border:1px solid rgba(13,85,167,.3);border-radius:20px;padding:4px 12px;font-size:12.5px;font-weight:700;color:var(--blue);letter-spacing:.04em;margin:3px 4px 3px 0}
+.ct-badge.teal{background:rgba(2,173,165,.1);border-color:rgba(2,173,165,.3);color:var(--teal-dark)}
+.ct-badge.orange{background:rgba(245,162,29,.12);border-color:rgba(245,162,29,.4);color:#8a5c00}
+.ct-badge.red{background:rgba(200,0,0,.08);border-color:rgba(200,0,0,.25);color:var(--red)}
+.ct-spot{background:rgba(13,85,167,.05);border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0}
+.ct-spot h4{margin:0 0 6px;color:var(--blue);font-size:15px}.ct-spot p{margin:0;font-size:14.5px}
+.ct-spot.teal{background:rgba(2,173,165,.05);border-color:var(--teal)}.ct-spot.teal h4{color:var(--teal)}
+.ct-spot.orange{background:rgba(245,162,29,.05);border-color:#B87708}.ct-spot.orange h4{color:#B87708}
+.ct-spot.red{background:rgba(200,0,0,.04);border-color:var(--red)}.ct-spot.red h4{color:var(--red)}
+/* RL diagram */
+.rl-cycle{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin:20px 0}
+.rl-box{border-radius:10px;padding:12px 18px;text-align:center;font-weight:700;font-size:14px;min-width:90px}
+.rl-agent{background:rgba(13,85,167,.15);border:2px solid var(--blue);color:var(--blue)}
+.rl-env{background:rgba(2,173,165,.12);border:2px solid var(--teal);color:var(--teal)}
+.rl-arrow{color:var(--muted);font-size:18px}
+/* Q-table */
+.qtable{font-family:monospace;font-size:12.5px;border-collapse:collapse;width:100%;margin:14px 0;overflow-x:auto;display:block}
+.qtable th{background:rgba(13,85,167,.15);color:var(--blue);padding:7px 10px;text-align:center;border:1px solid rgba(255,255,255,.1)}
+.qtable td{padding:5px 10px;text-align:center;border:1px solid rgba(255,255,255,.07);color:#E6EDF3}
+.qtable td.best{background:rgba(86,211,100,.12);color:#56d364;font-weight:700}
+.qtable td.worst{background:rgba(200,0,0,.08);color:#FF7B72}
+.qtable tr:nth-child(even) td{background:rgba(255,255,255,.03)}
+
+/* ── Common Mistakes ── */
+.mistake-grid{display:flex;flex-direction:column;gap:18px;margin:16px 0}
+.mistake-card{border-radius:12px;overflow:hidden;border:1.5px solid var(--line)}
+.mistake-hdr{padding:11px 16px;font-weight:700;font-size:14px}
+.mistake-hdr.err{background:rgba(200,0,0,.08);color:var(--red);border-bottom:1px solid rgba(200,0,0,.2)}
+.mistake-hdr.warn{background:rgba(245,162,29,.1);color:#8a5c00;border-bottom:1px solid rgba(245,162,29,.3)}
+.mistake-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.mistake-result{background:rgba(200,0,0,.06);border-left:3px solid var(--red);border-radius:0 8px 8px 0;
+  padding:10px 14px;font-size:13.5px;color:var(--ink)}
+pre.code.bad{border:1.5px solid rgba(200,0,0,.3)!important;margin:0!important}
+pre.code.good{border:1.5px solid rgba(86,211,100,.4)!important;margin:0!important}
+/* ── Quick Check ── */
+.qc-item{background:var(--card);border:1.5px solid var(--line);border-radius:12px;
+  padding:16px;margin-bottom:14px}
+.qc-q{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:12px;line-height:1.5}
+.qc-num{display:inline-flex;align-items:center;justify-content:center;
+  background:var(--teal);color:#fff;border-radius:50%;width:24px;height:24px;
+  font-size:13px;font-weight:800;margin-right:8px;flex-shrink:0;vertical-align:middle}
+.qc-opts{display:flex;flex-direction:column;gap:8px}
+.qc-btn{text-align:left;background:rgba(0,0,0,.04);border:1.5px solid var(--line);
+  border-radius:8px;padding:10px 14px;font-size:14px;cursor:pointer;
+  font-family:inherit;color:var(--ink);transition:border-color .15s,background .15s;line-height:1.5}
+.qc-btn:hover:not(:disabled){border-color:var(--teal);background:rgba(2,173,165,.05)}
+.qc-btn.qc-correct{background:rgba(86,211,100,.12);border-color:#56d364;color:#1a4a1e}
+.qc-btn.qc-wrong{background:rgba(200,0,0,.08);border-color:var(--red);color:#5a1010}
+.qc-feedback{margin-top:10px;font-size:14px;padding:10px 14px;border-radius:8px;display:none;line-height:1.5}
+.qc-feedback.qc-correct{background:rgba(86,211,100,.12);border:1px solid #56d364;color:#1a4a1e;display:block}
+.qc-feedback.qc-wrong{background:rgba(200,0,0,.08);border:1px solid var(--red);color:#5a1010;display:block}
+
+/* ── state visualizer ── */
+.sv-wrap{background:#0F1B22;border-radius:14px;padding:16px;margin:14px 0;display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+#sv-canvas{display:block;border-radius:10px;flex-shrink:0;max-width:100%}
+.sv-features{flex:1;min-width:210px}
+.sv-feat-title{color:#79C0FF;font:700 11px monospace;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
+.sv-feat{display:flex;align-items:center;gap:8px;margin:4px 0;font:12px monospace;color:#E6EDF3;border-radius:6px;padding:3px 6px;transition:background .2s}
+.sv-feat.t{background:rgba(86,211,100,.1)}
+.sv-feat.f{background:rgba(255,123,114,.06)}
+.sv-feat .fv{font-weight:700;width:36px;text-align:right}
+.sv-feat.t .fv{color:#56d364}.sv-feat.f .fv{color:#5b7284}
+.sv-feat .fi{font-size:10px;color:#5b7284;margin-left:4px}
+.sv-tuple{font:11px/1.5 monospace;color:#E6EDF3;background:rgba(255,255,255,.04);border-radius:8px;padding:8px 10px;margin-top:10px;word-break:break-all}
+.sv-tuple .tt{color:#D2A8FF}.sv-tuple .tv{color:#56d364}.sv-tuple .tf{color:#5b7284}
+.sv-hint{color:#8B949E;font:11px monospace;margin-top:6px}
+.sv-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.sv-btn{padding:6px 14px;border-radius:7px;border:none;cursor:pointer;font:600 12px system-ui;color:#fff;background:#02ADA5}
+.sv-btn.reset{background:#5b7284}
+</style>
+</head>
+<body>
+<div class="chev" id="chev"><span id="see-box">See</span><span>Think</span><span>Explore</span><span>Marvel</span></div>
+<nav class="sitenav"><div class="wrap">
+  <a class="brand" href="index.html">Snake Game <span>Python Tutorial</span></a>
+  <details class="navsel"><summary>Steps</summary><div class="navmenu" role="menu">
+      <a href="step-1.html"><b>Step 1</b>: Variables &amp; Setup</a>
+      <a href="step-2.html"><b>Step 2</b>: Loop &amp; Events</a>
+      <a href="step-3.html"><b>Step 3</b>: Direction Control</a>
+      <a href="step-4.html"><b>Step 4</b>: Snake Body ⭐</a>
+      <a href="step-5.html"><b>Step 5</b>: Bonus Food 🌟</a>
+      <a href="step-6.html"><b>Step 6</b>: Functions</a>
+      <a href="step-7.html"><b>Step 7</b>: Wrap-Around ⭐</a>
+      <a href="step-8.html"><b>Step 8</b>: Save High Score</a>
+      <a href="step-9.html"><b>Step 9</b>: OOP Refactor</a>
+      <a href="step-10.html" aria-current="page"><b>Step 10</b>: ML Extension</a>
+    </div></details>
+  <a class="nl" href="index.html">Home</a>
+</div></nav>
+<header class="hero"><div class="wrap">
+  <p class="eyebrow">UMPSA STEM LAB · Step 10 of 10 · Extension</p>
+  <h1>Step 10 — ML Extension 🤖</h1>
+  <p class="sub">Teach a computer to play Snake by itself using Q-Learning — a Reinforcement Learning algorithm. No AI library needed, just dictionaries and loops.</p>
+  <div class="pills"><span class="pill">Q-Learning</span><span class="pill">State space</span><span class="pill">Q-table (dict)</span><span class="pill">Reward signal</span><span class="pill">ε-greedy</span></div>
+</div></header>
+<div class="progress-bar"><div class="wrap"><div class="track"><i style="width:100%"></i></div><b>Step 10 / 10</b></div></div>
+<div class="wrap">
+
+<section>
+  <h2>The Big Idea: Learning by Trial and Error</h2>
+  <p class="lede">Instead of a human pressing keys, an AI <em>agent</em> chooses actions by looking up a table of learned values (the Q-table). Over thousands of games, it learns which actions lead to reward and which lead to death.</p>
+
+  <div class="rl-cycle">
+    <div class="rl-box rl-agent">🤖 Agent<br><small>(Q-learner)</small></div>
+    <div class="rl-arrow">→ action →</div>
+    <div class="rl-box rl-env">🎮 Environment<br><small>(Snake game)</small></div>
+    <div style="display:flex;flex-direction:column;gap:6px;align-items:center">
+      <div class="rl-arrow">← state, reward ←</div>
+    </div>
+  </div>
+
+  <div class="ct-spot">
+    <h4>🔄 Pattern Recognition — reinforcement learning pattern</h4>
+    <p>Reinforcement Learning is how humans and animals learn: try something, get feedback (reward or punishment), do more of what worked. This exact pattern is used in: AlphaGo (chess/Go), self-driving car training, recommendation algorithms, robot control, and ChatGPT's RLHF fine-tuning. Recognising this pattern means you understand the core of modern AI.</p>
+  </div>
+</section>
+
+<section>
+  <h2>State Representation</h2>
+  <p class="lede">The Q-learner needs to know the current situation (state). We can't use raw coordinates — the grid is too large. Instead we use 11 boolean features that capture what matters.</p>
+
+  <div class="ct-spot orange">
+    <h4>💡 Abstraction — feature engineering</h4>
+    <p>Choosing what information to give the AI is called <em>feature engineering</em>. Raw pixel values = 20×15 = 300 numbers (too many). Our 11-bit state = 2^11 = 2048 possible states (manageable). This is abstraction applied to machine learning: extract only what's relevant, discard the rest.</p>
+  </div>
+
+  <pre class="code">def get_state(snake, food, direction):
+    """
+    Return an 11-element tuple of booleans representing the game state.
+    This tuple becomes the KEY in our Q-table dictionary.
+    """
+    hx, hy = snake.head()
+    # 3 danger sensors: is there immediate danger straight/left/right?
+    dir_r = (direction == "RIGHT")
+    dir_l = (direction == "LEFT")
+    dir_u = (direction == "UP")
+    dir_d = (direction == "DOWN")
+
+    # Check danger in relative directions
+    def is_wall_or_body(x, y):
+        """True if (x, y) is out of bounds or snake body."""
+        if x &lt; 0 or x &gt;= GRID_COLS or y &lt; 0 or y &gt;= GRID_ROWS:
+            return True
+        return (x, y) in snake.body[1:]
+
+    state = (
+        # Danger straight, right, left (relative to current direction)
+        is_wall_or_body(hx + (dir_r - dir_l), hy + (dir_d - dir_u)),  # danger ahead
+        is_wall_or_body(hx + (dir_d - dir_u), hy - (dir_r - dir_l)),  # danger right
+        is_wall_or_body(hx - (dir_d - dir_u), hy + (dir_r - dir_l)),  # danger left
+
+        # Current movement direction (one-hot encoded)
+        dir_r, dir_l, dir_u, dir_d,
+
+        # Food direction relative to head
+        food.pos[0] &lt; hx,   # food is to the left
+        food.pos[0] &gt; hx,   # food is to the right
+        food.pos[1] &lt; hy,   # food is above
+        food.pos[1] &gt; hy,   # food is below
+    )
+    return state   # a tuple of 11 True/False values</pre>
+</section>
+
+
+<section>
+  <h2>&#129504; State Vector — Interactive Visualizer</h2>
+  <p>The Q-learner sees the game as 11 True/False features. Click the arrow buttons to move the snake head. Watch which features flip as danger and food directions change — this tuple becomes the Q-table key.</p>
+
+  <div class="sv-wrap">
+    <div>
+      <canvas id="sv-canvas" width="260" height="200"></canvas>
+      <div class="sv-btns">
+        <button class="sv-btn" id="sv-up">▲</button>
+        <button class="sv-btn" id="sv-left">◀</button>
+        <button class="sv-btn" id="sv-down">▼</button>
+        <button class="sv-btn" id="sv-right">▶</button>
+        <button class="sv-btn reset" id="sv-reset">↺</button>
+      </div>
+    </div>
+    <div class="sv-features">
+      <div class="sv-feat-title">State features (11 bits)</div>
+      <div id="sv-feat-list"></div>
+      <div class="sv-tuple" id="sv-tuple"></div>
+      <div class="sv-hint">This tuple is the KEY in the Q-table dictionary.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>The Q-Table</h2>
+  <p class="lede">The Q-table maps <em>(state, action) pairs</em> to a numeric value — how good is it to take this action in this situation? Higher Q-value = better action.</p>
+
+  <h3>Example Q-table (simplified)</h3>
+  <table class="qtable">
+    <thead>
+      <tr><th>State (11 booleans)</th><th>Q[STRAIGHT]</th><th>Q[LEFT]</th><th>Q[RIGHT]</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>(F,F,F, T,F,F,F, T,F,F,F)</td>
+        <td class="best">8.3</td>
+        <td>2.1</td>
+        <td class="worst">-5.2</td>
+      </tr>
+      <tr>
+        <td>(T,F,F, T,F,F,F, T,F,F,F)</td>
+        <td class="worst">-12.0</td>
+        <td class="best">6.7</td>
+        <td>1.2</td>
+      </tr>
+      <tr>
+        <td>(F,T,F, F,F,T,F, F,T,F,T)</td>
+        <td>3.4</td>
+        <td class="worst">-8.1</td>
+        <td class="best">9.2</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>The agent picks the action with the highest Q-value for the current state. In Python, this table is just a <code>defaultdict</code>:</p>
+  <pre class="code">from collections import defaultdict
+import random
+
+# Q-table: maps (state, action) → float
+# defaultdict(float) returns 0.0 for any new key
+q_table = defaultdict(float)
+
+ACTIONS = [0, 1, 2]   # 0=straight, 1=turn-left, 2=turn-right
+EPSILON = 0.1         # exploration rate (10% random, 90% best known)
+
+def choose_action(state):
+    """ε-greedy: explore randomly 10% of the time, exploit best 90%."""
+    if random.random() &lt; EPSILON:
+        return random.choice(ACTIONS)   # explore!
+    q_vals = [q_table[(state, a)] for a in ACTIONS]
+    return ACTIONS[q_vals.index(max(q_vals))]   # exploit!</pre>
+</section>
+
+<section>
+  <h2>The Q-Learning Update Rule</h2>
+  <p class="lede">After every action, we update the Q-value using the <em>Bellman equation</em>. New estimate = immediate reward + discounted future reward.</p>
+
+  <pre class="code">ALPHA = 0.1    # learning rate: how fast we update Q values
+GAMMA = 0.9    # discount factor: how much we value future rewards
+
+def update_q(state, action, reward, next_state):
+    """
+    Q-Learning update rule (Bellman equation):
+    Q(s,a) ← Q(s,a) + α × [r + γ × max(Q(s',a')) − Q(s,a)]
+    """
+    old_q = q_table[(state, action)]
+    # Best possible future reward from next_state
+    best_future = max(q_table[(next_state, a)] for a in ACTIONS)
+    # Bellman target
+    target = reward + GAMMA * best_future
+    # Update Q-value (weighted average with learning rate)
+    q_table[(state, action)] = old_q + ALPHA * (target - old_q)
+
+# Reward signal:
+# +10 = ate food   (reward good behaviour)
+# -10 = died       (punish bad behaviour)
+# -0.1 = each step (small penalty encourages efficiency)</pre>
+
+  <div class="ct-spot red">
+    <h4>📋 Algorithm Design — the Bellman equation</h4>
+    <p>The Bellman equation says: the value of taking action A in state S equals the immediate reward PLUS the best possible reward from the resulting state S'. The discount factor γ (gamma) makes near rewards more valuable than distant ones — just like humans prefer $100 today over $100 next year. This one equation is the foundation of Q-Learning, Deep Q-Networks (DQN), and RLHF (how ChatGPT is trained).</p>
+  </div>
+</section>
+
+<section>
+  <h2>The Training Loop</h2>
+  <p class="lede">Instead of one human playing, we run thousands of games in a loop. Each game updates the Q-table. After enough games, the agent learns to play well.</p>
+
+  <pre class="code">import pygame
+from collections import defaultdict
+
+# (All class definitions from Step 8 go here)
+
+q_table = defaultdict(float)
+ALPHA = 0.1; GAMMA = 0.9; EPSILON = 0.1
+
+# Map relative action (0,1,2) to absolute direction
+TURNS = {
+    "RIGHT": ["RIGHT","DOWN","UP"],
+    "LEFT":  ["LEFT","UP","DOWN"],
+    "UP":    ["UP","RIGHT","LEFT"],
+    "DOWN":  ["DOWN","LEFT","RIGHT"],
+}
+
+def train(n_episodes=10000, visual=False):
+    """Train the Q-learner over n_episodes games."""
+    pygame.init()
+    screen = pygame.display.set_mode(
+        (GRID_COLS*CELL_SIZE, GRID_ROWS*CELL_SIZE)) if visual else None
+    clock = pygame.time.Clock()
+    scores = []
+
+    for episode in range(n_episodes):
+        game = Game()
+        state = get_state(game.snake, game.food, game.snake.direction)
+        steps = 0
+
+        while game.running and steps &lt; 1000:   # cap steps to avoid loops
+            action = choose_action(state)
+            new_dir = TURNS[game.snake.direction][action]
+            game.snake.direction = new_dir
+
+            old_score = game.score
+            game.update()
+            steps += 1
+
+            if game.score &gt; old_score:
+                reward = 10   # ate food
+            elif not game.running:
+                reward = -10  # died
+            else:
+                reward = -0.1  # still alive, small penalty
+
+            next_state = get_state(game.snake, game.food,
+                                   game.snake.direction)
+            update_q(state, action, reward, next_state)
+            state = next_state
+
+            if visual:
+                game.draw(); clock.tick(60)
+
+        scores.append(game.score)
+        if episode % 1000 == 0:
+            avg = sum(scores[-100:])/min(100, len(scores))
+            print(f"Episode {episode:5d} | Avg score: {avg:.2f}"
+                  f" | Q-table size: {len(q_table)}")
+
+    pygame.quit()
+    return scores
+
+if __name__ == "__main__":
+    train(n_episodes=5000, visual=True)</pre>
+</section>
+
+<section>
+  <h2>What Happens During Training?</h2>
+  <p class="lede">Early in training the snake dies quickly (Q-table is all zeros, actions are random). After a few thousand games, patterns emerge.</p>
+
+  <table>
+    <thead><tr><th>Episode range</th><th>Avg score</th><th>What's happening</th></tr></thead>
+    <tbody>
+      <tr><td>0 – 100</td><td>≈ 0.5</td><td>Mostly random — dies in a few steps</td></tr>
+      <tr><td>100 – 1000</td><td>≈ 2–5</td><td>Learns to avoid immediate walls</td></tr>
+      <tr><td>1000 – 5000</td><td>≈ 5–15</td><td>Learns to navigate toward food</td></tr>
+      <tr><td>5000 – 20000</td><td>≈ 15–30</td><td>Starts to avoid self-collisions</td></tr>
+      <tr><td>20000+</td><td>≈ 30+</td><td>Sophisticated strategy emerges</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cal note"><b>Limitations</b> — our simple 11-bit state can't represent the full body shape. A snake that spirals inward will die even though the 11 sensors show no immediate danger. This is why state design is crucial in RL: a better state representation (e.g. distance to nearest body segment in each direction) would learn a better policy. DeepMind's DQN uses the full pixel image as state — 84×84 grayscale frames.</div>
+</section>
+
+<section>
+  <h2>The Big Picture — Where This Leads</h2>
+  <div class="grid2">
+    <div class="mini"><h4>What you've learned</h4>
+      <p>Q-Learning, Bellman equation, state representation, epsilon-greedy exploration, reward engineering, and training loops — the same concepts used in professional AI research.</p>
+    </div>
+    <div class="mini"><h4>Next steps in AI</h4>
+      <p>Replace the Q-table with a neural network → Deep Q-Network (DQN). Use a CNN on raw pixels → matches DeepMind's Atari paper. Add experience replay and target networks → modern stable RL training.</p>
+    </div>
+  </div>
+
+  <div class="ct-spot teal">
+    <h4>🔄 Pattern Recognition — CT all the way down</h4>
+    <p>Look back at every step. Decomposition (Step 5: functions), Pattern Recognition (modulo, RL loops), Abstraction (OOP, feature engineering), Algorithm Design (Bellman equation, collision detection) — these four CT skills are exactly the skills used by AI researchers, game developers, and software engineers. You didn't just learn to code a Snake game. You learned to think computationally.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Try It — Exercises</h2>
+  <div class="step"><div class="idx">1</div><div class="body">
+    <h4>Print Q-table stats <span class="ct-badge red" style="vertical-align:middle">📋 Algorithm</span></h4>
+    <p>After training, print the 5 (state, action) pairs with the highest Q-values: <code>sorted(q_table.items(), key=lambda x: x[1], reverse=True)[:5]</code>. What do the top states have in common?</p>
+  </div></div>
+  <div class="step"><div class="idx">2</div><div class="body">
+    <h4>Plot the learning curve <span class="ct-badge teal" style="vertical-align:middle">🔄 Pattern</span></h4>
+    <p>Save episode scores to a list. Use <code>matplotlib.pyplot.plot(scores)</code> after training to visualise how the agent improves over time. Install matplotlib: <code>pip install matplotlib</code>.</p>
+  </div></div>
+  <div class="step"><div class="idx">3</div><div class="body">
+    <h4>Save and load the Q-table <span class="ct-badge orange" style="vertical-align:middle">💡 Abstraction</span></h4>
+    <p>Use the <code>json</code> module from Step 7 to save <code>q_table</code> as a JSON file after training, and load it before playing. You'll need to convert tuple keys to strings: <code>str(key)</code>.</p>
+  </div></div>
+</section>
+
+<section style="background:rgba(2,173,165,.06);border:1px solid rgba(2,173,165,.2);border-radius:12px;padding:2rem;margin-top:2rem">
+  <h2>🎉 You've completed the Snake Game Tutorial!</h2>
+  <p class="lede">You went from <code>print("Hello, World!")</code> to building and training an AI agent — in 9 steps. That's remarkable.</p>
+  <div class="grid2">
+    <div class="mini"><h4>Skills you've gained</h4>
+      <p>Variables, loops, conditionals, lists, functions, file I/O, OOP, and machine learning — the full stack of programming knowledge, applied to a real game.</p>
+    </div>
+    <div class="mini"><h4>What to build next</h4>
+      <p>Tetris, Pac-Man, a platformer — you have all the tools. Or explore pygame's network module for multiplayer, or PyTorch for a real neural network agent.</p>
+    </div>
+  </div>
+
+  <div style="margin-top:20px;background:rgba(11,79,75,.12);border:2px solid var(--teal);
+              border-radius:12px;padding:18px 22px;display:flex;align-items:center;
+              justify-content:space-between;gap:14px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:10px;color:var(--teal-dark)">
+      <span style="font-size:22px">&#128203;</span>
+      <div>
+        <div style="font-weight:800;font-size:15px">Research Study &mdash; Post-Survey</div>
+        <div style="font-size:13px;color:var(--muted)">You&#8217;ve finished all 10 steps &mdash; complete the post-survey to close the study loop.</div>
+      </div>
+    </div>
+    <a href="survey-post.html"
+       style="background:var(--teal);color:#fff;border-radius:9px;padding:11px 24px;
+              font-size:14px;font-weight:700;text-decoration:none;white-space:nowrap;
+              display:inline-flex;align-items:center;gap:7px"
+       onmouseover="this.style.background='var(--teal-dark)'" onmouseout="this.style.background='var(--teal)'">
+      Take Post-Survey &#8594;
+    </a>
+  </div>
+  <p style="margin-top:1.2rem"><a href="index.html" class="replay-btn" style="display:inline-block;font-size:15px;padding:12px 24px">← Back to the Tutorial Index</a></p>
+</section>
+
+
+
+<!-- ══ Common Mistakes ══ -->
+<section>
+  <h2>&#9888;&#65039; Common Mistakes &#x2014; Spot These Before You Start</h2>
+  <p class="lede">These are the errors beginners make most often in Step 10. Read them now so you can recognise them in your own code.</p>
+  <div class="mistake-grid">
+<div class="mistake-card">
+      <div class="mistake-hdr err">&#10007; Mistake 1: Setting the learning rate too high</div>
+      <div class="mistake-body">
+        <pre class="code bad">LEARNING_RATE = 1.0   # replaces Q-value completely each update</pre>
+        <div class="mistake-result">&#x1F41E; A learning rate of 1.0 discards all past experience &#x2014; the agent forgets what it learned the moment new feedback arrives. Q-values oscillate wildly and the agent never improves.</div>
+        <pre class="code good">LEARNING_RATE = 0.1   # blend 10% new info with 90% existing knowledge</pre>
+      </div>
+    </div>
+    <div class="mistake-card">
+      <div class="mistake-hdr err">&#10007; Mistake 2: Not decaying epsilon</div>
+      <div class="mistake-body">
+        <pre class="code bad">EPSILON = 0.3   # fixed: agent always explores 30% of the time</pre>
+        <div class="mistake-result">&#x1F41E; The agent keeps making random moves even after thousands of training games. It learned a strategy but keeps ignoring it 30% of the time &#x2014; performance never stabilises.</div>
+        <pre class="code good">epsilon = max(0.01, epsilon * 0.995)  # decay: explore less as agent learns</pre>
+      </div>
+    </div>
+    <div class="mistake-card">
+      <div class="mistake-hdr warn">&#9889; Mistake 3: Confusing state with action</div>
+      <div class="mistake-body">
+        <pre class="code bad"># Trying to store the state IN the action variable</pre>
+        <div class="mistake-result">&#x26A1; The <em>state</em> describes the world (where is the snake? where is food? are there walls ahead?). The <em>action</em> is what the agent does next (go UP, DOWN, LEFT, RIGHT). The Q-table maps state &#x2192; action &#x2192; expected reward.</div>
+        <pre class="code good">state = get_state(snake, food)   # observe the world
+action = choose_action(state)    # decide what to do
+q_table[state][action] += ...    # update the value of that choice</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ Quick Check ══ -->
+<section>
+  <h2>&#9989; Quick Check &#x2014; Are You Ready?</h2>
+  <p class="lede">Three questions &#x2014; not graded. They help you spot gaps before the activities.</p>
+  <div id="qcheck">
+    <div class="qc-item">
+      <div class="qc-q"><span class="qc-num">1</span> What does the Q-table store?</div>
+      <div class="qc-opts">
+        <button class="qc-btn" data-q="1" data-ok="1">The expected future reward for each (state, action) pair &#x2014; telling the agent how good a specific action is in a specific situation.</button>
+        <button class="qc-btn" data-q="1" data-ok="0">The list of moves the agent has made so far during training.</button>
+        <button class="qc-btn" data-q="1" data-ok="0">The list of moves the agent has made so far during training.</button>
+      </div>
+      <div class="qc-feedback" id="qcfb1"></div>
+    </div>
+    <div class="qc-item">
+      <div class="qc-q"><span class="qc-num">2</span> What is epsilon used for in epsilon-greedy learning?</div>
+      <div class="qc-opts">
+        <button class="qc-btn" data-q="2" data-ok="1">It controls the probability of choosing a random action (exploring) vs the best-known action (exploiting). It typically decays over time.</button>
+        <button class="qc-btn" data-q="2" data-ok="0">It sets how fast the agent moves inside the game window.</button>
+        <button class="qc-btn" data-q="2" data-ok="0">It sets how fast the agent moves inside the game window.</button>
+      </div>
+      <div class="qc-feedback" id="qcfb2"></div>
+    </div>
+    <div class="qc-item">
+      <div class="qc-q"><span class="qc-num">3</span> Why should epsilon decrease over training time?</div>
+      <div class="qc-opts">
+        <button class="qc-btn" data-q="3" data-ok="1">Early on the agent knows nothing, so random exploration is useful. Later, the Q-table has good estimates and the agent should trust them more &#x2014; exploring less.</button>
+        <button class="qc-btn" data-q="3" data-ok="0">To make the training run faster by skipping unnecessary decisions.</button>
+        <button class="qc-btn" data-q="3" data-ok="0">To make the training run faster by skipping unnecessary decisions.</button>
+      </div>
+      <div class="qc-feedback" id="qcfb3"></div>
+    </div>
+  </div>
+
+  <div id="qcheck-result" hidden style="margin-top:20px;text-align:center;padding:18px;border-radius:12px;background:rgba(2,173,165,.08);border:1.5px solid var(--teal)">
+    <p style="margin:0;font-size:17px;font-weight:700;color:var(--teal-dark)" id="qcheck-msg"></p>
+  </div>
+
+</section>
+
+<div style="margin:40px 0 20px;text-align:center">
+  <p style="font-size:15px;color:var(--muted);margin-bottom:16px">You've covered all the concepts for Step 10. Time to apply them.</p>
+  <a href="step-10-activity.html" style="display:inline-flex;align-items:center;gap:10px;background:var(--teal);color:#fff;font-weight:700;font-size:16px;padding:14px 32px;border-radius:10px;text-decoration:none;transition:opacity .2s;box-shadow:0 4px 14px rgba(2,173,165,.35)" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+    Start Activities &rarr;
+    <span style="font-size:12px;font-weight:400;opacity:.85">Tier 1 &rarr; 2 &rarr; 3 &rarr; 4</span>
+  </a>
+</div>
+
+<div class="stepnav">
+  <a href="step-9.html"><small>Previous</small><b>← OOP Refactor</b></a>
+</div>
+</div>
+<div id="teacher-reveal" hidden style="position:fixed;bottom:24px;right:24px;background:#08312F;color:#B9E4E1;border-radius:10px;padding:14px 18px;font-size:14px;z-index:999;border:1px solid rgba(255,255,255,.2);box-shadow:0 8px 24px rgba(0,0,0,.4)">
+  🔑 Teacher access: <a href="teacher-10.html" style="color:#8FD9D5">Open Teacher Notes →</a>
+</div>
+<footer><div class="wrap"><p><strong>See · Think · Explore · Marvel</strong><br>UMPSA STEM LAB · Snake Game Python Tutorial · All 9 Steps Complete</p></div>  <p style="margin-top:10px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-weight:400">
+    <span>© 2026 Nurul Hazlina Noordin · UMPSA STEM Lab Engineering Education Initiative</span>
+    <a href="https://ee.ump.edu.my/hazlina/#research" target="_blank" rel="noopener"
+       title="Visit research page" aria-label="Research website"
+       style="color:var(--teal);display:inline-flex;align-items:center;transition:opacity .15s"
+       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="2" y1="12" x2="22" y2="12"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    </a>
+    <a href="mailto:hazlina@umpsa.edu.my"
+       title="hazlina@umpsa.edu.my" aria-label="Email Dr Nurul Hazlina"
+       style="color:var(--teal);display:inline-flex;align-items:center;transition:opacity .15s"
+       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true">
+        <rect x="2" y="4" width="20" height="16" rx="2"/>
+        <polyline points="2,4 12,13 22,4"/>
+      </svg>
+    </a>
+  </p>
+</footer>
+<script>
+(function(){var clicks=0,timer,box=document.getElementById('see-box');if(!box)return;box.style.cursor='pointer';box.addEventListener('click',function(){clicks++;clearTimeout(timer);timer=setTimeout(function(){clicks=0;},1500);if(clicks>=3){clicks=0;var el=document.getElementById('teacher-reveal');if(el)el.hidden=false;}});})();
+document.querySelectorAll('pre.code').forEach(function(pre){var lines=pre.textContent.split('\n');if(lines.length&&lines[lines.length-1].trim()==='')lines.pop();pre.innerHTML=lines.map(function(line,i){var ln=String(i+1).padStart(3,' ');var esc=line.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');return '<span class="code-ln">'+ln+'</span>'+esc;}).join('\n');});
+
+/* ══ QUICK CHECK QUIZ ══ */
+(function(){
+  var answered={};
+  var score=0;
+  var total=0;
+  document.querySelectorAll('#qcheck .qc-item').forEach(function(item,i){total++;answered[i]=false;});
+  document.querySelectorAll('#qcheck .qc-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var q=+btn.getAttribute('data-q');
+      if(answered[q]) return;
+      answered[q]=true;
+      var isOk=btn.getAttribute('data-ok')==='1';
+      if(isOk) score++;
+      btn.classList.add(isOk?'qc-correct':'qc-wrong');
+      var item=btn.closest('.qc-item');
+      // show correct answer if wrong
+      if(!isOk){
+        item.querySelectorAll('[data-ok="1"]').forEach(function(b){b.classList.add('qc-correct');});
+      }
+      // disable all buttons in this question
+      item.querySelectorAll('.qc-btn').forEach(function(b){b.disabled=true;});
+      // set feedback text
+      var fbEl=document.getElementById('qcfb'+q);
+      if(fbEl){
+        if(isOk){
+          fbEl.innerHTML='&#10003; Correct!';
+        } else {
+          var okBtn=item.querySelector('[data-ok="1"]');
+          var okLabel=okBtn?okBtn.textContent.trim():'';
+          fbEl.innerHTML='&#10007; Not quite. The right answer: <strong>'+okLabel+'</strong>';
+        }
+        fbEl.className='qc-feedback '+(isOk?'qc-correct':'qc-wrong');
+      }
+      // check if all answered
+      var allDone=true;
+      for(var k in answered){if(!answered[k]){allDone=false;break;}}
+      if(allDone){
+        var res=document.getElementById('qcheck-result');
+        var msg=document.getElementById('qcheck-msg');
+        if(res&&msg){
+          res.hidden=false;
+          var pct=Math.round(score/total*100);
+          if(pct===100) msg.textContent='Perfect — '+score+'/'+total+'! You are ready to move on. 🚀';
+          else if(pct>=67) msg.textContent='Good — '+score+'/'+total+'. Review the misses above, then continue.';
+          else msg.textContent=''+score+'/'+total+' — re-read the sections above, then try again.';
+        }
+      }
+    });
+  });
+})();
+
+/* ══ Q-LEARNING STATE VISUALIZER ══ */
+(function(){
+  var canvas=document.getElementById('sv-canvas');
+  if(!canvas) return;
+  var ctx=canvas.getContext('2d');
+  var COLS=8,ROWS=6,W=260,H=200;
+  canvas.width=W; canvas.height=H;
+  var CW=W/COLS, CH=H/ROWS;
+
+  var hx=4,hy=3;
+  var food={x:6,y:1};
+  var bodySet=new Set(['3,3','3,4','4,4']);  // relative to head for obstacle
+
+  var FEAT_LABELS=[
+    'danger ahead','danger right','danger left',
+    'moving RIGHT','moving LEFT','moving UP','moving DOWN',
+    'food ← left','food → right','food ↑ above','food ↓ below'
+  ];
+  var dir='RIGHT';
+  var DIR_OFFSETS={RIGHT:[1,0],LEFT:[-1,0],UP:[0,-1],DOWN:[0,1]};
+
+  function isWallOrBody(x,y){
+    return x<0||x>=COLS||y<0||y>=ROWS||bodySet.has(x+','+y);
+  }
+
+  function getState(){
+    var dr=dir==='RIGHT',dl=dir==='LEFT',du=dir==='UP',dd=dir==='DOWN';
+    var off=DIR_OFFSETS[dir];
+    // straight: in direction of travel
+    var ds=isWallOrBody(hx+off[0],hy+off[1]);
+    // right relative
+    var rOff=dir==='RIGHT'?[0,1]:dir==='LEFT'?[0,-1]:dir==='UP'?[1,0]:[-1,0];
+    var dright=isWallOrBody(hx+rOff[0],hy+rOff[1]);
+    // left relative
+    var lOff=dir==='RIGHT'?[0,-1]:dir==='LEFT'?[0,1]:dir==='UP'?[-1,0]:[1,0];
+    var dleft=isWallOrBody(hx+lOff[0],hy+lOff[1]);
+    return [ds,dright,dleft,dr,dl,du,dd,food.x<hx,food.x>hx,food.y<hy,food.y>hy];
+  }
+
+  function renderCanvas(){
+    ctx.fillStyle='#0F1B22'; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='rgba(255,255,255,.06)'; ctx.lineWidth=1;
+    for(var c=0;c<=COLS;c++){ctx.beginPath();ctx.moveTo(c*CW,0);ctx.lineTo(c*CW,H);ctx.stroke();}
+    for(var r=0;r<=ROWS;r++){ctx.beginPath();ctx.moveTo(0,r*CH);ctx.lineTo(W,r*CH);ctx.stroke();}
+
+    // body obstacles
+    bodySet.forEach(function(k){
+      var p=k.split(',');
+      ctx.fillStyle='#0B4F4B';
+      ctx.beginPath();ctx.roundRect(+p[0]*CW+2,+p[1]*CH+2,CW-4,CH-4,3);ctx.fill();
+    });
+    // food
+    ctx.fillStyle='#C80000';
+    ctx.beginPath();ctx.arc(food.x*CW+CW/2,food.y*CH+CH/2,CW/2-4,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#ff6b6b'; ctx.beginPath();ctx.arc(food.x*CW+CW/2-3,food.y*CH+CH/2-3,3,0,Math.PI*2);ctx.fill();
+
+    // danger sensor arrows
+    var st=getState();
+    var rOff=dir==='RIGHT'?[0,1]:dir==='LEFT'?[0,-1]:dir==='UP'?[1,0]:[-1,0];
+    var lOff=dir==='RIGHT'?[0,-1]:dir==='LEFT'?[0,1]:dir==='UP'?[-1,0]:[1,0];
+    var off=DIR_OFFSETS[dir];
+    [[off[0],off[1],st[0]],[rOff[0],rOff[1],st[1]],[lOff[0],lOff[1],st[2]]].forEach(function(s){
+      var tx=hx+s[0],ty=hy+s[1];
+      if(tx>=0&&tx<COLS&&ty>=0&&ty<ROWS){
+        ctx.fillStyle=s[2]?'rgba(200,0,0,.25)':'rgba(86,211,100,.15)';
+        ctx.fillRect(tx*CW,ty*CH,CW,CH);
+      }
+    });
+
+    // head
+    ctx.fillStyle='#02ADA5';
+    ctx.beginPath();ctx.roundRect(hx*CW+1,hy*CH+1,CW-2,CH-2,5);ctx.fill();
+    ctx.fillStyle='#fff'; ctx.font='bold 9px monospace'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(dir[0],hx*CW+CW/2,hy*CH+CH/2);
+  }
+
+  function renderFeatures(){
+    var st=getState();
+    var fl=document.getElementById('sv-feat-list');
+    var tup=document.getElementById('sv-tuple');
+    if(!fl) return;
+    fl.innerHTML='';
+    st.forEach(function(v,i){
+      var d=document.createElement('div');
+      d.className='sv-feat '+(v?'t':'f');
+      d.innerHTML='<span class="fv">'+(v?'True':'False')+'</span>'
+        +' <span>'+FEAT_LABELS[i]+'</span>';
+      fl.appendChild(d);
+    });
+    var parts=st.map(function(v,i){
+      return '<span class="'+(v?'tv':'tf')+'">'+(v?'True':'False')+'</span>';
+    });
+    tup.innerHTML='<span class="tt">state</span> = ('+parts.join(', ')+')';
+  }
+
+  function move(d){
+    var off=DIR_OFFSETS[d];
+    dir=d;
+    var nx=hx+off[0], ny=hy+off[1];
+    if(nx<0||nx>=COLS||ny<0||ny>=ROWS) return; // wall: don't move
+    hx=nx; hy=ny;
+    if(hx===food.x&&hy===food.y){
+      food={x:Math.floor(Math.random()*(COLS-2))+1, y:Math.floor(Math.random()*(ROWS-2))+1};
+    }
+    renderCanvas(); renderFeatures();
+  }
+
+  document.getElementById('sv-up').addEventListener('click',function(){move('UP');});
+  document.getElementById('sv-down').addEventListener('click',function(){move('DOWN');});
+  document.getElementById('sv-left').addEventListener('click',function(){move('LEFT');});
+  document.getElementById('sv-right').addEventListener('click',function(){move('RIGHT');});
+  document.getElementById('sv-reset').addEventListener('click',function(){
+    hx=4;hy=3;dir='RIGHT';food={x:6,y:1};
+    bodySet=new Set(['3,3','3,4','4,4']);
+    renderCanvas();renderFeatures();
+  });
+
+  renderCanvas(); renderFeatures();
+})();
+
+</script>
+</body>
+</html>

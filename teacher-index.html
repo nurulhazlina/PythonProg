@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Facilitator Hub | Snake Tutorial</title>
+<style>
+  :root {
+    --bg:#F0F4F8;
+    --surface:#FFFFFF;
+    --surface2:#F7FAFC;
+    --teal:#0A8F8A;
+    --teal-dark:#076862;
+    --teal-light:#E6F6F5;
+    --ink:#1A2332;
+    --body:#374151;
+    --muted:#6B7A8D;
+    --border:#D6E0EA;
+    --code-bg:#F1F5F9;
+    --code-fg:#1E293B;
+    --radius:10px;
+    --shadow:0 1px 4px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.05);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--body);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── STEM Brand Bar ── */
+  .stem-brand-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .sb {
+    padding: 6px 8px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-align: center;
+    color: #fff;
+  }
+
+  .sb-see     { background: #2E5FAF; }
+  .sb-think   { background: #B82828; }
+  .sb-explore { background: #D99A10; }
+  .sb-marvel  { background: #1FA898; }
+
+  /* ── Nav Bar ── */
+  .navbar {
+    background: var(--teal-dark);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 52px;
+    gap: 16px;
+  }
+
+  .navbar-brand {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1 1 auto;
+  }
+
+  .navbar-brand:hover { color: #b2f0ed; }
+
+  .navbar-links {
+    display: flex;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .navbar-links a {
+    color: rgba(255,255,255,.85);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 6px;
+    transition: background .15s;
+  }
+
+  .navbar-links a:hover {
+    background: rgba(255,255,255,.15);
+    color: #fff;
+  }
+
+  /* ── Gate Screen ── */
+  #gate {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 24px;
+    text-align: center;
+    gap: 16px;
+  }
+
+  .gate-icon {
+    font-size: 56px;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  #gate h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  #gate p {
+    color: var(--muted);
+    max-width: 380px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  #gatebtn {
+    margin-top: 8px;
+    background: var(--teal);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    padding: 12px 28px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s;
+  }
+
+  #gatebtn:hover { background: var(--teal-dark); }
+
+  /* ── Teacher Content ── */
+  #tcontent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    background: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal) 100%);
+    color: #fff;
+    padding: 48px 24px 40px;
+    text-align: center;
+  }
+
+  .hero-eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    opacity: .8;
+    margin-bottom: 14px;
+  }
+
+  .hero h1 {
+    font-size: clamp(26px, 5vw, 38px);
+    font-weight: 800;
+    margin-bottom: 14px;
+    line-height: 1.2;
+  }
+
+  .hero-subtitle {
+    font-size: 16px;
+    opacity: .9;
+    max-width: 560px;
+    margin: 0 auto 24px;
+    line-height: 1.6;
+  }
+
+  .hero-warning {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: rgba(0,0,0,.25);
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 8px;
+    padding: 12px 18px;
+    font-size: 13.5px;
+    max-width: 520px;
+    text-align: left;
+    line-height: 1.5;
+    color: rgba(255,255,255,.95);
+  }
+
+  .hero-warning-icon {
+    flex-shrink: 0;
+    font-size: 16px;
+    margin-top: 1px;
+  }
+
+  /* ── Main Container ── */
+  .main {
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 40px 24px 56px;
+    flex: 1;
+  }
+
+  /* ── Section Header ── */
+  .section-heading {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  /* ── Step Cards Grid ── */
+  .step-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  @media (max-width: 580px) {
+    .step-grid { grid-template-columns: 1fr; }
+  }
+
+  .step-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    transition: box-shadow .15s, transform .15s, border-color .15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .step-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,.1), 0 8px 28px rgba(0,0,0,.09);
+    transform: translateY(-2px);
+    border-color: var(--teal);
+  }
+
+  .step-badge {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--teal);
+    color: #fff;
+    font-weight: 800;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+  }
+
+  .step-card-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .step-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+
+  .step-sub {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.4;
+    margin-bottom: 6px;
+  }
+
+  .step-hotspot {
+    display: inline-block;
+    background: #FEF3C7;
+    color: #92400E;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    border: 1px solid #F59E0B;
+  }
+
+  .step-arrow {
+    flex-shrink: 0;
+    color: var(--teal);
+    font-size: 18px;
+    align-self: center;
+    opacity: .6;
+    transition: opacity .15s, transform .15s;
+  }
+
+  .step-card:hover .step-arrow {
+    opacity: 1;
+    transform: translateX(3px);
+  }
+
+  /* ── Quick Links ── */
+  .quick-links {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+  }
+
+  .quick-links-heading {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 14px;
+  }
+
+  .quick-links-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .ql-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--teal);
+    transition: background .15s;
+  }
+
+  .ql-link:hover {
+    background: var(--teal);
+    color: #fff;
+  }
+
+  /* ── Footer ── */
+  footer {
+    background: #1C5C54;
+    color: rgba(255,255,255,.8);
+    padding: 24px;
+    text-align: center;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  footer span { line-height: 1.5; }
+
+  .footer-links {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .footer-icon-link {
+    display: inline-flex;
+    align-items: center;
+    color: rgba(255,255,255,.7);
+    text-decoration: none;
+    transition: color .15s;
+  }
+
+  .footer-icon-link:hover { color: #fff; }
+
+  .footer-icon-link svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  @media (max-width: 400px) {
+    .navbar { padding: 0 12px; }
+    .navbar-brand { font-size: 13px; }
+    .main { padding: 28px 14px 48px; }
+    .hero { padding: 36px 14px 32px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── STEM Brand Bar ── -->
+<div class="stem-brand-bar">
+  <div class="sb sb-see">SEE</div>
+  <div class="sb sb-think">THINK</div>
+  <div class="sb sb-explore">EXPLORE</div>
+  <div class="sb sb-marvel">MARVEL</div>
+</div>
+
+<!-- ── Nav Bar ── -->
+<nav class="navbar">
+  <a class="navbar-brand" href="index.html">UMPSA STEM Lab Python Module</a>
+  <div class="navbar-links">
+    <a href="index.html">Student LMS</a>
+  </div>
+</nav>
+
+<!-- ── Gate Screen ── -->
+<div id="gate">
+  <div class="gate-icon">🔒</div>
+  <h2>Facilitator Access Only</h2>
+  <p>These notes are for course facilitators and research team members only.</p>
+  <button id="gatebtn">I am a facilitator — show notes</button>
+</div>
+
+<!-- ── Teacher Content (hidden until gate passed) ── -->
+<div id="tcontent" hidden>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-eyebrow">UMPSA STEM Lab · Snake Game Python Tutorial</div>
+    <h1>Facilitator Notes Hub</h1>
+    <p class="hero-subtitle">All 10 steps — annotated code, activity answers, common mistakes, and teaching guidance.</p>
+    <div class="hero-warning">
+      <span class="hero-warning-icon">⚠️</span>
+      <span><strong>Private.</strong> Not linked from student pages. Share URL only with co-facilitators and research team members.</span>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="main">
+
+    <p class="section-heading">All Steps — Facilitator Notes</p>
+
+    <!-- Step Cards Grid -->
+    <div class="step-grid">
+
+      <!-- Step 1 -->
+      <a class="step-card" href="teacher-1.html">
+        <div class="step-badge">1</div>
+        <div class="step-card-body">
+          <div class="step-title">Variables, Tuples &amp; Constants</div>
+          <div class="step-sub">Facilitator notes · activity answers · common mistakes</div>
+        </div>
+        <div class="step-arrow">→</div>
+      </a>
+
+      <!-- Step 2 -->
+      <a class="step-card" href="teacher-2.html">
+        <div class="step-badge">2</div>
+        <div class="step-card-body">
+          <div class="step-title">While Loop &amp; Event Handling</div>
+          <div class="step-sub">Facilitator notes · activity answers · common mistakes</div>
+        </div>
+        <div class="step-arrow">→</div>
+      </a>
+
+      <!-- Step 3 -->
+      <a class="step-card" href="teacher-3.html">
+        <div class="step-badge">3</div>
+        <div class="step-card-body">
+          <div class="step-title">Conditionals — Direction Control</div>
+          <div class="step-sub">Facilitator notes · activity answers · common mistakes</div>
+        </div>
+        <div class="step-arrow">→</div>
+      </a>
+
+      <!-- Step 4 — Metacognitive Hotspot -->
+      <a class="step-card" href="teacher-4.html">
+        <div class="step-badge">4</div>
+        <div class="step-card-body">
+          <div class="step-title">Lists — The Snake Body ⭐</div>
+          <div class="step-sub">Facilitator notes · activity answers · common mistakes</div>
+          <span class="step-hotspot">★ Metacognitive Hotspot</span>
+        </div>
+        <div class="step-arrow">→</div>
+      </a>
+
+      <!-- Step 5 -->
+      <a class="step-card" href="teacher-5.html">
+        <div class="step-badge">5</div>
+        <div class="step-card-body">
+          <div class="step-title">for Loops &amp; Bonus Foods</div>
+          <div class="step-sub">Facilitator notes · activity answers · common mistakes</div>
+        </div>
+        <div class="step-arrow">→</div>
+      </a>
+
+      <!-- Step 6 -->
+      <a class="step-card" href="teacher-6.html">
+        <div class="step-badge">6</div>
+        <div class="step-card-body">
+          <div class="step-title">Functions &amp; DRY Principle</div>
+          <div class="step-sub">Facilitator notes · activity answers · common mistakes</div>
+        </div>
+        <div class="step-arrow">→</div>
+      </a>
+
+      <!-- Step 7 -->
+      <a class="step-card" href="teacher-7.html">
+        <div class="step-badge">7</div>
+        <div class="step-card-body">
+          <div class="step-title">Modulo, Wrap-Around &amp; Dictionaries</div>
+          <div class="step-sub">Facilitator notes · activity answers · common mistakes</div>
+        </div>
+        <div class="step-arrow">→</div>
+      </a>
+
+      <!-- Step 8 -->
+      <a class="step-card" href="teacher-8.html">
+        <div class="step-badge">8</div>
+        <div class="step-card-body">
+          <div class="step-title">File I/O, try/except &amp; Leaderboard</div>
+          <div class="step-sub">Facilitator notes · activity answers · common mistakes</div>
+        </div>
+        <div class="step-arrow">→</div>
+      </a>
+
+      <!-- Step 9 -->
+      <a class="step-card" href="teacher-9.html">
+        <div class="step-badge">9</div>
+        <div class="step-card-body">
+          <div class="step-title">OOP &amp; Classes</div>
+          <div class="step-sub">Facilitator notes · activity answers · common mistakes</div>
+        </div>
+        <div class="step-arrow">→</div>
+      </a>
+
+      <!-- Step 10 -->
+      <a class="step-card" href="teacher-10.html">
+        <div class="step-badge">10</div>
+        <div class="step-card-body">
+          <div class="step-title">ML Extension 🤖</div>
+          <div class="step-sub">Facilitator notes · activity answers · common mistakes</div>
+        </div>
+        <div class="step-arrow">→</div>
+      </a>
+
+    </div><!-- /step-grid -->
+
+    <!-- Quick Links -->
+    <div class="quick-links">
+      <div class="quick-links-heading">Quick Links</div>
+      <div class="quick-links-list">
+        <a class="ql-link" href="index.html">
+          <span>🎓</span> Student LMS
+        </a>
+        <a class="ql-link" href="teacher-1.html">
+          <span>▶</span> Start from Step 1
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+</div><!-- /tcontent -->
+
+<!-- ── Footer ── -->
+
+  <!-- DATA_STRUCTURE_ADDED -->
+  <!-- ══ GOOGLE SHEETS OVERVIEW ══ -->
+  <div class="t-section" style="margin-top:24px">
+    <h2><span class="sec-icon">&#x1F4CA;</span> Research Data Collection — Google Sheets Overview</h2>
+    <p>The research spreadsheet has <strong>13 tabs</strong>. Every tab includes the full 10-field student identity block (matric, name, gender, age, mykid, home_state, class, school_code, phone, email) so data from any tab can be analysed independently or joined by matric number.</p>
+    <table class="t-table">
+      <thead><tr><th>Tab</th><th>Triggered by</th><th>Key columns (beyond identity)</th></tr></thead>
+      <tbody>
+        <tr><td><code>Student_Reg</code></td><td>Registration form submission</td><td>registered_at</td></tr>
+        <tr><td><code>Pre_Test</code></td><td>Pre-test survey completion</td><td>test_type, submitted_iso, score, Q1–Q50</td></tr>
+        <tr><td><code>Post_Test</code></td><td>Post-test survey completion</td><td>test_type, submitted_iso, score, Q1–Q50</td></tr>
+        <tr><td><code>Act_1</code>&ndash;<code>Act_10</code></td><td>Each step's activity page submission</td><td>step, submitted_iso, cal_confidence, cal_predicted, cal_reflection, t1_score_pct, t2_attempts, refl2_text, t3_attempts, t4_attempts, concept_q1–q5, concept_score_pct, concept_passed, concept_attempts, jr1–jr5, post_confidence, post_actual, post_r1, post_r2, calibration_index</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:14px">
+      <span class="callout-icon">&#x26A0;&#xFE0F;</span>
+      <p><strong>Before collecting real data:</strong> run <code>clearAllDataSheets()</code> in the Google Apps Script editor to wipe any test rows and reset all 13 tabs. Headers are recreated automatically on the first live submission.</p>
+    </div>
+  </div>
+
+<footer>
+  <span>© 2026 Nurul Hazlina Noordin · UMPSA STEM Lab Engineering Education Initiative</span>
+  <div class="footer-links">
+    <a class="footer-icon-link" href="https://www.umpsa.edu.my" target="_blank" rel="noopener" title="UMPSA website">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="2" y1="12" x2="22" y2="12"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    </a>
+    <a class="footer-icon-link" href="mailto:hazlina@umpsa.edu.my" title="Email facilitator">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+        <polyline points="22,6 12,13 2,6"/>
+      </svg>
+    </a>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var gate     = document.getElementById('gate');
+    var tcontent = document.getElementById('tcontent');
+    var gatebtn  = document.getElementById('gatebtn');
+
+    // Auto-reveal if previously authenticated
+    try {
+      if (localStorage.getItem('tf_auth') === '1') {
+        gate.hidden     = true;
+        tcontent.hidden = false;
+      }
+    } catch (e) { /* localStorage blocked */ }
+
+    gatebtn.addEventListener('click', function () {
+      gate.hidden     = true;
+      tcontent.hidden = false;
+      try { localStorage.setItem('tf_auth', '1'); } catch (e) {}
+    });
+  })();
+</script>
+
+</body>
+</html>
