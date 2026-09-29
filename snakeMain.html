@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Snake Game — UMPSA STEM LAB</title>
+<style>
+  :root {
+    --teal: #02ADA5;
+    --teal-dark: #08625E;
+    --blue: #0D55A7;
+    --text: #1a2332;
+    --muted: #64748b;
+    --bg: #f0f4f8;
+    --card: #fff;
+    --line: #e2e8f0;
+    --red: #c80000;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* NAV */
+  nav {
+    background: var(--teal-dark);
+    padding: 0 20px;
+  }
+  .nav-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 52px;
+    flex-wrap: wrap;
+  }
+  .brand {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 15px;
+  }
+  .brand span { opacity: .7; font-weight: 400; font-size: 13px; margin-left: 6px; }
+  .nav-link {
+    color: rgba(255,255,255,.8);
+    text-decoration: none;
+    font-size: 14px;
+    padding: 4px 8px;
+    border-radius: 5px;
+    transition: background .15s;
+  }
+  .nav-link:hover { background: rgba(255,255,255,.15); color: #fff; }
+  .nav-link.active { color: #fff; font-weight: 600; }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, var(--teal-dark) 0%, #04706B 100%);
+    color: #fff;
+    text-align: center;
+    padding: 36px 20px 28px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    opacity: .75;
+    margin-bottom: 8px;
+  }
+  .hero h1 { font-size: clamp(20px, 5vw, 32px); margin-bottom: 8px; }
+  .hero p { font-size: 15px; opacity: .85; max-width: 540px; margin: 0 auto; }
+
+  /* MAIN */
+  main {
+    flex: 1;
+    max-width: 680px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 24px 16px 40px;
+  }
+
+  /* SCORE BAR */
+  .score-bar {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 14px;
+  }
+  .score-item { text-align: center; }
+  .score-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 2px;
+  }
+  .score-value {
+    font-size: 26px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: var(--teal-dark);
+    font-family: monospace;
+  }
+  .score-value.hi { color: var(--blue); }
+
+  /* GAME WRAP */
+  .game-wrap {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,.18);
+    margin: 0 auto;
+    display: block;
+  }
+  #snake-canvas {
+    display: block;
+    max-width: 100%;
+    cursor: pointer;
+    margin: 0 auto;
+  }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+  .leg-item { display: flex; align-items: center; gap: 7px; }
+  .leg-dot { width: 13px; height: 13px; border-radius: 50%; flex-shrink: 0; }
+
+  /* CONTROLS */
+  .controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 10px 22px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter .15s, transform .1s;
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn-primary { background: var(--teal); color: #fff; }
+  .btn-primary:hover { filter: brightness(1.1); }
+  .btn-secondary { background: var(--line); color: var(--text); border: 1px solid #cdd8e5; }
+  .btn-secondary:hover { background: #d4dde8; }
+
+  /* D-PAD (mobile) */
+  .dpad-wrap {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    margin-top: 16px;
+  }
+  .dpad-row { display: flex; gap: 5px; }
+  .dpad-btn {
+    width: 54px; height: 54px;
+    background: var(--card);
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    font-size: 22px;
+    cursor: pointer;
+    display: grid; place-items: center;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    box-shadow: 0 2px 6px rgba(0,0,0,.08);
+    transition: background .1s;
+  }
+  .dpad-btn:active { background: #dde5ef; }
+  .dpad-spacer { width: 54px; height: 54px; }
+
+  .tip {
+    background: linear-gradient(135deg, rgba(2,173,165,.07), rgba(13,85,167,.07));
+    border: 1px solid rgba(2,173,165,.2);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 13.5px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 18px;
+  }
+  .tip b { color: var(--teal-dark); }
+
+  /* BACK LINK */
+  .back-row {
+    text-align: center;
+    margin-top: 28px;
+  }
+  .back-row a {
+    color: var(--teal);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .back-row a:hover { text-decoration: underline; }
+
+  /* FOOTER */
+  footer {
+    background: var(--teal-dark);
+    color: rgba(255,255,255,.7);
+    text-align: center;
+    padding: 18px 20px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  footer a { color: var(--teal); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 520px) { .dpad-wrap { display: flex; } }
+  @media (hover: none) and (pointer: coarse) { .dpad-wrap { display: flex; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="brand" href="index.html">Snake Game <span>Python Tutorial</span></a>
+    <a class="nav-link active" href="snake.html">🎮 Play</a>
+    <a class="nav-link" href="index.html">Home</a>
+    <a class="nav-link" href="step-1.html">Step 1</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <p class="eyebrow">UMPSA STEM LAB · Game Development with Python</p>
+  <h1>🐍 Snake Game</h1>
+  <p>The finished game — play it yourself or watch the AI. Collect ⭐ bonus food for 3× points!</p>
+</div>
+
+<main>
+  <!-- Score bar -->
+  <div class="score-bar">
+    <div class="score-item">
+      <div class="score-label">Score</div>
+      <div class="score-value" id="score">0</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">High Score</div>
+      <div class="score-value hi" id="highscore">0</div>
+    </div>
+  </div>
+
+  <!-- Canvas -->
+  <div class="game-wrap">
+    <canvas id="snake-canvas" width="500" height="375"></canvas>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="leg-item">
+      <div class="leg-dot" style="background:#FF3030"></div>
+      Regular food — 1 point
+    </div>
+    <div class="leg-item">
+      <div class="leg-dot" style="background:#FFD700;box-shadow:0 0 6px #FFD700"></div>
+      Bonus food ⭐ — 3 points, disappears after 4 s
+    </div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="controls">
+    <button class="btn btn-primary" id="ai-btn">Play yourself</button>
+    <button class="btn btn-secondary" id="restart-btn">↺ Restart</button>
+  </div>
+
+  <!-- D-pad for mobile -->
+  <div class="dpad-wrap">
+    <div class="dpad-row">
+      <div class="dpad-spacer"></div>
+      <button class="dpad-btn" id="dp-up">▲</button>
+      <div class="dpad-spacer"></div>
+    </div>
+    <div class="dpad-row">
+      <button class="dpad-btn" id="dp-left">◄</button>
+      <button class="dpad-btn" id="dp-down">▼</button>
+      <button class="dpad-btn" id="dp-right">►</button>
+    </div>
+  </div>
+
+  <div class="tip">
+    <b>Tip:</b> Arrow keys to move · Click the canvas after Game Over to restart · Click "Watch AI" to hand back control
+  </div>
+
+  <div class="back-row">
+    <a href="index.html">← Back to Tutorial Home</a>
+  </div>
+</main>
+
+<footer>
+  <p><strong>See · Think · Explore · Marvel</strong><br>
+  UMPSA STEM LAB · Snake Game Python Tutorial<br>
+  © 2026 Nurul Hazlina Noordin</p>
+</footer>
+
+<script>
+(function () {
+  var canvas  = document.getElementById('snake-canvas');
+  var ctx     = canvas.getContext('2d');
+  var scoreEl = document.getElementById('score');
+  var hiEl    = document.getElementById('highscore');
+  var aiBtn   = document.getElementById('ai-btn');
+  var restBtn = document.getElementById('restart-btn');
+
+  var COLS = 20, ROWS = 15, CS = 25;
+  var BG = '#0F1B22', SNAKE_C = '#00C850', HEAD_C = '#00FF7F';
+  var FOOD_C = '#FF3030', BONUS_C = '#FFD700', GRID_C = 'rgba(255,255,255,0.03)';
+  var BONUS_INTERVAL = 300, BONUS_TIMER = 240;
+
+  var snake, food, bonusFoods, dir, score, highScore, running, aiMode, animId, frameCount;
+
+  // Persist high score
+  try { highScore = parseInt(localStorage.getItem('umpsa_snake_hi') || '0') || 0; } catch(e) { highScore = 0; }
+  hiEl.textContent = highScore;
+
+  function rand(n) { return Math.floor(Math.random() * n); }
+  function occupied(x, y) { return snake.some(function(s){ return s.x===x && s.y===y; }); }
+
+  function spawnFood() {
+    var p; do { p = {x:rand(COLS), y:rand(ROWS)}; } while(occupied(p.x, p.y)); return p;
+  }
+
+  function spawnBonus() {
+    var p, tries=0;
+    do {
+      p = {x:rand(COLS), y:rand(ROWS), t:BONUS_TIMER}; tries++;
+    } while(tries < 30 && (occupied(p.x,p.y) ||
+            bonusFoods.some(function(b){return b.x===p.x&&b.y===p.y;}) ||
+            (food.x===p.x && food.y===p.y)));
+    bonusFoods.push(p);
+  }
+
+  function init() {
+    snake = [{x:10,y:7},{x:9,y:7},{x:8,y:7}];
+    dir   = {x:1, y:0};
+    bonusFoods = []; frameCount = 0;
+    food  = spawnFood();
+    score = 0; running = true;
+    if(animId) cancelAnimationFrame(animId);
+    updateUI();
+    animId = requestAnimationFrame(loop);
+  }
+
+  // AI: greedy toward best target, avoids self
+  function aiStep() {
+    var head = snake[0];
+    var targets = [{x:food.x, y:food.y, w:1}];
+    bonusFoods.forEach(function(b){ targets.push({x:b.x, y:b.y, w:3}); });
+    targets.sort(function(a,b){ return b.w - a.w; });
+    var tgt = targets[0];
+    var options = [{x:1,y:0},{x:-1,y:0},{x:0,y:1},{x:0,y:-1}];
+    var valid = options.filter(function(d){
+      if(d.x===-dir.x && d.y===-dir.y) return false;
+      var nx=(head.x+d.x+COLS)%COLS, ny=(head.y+d.y+ROWS)%ROWS;
+      return !snake.some(function(s){ return s.x===nx && s.y===ny; });
+    });
+    if(!valid.length) return;
+    valid.sort(function(a,b){
+      var ax=Math.abs((head.x+a.x+COLS)%COLS - tgt.x)+Math.abs((head.y+a.y+ROWS)%ROWS - tgt.y);
+      var bx=Math.abs((head.x+b.x+COLS)%COLS - tgt.x)+Math.abs((head.y+b.y+ROWS)%ROWS - tgt.y);
+      return ax-bx;
+    });
+    dir = valid[0];
+  }
+
+  function step() {
+    frameCount++;
+    if(aiMode) aiStep();
+    var head = snake[0];
+    var nx=(head.x+dir.x+COLS)%COLS, ny=(head.y+dir.y+ROWS)%ROWS;
+    if(snake.some(function(s){ return s.x===nx && s.y===ny; })){ running=false; draw(); return; }
+    snake.unshift({x:nx, y:ny});
+    var ate = false;
+    if(nx===food.x && ny===food.y){ score+=1; food=spawnFood(); ate=true; }
+    bonusFoods = bonusFoods.filter(function(b){
+      if(b.x===nx && b.y===ny){ score+=3; ate=true; return false; }
+      b.t--;
+      return b.t > 0;
+    });
+    if(!ate) snake.pop();
+    if(frameCount % BONUS_INTERVAL === 0) spawnBonus();
+    if(score > highScore) {
+      highScore = score;
+      try { localStorage.setItem('umpsa_snake_hi', highScore); } catch(e){}
+    }
+    updateUI();
+  }
+
+  function updateUI() {
+    scoreEl.textContent = score;
+    hiEl.textContent    = highScore;
+  }
+
+  function draw() {
+    ctx.fillStyle = BG; ctx.fillRect(0,0,canvas.width,canvas.height);
+    // grid
+    ctx.strokeStyle = GRID_C; ctx.lineWidth = 1;
+    for(var c=0;c<=COLS;c++){ctx.beginPath();ctx.moveTo(c*CS,0);ctx.lineTo(c*CS,canvas.height);ctx.stroke();}
+    for(var r=0;r<=ROWS;r++){ctx.beginPath();ctx.moveTo(0,r*CS);ctx.lineTo(canvas.width,r*CS);ctx.stroke();}
+    // regular food
+    ctx.fillStyle = FOOD_C;
+    ctx.beginPath();
+    ctx.arc(food.x*CS+CS/2, food.y*CS+CS/2, CS/2-3, 0, Math.PI*2);
+    ctx.fill();
+    // bonus foods
+    bonusFoods.forEach(function(b){
+      var alpha = Math.max(0.4, b.t / BONUS_TIMER);
+      ctx.save();
+      ctx.globalAlpha = alpha*0.35;
+      ctx.fillStyle = BONUS_C;
+      ctx.beginPath();ctx.arc(b.x*CS+CS/2,b.y*CS+CS/2,CS/2+2,0,Math.PI*2);ctx.fill();
+      ctx.globalAlpha = alpha;
+      ctx.font = 'bold '+(CS-4)+'px serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = BONUS_C;
+      ctx.fillText('⭐', b.x*CS+CS/2, b.y*CS+CS/2+1);
+      ctx.restore();
+    });
+    // snake
+    snake.forEach(function(s,i){
+      ctx.fillStyle = i===0 ? HEAD_C : SNAKE_C;
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(s.x*CS+1,s.y*CS+1,CS-2,CS-2,4);
+      else ctx.rect(s.x*CS+1,s.y*CS+1,CS-2,CS-2);
+      ctx.fill();
+    });
+    // mode label
+    ctx.fillStyle = '#5eead4'; ctx.font = '11px monospace'; ctx.textAlign = 'right';
+    ctx.fillText(aiMode ? '🤖 AI' : '🕹️ You', canvas.width-8, 18);
+    ctx.textAlign = 'left';
+    // game over overlay
+    if(!running){
+      ctx.fillStyle='rgba(0,0,0,0.65)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle='#fff'; ctx.font='bold 22px sans-serif'; ctx.textAlign='center';
+      ctx.fillText('Game Over — Score: '+score, canvas.width/2, canvas.height/2-14);
+      ctx.font='14px sans-serif'; ctx.fillStyle='#FFD700';
+      ctx.fillText('High Score: '+highScore, canvas.width/2, canvas.height/2+12);
+      ctx.fillStyle='#8FD9D5';
+      ctx.fillText('Click the canvas to restart', canvas.width/2, canvas.height/2+36);
+      ctx.textAlign='left';
+    }
+  }
+
+  var last=0, INTERVAL=120;
+  function loop(ts){
+    if(!running){ return; }
+    if(ts - last > INTERVAL){ step(); last=ts; }
+    draw();
+    animId = requestAnimationFrame(loop);
+  }
+
+  // Keyboard
+  var KEYS = {ArrowUp:{x:0,y:-1},ArrowDown:{x:0,y:1},ArrowLeft:{x:-1,y:0},ArrowRight:{x:1,y:0}};
+  document.addEventListener('keydown', function(e){
+    var d = KEYS[e.key];
+    if(d){
+      if(d.x !== -dir.x || d.y !== -dir.y) dir = d;
+      aiMode = false;
+      aiBtn.textContent = 'Watch AI';
+      e.preventDefault();
+    }
+    if(e.key === ' ' && !running){ init(); e.preventDefault(); }
+  });
+
+  // Click canvas to restart
+  canvas.addEventListener('click', function(){ if(!running) init(); });
+
+  // AI toggle button
+  aiMode = true;
+  aiBtn.textContent = 'Play yourself';
+  aiBtn.addEventListener('click', function(){
+    aiMode = !aiMode;
+    aiBtn.textContent = aiMode ? 'Play yourself' : 'Watch AI';
+    if(!running) init();
+  });
+
+  // Restart button
+  restBtn.addEventListener('click', function(){ init(); });
+
+  // D-pad buttons
+  function dpad(d) {
+    return function(){
+      if(d.x !== -dir.x || d.y !== -dir.y) dir = d;
+      aiMode = false;
+      aiBtn.textContent = 'Watch AI';
+    };
+  }
+  document.getElementById('dp-up').addEventListener('click',    dpad({x:0,y:-1}));
+  document.getElementById('dp-down').addEventListener('click',  dpad({x:0,y:1}));
+  document.getElementById('dp-left').addEventListener('click',  dpad({x:-1,y:0}));
+  document.getElementById('dp-right').addEventListener('click', dpad({x:1,y:0}));
+
+  // Start
+  init();
+})();
+</script>
+</body>
+</html>
