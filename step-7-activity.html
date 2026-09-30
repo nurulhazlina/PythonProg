@@ -813,6 +813,8 @@ function editIdentity() {
   if (form)  form.style.display = '';
   if (conf)  conf.style.display = 'none';
 }
+window.saveIdentity = saveIdentity;
+window.editIdentity  = editIdentity;
 
 (function _initIdentity() {
   try {
