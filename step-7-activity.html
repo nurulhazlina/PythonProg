@@ -787,7 +787,7 @@ function saveIdentity() {
   var ageVal    = ((document.getElementById('id-age')    ||{}).value||'').trim();
   var notice    = document.getElementById('idNotice');
   if (!nameVal || !matricVal || !classVal || !genderVal || !ageVal) {
-    if (notice) { notice.style.display=''; notice.textContent='⚠ Please fill in all required fields (★): Name, Matric No., Class, Gender and Age.'; }
+    if (notice) { notice.style.display='block'; notice.textContent='⚠ Please fill in all required fields (★): Name, Matric No., Class, Gender and Age.'; }
     return;
   }
   var st = {
@@ -837,7 +837,7 @@ function editIdentity() {
       if (!_idConfirmed) {
         e.stopImmediatePropagation();
         var notice = document.getElementById('idNotice');
-        if (notice) { notice.style.display=''; notice.textContent='⚠ Please fill in and confirm your details above before starting.'; }
+        if (notice) { notice.style.display='block'; notice.textContent='⚠ Please fill in and confirm your details above before starting.'; }
         var block = document.getElementById('idBlock');
         if (block) block.scrollIntoView({behavior:'smooth',block:'start'});
       }
@@ -1328,7 +1328,19 @@ function sendActivityRecord(stepNum) {
     function jv(id) { var el=document.getElementById(id); if(el&&el.value) return el.value; return (d.journal_text&&d.journal_text[id])?d.journal_text[id]:''; }
     function pv(id,lk) { var el=document.getElementById(id); if(el&&el.value) return el.value; return pc[lk]!==undefined?pc[lk]:''; }
     var payload = {
-      type: 'act_'+stepNum, matric:st.matric||'', name:st.name||'', class:st.class||'', step:stepNum,
+      type: 'act_'+stepNum,
+      /* ── Student identity (10 fields) ── */
+      matric:      st.matric      || '',
+      name:        st.name        || '',
+      class:       st.class       || '',
+      gender:      st.gender      || '',
+      age:         st.age         || '',
+      mykid:       st.mykid       || '',
+      home_state:  st.home_state  || '',
+      school_code: st.school_code || '',
+      phone:       st.phone       || '',
+      email:       st.email       || '',
+      step:        stepNum,
       submitted_iso: new Date().toISOString(),
       cal_confidence: cal.confidence!==undefined?cal.confidence:'',
       cal_predicted:  cal.predicted_score!==undefined?cal.predicted_score:'',
@@ -1353,9 +1365,16 @@ function postToSheets(payload){
   try{
     var st={};
     try{st=JSON.parse(localStorage.getItem('umpsa_snake_student')||'{}');}catch(e){}
-    payload.matric = payload.matric || st.matric || '';
-    payload.name   = payload.name   || st.name   || '';
-    payload.class  = payload.class  || st.class  || '';
+    payload.matric      = payload.matric      || st.matric      || '';
+    payload.name        = payload.name        || st.name        || '';
+    payload.class       = payload.class       || st.class       || '';
+    payload.gender      = payload.gender      || st.gender      || '';
+    payload.age         = payload.age         || st.age         || '';
+    payload.mykid       = payload.mykid       || st.mykid       || '';
+    payload.home_state  = payload.home_state  || st.home_state  || '';
+    payload.school_code = payload.school_code || st.school_code || '';
+    payload.phone       = payload.phone       || st.phone       || '';
+    payload.email       = payload.email       || st.email       || '';
     payload.submitted_iso = payload.submitted_iso || new Date().toISOString();
     fetch('https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec',{method:'POST',mode:'no-cors',body:JSON.stringify(payload)});
   }catch(err){console.warn('postToSheets error:',err);}
