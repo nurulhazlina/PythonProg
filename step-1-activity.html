@@ -96,22 +96,88 @@
 .refl-badge{font-size:11px;font-weight:700;letter-spacing:.06em;padding:3px 8px;border-radius:20px;background:var(--blue);color:#fff;white-space:nowrap}
 .refl-gate-body{padding:18px}
 .cal-tip{background:rgba(2,173,165,.08);border-left:3px solid var(--teal);border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:16px;font-size:13px;line-height:1.6}
+
+/* ── Student Identity Block ── */
+.id-block{background:linear-gradient(135deg,#08312F,#0a3d39);border-radius:12px;padding:20px 22px;margin-bottom:22px;border:2px solid rgba(2,173,165,.3)}
+.id-block.id-confirmed{border-color:#02ADA5;background:linear-gradient(135deg,#052e16,#073d2e)}
+.id-block-title{font-weight:800;font-size:15px;color:#fff;display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.id-required-badge{background:#02ADA5;color:#fff;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;letter-spacing:.05em;flex-shrink:0}
+.id-subtitle{font-weight:400;font-size:13px;color:rgba(255,255,255,.6)}
+.id-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px 12px;align-items:end}
+.id-field{display:flex;flex-direction:column;gap:5px}
+.id-field.id-w2{grid-column:span 2}
+.id-field label{font-size:11px;font-weight:700;color:rgba(255,255,255,.65);letter-spacing:.06em;text-transform:uppercase}
+.id-req{color:#f5a21d;margin-left:2px}
+.id-field input,.id-field select{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);border-radius:7px;padding:9px 12px;color:#fff;font-size:13px;font-family:inherit;width:100%;box-sizing:border-box;transition:border-color .2s}
+.id-field select{cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,.5)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.id-field select option{background:#0a3d39;color:#fff}
+.id-field input:focus,.id-field select:focus{outline:none;border-color:#02ADA5;background:rgba(2,173,165,.12)}
+.id-field input::placeholder{color:rgba(255,255,255,.3)}
+.id-save-btn{background:#02ADA5;color:#fff;border:none;border-radius:8px;padding:11px 22px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;transition:opacity .2s;width:100%;margin-top:14px}
+.id-save-btn:hover{opacity:.88}
+.id-confirmed-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.id-confirmed-name{font-weight:700;font-size:16px;color:#fff}
+.id-confirmed-meta{color:rgba(255,255,255,.65);font-size:13px}
+.id-edit-btn{background:transparent;border:1.5px solid rgba(255,255,255,.35);color:rgba(255,255,255,.75);border-radius:6px;padding:5px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+.id-edit-btn:hover{border-color:#fff;color:#fff}
+.id-notice{background:rgba(245,162,29,.12);border:1.5px solid rgba(245,162,29,.45);border-radius:8px;padding:9px 14px;color:#f5a21d;font-size:13px;font-weight:600;margin-top:12px;display:none}
+
+/* ─── Standard site-header (matches step-2 through step-10) ─── */
+.site-header{background:var(--teal-dark,#08312F);color:#fff;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.28)}
+.header-inner{display:flex;justify-content:space-between;align-items:center;padding:0 20px;height:50px;max-width:1100px;margin:0 auto}
+.logo{color:#fff;text-decoration:none;font-weight:800;font-size:17px;white-space:nowrap;letter-spacing:-.01em}
+.logo:hover{opacity:.85}
+.step-nav{display:flex;gap:3px;align-items:center;flex-wrap:wrap}
+.step-nav a{color:rgba(255,255,255,.75);text-decoration:none;font-size:13px;font-weight:600;padding:5px 9px;border-radius:6px;transition:background .15s,color .15s;line-height:1}
+.step-nav a:hover{background:rgba(255,255,255,.15);color:#fff}
+.step-nav a.active{background:rgba(255,255,255,.22);color:#fff;font-weight:800}
+.step-badge{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:12px}
+.hero{background:var(--teal-dark,#08312F);color:#fff;padding:32px 0 24px}
+.hero .container{max-width:1100px;margin:0 auto;padding:0 20px}
+.hero-title{font-size:clamp(28px,5vw,44px);font-weight:800;line-height:1.1;margin:0 0 8px}
+.hero-sub{opacity:.75;font-size:15px;margin:0 0 16px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:8px;font-weight:600;font-size:14px;text-decoration:none;border:none;cursor:pointer;transition:opacity .15s,background .15s;background:var(--teal,#02ADA5);color:#fff}
+.btn:hover{opacity:.85}
+.btn-outline{background:transparent;border:2px solid rgba(255,255,255,.55);color:#fff}
+.btn-outline:hover{background:rgba(255,255,255,.1);opacity:1}
 </style>
 </head>
 <body>
 <div class="chev" id="chev">
   <span id="see-box">See</span><span>Think</span><span>Explore</span><span>Marvel</span>
 </div>
-<nav class="sitenav"><div class="wrap">
-
-<div style="background:rgba(2,173,165,.08);border:1px solid rgba(2,173,165,.25);border-radius:10px;padding:12px 18px;margin-bottom:24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-  <span style="font-size:20px">📖</span>
-  <div style="flex:1;min-width:180px">
-    <div style="font-weight:700;font-size:14px">Step 1 — Variables &amp; Setup</div>
-    <div style="font-size:12px;color:var(--muted)">Review the concept page any time before attempting the tiers</div>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="index.html">🐍 Snake Tutorial</a>
+    <nav class="step-nav">
+      <a href="step-1-activity.html" class="active">1</a>
+<a href="step-2-activity.html">2</a>
+<a href="step-3-activity.html">3</a>
+<a href="step-4-activity.html">4</a>
+<a href="step-5-activity.html">5</a>
+<a href="step-6-activity.html">6</a>
+<a href="step-7-activity.html">7</a>
+<a href="step-8-activity.html">8</a>
+<a href="step-9-activity.html">9</a>
+<a href="step-10-activity.html">10</a>
+    </nav>
   </div>
-  <a href="step-1.html" style="padding:7px 16px;border:1.5px solid var(--teal);border-radius:7px;color:var(--teal);font-weight:600;font-size:13px;text-decoration:none;white-space:nowrap;transition:opacity .2s" onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">&larr; Back to Concept</a>
-</div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="step-badge">Step 1 — Activity</div>
+    <h1 class="hero-title">Variables &amp; Setup</h1>
+    <p class="hero-sub">constants &bull; colour tuples &bull; pygame window</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+      <a class="btn btn-outline" href="step-1.html">📖 Concept Page</a>
+      <a class="btn" href="step-2-activity.html">Step 2 &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<main class="main-content">
+<div class="container">
 
 <!-- ═══ ACTIVITIES — 4-Tier Progressive System ═══ -->
 <section id="activity-section">
@@ -131,6 +197,85 @@
     <div class="tier-connector" id="tc4j"></div>
     <div class="tier-step locked" id="tpj"><span class="tier-num">&#128211;</span><span class="tier-label">Reflect</span></div>
   </div>
+
+
+<!-- ── STUDENT IDENTITY ── -->
+<div class="id-block" id="idBlock">
+  <div class="id-block-title">
+    &#x1F464; Your Details
+    <span class="id-required-badge">REQUIRED</span>
+    <span class="id-subtitle">&#8212; fill in before you begin (<span style="color:#f5a21d">&#9733;</span> = required)</span>
+  </div>
+  <div id="idForm">
+    <div class="id-grid">
+      <div class="id-field id-w2">
+        <label>Full Name <span class="id-req">&#9733;</span></label>
+        <input type="text" id="id-name" placeholder="Ahmad bin Ali" autocomplete="name">
+      </div>
+      <div class="id-field">
+        <label>Matric No. <span class="id-req">&#9733;</span></label>
+        <input type="text" id="id-matric" placeholder="RE25001" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>Class <span class="id-req">&#9733;</span></label>
+        <input type="text" id="id-class" placeholder="01A" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>Gender <span class="id-req">&#9733;</span></label>
+        <select id="id-gender">
+          <option value="">-- select --</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Prefer not to say</option>
+        </select>
+      </div>
+      <div class="id-field">
+        <label>Age <span class="id-req">&#9733;</span></label>
+        <input type="number" id="id-age" min="10" max="30" placeholder="e.g. 19" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>Home State</label>
+        <select id="id-state">
+          <option value="">-- select --</option>
+          <option>Johor</option><option>Kedah</option><option>Kelantan</option>
+          <option>Melaka</option><option>Negeri Sembilan</option><option>Pahang</option>
+          <option>Perak</option><option>Perlis</option><option>Pulau Pinang</option>
+          <option>Sabah</option><option>Sarawak</option><option>Selangor</option>
+          <option>Terengganu</option><option>Kuala Lumpur</option><option>Labuan</option>
+          <option>Putrajaya</option>
+        </select>
+      </div>
+      <div class="id-field id-w2">
+        <label>IC / MyKid No.</label>
+        <input type="text" id="id-mykid" placeholder="e.g. 050101-01-1234" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>School Code</label>
+        <input type="text" id="id-school" placeholder="e.g. JBA0001" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>Phone</label>
+        <input type="tel" id="id-phone" placeholder="0123456789" autocomplete="tel">
+      </div>
+      <div class="id-field id-w2">
+        <label>Email</label>
+        <input type="email" id="id-email" placeholder="name@example.com" autocomplete="email">
+      </div>
+    </div>
+    <div class="id-notice" id="idNotice"></div>
+    <button class="id-save-btn" onclick="saveIdentity()">✓ Confirm My Details</button>
+  </div>
+  <div id="idConfirmed" style="display:none">
+    <div class="id-confirmed-row">
+      <span style="font-size:20px">&#9989;</span>
+      <div>
+        <div class="id-confirmed-name" id="idConfName"></div>
+        <div class="id-confirmed-meta" id="idConfMeta"></div>
+      </div>
+      <button class="id-edit-btn" onclick="editIdentity()">Edit</button>
+    </div>
+  </div>
+</div>
 
   <!-- ═══ CALIBRATION GATE (Layer 2 — task-level metacognition) ═══ -->
   <div class="cal-gate" id="calGate">
@@ -513,6 +658,83 @@ pygame.quit()</pre>
 (function(){
 'use strict';
 var LMS_KEY='lms_step1';
+/* ── Student Identity ── */
+var ID_KEY = 'umpsa_snake_student';
+var _idConfirmed = false;
+
+function _setIdentityConfirmed(st) {
+  _idConfirmed = true;
+  var block = document.getElementById('idBlock');
+  var form  = document.getElementById('idForm');
+  var conf  = document.getElementById('idConfirmed');
+  var nameEl = document.getElementById('idConfName');
+  var metaEl = document.getElementById('idConfMeta');
+  if (block) block.classList.add('id-confirmed');
+  if (form)  form.style.display  = 'none';
+  if (conf)  conf.style.display  = '';
+  if (nameEl) nameEl.textContent = st.name || '';
+  var gLabel = {male:'Male', female:'Female', other:'N/A'}[st.gender] || st.gender || '';
+  var parts = [st.matric, st.class, gLabel, st.age ? 'Age '+st.age : ''].filter(Boolean);
+  if (metaEl) metaEl.textContent = parts.join('  ·  ');
+}
+
+function saveIdentity() {
+  var nameVal   = ((document.getElementById('id-name')   ||{}).value||'').trim();
+  var matricVal = ((document.getElementById('id-matric') ||{}).value||'').trim();
+  var classVal  = ((document.getElementById('id-class')  ||{}).value||'').trim();
+  var genderVal = ((document.getElementById('id-gender') ||{}).value||'').trim();
+  var ageVal    = ((document.getElementById('id-age')    ||{}).value||'').trim();
+  var notice    = document.getElementById('idNotice');
+  if (!nameVal || !matricVal || !classVal || !genderVal || !ageVal) {
+    if (notice) { notice.style.display='block'; notice.textContent='⚠ Please fill in all required fields (★): Name, Matric No., Class, Gender and Age.'; }
+    return;
+  }
+  var st = {
+    name: nameVal, matric: matricVal, class: classVal,
+    gender: genderVal, age: ageVal,
+    mykid:       ((document.getElementById('id-mykid')  ||{}).value||'').trim(),
+    home_state:  ((document.getElementById('id-state')  ||{}).value||'').trim(),
+    school_code: ((document.getElementById('id-school') ||{}).value||'').trim(),
+    phone:       ((document.getElementById('id-phone')  ||{}).value||'').trim(),
+    email:       ((document.getElementById('id-email')  ||{}).value||'').trim()
+  };
+  try { localStorage.setItem(ID_KEY, JSON.stringify(st)); } catch(e) {}
+  if (notice) notice.style.display = 'none';
+  _setIdentityConfirmed(st);
+}
+
+function editIdentity() {
+  _idConfirmed = false;
+  var block = document.getElementById('idBlock');
+  var form  = document.getElementById('idForm');
+  var conf  = document.getElementById('idConfirmed');
+  if (block) block.classList.remove('id-confirmed');
+  if (form)  form.style.display = '';
+  if (conf)  conf.style.display = 'none';
+}
+window.saveIdentity = saveIdentity;
+window.editIdentity  = editIdentity;
+
+(function _initIdentity() {
+  try {
+    var st = JSON.parse(localStorage.getItem(ID_KEY) || '{}');
+    if (st.name) {
+      var map = {
+        'id-name': st.name, 'id-matric': st.matric, 'id-class': st.class,
+        'id-gender': st.gender, 'id-age': st.age, 'id-mykid': st.mykid,
+        'id-state': st.home_state, 'id-school': st.school_code,
+        'id-phone': st.phone, 'id-email': st.email
+      };
+      Object.keys(map).forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el && map[id]) el.value = map[id];
+      });
+      if (st.name && st.matric && st.class && st.gender && st.age) _setIdentityConfirmed(st);
+    }
+  } catch(e) {}
+})();
+/* ── End Student Identity ── */
+
 function lmsGet(){try{return JSON.parse(localStorage.getItem(LMS_KEY)||'{}')}catch(e){return{}}}
 function lmsSet(d){try{localStorage.setItem(LMS_KEY,JSON.stringify(d))}catch(e){}}
 function lmsLog(ev,val){var d=lmsGet();if(!d[ev])d[ev]=[];d[ev].push({ts:Date.now(),v:val!==undefined?val:null});lmsSet(d);}
@@ -559,10 +781,12 @@ document.getElementById('t1-submit').addEventListener('click',function(){
     showFeedback('t1-feedback',(ok.length-correct)+' blank(s) incorrect — check highlighted fields and try again.','error');
   }
 });
-/* TIER 2 */
+/* TIER 2 — 2-attempt record-and-proceed */
 document.getElementById('t2-submit').addEventListener('click',function(){
   if(state.t2)return;
-  attempts.t2++;lmsLog('t2_attempt',attempts.t2);setAttempts('t2-attempts',attempts.t2);
+  var d=lmsGet();var t2n=(d.t2_attempt_num||0)+1;
+  d.t2_attempt_num=t2n;lmsSet(d);
+  attempts.t2=t2n;lmsLog('t2_attempt',t2n);setAttempts('t2-attempts',t2n+'/2');
   var v1=normCode(document.getElementById('bug1-var').value);
   var f1=normCode(document.getElementById('bug1-fix').value);
   var w1=document.getElementById('bug1-why').value.trim();
@@ -575,31 +799,46 @@ document.getElementById('t2-submit').addEventListener('click',function(){
   var ok1=(v1==='cell_size')&&(f1.includes('cell_size=30'))&&w1.length>10;
   var ok2=(v2==='green')&&(f2.includes('green=(0,200,80)'))&&w2.length>10;
   var ok3=(v3==='window_w')&&f3.includes('*')&&w3.length>10;
+  var d2=lmsGet();
+  d2['t2_resp_'+t2n]={
+    bug1_var:document.getElementById('bug1-var').value,bug1_fix:document.getElementById('bug1-fix').value,bug1_why:w1,
+    bug2_var:document.getElementById('bug2-var').value,bug2_fix:document.getElementById('bug2-fix').value,bug2_why:w2,
+    bug3_var:document.getElementById('bug3-var').value,bug3_fix:document.getElementById('bug3-fix').value,bug3_why:w3,
+    checks:[ok1?1:0,ok2?1:0,ok3?1:0]};lmsSet(d2);
   if(ok1&&ok2&&ok3){
-    state.t2=true;lmsLog('t2_submitted',{attempts:attempts.t2,ts:Date.now()});
-    showFeedback('t2-feedback','All 3 bugs found and fixed! Complete the mid-point reflection below to unlock Tier 3.','success');
-    document.getElementById('t2-submit').disabled=true;
-    markDone('tp2');document.getElementById('tc23').classList.add('done');
-    /* Unlock Reflection 2 gate — Tier 3 unlocks after reflection */
-    var r2c=document.getElementById('refl2');
-    r2c.classList.remove('tier-locked');r2c.removeAttribute('aria-disabled');
-    document.getElementById('refl2-submit').disabled=false;
-    setTimeout(function(){r2c.scrollIntoView({behavior:'smooth',block:'nearest'});},200);
+    _unlockT2('All 3 bugs correctly identified — complete the mid-point reflection to unlock Tier 3.','success');
+  } else if(t2n>=2){
+    _unlockT2('Responses recorded — complete the mid-point reflection to unlock Tier 3.','partial');
   } else {
     var m=[];
-    if(!ok1)m.push('Bug 1: variable is CELL_SIZE — the value "30" has the wrong type');
-    if(!ok2)m.push('Bug 2: variable is GREEN — tuples use () not []');
-    if(!ok3)m.push('Bug 3: variable is WINDOW_W — should multiply, not add');
-    if(w1.length<=10||w2.length<=10||w3.length<=10)m.push('Write fuller explanations');
-    showFeedback('t2-feedback',m.join(' &middot; '),'error');
+    if(!ok1)m.push('Bug 1: CELL_SIZE — value “30” has wrong type');
+    if(!ok2)m.push('Bug 2: GREEN — tuples use () not []');
+    if(!ok3)m.push('Bug 3: WINDOW_W — should multiply, not add');
+    if(w1.length<=10||w2.length<=10||w3.length<=10)m.push('Explain each bug in 10+ words');
+    showFeedback('t2-feedback','Attempt 1/2 — '+m.join(' · ')+' — review and try once more.','error');
+    document.getElementById('t2-submit').textContent='Submit 2nd Attempt →';
   }
 });
-/* TIER 3 */
+function _unlockT2(msg,fbType){
+  state.t2=true;var d=lmsGet();d.t2_done=true;lmsSet(d);
+  lmsLog('t2_submitted',{ts:Date.now()});
+  document.getElementById('t2-submit').disabled=true;
+  markDone('tp2');document.getElementById('tc23').classList.add('done');
+  var r2c=document.getElementById('refl2');
+  r2c.classList.remove('tier-locked');r2c.removeAttribute('aria-disabled');
+  document.getElementById('refl2-submit').disabled=false;
+  showFeedback('t2-feedback',msg,fbType);
+  setTimeout(function(){r2c.scrollIntoView({behavior:'smooth',block:'nearest'});},200);
+}
+/* TIER 3 — 2-attempt record-and-proceed */
 document.getElementById('t3-submit').addEventListener('click',function(){
   if(state.t3)return;
-  attempts.t3++;lmsLog('t3_attempt',attempts.t3);setAttempts('t3-attempts',attempts.t3);
-  var c=normCode(document.getElementById('t3-code').value);
-  var checks=[
+  var d=lmsGet();var t3n=(d.t3_attempt_num||0)+1;
+  d.t3_attempt_num=t3n;lmsSet(d);
+  attempts.t3=t3n;lmsLog('t3_attempt',t3n);setAttempts('t3-attempts',t3n+'/2');
+  var code=document.getElementById('t3-code').value;
+  var c=normCode(code);
+  var checkList=[
     c.includes('importpygame'),c.includes('pygame.init()'),
     c.includes('grid_cols=20'),c.includes('grid_rows=15'),c.includes('cell_size=30'),
     c.includes('(255,255,255)'),c.includes('(0,200,80)'),c.includes('(0,160,50)'),
@@ -609,54 +848,76 @@ document.getElementById('t3-submit').addEventListener('click',function(){
     c.includes('set_mode'),c.includes('set_caption'),
     c.includes('screen.fill'),c.includes('display.flip'),c.includes('time.wait'),c.includes('pygame.quit()')
   ];
-  var n=checks.filter(Boolean).length;
-  if(n>=checks.length-2){
-    state.t3=true;lmsLog('t3_submitted',{attempts:attempts.t3,ts:Date.now()});
-    showFeedback('t3-feedback','Program complete ('+n+'/'+checks.length+' checks). Tier 4 unlocked!','success');
-    document.getElementById('t3-submit').disabled=true;
-    markDone('tp3');document.getElementById('tc34').classList.add('done');unlockTier(4);
+  var n=checkList.filter(Boolean).length;
+  var d2=lmsGet();
+  d2['t3_code_'+t3n]=code;d2['t3_checks_'+t3n]=n;
+  d2['t3_detail_'+t3n]=checkList.map(function(v,i){return v?i+1:0;}).filter(Boolean).join(',');
+  lmsSet(d2);
+  if(n>=checkList.length-2){
+    _unlockT3('Program complete ('+n+'/'+checkList.length+' checks). Tier 4 unlocked!','success');
+  } else if(t3n>=2){
+    _unlockT3('Responses recorded ('+n+'/'+checkList.length+' checks). Tier 4 unlocked.','partial');
   } else {
-    showFeedback('t3-feedback',n+'/'+checks.length+' checks passed. Check constants, colours, window setup, fill/flip/wait, and pygame.quit().','partial');
+    showFeedback('t3-feedback','Attempt 1/2 — '+n+'/'+checkList.length+' checks passed. Check constants, colours, window setup, fill/flip/wait, and pygame.quit() — then try once more.','partial');
+    document.getElementById('t3-submit').textContent='Submit 2nd Attempt →';
   }
 });
-/* TIER 4 */
+function _unlockT3(msg,fbType){
+  state.t3=true;var d=lmsGet();d.t3_done=true;lmsSet(d);
+  lmsLog('t3_submitted',{ts:Date.now()});
+  document.getElementById('t3-submit').disabled=true;
+  markDone('tp3');document.getElementById('tc34').classList.add('done');unlockTier(4);
+  showFeedback('t3-feedback',msg,fbType);
+}
+/* TIER 4 — 2-attempt record-and-proceed */
 document.getElementById('t4-submit').addEventListener('click',function(){
   if(state.t4)return;
-  attempts.t4++;lmsLog('t4_attempt',attempts.t4);setAttempts('t4-attempts',attempts.t4);
-  var c=normCode(document.getElementById('t4-code').value);
+  var d=lmsGet();var t4n=(d.t4_attempt_num||0)+1;
+  d.t4_attempt_num=t4n;lmsSet(d);
+  attempts.t4=t4n;lmsLog('t4_attempt',t4n);setAttempts('t4-attempts',t4n+'/2');
+  var code=document.getElementById('t4-code').value;
+  var c=normCode(code);
   var o=document.getElementById('t4-output').value.trim();
   var hasGold=c.includes('gold')&&(c.includes('255,200,0'));
   var hasBorder=c.includes('border_colour')||c.includes('border_color');
   var hasPrint=c.includes('print(type(');
   var hasOutput=o.length>20;
+  var checks=[hasGold?1:0,hasBorder?1:0,hasPrint?1:0,hasOutput?1:0];
+  var d2=lmsGet();
+  d2['t4_code_'+t4n]=code;d2['t4_output_'+t4n]=o;d2['t4_checks_'+t4n]=checks;lmsSet(d2);
   if(hasGold&&hasBorder&&hasPrint&&hasOutput){
-    state.t4=true;
-    var d=lmsGet();
-    function dur(a,b){var s=d[a],e=d[b];if(!s||!s.length||!e||!e.length)return null;return e[e.length-1].ts-s[0].ts;}
-    var dt1=dur('t1_attempt','t1_submitted'),
-        dt2=dur('t2_attempt','t2_submitted'),
-        dt3=dur('t3_attempt','t3_submitted'),
-        dt4=dur('t4_attempt','t4_submitted');
-    var ratio=dt1&&dt4&&dt1>0?(dt4/dt1).toFixed(2):null;
-    lmsLog('t4_submitted',{attempts:attempts.t4,ts:Date.now()});
-    lmsLog('effort_index',{t1_ms:dt1,t2_ms:dt2,t3_ms:dt3,t4_ms:dt4,ratio:ratio});
-    showFeedback('t4-feedback','Tier 4 complete!'+(ratio?' Effort index: '+ratio+'.':'')+'  Answer the reflection below to open the journal.','success');
-    document.getElementById('t4-submit').disabled=true;
-    markDone('tp4');document.getElementById('tc4j').classList.add('done');
-    /* Unlock Reflection 3 gate — Journal unlocks after reflection */
-    var r3c=document.getElementById('refl3');
-    r3c.classList.remove('tier-locked');r3c.removeAttribute('aria-disabled');
-    document.getElementById('refl3-submit').disabled=false;
-    setTimeout(function(){r3c.scrollIntoView({behavior:'smooth',block:'nearest'});},200);
+    _unlockT4(true);
+  } else if(t4n>=2){
+    _unlockT4(false);
   } else {
     var m=[];
     if(!hasGold)m.push('GOLD = (255, 200, 0) not found');
     if(!hasBorder)m.push('BORDER_COLOUR missing');
     if(!hasPrint)m.push('print(type(...)) statements missing');
-    if(!hasOutput)m.push('paste terminal output from Thonny');
-    showFeedback('t4-feedback',m.join(' &middot; '),'error');
+    if(!hasOutput)m.push('paste terminal output from Thonny (20+ chars)');
+    showFeedback('t4-feedback','Attempt 1/2 — '+m.join(' · ')+' — review and try once more.','error');
+    document.getElementById('t4-submit').textContent='Submit 2nd Attempt →';
   }
 });
+function _unlockT4(passed){
+  state.t4=true;
+  var d=lmsGet();
+  function dur(a,b){var s=d[a],e=d[b];if(!s||!s.length||!e||!e.length)return null;return e[e.length-1].ts-s[0].ts;}
+  var dt1=dur('t1_attempt','t1_submitted'),dt2=dur('t2_attempt','t2_submitted'),
+      dt3=dur('t3_attempt','t3_submitted'),dt4=dur('t4_attempt','t4_submitted');
+  var ratio=dt1&&dt4&&dt1>0?(dt4/dt1).toFixed(2):null;
+  lmsLog('t4_submitted',{ts:Date.now()});
+  d.t4_done=true;lmsSet(d);
+  lmsLog('effort_index',{t1_ms:dt1,t2_ms:dt2,t3_ms:dt3,t4_ms:dt4,ratio:ratio});
+  if(passed) showFeedback('t4-feedback','Tier 4 complete!'+(ratio?' Effort index: '+ratio+'.':'')+'  Answer the reflection below to open the journal.','success');
+  else showFeedback('t4-feedback','Responses recorded — answer the reflection below to open the journal.','partial');
+  document.getElementById('t4-submit').disabled=true;
+  markDone('tp4');document.getElementById('tc4j').classList.add('done');
+  var r3c=document.getElementById('refl3');
+  r3c.classList.remove('tier-locked');r3c.removeAttribute('aria-disabled');
+  document.getElementById('refl3-submit').disabled=false;
+  setTimeout(function(){r3c.scrollIntoView({behavior:'smooth',block:'nearest'});},200);
+}
 /* JOURNAL */
 document.getElementById('tj-submit').addEventListener('click',function(){
   if(state.tj)return;
@@ -844,7 +1105,7 @@ document.getElementById('refl3-submit').addEventListener('click',function(){
   <a href="step-1.html" class="prev"><small>Previous</small><b>&larr; Step 1: Concept</b></a>
   <a href="step-2.html" class="next"><small>Next</small><b>Step 2: Loop &amp; Events &rarr;</b></a>
 </div>
-</div><!-- end .wrap -->
+
 
 
 <div id="teacher-reveal" hidden style="position:fixed;bottom:24px;right:24px;background:#08312F;
@@ -853,37 +1114,20 @@ document.getElementById('refl3-submit').addEventListener('click',function(){
   🔑 Teacher access: <a href="teacher-1.html" style="color:#8FD9D5">Open Teacher Notes →</a>
 </div>
 
-<footer>
-  <div class="wrap" style="text-align:center">
-    <p><strong>See · Think · Explore · Marvel</strong><br>UMPSA STEM LAB · Snake Game Python Tutorial</p>
-    <p>
-      <a href="index.html">Home</a> · <a href="step-1.html">Step 1</a> · <a href="step-2.html">Step 2</a> · <a href="step-3.html">Step 3</a> · <a href="step-4.html">Step 4</a> · <a href="step-5.html">Step 5</a> · <a href="step-6.html">Step 6</a> · <a href="step-7.html">Step 7</a> · <a href="step-8.html">Step 8</a> · <a href="step-9.html">Step 9</a> · <a href="step-10.html">Step 10</a></p>
-      <p style="margin-top:10px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-weight:400">
-    <span>© 2026 UMPSA STEM Lab Engineering Education Initiative</span>
-    <a href="https://ee.ump.edu.my/hazlina/#research" target="_blank" rel="noopener"
-       title="Visit research page" aria-label="Research website"
-       style="color:var(--teal);display:inline-flex;align-items:center;transition:opacity .15s"
-       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
-      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
-           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-           aria-hidden="true">
-        <circle cx="12" cy="12" r="10"/>
-        <line x1="2" y1="12" x2="22" y2="12"/>
-        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-      </svg>
-    </a>
-    <a href="mailto:hazlina@umpsa.edu.my"
-       title="hazlina@umpsa.edu.my" aria-label="Email Dr Nurul Hazlina"
-       style="color:var(--teal);display:inline-flex;align-items:center;transition:opacity .15s"
-       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
-      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
-           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-           aria-hidden="true">
-        <rect x="2" y="4" width="20" height="16" rx="2"/>
-        <polyline points="2,4 12,13 22,4"/>
-      </svg>
-    </a>
-  </p>
+</div></main>
+
+<footer style="background:#1e293b;color:#94a3b8;padding:32px 24px;margin-top:48px;font-size:13px;text-align:center">
+  <div style="max-width:900px;margin:0 auto">
+    <p style="margin-bottom:8px"><strong style="color:#e2e8f0">See &middot; Think &middot; Explore &middot; Marvel</strong><br>UMPSA STEM LAB &middot; Snake Game Python Tutorial</p>
+    <p style="margin-top:10px;font-size:12px;color:#64748b">
+      <span>© 2026 Nurul Hazlina Noordin &middot; UMPSA STEM Lab Engineering Education Initiative</span>
+      <a href="https://ee.ump.edu.my/hazlina/#research" target="_blank" rel="noopener" style="color:#64748b;margin-left:8px" aria-label="Research page">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </a>
+      <a href="mailto:hazlina@umpsa.edu.my" style="color:#64748b;margin-left:8px" aria-label="Email">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+      </a>
+    </p>
   </div>
 </footer>
 
