@@ -797,6 +797,7 @@ window.editIdentity  = editIdentity;
 
 function lmsGet(){try{return JSON.parse(localStorage.getItem(LMS_KEY)||'{}')}catch(e){return{}}}
 function lmsSet(d){try{localStorage.setItem(LMS_KEY,JSON.stringify(d))}catch(e){}}
+window.lmsGet=lmsGet;window.lmsSet=lmsSet;
 function lmsLog(ev,val){var d=lmsGet();if(!Array.isArray(d[ev]))d[ev]=d[ev]?[]:[];d[ev].push({ts:Date.now(),v:val!==undefined?val:null});lmsSet(d);}
 lmsLog('page_opened');
 var state={cal:false,t1:false,t2:false,refl2:false,t3:false,t4:false,refl3:false,tj:false,post_cal:false};
