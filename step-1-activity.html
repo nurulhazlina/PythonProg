@@ -1230,6 +1230,75 @@ document.getElementById('refl3-submit').addEventListener('click',function(){
 })();
 })();
 })();
+
+/* === sendActivityRecord: bundle full Act_1 data → Sheets === */
+function sendActivityRecord(stepNum){
+  try{
+    var APPS_URL='https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec';
+    var st={};try{st=JSON.parse(localStorage.getItem('umpsa_snake_student')||'{}');}catch(e){}
+    var d=lmsGet();
+    /* T1 attempts: stored inside t1_submitted log entry */
+    var t1att='';
+    if(d.t1_submitted&&d.t1_submitted.length){t1att=d.t1_submitted[d.t1_submitted.length-1].attempts||'';}
+    function jv(id){var el=document.getElementById(id);if(el&&el.value)return el.value;return(d.journal_text&&d.journal_text[id])?d.journal_text[id]:'';}
+    function tv(id){var el=document.getElementById(id);return el?el.value:'';}
+    function dur(a,b){var s=d[a],e=d[b];if(!s||!s.length||!e||!e.length)return '';return e[e.length-1].ts-s[0].ts;}
+    var payload={
+      tab:'Act_1',
+      /* identity */
+      sid:st.matric||'anon',step:stepNum,ts:new Date().toISOString(),
+      matric:st.matric||'',name:st.name||'',gender:st.gender||'',
+      age:st.age||'',mykid:st.mykid||'',home_state:st.home_state||'',
+      class:st.class||'',school_code:st.school_code||'',phone:st.phone||'',email:st.email||'',
+      /* T1 — attempts tracked in log */
+      t1_attempts:t1att,
+      /* T2 */
+      t2_attempt_num:d.t2_attempt_num||0,
+      t2_bug1_why_1:(d['t2_resp_1']&&d['t2_resp_1'].bug1_why)||'',
+      t2_bug2_why_1:(d['t2_resp_1']&&d['t2_resp_1'].bug2_why)||'',
+      t2_bug3_why_1:(d['t2_resp_1']&&d['t2_resp_1'].bug3_why)||'',
+      t2_checks_1:(d['t2_resp_1']?JSON.stringify(d['t2_resp_1'].checks):''),
+      t2_bug1_why_2:(d['t2_resp_2']&&d['t2_resp_2'].bug1_why)||'',
+      t2_bug2_why_2:(d['t2_resp_2']&&d['t2_resp_2'].bug2_why)||'',
+      t2_bug3_why_2:(d['t2_resp_2']&&d['t2_resp_2'].bug3_why)||'',
+      t2_checks_2:(d['t2_resp_2']?JSON.stringify(d['t2_resp_2'].checks):''),
+      refl2_text:tv('refl2-text'),
+      /* T3 */
+      t3_attempt_num:d.t3_attempt_num||0,
+      t3_code_1:d['t3_code_1']||'',t3_checks_1:d['t3_checks_1']||'',t3_detail_1:d['t3_detail_1']||'',
+      t3_code_2:d['t3_code_2']||'',t3_checks_2:d['t3_checks_2']||'',t3_detail_2:d['t3_detail_2']||'',
+      /* T4 */
+      t4_attempt_num:d.t4_attempt_num||0,
+      t4_code_1:d['t4_code_1']||'',t4_output_1:d['t4_output_1']||'',
+      t4_checks_1:(d['t4_checks_1']?JSON.stringify(d['t4_checks_1']):''),
+      t4_code_2:d['t4_code_2']||'',t4_output_2:d['t4_output_2']||'',
+      t4_checks_2:(d['t4_checks_2']?JSON.stringify(d['t4_checks_2']):''),
+      /* reflections — step-1 has refl2 + refl3 only (refl1=pre-task in other steps) */
+      refl1_text:'',
+      refl3_text:tv('refl3-text'),
+      refl4_text:'',
+      post_confidence:(d.post_cal&&d.post_cal.post_confidence)||'',
+      post_actual:(d.post_cal&&d.post_cal.actual_pct)||'',
+      post_r1:(d.post_cal&&d.post_cal.r1)||tv('post-r1'),
+      post_r2:(d.post_cal&&d.post_cal.r2)||tv('post-r2'),
+      journal_text:JSON.stringify({jr1:jv('jr1'),jr2:jv('jr2'),jr3:jv('jr3'),jr4:jv('jr4'),jr5:jv('jr5')}),
+      /* concept — step-1 has no concept-check gate */
+      concept_score:'',concept_detail:'',
+      /* timing */
+      duration_ms:dur('cal_submitted','step1_complete')||''
+    };
+    fetch(APPS_URL,{method:'POST',mode:'no-cors',body:JSON.stringify(payload)});
+    console.log('sendActivityRecord step-1 fired',payload);
+    /* Show submission confirmation */
+    var banner=document.getElementById('step-complete-banner');
+    if(banner){
+      var sent=document.createElement('p');
+      sent.style.cssText='margin-top:8px;font-size:13px;color:#4ade80;font-weight:600';
+      sent.textContent='✓ Data submitted to spreadsheet';
+      if(!banner.querySelector('.gas-confirm')){{sent.className='gas-confirm';banner.appendChild(sent);}}
+    }
+  }catch(err){console.warn('sendActivityRecord error:',err);}
+}
 </script>
 <div class="stepnav" style="max-width:680px;margin-left:auto;margin-right:auto">
   <a href="step-1.html" class="prev"><small>Previous</small><b>&larr; Step 1: Concept</b></a>
@@ -1454,74 +1523,6 @@ document.querySelectorAll('pre.code:not(.code-fill)').forEach(function(pre){
   });
   update();
 })();
-/* === sendActivityRecord: bundle full Act_1 data → Sheets === */
-function sendActivityRecord(stepNum){
-  try{
-    var APPS_URL='https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec';
-    var st={};try{st=JSON.parse(localStorage.getItem('umpsa_snake_student')||'{}');}catch(e){}
-    var d=lmsGet();
-    /* T1 attempts: stored inside t1_submitted log entry */
-    var t1att='';
-    if(d.t1_submitted&&d.t1_submitted.length){t1att=d.t1_submitted[d.t1_submitted.length-1].attempts||'';}
-    function jv(id){var el=document.getElementById(id);if(el&&el.value)return el.value;return(d.journal_text&&d.journal_text[id])?d.journal_text[id]:'';}
-    function tv(id){var el=document.getElementById(id);return el?el.value:'';}
-    function dur(a,b){var s=d[a],e=d[b];if(!s||!s.length||!e||!e.length)return '';return e[e.length-1].ts-s[0].ts;}
-    var payload={
-      tab:'Act_1',
-      /* identity */
-      sid:st.matric||'anon',step:stepNum,ts:new Date().toISOString(),
-      matric:st.matric||'',name:st.name||'',gender:st.gender||'',
-      age:st.age||'',mykid:st.mykid||'',home_state:st.home_state||'',
-      class:st.class||'',school_code:st.school_code||'',phone:st.phone||'',email:st.email||'',
-      /* T1 — attempts tracked in log */
-      t1_attempts:t1att,
-      /* T2 */
-      t2_attempt_num:d.t2_attempt_num||0,
-      t2_bug1_why_1:(d['t2_resp_1']&&d['t2_resp_1'].bug1_why)||'',
-      t2_bug2_why_1:(d['t2_resp_1']&&d['t2_resp_1'].bug2_why)||'',
-      t2_bug3_why_1:(d['t2_resp_1']&&d['t2_resp_1'].bug3_why)||'',
-      t2_checks_1:(d['t2_resp_1']?JSON.stringify(d['t2_resp_1'].checks):''),
-      t2_bug1_why_2:(d['t2_resp_2']&&d['t2_resp_2'].bug1_why)||'',
-      t2_bug2_why_2:(d['t2_resp_2']&&d['t2_resp_2'].bug2_why)||'',
-      t2_bug3_why_2:(d['t2_resp_2']&&d['t2_resp_2'].bug3_why)||'',
-      t2_checks_2:(d['t2_resp_2']?JSON.stringify(d['t2_resp_2'].checks):''),
-      refl2_text:tv('refl2-text'),
-      /* T3 */
-      t3_attempt_num:d.t3_attempt_num||0,
-      t3_code_1:d['t3_code_1']||'',t3_checks_1:d['t3_checks_1']||'',t3_detail_1:d['t3_detail_1']||'',
-      t3_code_2:d['t3_code_2']||'',t3_checks_2:d['t3_checks_2']||'',t3_detail_2:d['t3_detail_2']||'',
-      /* T4 */
-      t4_attempt_num:d.t4_attempt_num||0,
-      t4_code_1:d['t4_code_1']||'',t4_output_1:d['t4_output_1']||'',
-      t4_checks_1:(d['t4_checks_1']?JSON.stringify(d['t4_checks_1']):''),
-      t4_code_2:d['t4_code_2']||'',t4_output_2:d['t4_output_2']||'',
-      t4_checks_2:(d['t4_checks_2']?JSON.stringify(d['t4_checks_2']):''),
-      /* reflections — step-1 has refl2 + refl3 only (refl1=pre-task in other steps) */
-      refl1_text:'',
-      refl3_text:tv('refl3-text'),
-      refl4_text:'',
-      post_confidence:(d.post_cal&&d.post_cal.post_confidence)||'',
-      post_actual:(d.post_cal&&d.post_cal.actual_pct)||'',
-      post_r1:(d.post_cal&&d.post_cal.r1)||tv('post-r1'),
-      post_r2:(d.post_cal&&d.post_cal.r2)||tv('post-r2'),
-      journal_text:JSON.stringify({jr1:jv('jr1'),jr2:jv('jr2'),jr3:jv('jr3'),jr4:jv('jr4'),jr5:jv('jr5')}),
-      /* concept — step-1 has no concept-check gate */
-      concept_score:'',concept_detail:'',
-      /* timing */
-      duration_ms:dur('cal_submitted','step1_complete')||''
-    };
-    fetch(APPS_URL,{method:'POST',mode:'no-cors',body:JSON.stringify(payload)});
-    console.log('sendActivityRecord step-1 fired',payload);
-    /* Show submission confirmation */
-    var banner=document.getElementById('step-complete-banner');
-    if(banner){
-      var sent=document.createElement('p');
-      sent.style.cssText='margin-top:8px;font-size:13px;color:#4ade80;font-weight:600';
-      sent.textContent='✓ Data submitted to spreadsheet';
-      if(!banner.querySelector('.gas-confirm')){{sent.className='gas-confirm';banner.appendChild(sent);}}
-    }
-  }catch(err){console.warn('sendActivityRecord error:',err);}
-}
 
 </script>
 </body>
