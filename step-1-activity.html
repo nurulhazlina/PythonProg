@@ -1034,8 +1034,9 @@ document.getElementById('t4-submit').addEventListener('click',function(){
   var o=document.getElementById('t4-output').value.trim();
   var hasGold=c.includes('gold')&&(c.includes('255,200,0'));
   var hasBorder=c.includes('border_colour')||c.includes('border_color');
-  var hasPrint=c.includes('print(type(');
-  var hasOutput=o.length>20;
+  var hasPrint=c.includes('print')&&c.includes('type(');
+  var oNorm=normCode(o);
+  var hasOutput=o.length>20&&oNorm.includes("class'tuple'");
   if(hasGold&&hasBorder&&hasPrint&&hasOutput){
     state.t4=true;
     var d=lmsGet();
@@ -1069,8 +1070,8 @@ document.getElementById('t4-submit').addEventListener('click',function(){
     var m=[];
     if(!hasGold)m.push('GOLD = (255, 200, 0) not found');
     if(!hasBorder)m.push('BORDER_COLOUR missing');
-    if(!hasPrint)m.push('print(type(...)) statements missing');
-    if(!hasOutput)m.push('paste terminal output from Thonny');
+    if(!hasPrint)m.push('Add print() with type() for each colour in code box');
+    if(!hasOutput)m.push('Paste terminal output — each line must show <class \'tuple\'>');
     showFeedback('t4-feedback',m.join(' &middot; '),'error');
   }
 });
