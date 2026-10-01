@@ -194,7 +194,9 @@
     <div class="tier-step locked" id="tp3"><span class="tier-num">3</span><span class="tier-label">Complete</span></div>
     <div class="tier-connector" id="tc34"></div>
     <div class="tier-step locked" id="tp4"><span class="tier-num">4</span><span class="tier-label">Create</span></div>
-    <div class="tier-connector" id="tc4j"></div>
+    <div class="tier-connector" id="tc4c"></div>
+    <div class="tier-step locked" id="tpc"><span class="tier-num">&#9997;&#65039;</span><span class="tier-label">Concept</span></div>
+    <div class="tier-connector" id="tccj"></div>
     <div class="tier-step locked" id="tpj"><span class="tier-num">&#128211;</span><span class="tier-label">Reflect</span></div>
   </div>
 
@@ -529,6 +531,22 @@ pygame.quit()</pre>
     </div>
   </div>
 
+
+  <!-- ─── Concept Check (unlocked after Tier 4) ──────────────────── -->
+  <div class="refl-gate tier-locked" id="concept-check-gate" aria-disabled="true">
+    <div class="refl-gate-header">
+      <span class="refl-badge">&#129504; Concept Check</span>
+      <span class="tier-title" style="font-size:14px">Test Your Understanding</span>
+      <span class="tier-desc">5 quick questions &mdash; required before Reflection 3</span>
+      <span class="lock-icon">&#128274;</span>
+    </div>
+    <div class="refl-gate-body">
+      <div id="concept-check-wrap" data-step="1">
+        <p class="concept-desc">Complete Tier 4 to unlock these questions.</p>
+      </div>
+    </div>
+  </div>
+
   <!-- ═══ REFLECTION GATE 3 (Layer 3 — after Tier 4, before Journal) ═══ -->
   <div class="refl-gate tier-locked" id="refl3" aria-disabled="true">
     <div class="refl-gate-header">
@@ -714,6 +732,21 @@ pygame.quit()</pre>
 .next-step-link:hover{opacity:.85}
 </style>
 
+
+<style>
+/* Concept Check Component */
+.concept-check-inner { padding:4px 0; }
+.concept-desc { font-size:14px; color:var(--muted); margin-bottom:12px; font-style:italic; }
+.concept-q { background:var(--code-bg); border:1px solid var(--line); border-radius:8px; padding:14px 16px; margin-bottom:14px; color:var(--fg); }
+.concept-q-text { margin:0 0 10px; font-size:15px; line-height:1.5; color:var(--fg); font-weight:500; }
+.concept-opts { display:flex; flex-direction:column; gap:8px; }
+.concept-opt { display:flex; align-items:flex-start; gap:10px; cursor:pointer; font-size:14px; line-height:1.4; color:var(--fg); }
+.concept-opt span { color:var(--fg); }
+.concept-opt input[type=radio] { margin-top:3px; flex-shrink:0; cursor:pointer; }
+.concept-feedback { font-size:14px; font-weight:600; margin-top:8px; padding:6px 10px; border-radius:6px; background:rgba(0,0,0,0.05); }
+.concept-done .concept-q { opacity:.85; }
+</style>
+
 <script>
 (function(){
 'use strict';
@@ -810,7 +843,7 @@ function setAttempts(id,n){var el=document.getElementById(id);if(el)el.textConte
 function markDone(tpId){var el=document.getElementById(tpId);if(el)el.className='tier-step done';}
 function unlockTier(key){
   var cards={2:'tier2',3:'tier3',4:'tier4',J:'tierJ'};
-  var tps={2:'tp2',3:'tp3',4:'tp4',J:'tpj'};
+  var tps={2:'tp2',3:'tp3',4:'tp4',C:'tpc',J:'tpj'};
   var btns={2:'t2-submit',3:'t3-submit',4:'t4-submit',J:'tj-submit'};
   var card=document.getElementById(cards[key]);
   if(card){card.classList.remove('tier-locked');card.removeAttribute('aria-disabled');}
@@ -888,6 +921,7 @@ function _unlockT2(msg,fbType){
   var r2c=document.getElementById('refl2');
   r2c.classList.remove('tier-locked');r2c.removeAttribute('aria-disabled');
   document.getElementById('refl2-submit').disabled=false;
+  unlockTier(3);/* non-blocking: T3 opens when T2 done */
   showFeedback('t2-feedback',msg,fbType);
   setTimeout(function(){r2c.scrollIntoView({behavior:'smooth',block:'nearest'});},200);
 }
@@ -919,7 +953,8 @@ document.getElementById('t3-submit').addEventListener('click',function(){
   } else if(t3n>=2){
     _unlockT3('Responses recorded ('+n+'/'+checkList.length+' checks). Tier 4 unlocked.','partial');
   } else {
-    showFeedback('t3-feedback','Attempt 1/2 — '+n+'/'+checkList.length+' checks passed. Check constants, colours, window setup, fill/flip/wait, and pygame.quit() — then try once more.','partial');
+    unlockTier(4);/* non-blocking: T4 opens after first T3 attempt */
+    showFeedback('t3-feedback','Attempt 1/2 — '+n+'/'+checkList.length+' checks passed. Tier 4 is now open — check constants, colours, window setup, fill/flip/wait, and pygame.quit(), then try once more.','partial');
     document.getElementById('t3-submit').textContent='Submit 2nd Attempt →';
   }
 });
@@ -970,14 +1005,18 @@ function _unlockT4(passed){
   lmsLog('t4_submitted',{ts:Date.now()});
   d.t4_done=true;lmsSet(d);
   lmsLog('effort_index',{t1_ms:dt1,t2_ms:dt2,t3_ms:dt3,t4_ms:dt4,ratio:ratio});
-  if(passed) showFeedback('t4-feedback','Tier 4 complete!'+(ratio?' Effort index: '+ratio+'.':'')+'  Answer the reflection below to open the journal.','success');
-  else showFeedback('t4-feedback','Responses recorded — answer the reflection below to open the journal.','partial');
+  if(passed) showFeedback('t4-feedback','Tier 4 complete!'+(ratio?' Effort index: '+ratio+'.':'')+'  Complete the concept check below to continue.','success');
+  else showFeedback('t4-feedback','Responses recorded — complete the concept check below to continue.','partial');
   document.getElementById('t4-submit').disabled=true;
-  markDone('tp4');document.getElementById('tc4j').classList.add('done');
-  var r3c=document.getElementById('refl3');
-  r3c.classList.remove('tier-locked');r3c.removeAttribute('aria-disabled');
-  document.getElementById('refl3-submit').disabled=false;
-  setTimeout(function(){r3c.scrollIntoView({behavior:'smooth',block:'nearest'});},200);
+  markDone('tp4');document.getElementById('tc4c').classList.add('done');document.getElementById('tpc').className='tier-step active';
+  /* Unlock Concept Check gate */
+  (function(){
+    var cg=document.getElementById('concept-check-gate');
+    if(cg){cg.classList.remove('tier-locked');cg.removeAttribute('aria-disabled');
+      var li=cg.querySelector('.lock-icon');if(li)li.textContent='🧠';
+      initConceptCheck({step:1,containerId:'concept-check-wrap'});}
+  })();
+  setTimeout(function(){var cg=document.getElementById('concept-check-gate');if(cg)cg.scrollIntoView({behavior:'smooth',block:'nearest'});},200);
 }
 /* JOURNAL */
 document.getElementById('tj-submit').addEventListener('click',function(){
@@ -1047,6 +1086,89 @@ document.getElementById('post-cal-submit').addEventListener('click',function(){
   document.getElementById('step-complete-banner').hidden=false;
   sendActivityRecord(1);
 });
+
+
+/* === CONCEPT CHECK — 5 MCQs === */
+var STEP_CHECK_QUESTIONS={1:[
+  {q:"Which of these is a string (text) value in Python?",opts:["42","True","\"snake\"","3.14"],ans:2},
+  {q:"What does WIN_WIDTH = 600 create?",opts:["A function called WIN_WIDTH","A named constant storing 600","A loop that runs 600 times","An import statement"],ans:1},
+  {q:"What will this print?\n  x = 3\n  x = x + 1\n  print(x)",opts:["3","x + 1","4","Error"],ans:2},
+  {q:"Which line correctly imports the pygame library?",opts:["include pygame","import pygame","use pygame","load pygame"],ans:1},
+  {q:"What does pygame.init() do?",opts:["Creates a display window","Imports the pygame module","Initialises all pygame subsystems (sound, display, etc.)","Starts the game loop immediately"],ans:2}
+]};
+function initConceptCheck(opts){
+  var step=opts.step||1;
+  var wrap=document.getElementById(opts.containerId||'concept-check-wrap');
+  if(!wrap)return;
+  var questions=STEP_CHECK_QUESTIONS[step];
+  if(!questions||!questions.length)return;
+  var d=lmsGet();
+  if(d.concept_step&&d.concept_step.submitted){renderSubmittedFull(wrap,d.concept_step,questions);_unlockRefl3();return;}
+  var html='<div class="concept-check-inner"><p class="concept-desc">Answer all 5 questions to proceed to Reflection 3.</p>';
+  questions.forEach(function(q,qi){
+    html+='<div class="concept-q" id="cq-'+qi+'">';
+    html+='<p class="concept-q-text"><strong>'+(qi+1)+'.</strong> '+q.q.replace(/\n/g,'<br>')+'</p>';
+    html+='<div class="concept-opts">';
+    q.opts.forEach(function(opt,oi){
+      var id='cq'+qi+'_'+oi;
+      html+='<label class="concept-opt" for="'+id+'"><input type="radio" name="cq'+qi+'" id="'+id+'" value="'+oi+'"><span>'+opt+'</span></label>';
+    });
+    html+='</div><div class="concept-feedback" id="cfb-'+qi+'" hidden></div></div>';
+  });
+  html+='<div id="concept-global-fb" style="margin-top:10px"></div>';
+  html+='<button class="tier-btn" id="concept-submit" style="margin-top:12px">Submit Answers &amp; Continue &rarr;</button></div>';
+  wrap.innerHTML=html;
+  document.getElementById('concept-submit').addEventListener('click',function(){submitConceptCheck(step,questions,wrap);});
+}
+function submitConceptCheck(step,questions,wrap){
+  var answers=[];var allAnswered=true;
+  questions.forEach(function(q,qi){
+    var sel=wrap.querySelector('input[name="cq'+qi+'"]:checked');
+    if(!sel){allAnswered=false;answers.push(null);return;}
+    answers.push({answer:parseInt(sel.value,10),correct:(parseInt(sel.value,10)===q.ans)});
+  });
+  if(!allAnswered){
+    var gfb=document.getElementById('concept-global-fb');
+    gfb.textContent='Please answer all 5 questions before submitting.';
+    gfb.style.color='var(--red,#c0392b)';gfb.removeAttribute('hidden');return;
+  }
+  questions.forEach(function(q,qi){
+    var fb=document.getElementById('cfb-'+qi);var a=answers[qi];fb.removeAttribute('hidden');
+    if(a&&a.correct){fb.textContent='✓ Correct!';fb.style.color='var(--green,#27ae60)';}
+    else{fb.textContent='✗ Correct answer: '+q.opts[q.ans];fb.style.color='var(--red,#c0392b)';}
+    wrap.querySelectorAll('input[name="cq'+qi+'"]').forEach(function(r){r.disabled=true;});
+  });
+  var correct=answers.filter(function(a){return a&&a.correct;}).length;
+  var pct=Math.round((correct/questions.length)*100);
+  var btn=document.getElementById('concept-submit');btn.disabled=true;btn.textContent='Answers submitted ✓';
+  var gfb=document.getElementById('concept-global-fb');gfb.removeAttribute('hidden');
+  gfb.innerHTML='<strong>Score: '+correct+' / '+questions.length+' ('+pct+'%).</strong> Reflection 3 is now unlocked!';
+  gfb.style.color=pct>=60?'var(--green,#27ae60)':'var(--orange,#e67e22)';
+  var d=lmsGet();d.concept_step={submitted:true,answers:answers,correct:correct,total:questions.length,score_pct:pct,ts:Date.now()};lmsSet(d);
+  markDone('tpc');document.getElementById('tccj').classList.add('done');document.getElementById('tpj').className='tier-step active';
+  _unlockRefl3();
+}
+function _unlockRefl3(){
+  var r3c=document.getElementById('refl3');
+  if(r3c){r3c.classList.remove('tier-locked');r3c.removeAttribute('aria-disabled');
+    var li=r3c.querySelector('.lock-icon');if(li)li.textContent='✏️';}
+  document.getElementById('refl3-submit').disabled=false;
+  setTimeout(function(){var r3=document.getElementById('refl3');if(r3)r3.scrollIntoView({behavior:'smooth',block:'nearest'});},400);
+}
+function renderSubmittedFull(wrap,saved,questions){
+  var sc=saved.score_pct!==undefined?saved.score_pct:'--';
+  var html='<div class="concept-check-inner concept-done"><p><strong>✓ Concept check completed.</strong> Score: <strong>'+sc+'%</strong></p>';
+  if(saved.answers&&questions){
+    saved.answers.forEach(function(a,qi){
+      var q=questions[qi];if(!q||a===null)return;
+      html+='<div class="concept-q"><p class="concept-q-text"><strong>'+(qi+1)+'.</strong> '+q.q.replace(/\n/g,'<br>')+'</p>';
+      html+='<div class="concept-feedback" style="color:'+(a&&a.correct?'var(--green,#27ae60)':'var(--red,#c0392b)')+';font-size:14px">';
+      html+=a&&a.correct?'✓ '+(q.opts[a.answer]||''):'✗ Your answer: '+(q.opts[a.answer]||'?')+' — Correct: '+q.opts[q.ans];
+      html+='</div></div>';
+    });
+  }
+  html+='</div>';wrap.innerHTML=html;
+}
 
 /* ═══ CALIBRATION GATE ═══ */
 (function(){
@@ -1139,23 +1261,32 @@ document.getElementById('refl3-submit').addEventListener('click',function(){
   if(d.t2_submitted){
     state.t2=true;markDone('tp2');document.getElementById('tc23').classList.add('done');document.getElementById('t2-submit').disabled=true;
     var r2c=document.getElementById('refl2');r2c.classList.remove('tier-locked');r2c.removeAttribute('aria-disabled');
+    unlockTier(3);/* non-blocking: T3 always open once T2 done */
     if(d.reflection_2){
       state.refl2=true;document.getElementById('refl2-submit').disabled=true;
       showFeedback('refl2-feedback','Reflection saved.','success');
-      unlockTier(3);
     } else {document.getElementById('refl2-submit').disabled=false;}
   }
   /* ── Restore T3 ── */
   if(d.t3_submitted){state.t3=true;unlockTier(4);markDone('tp3');document.getElementById('tc34').classList.add('done');document.getElementById('t3-submit').disabled=true;}
-  /* ── Restore T4 + Reflection 3 gate ── */
+  /* ── Restore T4 + Concept Check + Reflection 3 gate ── */
   if(d.t4_submitted){
-    state.t4=true;markDone('tp4');document.getElementById('tc4j').classList.add('done');document.getElementById('t4-submit').disabled=true;
-    var r3c=document.getElementById('refl3');r3c.classList.remove('tier-locked');r3c.removeAttribute('aria-disabled');
-    if(d.reflection_3){
-      state.refl3=true;document.getElementById('refl3-submit').disabled=true;
-      showFeedback('refl3-feedback','Reflection saved.','success');
-      unlockTier('J');
-    } else {document.getElementById('refl3-submit').disabled=false;}
+    state.t4=true;markDone('tp4');document.getElementById('tc4c').classList.add('done');document.getElementById('t4-submit').disabled=true;document.getElementById('tpc').className='tier-step active';
+    var cg2=document.getElementById('concept-check-gate');
+    if(cg2){cg2.classList.remove('tier-locked');cg2.removeAttribute('aria-disabled');}
+    if(d.concept_step&&d.concept_step.submitted){
+      var cw=document.getElementById('concept-check-wrap');
+      if(cw&&typeof renderSubmittedFull==='function')renderSubmittedFull(cw,d.concept_step,STEP_CHECK_QUESTIONS[1]);
+      markDone('tpc');document.getElementById('tccj').classList.add('done');document.getElementById('tpj').className='tier-step active';
+      var r3c=document.getElementById('refl3');r3c.classList.remove('tier-locked');r3c.removeAttribute('aria-disabled');
+      if(d.reflection_3){
+        state.refl3=true;document.getElementById('refl3-submit').disabled=true;
+        showFeedback('refl3-feedback','Reflection saved.','success');
+        unlockTier('J');
+      } else {document.getElementById('refl3-submit').disabled=false;}
+    } else {
+      if(typeof initConceptCheck==='function')initConceptCheck({step:1,containerId:'concept-check-wrap'});
+    }
   }
   /* ── Restore Journal ── */
   if(d.tj_submitted){
@@ -1283,8 +1414,18 @@ function sendActivityRecord(stepNum){
       post_r1:(d.post_cal&&d.post_cal.r1)||tv('post-r1'),
       post_r2:(d.post_cal&&d.post_cal.r2)||tv('post-r2'),
       journal_text:JSON.stringify({jr1:jv('jr1'),jr2:jv('jr2'),jr3:jv('jr3'),jr4:jv('jr4'),jr5:jv('jr5')}),
-      /* concept — step-1 has no concept-check gate */
-      concept_score:'',concept_detail:'',
+      /* concept check score */
+      concept_score:(d.concept_step&&d.concept_step.score_pct!==undefined)?d.concept_step.score_pct:'',
+      concept_q1_ans:(d.concept_step&&d.concept_step.answers&&d.concept_step.answers[0]!==undefined)?d.concept_step.answers[0].answer:'',
+      concept_q1_cor:(d.concept_step&&d.concept_step.answers&&d.concept_step.answers[0]!==undefined)?(d.concept_step.answers[0].correct?1:0):'',
+      concept_q2_ans:(d.concept_step&&d.concept_step.answers&&d.concept_step.answers[1]!==undefined)?d.concept_step.answers[1].answer:'',
+      concept_q2_cor:(d.concept_step&&d.concept_step.answers&&d.concept_step.answers[1]!==undefined)?(d.concept_step.answers[1].correct?1:0):'',
+      concept_q3_ans:(d.concept_step&&d.concept_step.answers&&d.concept_step.answers[2]!==undefined)?d.concept_step.answers[2].answer:'',
+      concept_q3_cor:(d.concept_step&&d.concept_step.answers&&d.concept_step.answers[2]!==undefined)?(d.concept_step.answers[2].correct?1:0):'',
+      concept_q4_ans:(d.concept_step&&d.concept_step.answers&&d.concept_step.answers[3]!==undefined)?d.concept_step.answers[3].answer:'',
+      concept_q4_cor:(d.concept_step&&d.concept_step.answers&&d.concept_step.answers[3]!==undefined)?(d.concept_step.answers[3].correct?1:0):'',
+      concept_q5_ans:(d.concept_step&&d.concept_step.answers&&d.concept_step.answers[4]!==undefined)?d.concept_step.answers[4].answer:'',
+      concept_q5_cor:(d.concept_step&&d.concept_step.answers&&d.concept_step.answers[4]!==undefined)?(d.concept_step.answers[4].correct?1:0):'',
       /* timing */
       duration_ms:dur('cal_submitted','step1_complete')||''
     };
