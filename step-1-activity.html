@@ -580,13 +580,73 @@ pygame.quit()</pre>
       </div>
       <div id="tj-feedback" class="tier-feedback" hidden></div>
       <div class="tier-actions">
-        <button class="tier-btn tj-btn" id="tj-submit" disabled>Complete Step 1 &#10003;</button>
-      </div>
-      <div id="step-complete-banner" class="step-complete" hidden>
-        <span>&#10003; Step 1 Complete!</span>
-        <a href="step-2.html" class="next-step-link">Continue to Step 2 &rarr;</a>
+        <button class="tier-btn tj-btn" id="tj-submit" disabled>Save Journal &amp; Continue &rarr;</button>
       </div>
     </div>
+  </div>
+
+  <!-- ═══ POST-ACTIVITY CHECK-IN ═══ -->
+  <div class="refl-gate tier-locked" id="post-cal-section" aria-disabled="true">
+    <div class="refl-gate-header">
+      <span class="refl-badge">&#127919; Post-Activity Check-In</span>
+      <span class="tier-title" style="font-size:14px">After Completing All Tiers</span>
+      <span class="tier-desc">Complete after the Reflective Journal to finish this step</span>
+      <span class="lock-icon">&#128274;</span>
+    </div>
+    <div class="refl-gate-body">
+
+      <!-- 1. Post-confidence slider -->
+      <div style="margin-bottom:18px">
+        <span class="cal-label">1. How confident do you feel about this step&#8217;s concepts <em>now</em>?
+          <em style="font-weight:400;color:var(--muted)">(1&nbsp;=&nbsp;not confident, 10&nbsp;=&nbsp;very confident)</em>
+        </span>
+        <div class="conf-slider-wrap">
+          <span style="font-size:13px;color:var(--muted)">1</span>
+          <input type="range" id="post-conf" min="1" max="10" value="5" step="1">
+          <span style="font-size:13px;color:var(--muted)">10</span>
+          <span class="conf-val" id="post-conf-val">5</span>
+        </div>
+      </div>
+
+      <!-- 2. Actual Tier 1 first-attempt score (auto-filled) -->
+      <div style="margin-bottom:18px">
+        <span class="cal-label">2. Your Tier 1 first-attempt score <em style="font-weight:400;color:var(--muted)">(auto-filled)</em></span>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+          <input type="number" id="post-actual" class="pred-input" min="0" max="100"
+                 placeholder="&#8212;" readonly style="background:var(--surface,#f0f4f0);cursor:default">
+          <span style="font-size:14px;color:var(--muted)">%</span>
+        </div>
+        <span class="cal-sub" id="post-actual-hint" style="display:block;margin-top:4px"></span>
+      </div>
+
+      <!-- 3. Reflection: prediction vs actual -->
+      <div style="margin-bottom:14px">
+        <label for="post-r1" class="cal-label">3. How did your actual performance compare to your prediction?
+          <span class="cal-sub">Write at least 2&#8211;3 sentences.</span>
+        </label>
+        <textarea class="tier-textarea" id="post-r1" rows="4"
+          placeholder="I predicted __% but I actually got __% because&#8230;"></textarea>
+      </div>
+
+      <!-- 4. Reflection: hardest part -->
+      <div style="margin-bottom:14px">
+        <label for="post-r2" class="cal-label">4. What was the hardest part, and how did you handle it?
+          <span class="cal-sub">Write at least 2&#8211;3 sentences.</span>
+        </label>
+        <textarea class="tier-textarea" id="post-r2" rows="4"
+          placeholder="The hardest part was&#8230; I handled it by&#8230;"></textarea>
+      </div>
+
+      <div id="post-cal-feedback" style="margin-top:8px"></div>
+      <div class="tier-actions" style="margin-top:12px">
+        <button class="tier-btn" id="post-cal-submit" disabled>Save &amp; Complete Step 1 &#10003;</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="step-complete-banner" class="step-complete" hidden>
+    <span>&#10003; Step 1 Complete!</span>
+    <a href="step-2.html" class="next-step-link">Continue to Step 2 &rarr;</a>
   </div>
 
 </section>
@@ -739,7 +799,7 @@ function lmsGet(){try{return JSON.parse(localStorage.getItem(LMS_KEY)||'{}')}cat
 function lmsSet(d){try{localStorage.setItem(LMS_KEY,JSON.stringify(d))}catch(e){}}
 function lmsLog(ev,val){var d=lmsGet();if(!Array.isArray(d[ev]))d[ev]=d[ev]?[]:[];d[ev].push({ts:Date.now(),v:val!==undefined?val:null});lmsSet(d);}
 lmsLog('page_opened');
-var state={cal:false,t1:false,t2:false,refl2:false,t3:false,t4:false,refl3:false,tj:false};
+var state={cal:false,t1:false,t2:false,refl2:false,t3:false,t4:false,refl3:false,tj:false,post_cal:false};
 var attempts={t1:0,t2:0,t3:0,t4:0,tj:0};
 var firstAttemptScore=null; /* % correct on T1 first try — for calibration index */
 function norm(s){return String(s).replace(/\s+/g,' ').trim().toLowerCase();}
@@ -939,14 +999,54 @@ document.getElementById('tj-submit').addEventListener('click',function(){
     lmsSet(jd);
     lmsLog('calibration_index',{predicted:jd.cal.predicted_score,actual:jd.t1_first_attempt_pct,index:jd.calibration_index,confidence:jd.calibration_confidence});
   }
-  lmsLog('tj_submitted',{ts:Date.now(),responses:jText});lmsLog('step1_complete',{ts:Date.now()});
-  showFeedback('tj-feedback','Reflection complete!','success');
+  lmsLog('tj_submitted',{ts:Date.now(),responses:jText});
+  showFeedback('tj-feedback','Journal saved! Complete the Post-Activity Check-In below to finish Step 1.','success');
   document.getElementById('tj-submit').disabled=true;
   markDone('tpj');
+  /* Unlock Post-Activity Check-In */
+  var pcSec=document.getElementById('post-cal-section');
+  if(pcSec){pcSec.classList.remove('tier-locked');pcSec.removeAttribute('aria-disabled');}
+  document.getElementById('post-cal-submit').disabled=false;
+  /* Auto-fill T1 first-attempt score */
+  var jd2=lmsGet();
+  var actualEl=document.getElementById('post-actual');
+  if(actualEl&&jd2.t1_first_attempt_pct!==undefined){
+    actualEl.value=jd2.t1_first_attempt_pct;
+    var hint=document.getElementById('post-actual-hint');
+    if(hint)hint.textContent='Your Tier 1 first-attempt score was '+jd2.t1_first_attempt_pct+'%.';
+  }
+  /* Confidence slider display */
+  var pcConf=document.getElementById('post-conf');
+  var pcConfVal=document.getElementById('post-conf-val');
+  if(pcConf&&pcConfVal){pcConf.addEventListener('input',function(){pcConfVal.textContent=pcConf.value;});}
+});
+/* POST-ACTIVITY CHECK-IN */
+document.getElementById('post-cal-submit').addEventListener('click',function(){
+  if(state.post_cal)return;
+  var r1txt=document.getElementById('post-r1').value.trim();
+  var r2txt=document.getElementById('post-r2').value.trim();
+  if(r1txt.split(/\s+/).filter(Boolean).length<10){
+    showFeedback('post-cal-feedback','Please write more for question 3 (aim for 10+ words).','error');return;
+  }
+  if(r2txt.split(/\s+/).filter(Boolean).length<10){
+    showFeedback('post-cal-feedback','Please write more for question 4 (aim for 10+ words).','error');return;
+  }
+  state.post_cal=true;
+  var postConf=+(document.getElementById('post-conf').value||5);
+  var postActual=document.getElementById('post-actual').value;
+  var d=lmsGet();
+  d.post_cal={post_confidence:postConf,actual_pct:postActual,r1:r1txt,r2:r2txt,ts:Date.now()};
+  lmsSet(d);
+  lmsLog('post_cal_submitted',{step:1,post_confidence:postConf,actual_pct:postActual,r1:r1txt,r2:r2txt,ts:Date.now()});
+  lmsLog('step1_complete',{ts:Date.now()});
+  showFeedback('post-cal-feedback','Post check-in saved! Step 1 complete!','success');
+  document.getElementById('post-cal-submit').disabled=true;
+  /* Mark step complete */
+  d=lmsGet();d.complete=true;d.complete_ts=Date.now();lmsSet(d);
   document.getElementById('step-complete-banner').hidden=false;
-  var d=lmsGet();d.complete=true;d.complete_ts=Date.now();lmsSet(d);
   sendActivityRecord(1);
 });
+
 /* ═══ CALIBRATION GATE ═══ */
 (function(){
   var confEl=document.getElementById('cal-conf');
@@ -1006,7 +1106,7 @@ document.getElementById('refl3-submit').addEventListener('click',function(){
   unlockTier('J');
 });
 /* JOURNAL & REFLECTION AUTO-SAVE — save text to localStorage on each keystroke */
-['jr1','jr2','jr3','jr4','jr5','cal-r1','refl2-text','refl3-text'].forEach(function(id){
+['jr1','jr2','jr3','jr4','jr5','cal-r1','refl2-text','refl3-text','post-r1','post-r2'].forEach(function(id){
   var el=document.getElementById(id);if(!el)return;
   /* restore previously saved text */
   var d=lmsGet();
@@ -1057,7 +1157,36 @@ document.getElementById('refl3-submit').addEventListener('click',function(){
     } else {document.getElementById('refl3-submit').disabled=false;}
   }
   /* ── Restore Journal ── */
-  if(d.tj_submitted){state.tj=true;markDone('tpj');document.getElementById('tj-submit').disabled=true;document.getElementById('step-complete-banner').hidden=false;}
+  if(d.tj_submitted){
+    state.tj=true;markDone('tpj');document.getElementById('tj-submit').disabled=true;
+    showFeedback('tj-feedback','Journal saved! Complete the Post-Activity Check-In below to finish Step 1.','success');
+    /* Unlock Post-Activity Check-In */
+    var pcSec2=document.getElementById('post-cal-section');
+    if(pcSec2){pcSec2.classList.remove('tier-locked');pcSec2.removeAttribute('aria-disabled');}
+    document.getElementById('post-cal-submit').disabled=false;
+    /* Auto-fill T1 score */
+    var actualEl2=document.getElementById('post-actual');
+    if(actualEl2&&d.t1_first_attempt_pct!==undefined){
+      actualEl2.value=d.t1_first_attempt_pct;
+      var hint2=document.getElementById('post-actual-hint');
+      if(hint2)hint2.textContent='Your Tier 1 first-attempt score was '+d.t1_first_attempt_pct+'%.';
+    }
+    var pcConf2=document.getElementById('post-conf');
+    var pcConfVal2=document.getElementById('post-conf-val');
+    if(pcConf2&&pcConfVal2){pcConf2.addEventListener('input',function(){pcConfVal2.textContent=pcConf2.value;});}
+  }
+  if(d.post_cal){
+    state.post_cal=true;
+    document.getElementById('post-cal-submit').disabled=true;
+    var pcs=document.getElementById('post-cal-section');
+    if(pcs){pcs.classList.remove('tier-locked');pcs.removeAttribute('aria-disabled');}
+    var r1el=document.getElementById('post-r1');if(r1el&&d.post_cal.r1)r1el.value=d.post_cal.r1;
+    var r2el=document.getElementById('post-r2');if(r2el&&d.post_cal.r2)r2el.value=d.post_cal.r2;
+    var pcEl=document.getElementById('post-conf');if(pcEl&&d.post_cal.post_confidence)pcEl.value=d.post_cal.post_confidence;
+    var pcVEl=document.getElementById('post-conf-val');if(pcVEl&&d.post_cal.post_confidence)pcVEl.textContent=d.post_cal.post_confidence;
+    showFeedback('post-cal-feedback','Post check-in saved.','success');
+    document.getElementById('step-complete-banner').hidden=false;
+  }
 
 /* ── EXPORT PANEL (?export=1) ──────────────────────────────────────────── */
 (function(){
@@ -1295,6 +1424,7 @@ document.querySelectorAll('pre.code:not(.code-fill)').forEach(function(pre){
   var slR=document.getElementById('sl-r');
   var slG=document.getElementById('sl-g');
   var slB=document.getElementById('sl-b');
+  if(!slR||!slG||!slB)return; /* guard: elements absent in this page */
   var vr=document.getElementById('vr');
   var vg=document.getElementById('vg');
   var vb=document.getElementById('vb');
@@ -1370,6 +1500,10 @@ function sendActivityRecord(stepNum){
       refl1_text:'',
       refl3_text:tv('refl3-text'),
       refl4_text:'',
+      post_confidence:(d.post_cal&&d.post_cal.post_confidence)||'',
+      post_actual:(d.post_cal&&d.post_cal.actual_pct)||'',
+      post_r1:(d.post_cal&&d.post_cal.r1)||tv('post-r1'),
+      post_r2:(d.post_cal&&d.post_cal.r2)||tv('post-r2'),
       journal_text:JSON.stringify({jr1:jv('jr1'),jr2:jv('jr2'),jr3:jv('jr3'),jr4:jv('jr4'),jr5:jv('jr5')}),
       /* concept — step-1 has no concept-check gate */
       concept_score:'',concept_detail:'',
