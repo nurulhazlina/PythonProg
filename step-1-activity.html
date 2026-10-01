@@ -90,8 +90,8 @@
 .pred-input:focus{outline:none;border-color:var(--teal)}
 /* ── reflection gate cards ── */
 .refl-gate{border:1.5px solid rgba(13,85,167,.4);border-radius:12px;margin-bottom:20px;overflow:hidden;background:rgba(13,85,167,.04)}
-.refl-gate.{opacity:.45;pointer-events:none}
-.refl-gate:not(.){opacity:1;pointer-events:auto}
+.refl-gate.tier-locked{opacity:.45;pointer-events:none}
+.refl-gate:not(.tier-locked){opacity:1;pointer-events:auto}
 .refl-gate-header{background:linear-gradient(90deg,rgba(13,85,167,.15),transparent);padding:12px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .refl-badge{font-size:11px;font-weight:700;letter-spacing:.06em;padding:3px 8px;border-radius:20px;background:var(--blue);color:#fff;white-space:nowrap}
 .refl-gate-body{padding:18px}
@@ -798,7 +798,7 @@ pygame.quit()</pre>
       <span class="cal-label">2. Your Tier 1 first-attempt score <em style="font-weight:400;color:var(--muted)">(auto-filled)</em></span>
       <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
         <input type="number" id="post-actual" class="pred-input" min="0" max="100"
-               placeholder="&#8212;" readonly style="background:var(--surface,#f0f4f0);cursor:default">
+               placeholder="enter score" style="background:var(--surface,#f0f4f0)">
         <span style="font-size:14px;color:var(--muted)">%</span>
       </div>
       <span class="cal-sub" id="post-actual-hint" style="display:block;margin-top:4px"></span>
@@ -846,8 +846,8 @@ pygame.quit()</pre>
 .tier-connector{flex:1;height:2px;background:var(--line);min-width:16px;transition:background .4s}
 .tier-connector.done{background:#22c55e}
 .tier-card{border:1px solid var(--line);border-radius:12px;margin-bottom:20px;overflow:hidden;transition:opacity .3s}
-.{opacity:.45;pointer-events:none}
-.tier-card:not(.){opacity:1;pointer-events:auto}
+.tier-locked{opacity:.45;pointer-events:none}
+.tier-card:not(.tier-locked){opacity:1;pointer-events:auto}
 .tier-header{display:flex;align-items:center;gap:10px;padding:12px 18px;flex-wrap:wrap}
 .t1-header{background:linear-gradient(90deg,rgba(2,173,165,.15),transparent)}
 .t2-header{background:linear-gradient(90deg,rgba(245,162,29,.15),transparent)}
@@ -1080,10 +1080,10 @@ document.getElementById('tj-submit').addEventListener('click',function(){
   if(state.tj)return;
   attempts.tj++;lmsLog('tj_attempt',attempts.tj);
   var short=['jr1','jr2','jr3','jr4','jr5'].filter(function(id){
-    return document.getElementById(id).value.trim().split(/\s+/).length<15;
+    return document.getElementById(id).value.trim().split(/\s+/).length<10;
   });
   if(short.length>0){
-    showFeedback('tj-feedback','Please write more for prompt '+short.map(function(id){return id.replace('jr','');}).join(', ')+' (aim for 15+ words each).','error');
+    showFeedback('tj-feedback','Please write more for prompt '+short.map(function(id){return id.replace('jr','');}).join(', ')+' (aim for 10+ words each).','error');
     return;
   }
   state.tj=true;
