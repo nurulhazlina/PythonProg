@@ -745,7 +745,7 @@ function markDone(id){
   if(el){el.classList.remove('locked','active');el.classList.add('done');}
 }
 function unlockTier(n){
-  var map={1:'tier1',2:'tier2',3:'tier3',4:'tier4','J':'tierJ'};
+  var map={1:'tier1',2:'tier2',3:'tier3',4:'tier4','C':'concept-check-gate','J':'tierJ'};
   var tmap={1:'tp1',2:'tp2',3:'tp3',4:'tp4','J':'tpj'};
   var card=document.getElementById(map[n]);
   var prog=document.getElementById(tmap[n]);
@@ -901,11 +901,8 @@ document.getElementById('t1-submit').addEventListener('click',function(){
     if(ok)correct++;
   });
   var pct=Math.round(correct/T1_ANSWERS.length*100);
-  if(attempts.t1===1){
-    firstAttemptScore=pct;
-    var d=lmsGet();d.t1_first_attempt_pct=pct;lmsSet(d);
-    lmsLog('t1_first_attempt',{pct:pct,correct:correct,total:T1_ANSWERS.length});
-  }
+  (function(){var _ans=[];T1_ANSWERS.forEach(function(_,i){var el=document.getElementById('t1b'+(i+1));_ans.push(el?el.value.trim():'');});var _d=lmsGet();if(!_d.t1_attempts_data)_d.t1_attempts_data=[];_d.t1_attempts_data.push({attempt:attempts.t1,answers:_ans,score:pct});if(attempts.t1===1){firstAttemptScore=pct;_d.t1_first_attempt_pct=pct;}lmsSet(_d);})();
+  if(attempts.t1===1){lmsLog('t1_first_attempt',{pct:pct,correct:correct,total:T1_ANSWERS.length});}
   if(correct===T1_ANSWERS.length){
     state.t1=true;
     showFeedback('t1-feedback','All '+T1_ANSWERS.length+' blanks correct! 🎉 Tier 2 unlocked.','success');
@@ -928,15 +925,10 @@ document.getElementById('t2-submit').addEventListener('click',function(){
   if(state.t2)return;
   attempts.t2++;
   var correct=0;
-  [document.getElementById("t2bug1"),document.getElementById("t2bug2"),document.getElementById("t2bug3")].forEach(function(inp){
-    if(!inp)return;
-    var ans=inp.dataset.ans||'';
-    var val=inp.value.trim();
-    var norm=function(s){return s.replace(/\s+/g,' ').trim().toLowerCase();};
-    var ok=(norm(val)===norm(ans));
-    inp.style.borderColor=ok?'#22b':'var(--red)';
-    if(ok)correct++;
-  });
+  var _t2els=[document.getElementById("t2bug1"),document.getElementById("t2bug2"),document.getElementById("t2bug3")];
+  var _t2vals=[];
+  _t2els.forEach(function(inp){if(!inp)return;var ans=inp.dataset.ans||'';var val=inp.value.trim();_t2vals.push(val);var norm=function(s){return s.replace(/\s+/g,' ').trim().toLowerCase();};var ok=(norm(val)===norm(ans));inp.style.borderColor=ok?'#22b':'var(--red)';if(ok)correct++;});
+  (function(){var _d=lmsGet();if(!_d.t2_attempts_data)_d.t2_attempts_data=[];_d.t2_attempts_data.push({attempt:attempts.t2,bugs:_t2vals});lmsSet(_d);})();
   var total=3;
   if(correct===total){
     state.t2=true;
@@ -952,7 +944,18 @@ document.getElementById('t2-submit').addEventListener('click',function(){
     document.getElementById('refl2-submit').disabled=false;
     setTimeout(function(){r2c.scrollIntoView({behavior:'smooth',block:'nearest'});},300);
   } else {
-    showFeedback('t2-feedback',correct+'/'+total+' fixed — red borders need correcting. Try again!','error');
+    if(attempts.t2>=2){
+      state.t2=true;
+      showFeedback('t2-feedback','2 attempts used — moving on. Review the concept page!','error');
+      document.getElementById('t2-submit').disabled=true;
+      markDone('tp2');document.getElementById('tc23').classList.add('done');
+      var _fd=lmsGet();_fd.t2_submitted={attempts:attempts.t2,forced:true,ts:Date.now()};lmsSet(_fd);
+      var r2c=document.getElementById('refl2');r2c.classList.remove('tier-locked');r2c.removeAttribute('aria-disabled');
+      document.getElementById('refl2-submit').disabled=false;
+      setTimeout(function(){r2c.scrollIntoView({behavior:'smooth',block:'nearest'});},300);
+    } else {
+      showFeedback('t2-feedback',correct+'/'+total+' fixed — red borders need correcting. Try again!','error');
+    }
   }
 });
 
@@ -984,8 +987,9 @@ document.getElementById('t3-submit').addEventListener('click',function(){
   attempts.t3++;
   var txt=document.getElementById('t3-text').value.trim();
   var words=txt.split(/\s+/).filter(Boolean).length;
-  if(words<10){
-    showFeedback('t3-feedback','Please write more — at least 10 words or several lines of code.','error');return;
+  (function(){var _d=lmsGet();if(!_d.t3_attempts_data)_d.t3_attempts_data=[];_d.t3_attempts_data.push({attempt:attempts.t3,code:txt,ts:Date.now()});lmsSet(_d);})();
+  if(words<10&&attempts.t3<3){
+    showFeedback('t3-feedback','Please write more — at least 10 words or several lines of code (attempt '+attempts.t3+'/3).','error');return;
   }
   state.t3=true;
   showFeedback('t3-feedback','Tier 3 submitted! Tier 4 is now unlocked.','success');
@@ -1008,13 +1012,15 @@ document.getElementById('t4-submit').addEventListener('click',function(){
   attempts.t4++;
   var txt=document.getElementById('t4-text').value.trim();
   var words=txt.split(/\s+/).filter(Boolean).length;
-  if(words<10){
-    showFeedback('t4-feedback','Please add more detail — at least 10 words.','error');return;
+  (function(){var _d=lmsGet();if(!_d.t4_attempts_data)_d.t4_attempts_data=[];_d.t4_attempts_data.push({attempt:attempts.t4,code:txt,ts:Date.now()});lmsSet(_d);})();
+  if(words<10&&attempts.t4<3){
+    showFeedback('t4-feedback','Please add more detail — at least 10 words (attempt '+attempts.t4+'/3).','error');return;
   }
   state.t4=true;
   showFeedback('t4-feedback','Tier 4 submitted! Complete the concept check below to unlock the journal.','success');
   document.getElementById('t4-submit').disabled=true;
-  markDone('tp4');document.getElementById('tc4j').classList.add('done');
+  markDone('tp4');document.getElementById('tc4c').classList.add('done');
+  document.getElementById('tpc').className='tier-step active';
   var d=lmsGet();d.t4_submitted={text:txt,attempts:attempts.t4,ts:Date.now()};lmsSet(d);
   
     var _atd=lmsGet();_atd.t4_attempts_count=attempts.t4;lmsSet(_atd);/*t4_attempts_count_saved*/
@@ -1027,7 +1033,7 @@ document.getElementById('t4-submit').addEventListener('click',function(){
       cg.removeAttribute('aria-disabled');
       var li=cg.querySelector('.lock-icon');
       if(li)li.textContent='\u2705';
-      initConceptCheck({step:stepN,containerId:'concept-check-wrap'});
+      /* initConceptCheck removed */
     }
   })();
   setTimeout(function(){document.getElementById('concept-check-gate').scrollIntoView({behavior:'smooth',block:'nearest'});},300);
@@ -1057,7 +1063,7 @@ document.getElementById('refl3-submit').addEventListener('click',function(){
   /* Post to Google Sheets */
   (function(){
     try{
-      var APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec';
+      var APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbyDlkpeqaDPzJoMDGMAplN1LOisC81dBdIo0fPJTOAeOqMsq-aM9sX60e8J0xrY780R/exec';
       var st={};
       try{st=JSON.parse(localStorage.getItem('umpsa_snake_student')||'{}');}catch(e){}
       var pl={
@@ -1214,12 +1220,13 @@ document.getElementById('tj-submit').addEventListener('click',function(){
     state.t4=true;
     document.getElementById('t4-submit').disabled=true;
     document.getElementById('t4-text').value=d.t4_submitted.text||'';
-    markDone('tp4');document.getElementById('tc4j').classList.add('done');
+    markDone('tp4');document.getElementById('tc4c').classList.add('done');
+    document.getElementById('tpc').className='tier-step active';
     (function(){
       var cg=document.getElementById('concept-check-gate');
       if(cg){cg.classList.remove('tier-locked');cg.removeAttribute('aria-disabled');
         var li=cg.querySelector('.lock-icon');if(li)li.textContent='\u2705';}
-      initConceptCheck({step:stepN,containerId:'concept-check-wrap'});
+      /* initConceptCheck removed */
       if(d.concept_step&&d.concept_step.submitted){
         var jc=document.getElementById('tierJ');
         if(jc){jc.classList.remove('tier-locked');jc.removeAttribute('aria-disabled');}
@@ -1300,7 +1307,7 @@ document.getElementById('exp-dl-csv')&&document.getElementById('exp-dl-csv').add
 /* ── Google Sheets: journal POST ── */
 function postJournalToSheets(stepNum, jData) {
   try {
-    var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec';
+    var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyDlkpeqaDPzJoMDGMAplN1LOisC81dBdIo0fPJTOAeOqMsq-aM9sX60e8J0xrY780R/exec';
     var student = {};
     try { student = JSON.parse(localStorage.getItem('umpsa_snake_student') || '{}'); } catch(e) {}
     var entries = Object.keys(jData).map(function(k) {
@@ -1321,44 +1328,58 @@ function postJournalToSheets(stepNum, jData) {
 
 /* ─── Generic Sheets poster ─────────────────────────────────── */
 
-/* === sendActivityRecord: bundle full activity data -> Sheets === */
+/* === sendActivityRecord: bundle full Act_2 data -> Sheets === */
 function sendActivityRecord(stepNum) {
   try {
-    var APPS_URL = 'https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec';
+    var APPS_URL = 'https://script.google.com/macros/s/AKfycbyDlkpeqaDPzJoMDGMAplN1LOisC81dBdIo0fPJTOAeOqMsq-aM9sX60e8J0xrY780R/exec';
     var st = {}; try { st = JSON.parse(localStorage.getItem('umpsa_snake_student')||'{}'); } catch(e) {}
     var d = lmsGet();
-    var cal = d.cal || {}; var refl2 = d.reflection_2 || {}; var cs = d.concept_step || {}; var pc = d.post_cal || {};
-    function jv(id) { var el=document.getElementById(id); if(el&&el.value) return el.value; return (d.journal_text&&d.journal_text[id])?d.journal_text[id]:''; }
-    function pv(id,lk) { var el=document.getElementById(id); if(el&&el.value) return el.value; return pc[lk]!==undefined?pc[lk]:''; }
+    var refl2 = d.reflection_2 || {}; var cs = d.concept_step || {}; var pc = d.post_cal || {};
+    var t1d = d.t1_attempts_data || [];
+    var t2d = d.t2_attempts_data || [];
+    var t3d = d.t3_attempts_data || [];
+    var t4d = d.t4_attempts_data || [];
+    function t1b(ai,bi){var r=t1d[ai];return r&&r.answers?r.answers[bi]:'';}
+    function t1s(ai){var r=t1d[ai];return r&&r.score!==undefined?r.score:'';}
+    function t2bug(ai,bi){var r=t2d[ai];return r&&r.bugs?r.bugs[bi]:'';}
+    var cans=cs.answers||[];
+    function cqa(i){return cans[i]!==undefined?cans[i].answer:'';}
+    function cqc(i){return cans[i]!==undefined?(cans[i].correct?1:0):'';}
+    function jv(id){var el=document.getElementById(id);if(el&&el.value)return el.value;return '';}
+    function pv(id,lk){var el=document.getElementById(id);if(el&&el.value)return el.value;return pc[lk]!==undefined?pc[lk]:'';}
     var payload = {
-      type: 'act_'+stepNum,
-      /* ── Student identity (10 fields) ── */
-      matric:      st.matric      || '',
-      name:        st.name        || '',
-      class:       st.class       || '',
-      gender:      st.gender      || '',
-      age:         st.age         || '',
-      mykid:       st.mykid       || '',
-      home_state:  st.home_state  || '',
-      school_code: st.school_code || '',
-      phone:       st.phone       || '',
-      email:       st.email       || '',
-      step:        stepNum,
-      submitted_iso: new Date().toISOString(),
-      cal_confidence: cal.confidence!==undefined?cal.confidence:'',
-      cal_predicted:  cal.predicted_score!==undefined?cal.predicted_score:'',
-      cal_reflection: cal.what_hardest||'',
-      t1_score_pct:  d.t1_first_attempt_pct!==undefined?d.t1_first_attempt_pct:'',
-      t2_attempts:   d.t2_attempts_count!==undefined?d.t2_attempts_count:'',
-      refl2_text:    refl2.text||'',
-      t3_attempts:   d.t3_attempts_count!==undefined?d.t3_attempts_count:'',
-      t4_attempts:   d.t4_attempts_count!==undefined?d.t4_attempts_count:'',
-      concept_answers: cs.answers||[], concept_score_pct: cs.score_pct!==undefined?cs.score_pct:'',
-      concept_passed:  cs.submitted?1:0, concept_attempts: d.concept_attempts!==undefined?d.concept_attempts:'',
-      jr1:jv('jr1'),jr2:jv('jr2'),jr3:jv('jr3'),jr4:jv('jr4'),jr5:jv('jr5'),
-      post_confidence: pv('post-conf','post_confidence'), post_actual: pv('post-actual','actual_pct'),
-      post_r1: pv('refl3-text','r1'), post_r2: pv('post-r2','r2'),
-      calibration_index: d.calibration_index!==undefined?d.calibration_index:''
+      type:'act_'+stepNum, tab:'Act_'+stepNum,
+      sid: st.matric||('S'+Date.now()),
+      step: stepNum, submitted_iso: new Date().toISOString(),
+      matric:st.matric||'', name:st.name||'', gender:st.gender||'',
+      age:st.age||'', mykid:st.mykid||'', home_state:st.home_state||'',
+      class:st.class||'', school_code:st.school_code||'',
+      phone:st.phone||'', email:st.email||'',
+      t1_attempts: t1d.length,
+      t1_b1_1:t1b(0,0),t1_b2_1:t1b(0,1),t1_b3_1:t1b(0,2),t1_b4_1:t1b(0,3),t1_b5_1:t1b(0,4),
+      t1_b6_1:t1b(0,5),t1_b7_1:t1b(0,6),t1_b8_1:t1b(0,7),t1_b9_1:t1b(0,8),t1_score_1:t1s(0),
+      t1_b1_2:t1b(1,0),t1_b2_2:t1b(1,1),t1_b3_2:t1b(1,2),t1_b4_2:t1b(1,3),t1_b5_2:t1b(1,4),
+      t1_b6_2:t1b(1,5),t1_b7_2:t1b(1,6),t1_b8_2:t1b(1,7),t1_b9_2:t1b(1,8),t1_score_2:t1s(1),
+      t2_attempt_num: t2d.length,
+      t2_bug1_1:t2bug(0,0),t2_bug2_1:t2bug(0,1),t2_bug3_1:t2bug(0,2),
+      t2_bug1_2:t2bug(1,0),t2_bug2_2:t2bug(1,1),t2_bug3_2:t2bug(1,2),
+      refl2_text: refl2.text||'',
+      t3_attempt_num: t3d.length,
+      t3_code_1:t3d[0]?t3d[0].code:'', t3_code_2:t3d[1]?t3d[1].code:'', t3_code_3:t3d[2]?t3d[2].code:'',
+      t4_attempt_num: t4d.length,
+      t4_code_1:t4d[0]?t4d[0].code:'', t4_code_2:t4d[1]?t4d[1].code:'', t4_code_3:t4d[2]?t4d[2].code:'',
+      concept_score: cs.score_pct!==undefined?cs.score_pct:'',
+      concept_q1_ans:cqa(0),concept_q1_cor:cqc(0),
+      concept_q2_ans:cqa(1),concept_q2_cor:cqc(1),
+      concept_q3_ans:cqa(2),concept_q3_cor:cqc(2),
+      concept_q4_ans:cqa(3),concept_q4_cor:cqc(3),
+      concept_q5_ans:cqa(4),concept_q5_cor:cqc(4),
+      journal_text: JSON.stringify({jr1:jv('jr1'),jr2:jv('jr2'),jr3:jv('jr3'),jr4:jv('jr4'),jr5:jv('jr5')}),
+      post_confidence: pv('post-conf','post_confidence'),
+      post_actual: pv('post-actual','actual_pct'),
+      post_r1: pv('refl3-text','r1'),
+      post_r2: pv('post-r2','r2'),
+      duration_ms: d.cal?Date.now()-d.cal.ts:''
     };
     fetch(APPS_URL, {method:'POST',mode:'no-cors',body:JSON.stringify(payload)});
   } catch(err) { console.warn('sendActivityRecord error:',err); }
@@ -1379,7 +1400,7 @@ function postToSheets(payload){
     payload.phone       = payload.phone       || st.phone       || '';
     payload.email       = payload.email       || st.email       || '';
     payload.submitted_iso = payload.submitted_iso || new Date().toISOString();
-    fetch('https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec',{method:'POST',mode:'no-cors',body:JSON.stringify(payload)});
+    fetch('https://script.google.com/macros/s/AKfycbyDlkpeqaDPzJoMDGMAplN1LOisC81dBdIo0fPJTOAeOqMsq-aM9sX60e8J0xrY780R/exec',{method:'POST',mode:'no-cors',body:JSON.stringify(payload)});
   }catch(err){console.warn('postToSheets error:',err);}
 }
 </script>
@@ -1433,6 +1454,9 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       if (!allAnswered) { alert('Please answer all 5 questions first.'); return; }
       if (allCorrect) {
+        markDone('tpc');
+        document.getElementById('tccj').classList.add('done');
+        document.getElementById('tpj').className='tier-step active';
         csBtn.disabled = true;
         csBtn.textContent = 'Answers submitted ✓';
         /* unlock journal */
@@ -1478,6 +1502,9 @@ document.addEventListener('DOMContentLoaded', function() {
         skip.style.cssText = 'background:var(--blue);margin-top:8px;display:block';
         skip.textContent = 'Continue anyway → (' + correct + '/5 correct)';
         skip.addEventListener('click', function() {
+          markDone('tpc');
+          document.getElementById('tccj').classList.add('done');
+          document.getElementById('tpj').className='tier-step active';
           skip.remove();
           csb.disabled = true; csb.textContent = 'Submitted ✓';
           var d2 = lmsGet(); d2.concept_step.submitted = true; lmsSet(d2);
