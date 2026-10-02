@@ -374,59 +374,99 @@ while running:            # "Keep going while running is True"
   <div class="t-section">
     <h2><span class="sec-icon">🔢</span> Activity Answers — <a href="step-2-activity.html" style="font-size:14px;font-weight:400;color:var(--teal)">step-2-activity.html</a></h2>
 
-    <h3>Tier 1 — Check Understanding</h3>
+    <!-- T1 FILL-IN-BLANK -->
+    <h3>Tier 1 — Fill in the Blanks (9 blanks)</h3>
+    <p>Students complete 9 blanks inside a game-loop code snippet. Answers must match exactly (case-insensitive trimming applied). Up to 2 attempts; scores recorded per attempt in <code>t1_b1_1…t1_b9_2</code>.</p>
     <table class="t-table">
-      <thead><tr><th>Question</th><th>Accepted answer</th></tr></thead>
+      <thead><tr><th style="width:8%">#</th><th style="width:30%">Hint shown</th><th>Correct answer</th><th>Context in code</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><code>T___</code></td><td><strong>True</strong></td><td><code>running = True</code> — Boolean flag that keeps the loop alive</td></tr>
+        <tr><td>2</td><td><code>C____</code></td><td><strong>Clock</strong></td><td><code>clock = pygame.time.Clock()</code> — creates the clock object</td></tr>
+        <tr><td>3</td><td><code>r______</code></td><td><strong>running</strong></td><td><code>while running:</code> — loop condition using the flag</td></tr>
+        <tr><td>4</td><td><code>g__</code></td><td><strong>get</strong></td><td><code>pygame.event.get()</code> — drains the event queue each frame</td></tr>
+        <tr><td>5</td><td><code>Q___</code></td><td><strong>QUIT</strong></td><td><code>pygame.QUIT</code> — event fired when user closes the window</td></tr>
+        <tr><td>6</td><td><code>F____</code></td><td><strong>False</strong></td><td><code>running = False</code> — signals the loop to stop next iteration</td></tr>
+        <tr><td>7</td><td><code>f___</code></td><td><strong>flip</strong></td><td><code>pygame.display.flip()</code> — swaps back-buffer to screen</td></tr>
+        <tr><td>8</td><td><code>t___</code></td><td><strong>tick</strong></td><td><code>clock.tick(SNAKE_SPEED)</code> — caps frame rate</td></tr>
+        <tr><td>9</td><td><code>S__________</code></td><td><strong>SNAKE_SPEED</strong></td><td><code>clock.tick(SNAKE_SPEED)</code> — uses the constant for FPS</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:8px">
+      <span class="callout-icon">📊</span>
+      <p><strong>Recorded in Sheets:</strong> <code>t1_attempts</code>, <code>t1_b1_1 … t1_b9_1</code> (attempt 1 blanks), <code>t1_score_1</code>, <code>t1_b1_2 … t1_b9_2</code> (attempt 2 blanks), <code>t1_score_2</code>.</p>
+    </div>
+
+    <!-- T2 DEBUG -->
+    <h3>Tier 2 — Debug the Code (3 bugs, up to 2 attempts)</h3>
+    <p>Three separate buggy lines are shown. Students type corrections. Answers must match exactly (trimmed). Each bug+attempt is recorded.</p>
+    <table class="t-table">
+      <thead><tr><th style="width:8%">Bug</th><th style="width:42%">Buggy line shown</th><th>Correct fix</th><th>Why</th></tr></thead>
       <tbody>
         <tr>
-          <td>1. What does <code>running = True</code> do?</td>
-          <td>Sets a Boolean variable that keeps the while loop going. When it becomes <code>False</code>, the loop exits.</td>
+          <td>1</td>
+          <td><code>if event.type == QUIT:</code></td>
+          <td><code>if event.type == pygame.QUIT:</code></td>
+          <td><code>QUIT</code> is an attribute of the <code>pygame</code> module — the prefix is required</td>
         </tr>
         <tr>
-          <td>2. What happens if you remove the <code>pygame.QUIT</code> event check?</td>
-          <td>The window becomes unresponsive; Alt+F4 or Task Manager is needed to close it.</td>
+          <td>2</td>
+          <td><code>clock.tick(8)</code></td>
+          <td><code>clock.tick(SNAKE_SPEED)</code></td>
+          <td>Hard-coded <code>8</code> should use the constant <code>SNAKE_SPEED</code> so FPS is controlled in one place</td>
         </tr>
         <tr>
-          <td>3. What is <code>clock.tick(8)</code> doing?</td>
-          <td>Limiting the game to 8 frames per second by sleeping until 1/8 second has elapsed.</td>
-        </tr>
-        <tr>
-          <td>4. Name the three phases of a game loop in order.</td>
-          <td>Process events → Update state → Draw / render.</td>
+          <td>3</td>
+          <td><code>pygame.display.update()</code></td>
+          <td><code>pygame.display.flip()</code></td>
+          <td><code>flip()</code> is the correct call to swap buffers for a full-screen surface; <code>update()</code> is for partial updates</td>
         </tr>
       </tbody>
     </table>
-
-    <h3>Tier 2 — Fix the Bug</h3>
-    <div class="answer-card">
-      <div class="answer-label">Bug</div>
-      <p style="margin:0;font-size:14px"><code>clock.tick()</code> is called before <code>screen.fill(BG)</code> and <code>pygame.display.flip()</code>.</p>
+    <div class="callout" style="margin-top:8px">
+      <span class="callout-icon">📊</span>
+      <p><strong>Recorded in Sheets:</strong> <code>t2_attempt_num</code>, <code>t2_bug1_1, t2_bug2_1, t2_bug3_1</code> (attempt 1), <code>t2_bug1_2, t2_bug2_2, t2_bug3_2</code> (attempt 2).</p>
     </div>
-    <p><strong>Fix:</strong> Move <code>clock.tick(8)</code> to the very end of the while loop body, after <code>pygame.display.flip()</code>. The clock times the full frame including drawing.</p>
 
-    <h3>Tier 3 — Extend (change FPS to 15)</h3>
+    <!-- T3 EXTEND -->
+    <h3>Tier 3 — Extend the Code (max 3 attempts, code recorded)</h3>
+    <p>Students write code to <strong>add a frame counter</strong> that increments every loop iteration. A sample correct answer:</p>
     <div class="codebox">
       <button class="copybtn" type="button">Copy</button>
-      <pre><code>clock.tick(15)   # was 8 — 15 fps is smoother</code></pre>
-    </div>
-    <p>Students should observe the clock running faster and the screen refreshing more often. A good follow-up: "What would happen at <code>clock.tick(1)</code>?"</p>
+      <pre><code># Before the while loop:
+frame_count = 0
 
-    <h3>Tier 4 — New Task: Frame counter</h3>
-    <p>Add a frame counter that prints to the terminal every 60 frames.</p>
+# Inside the while loop (after clock.tick):
+frame_count += 1
+if frame_count % 60 == 0:
+    print(f"Frame: {frame_count}")</code></pre>
+    </div>
+    <p><strong>Accept variations:</strong> any working counter that increments per frame. Look for: variable initialised before the loop, incremented inside, <code>+= 1</code> or equivalent. The exact print format is flexible.</p>
+    <div class="callout">
+      <span class="callout-icon">📊</span>
+      <p><strong>Recorded in Sheets:</strong> <code>t3_attempt_num</code>, <code>t3_code_1</code>, <code>t3_code_2</code>, <code>t3_code_3</code> — raw student code per attempt for misconception analysis.</p>
+    </div>
+
+    <!-- T4 CREATE -->
+    <h3>Tier 4 — Create Your Own (max 3 attempts, code recorded)</h3>
+    <p>Students write code to <strong>add a second boolean flag</strong> (e.g. <code>paused</code>) that toggles on/off when the spacebar is pressed, and only runs game updates when not paused. A sample correct answer:</p>
     <div class="codebox">
       <button class="copybtn" type="button">Copy</button>
-      <pre><code>frame_count = 0
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-    screen.fill(BG)
-    pygame.display.flip()
-    clock.tick(8)
-    frame_count += 1
-    if frame_count % 60 == 0:
-        print(f"Frame {frame_count}")</code></pre>
+      <pre><code># Before loop:
+paused = False
+
+# Inside event loop:
+if event.type == pygame.KEYDOWN:
+    if event.key == pygame.K_SPACE:
+        paused = not paused   # toggle
+
+# Wrap updates in:
+if not paused:
+    # ... game update logic here ...</code></pre>
+    </div>
+    <p><strong>Accept variations:</strong> any working pause mechanic using a boolean flag. Key concepts to look for: toggle with <code>not</code>, guarded update block, KEYDOWN event detection. Students who use <code>running = not running</code> miss the point — that would exit the loop.</p>
+    <div class="callout">
+      <span class="callout-icon">📊</span>
+      <p><strong>Recorded in Sheets:</strong> <code>t4_attempt_num</code>, <code>t4_code_1</code>, <code>t4_code_2</code>, <code>t4_code_3</code> — raw student code per attempt for misconception analysis.</p>
     </div>
 
     <h3>Reflective Journal — Suggested Answers</h3>
