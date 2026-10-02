@@ -139,6 +139,7 @@ section.hero{background:linear-gradient(135deg,var(--teal-dark) 0%,#063f3b 100%)
 .concept-feedback { margin-top:8px; font-size:13px; padding:6px 10px; border-radius:6px; }
 .concept-feedback.correct { background:#16a34a22; color:#16a34a; border:1px solid #16a34a44; }
 .concept-feedback.incorrect { background:#dc262622; color:#dc2626; border:1px solid #dc262644; }
+.attempt-count{font-size:0.8em;color:#888;font-weight:500;white-space:nowrap;}
 .tier-btn{padding:9px 22px;border:none;border-radius:8px;background:var(--teal);color:#fff;font-weight:700;font-size:14px;cursor:pointer;transition:opacity .2s;font-family:inherit}
 .tier-btn:hover:not(:disabled){opacity:.85}
 .tier-btn:disabled{opacity:.4;cursor:not-allowed}
@@ -489,7 +490,10 @@ while running:
     <label class="cal-label" style="margin-top:10px">Your extended code: <span class="cal-sub">Aim for at least 6 lines.</span></label>
     <textarea class="tier-textarea" id="t3-text" rows="10" placeholder="Paste or write your solution here…" style="font-family:monospace;font-size:13px"></textarea>
     <div id="t3-feedback" style="margin-top:10px"></div>
-    <button class="btn" id="t3-submit" disabled style="margin-top:10px;background:var(--blue)">Submit &amp; Unlock Tier 4</button>
+    <div class="tier-actions" style="display:flex;align-items:center;gap:10px;margin-top:10px">
+      <span id="t3-attempts" class="attempt-count"></span>
+      <button class="btn" id="t3-submit" disabled style="background:var(--blue)">Submit &amp; Unlock Tier 4</button>
+    </div>
   </div>
 </div>
 
@@ -507,7 +511,10 @@ while running:
     <label class="cal-label">Your solution: <span class="cal-sub">Aim for at least 10 lines or a clear explanation.</span></label>
     <textarea class="tier-textarea" id="t4-text" rows="12" placeholder="Write your solution or explanation here…" style="font-family:monospace;font-size:13px"></textarea>
     <div id="t4-feedback" style="margin-top:10px"></div>
-    <button class="btn" id="t4-submit" disabled style="margin-top:10px;background:var(--red)">Submit Tier 4</button>
+    <div class="tier-actions" style="display:flex;align-items:center;gap:10px;margin-top:10px">
+      <span id="t4-attempts" class="attempt-count"></span>
+      <button class="btn" id="t4-submit" disabled style="background:var(--red)">Submit Tier 4</button>
+    </div>
   </div>
 </div>
 
@@ -614,7 +621,10 @@ while running:
 </div>
     <div id="tj-feedback" class="tier-feedback" hidden></div>
     <div class="tier-actions">
-      <button class="tier-btn tj-btn" id="tj-submit" disabled>Submit Reflective Journal &#10003;</button>
+      <p id="tj-status" style="margin:8px 0 0;font-size:0.85em;color:var(--warn,#b45309);font-weight:500;">
+  ⚠️ You must complete the <strong>Concept Check</strong> above before submitting your journal.
+</p>
+<button class="tier-btn tj-btn" id="tj-submit">Submit Reflective Journal &#10003;</button>
     </div>
   </div>
 </div>
@@ -735,6 +745,7 @@ var firstAttemptScore=null;
 /* ═══════════════════════════════════════
    UI HELPERS
 ═══════════════════════════════════════ */
+function setAttempts(id,n){var el=document.getElementById(id);if(el)el.textContent=n>0?"Attempts: "+n:"";}
 function showFeedback(id,msg,type){
   var el=document.getElementById(id);
   if(!el)return;
@@ -909,7 +920,7 @@ document.getElementById('t1-submit').addEventListener('click',function(){
     document.getElementById('t1-submit').disabled=true;
     markDone('tp1');document.getElementById('tc12').classList.add('done');
     var d=lmsGet();d.t1_submitted={score:pct,attempts:attempts.t1,ts:Date.now()};lmsSet(d);
-  postToSheets({type:'tier',tier:'T1',step:stepN,score:pct,attempts:attempts.t1});
+  /* tier data saved to localStorage; sent in Act_2 at step completion */
     unlockTier(2);
     document.getElementById('t2-submit').disabled=false;
     setTimeout(function(){document.getElementById('tier2').scrollIntoView({behavior:'smooth',block:'nearest'});},300);
@@ -938,7 +949,7 @@ document.getElementById('t2-submit').addEventListener('click',function(){
     var d=lmsGet();d.t2_submitted={attempts:attempts.t2,ts:Date.now()};lmsSet(d);
   
     var _atd=lmsGet();_atd.t2_attempts_count=attempts.t2;lmsSet(_atd);/*t2_attempts_count_saved*/
-    postToSheets({type:'tier',tier:'T2',step:stepN,attempts:attempts.t2,text:(typeof txt!=='undefined'?txt:'')});
+    /* tier data saved to localStorage; sent in Act_2 at step completion */
     var r2c=document.getElementById('refl2');
     r2c.classList.remove('tier-locked');r2c.removeAttribute('aria-disabled');
     document.getElementById('refl2-submit').disabled=false;
@@ -984,12 +995,14 @@ document.getElementById('refl2-submit').addEventListener('click',function(){
 ═══════════════════════════════════════ */
 document.getElementById('t3-submit').addEventListener('click',function(){
   if(state.t3)return;
-  attempts.t3++;
+  var _d0=lmsGet();var t3n=(_d0.t3_attempt_num||0)+1;
+  _d0.t3_attempt_num=t3n;lmsSet(_d0);
+  attempts.t3=t3n;setAttempts('t3-attempts',t3n+'/2');
   var txt=document.getElementById('t3-text').value.trim();
   var words=txt.split(/\s+/).filter(Boolean).length;
   (function(){var _d=lmsGet();if(!_d.t3_attempts_data)_d.t3_attempts_data=[];_d.t3_attempts_data.push({attempt:attempts.t3,code:txt,ts:Date.now()});lmsSet(_d);})();
-  if(words<10&&attempts.t3<3){
-    showFeedback('t3-feedback','Please write more — at least 10 words or several lines of code (attempt '+attempts.t3+'/3).','error');return;
+  if(words<10&&attempts.t3<2){
+    showFeedback('t3-feedback','Attempt '+t3n+'/2 — Please write more (at least 10 words or several lines of code). You have 1 attempt remaining.','error');return;
   }
   state.t3=true;
   showFeedback('t3-feedback','Tier 3 submitted! Tier 4 is now unlocked.','success');
@@ -998,7 +1011,7 @@ document.getElementById('t3-submit').addEventListener('click',function(){
   var d=lmsGet();d.t3_submitted={text:txt,attempts:attempts.t3,ts:Date.now()};lmsSet(d);
   
     var _atd=lmsGet();_atd.t3_attempts_count=attempts.t3;lmsSet(_atd);/*t3_attempts_count_saved*/
-    postToSheets({type:'tier',tier:'T3',step:stepN,attempts:attempts.t3,text:txt});
+    /* tier data saved to localStorage; sent in Act_2 at step completion */
   unlockTier(4);
   document.getElementById('t4-submit').disabled=false;
   setTimeout(function(){document.getElementById('tier4').scrollIntoView({behavior:'smooth',block:'nearest'});},300);
@@ -1009,12 +1022,14 @@ document.getElementById('t3-submit').addEventListener('click',function(){
 ═══════════════════════════════════════ */
 document.getElementById('t4-submit').addEventListener('click',function(){
   if(state.t4)return;
-  attempts.t4++;
+  var _d0=lmsGet();var t4n=(_d0.t4_attempt_num||0)+1;
+  _d0.t4_attempt_num=t4n;lmsSet(_d0);
+  attempts.t4=t4n;setAttempts('t4-attempts',t4n+'/2');
   var txt=document.getElementById('t4-text').value.trim();
   var words=txt.split(/\s+/).filter(Boolean).length;
   (function(){var _d=lmsGet();if(!_d.t4_attempts_data)_d.t4_attempts_data=[];_d.t4_attempts_data.push({attempt:attempts.t4,code:txt,ts:Date.now()});lmsSet(_d);})();
-  if(words<10&&attempts.t4<3){
-    showFeedback('t4-feedback','Please add more detail — at least 10 words (attempt '+attempts.t4+'/3).','error');return;
+  if(words<10&&attempts.t4<2){
+    showFeedback('t4-feedback','Attempt '+t4n+'/2 — Please add more detail (at least 10 words). You have 1 attempt remaining.','error');return;
   }
   state.t4=true;
   showFeedback('t4-feedback','Tier 4 submitted! Complete the concept check below to unlock the journal.','success');
@@ -1024,7 +1039,7 @@ document.getElementById('t4-submit').addEventListener('click',function(){
   var d=lmsGet();d.t4_submitted={text:txt,attempts:attempts.t4,ts:Date.now()};lmsSet(d);
   
     var _atd=lmsGet();_atd.t4_attempts_count=attempts.t4;lmsSet(_atd);/*t4_attempts_count_saved*/
-    postToSheets({type:'tier',tier:'T4',step:stepN,attempts:attempts.t4,text:txt});
+    /* tier data saved to localStorage; sent in Act_2 at step completion */
   /* Unlock Concept Check gate */
   (function(){
     var cg=document.getElementById('concept-check-gate');
@@ -1094,12 +1109,20 @@ document.getElementById('refl3-submit').addEventListener('click',function(){
 ═══════════════════════════════════════ */
 document.getElementById('tj-submit').addEventListener('click',function(){
   if(state.tj)return;
+  /* Gate: concept check must be done first */
+  var cc=lmsGet();
+  if(!cc.concept_step||!cc.concept_step.submitted){
+    showFeedback('tj-feedback','Please complete the Concept Check above before submitting your journal.','error');
+    var cg=document.getElementById('concept-check-gate');
+    if(cg)setTimeout(function(){cg.scrollIntoView({behavior:'smooth',block:'start'});},200);
+    return;
+  }
   attempts.tj++;
   var ids=['jr1','jr2','jr3','jr4','jr5'];
   var short=ids.filter(function(id){
     return document.getElementById(id).value.trim().split(/\s+/).filter(Boolean).length<5;
   });
-  if(short.length>1){
+  if(short.length>0){
     showFeedback('tj-feedback','Please write at least 5 words in each journal prompt.','error');return;
   }
   state.tj=true;
@@ -1231,6 +1254,7 @@ document.getElementById('tj-submit').addEventListener('click',function(){
         var jc=document.getElementById('tierJ');
         if(jc){jc.classList.remove('tier-locked');jc.removeAttribute('aria-disabled');}
         var tj=document.getElementById('tj-submit');if(tj)tj.disabled=false;
+         var tjst=document.getElementById('tj-status');if(tjst)tjst.style.display='none';
       }
     })();
   }
@@ -1464,6 +1488,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (jCard) { jCard.classList.remove('tier-locked'); jCard.removeAttribute('aria-disabled'); }
         var tjBtn = document.getElementById('tj-submit');
         if (tjBtn) tjBtn.disabled = false;
+        var tjSt = document.getElementById('tj-status'); if (tjSt) tjSt.style.display='none';
       }
     });
   }
@@ -1507,6 +1532,7 @@ document.addEventListener('DOMContentLoaded', function() {
           document.getElementById('tpj').className='tier-step active';
           skip.remove();
           csb.disabled = true; csb.textContent = 'Submitted ✓';
+          var tjSt2 = document.getElementById('tj-status'); if (tjSt2) tjSt2.style.display='none';
           var d2 = lmsGet(); d2.concept_step.submitted = true; lmsSet(d2);
           var jCard = document.getElementById('tierJ');
           if (jCard) { jCard.classList.remove('tier-locked'); jCard.removeAttribute('aria-disabled'); }
