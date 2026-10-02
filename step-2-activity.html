@@ -1489,6 +1489,11 @@ document.addEventListener('DOMContentLoaded', function() {
         var tjBtn = document.getElementById('tj-submit');
         if (tjBtn) tjBtn.disabled = false;
         var tjSt = document.getElementById('tj-status'); if (tjSt) tjSt.style.display='none';
+      } else {
+        /* Not all correct — but student attempted; unlock journal anyway */
+        var tjBtn2 = document.getElementById('tj-submit');
+        if (tjBtn2) { tjBtn2.disabled = false; }
+        var tjSt2 = document.getElementById('tj-status'); if (tjSt2) tjSt2.style.display='none';
       }
     });
   }
@@ -1515,7 +1520,7 @@ document.addEventListener('DOMContentLoaded', function() {
         answers.push({ answer: sel ? parseInt(sel.value) : -1, correct: ok });
       }
       var d = lmsGet();
-      d.concept_step     = { submitted: correct === 5, answers: answers,
+      d.concept_step     = { submitted: true, answers: answers,
                               score_pct: Math.round(correct / 5 * 100), ts: Date.now() };
       d.concept_attempts = cAttempts;
       lmsSet(d);
