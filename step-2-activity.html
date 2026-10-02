@@ -883,7 +883,7 @@ window.editIdentity  = editIdentity;
     var calData={confidence:conf,predicted_score:pred,reflection_1:r1,ts:Date.now()};
     var d=lmsGet();d.cal=calData;lmsSet(d);
     lmsLog('cal_submitted',{confidence:conf,predicted_score:pred});
-  postToSheets({type:'pre_cal',step:stepN,confidence:conf,predicted_score:pred,what_hardest:r1});
+  /* pre_cal data saved to localStorage; sent in Act_2 at step completion */
     showFeedback('cal-feedback','Calibration saved! Tier 1 is now unlocked. Good luck!','success');
     document.getElementById('cal-submit').disabled=true;
     markDone('tp0');document.getElementById('tc01').classList.add('done');
@@ -982,7 +982,7 @@ document.getElementById('refl2-submit').addEventListener('click',function(){
   state.refl2=true;
   var d=lmsGet();d.reflection_2={text:txt,ts:Date.now()};lmsSet(d);
   lmsLog('refl2_submitted',{ts:Date.now()});
-  postToSheets({type:'refl2',step:stepN,text:txt});
+  /* refl2 data saved to localStorage; sent in Act_2 at step completion */
   showFeedback('refl2-feedback','Reflection saved! Tier 3 is now unlocked.','success');
   document.getElementById('refl2-submit').disabled=true;
   unlockTier(3);
@@ -1075,27 +1075,7 @@ document.getElementById('refl3-submit').addEventListener('click',function(){
   d.post_cal={post_confidence:postConf,actual_pct:postActual,r1:r1txt,r2:r2txt,ts:Date.now()};
   lmsSet(d);
   lmsLog('post_cal_submitted',{step:2,post_confidence:postConf,actual_pct:postActual,r1:r1txt,r2:r2txt,ts:Date.now()});
-  /* Post to Google Sheets */
-  (function(){
-    try{
-      var APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbyDlkpeqaDPzJoMDGMAplN1LOisC81dBdIo0fPJTOAeOqMsq-aM9sX60e8J0xrY780R/exec';
-      var st={};
-      try{st=JSON.parse(localStorage.getItem('umpsa_snake_student')||'{}');}catch(e){}
-      var pl={
-        type:'post_cal',
-        matric:st.matric||'',
-        name:st.name||'',
-        class:st.class||'',
-        step:2,
-        post_confidence:postConf,
-        actual_pct:postActual,
-        r1:r1txt,
-        r2:r2txt,
-        submitted_iso:new Date().toISOString()
-      };
-      fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify(pl)});
-    }catch(err){console.warn('PostCal POST error:',err);}
-  })();
+  /* post_cal data saved to localStorage; sent in Act_2 at step completion */
   showFeedback('refl3-feedback','Post check-in saved! Step complete!','success');
   sendActivityRecord(2);
   document.getElementById('refl3-submit').disabled=true;
@@ -1138,7 +1118,7 @@ document.getElementById('tj-submit').addEventListener('click',function(){
     lmsLog('calibration_index',{predicted:d.cal.predicted_score,actual:d.t1_first_attempt_pct,index:d.calibration_index});
   }
   lmsSet(d);
-  lmsLog('journal_submitted',{ts:Date.now()});postJournalToSheets(2, responses);
+  lmsLog('journal_submitted',{ts:Date.now()}); /* journal data saved to localStorage; sent in Act_2 at step completion */
 
   markDone('tpj');
   showFeedback('tj-feedback','Journal saved! Post-activity check-in is now unlocked.','success');
@@ -1328,27 +1308,7 @@ document.getElementById('exp-dl-csv')&&document.getElementById('exp-dl-csv').add
   });
 })();
 
-/* ── Google Sheets: journal POST ── */
-function postJournalToSheets(stepNum, jData) {
-  try {
-    var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyDlkpeqaDPzJoMDGMAplN1LOisC81dBdIo0fPJTOAeOqMsq-aM9sX60e8J0xrY780R/exec';
-    var student = {};
-    try { student = JSON.parse(localStorage.getItem('umpsa_snake_student') || '{}'); } catch(e) {}
-    var entries = Object.keys(jData).map(function(k) {
-      return { prompt_id: k, response: jData[k] };
-    });
-    var payload = {
-      type: 'journal',
-      matric: student.matric || '',
-      name:   student.name   || '',
-      class:  student.class  || '',
-      step:   stepNum,
-      entries: entries,
-      submitted_iso: new Date().toISOString()
-    };
-    fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-  } catch(err) { console.warn('Journal POST error:', err); }
-}
+/* journal data saved to localStorage; sent in Act_2 at step completion */
 
 /* ─── Generic Sheets poster ─────────────────────────────────── */
 
