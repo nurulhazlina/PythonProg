@@ -1022,7 +1022,7 @@ document.getElementById('t4-submit').addEventListener('click',function(){
   state.t4=true;
   showFeedback('t4-feedback','Tier 4 submitted! Complete the concept check below to unlock the journal.','success');
   document.getElementById('t4-submit').disabled=true;
-  markDone('tp4');document.getElementById('tc4j').classList.add('done');
+  markDone('tp4');document.getElementById('tc4c').classList.add('done');
   var d=lmsGet();d.t4_submitted={text:txt,attempts:attempts.t4,ts:Date.now()};lmsSet(d);
   
     var _atd=lmsGet();_atd.t4_attempts_count=attempts.t4;lmsSet(_atd);/*t4_attempts_count_saved*/
@@ -1209,7 +1209,7 @@ document.getElementById('tj-submit').addEventListener('click',function(){
     state.t4=true;
     document.getElementById('t4-submit').disabled=true;
     document.getElementById('t4-text').value=d.t4_submitted.text||'';
-    markDone('tp4');document.getElementById('tc4j').classList.add('done');
+    markDone('tp4');document.getElementById('tc4c').classList.add('done');
     (function(){
       var cg=document.getElementById('concept-check-gate');
       if(cg){cg.classList.remove('tier-locked');cg.removeAttribute('aria-disabled');
