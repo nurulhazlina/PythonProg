@@ -1034,7 +1034,7 @@ document.getElementById('t4-submit').addEventListener('click',function(){
       cg.removeAttribute('aria-disabled');
       var li=cg.querySelector('.lock-icon');
       if(li)li.textContent='\u2705';
-      initConceptCheck({step:stepN,containerId:'concept-check-wrap'});
+      /* initConceptCheck removed */
     }
   })();
   setTimeout(function(){document.getElementById('concept-check-gate').scrollIntoView({behavior:'smooth',block:'nearest'});},300);
@@ -1214,7 +1214,7 @@ document.getElementById('tj-submit').addEventListener('click',function(){
       var cg=document.getElementById('concept-check-gate');
       if(cg){cg.classList.remove('tier-locked');cg.removeAttribute('aria-disabled');
         var li=cg.querySelector('.lock-icon');if(li)li.textContent='\u2705';}
-      initConceptCheck({step:stepN,containerId:'concept-check-wrap'});
+      /* initConceptCheck removed */
       if(d.concept_step&&d.concept_step.submitted){
         var jc=document.getElementById('tierJ');
         if(jc){jc.classList.remove('tier-locked');jc.removeAttribute('aria-disabled');}
