@@ -43,6 +43,7 @@ section.hero{background:linear-gradient(135deg,var(--teal-dark) 0%,#063f3b 100%)
 /* ── Tier cards ── */
 .tier-card{border:1.5px solid var(--line);border-radius:12px;margin-bottom:20px;overflow:hidden;background:var(--card)}
 .tier-card.tier-locked{opacity:.45;pointer-events:none}
+.attempt-count{font-size:12px;color:var(--muted);margin-left:8px}
 .tier-card:not(.tier-locked){opacity:1;pointer-events:auto}
 .tier-header{padding:13px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--line);background:rgba(0,0,0,.025)}
 .tier-body{padding:18px}
@@ -492,6 +493,7 @@ for event in pygame.event.get():
     <label class="cal-label" style="margin-top:10px">Your extended code: <span class="cal-sub">Aim for at least 6 lines.</span></label>
     <textarea class="tier-textarea" id="t3-text" rows="10" placeholder="Paste or write your solution here…" style="font-family:monospace;font-size:13px"></textarea>
     <div id="t3-feedback" style="margin-top:10px"></div>
+    <span class="attempt-count" id="t3-attempts"></span>
     <button class="btn" id="t3-submit" disabled style="margin-top:10px;background:var(--blue)">Submit &amp; Unlock Tier 4</button>
   </div>
 </div>
@@ -510,6 +512,7 @@ for event in pygame.event.get():
     <label class="cal-label">Your solution: <span class="cal-sub">Aim for at least 10 lines or a clear explanation.</span></label>
     <textarea class="tier-textarea" id="t4-text" rows="12" placeholder="Write your solution or explanation here…" style="font-family:monospace;font-size:13px"></textarea>
     <div id="t4-feedback" style="margin-top:10px"></div>
+    <span class="attempt-count" id="t4-attempts"></span>
     <button class="btn" id="t4-submit" disabled style="margin-top:10px;background:var(--red)">Submit Tier 4</button>
   </div>
 </div>
@@ -617,7 +620,8 @@ for event in pygame.event.get():
 </div>
     <div id="tj-feedback" class="tier-feedback" hidden></div>
     <div class="tier-actions">
-      <button class="tier-btn tj-btn" id="tj-submit" disabled>Submit Reflective Journal ✓</button>
+      <p id="tj-status" style="display:none;color:var(--red);font-size:13px;margin-bottom:8px">⚠ Complete the Concept Check above first.</p>
+      <button class="tier-btn tj-btn" id="tj-submit">Submit Reflective Journal ✓</button>
     </div>
   </div>
 </div>
@@ -874,8 +878,7 @@ window.editIdentity  = editIdentity;
     var pred=+predRaw;
     var calData={confidence:conf,predicted_score:pred,reflection_1:r1,ts:Date.now()};
     var d=lmsGet();d.cal=calData;lmsSet(d);
-    lmsLog('cal_submitted',{confidence:conf,predicted_score:pred});
-  postToSheets({type:'pre_cal',step:stepN,confidence:conf,predicted_score:pred,what_hardest:r1});
+    lmsLog('cal_submitted',{confidence:conf,predicted_score:pred}); /* pre_cal saved to localStorage */
     showFeedback('cal-feedback','Calibration saved! Tier 1 is now unlocked. Good luck!','success');
     document.getElementById('cal-submit').disabled=true;
     markDone('tp0');document.getElementById('tc01').classList.add('done');
@@ -915,7 +918,7 @@ document.getElementById('t1-submit').addEventListener('click',function(){
     document.getElementById('t1-submit').disabled=true;
     markDone('tp1');document.getElementById('tc12').classList.add('done');
     var d=lmsGet();d.t1_submitted={score:pct,attempts:attempts.t1,ts:Date.now()};lmsSet(d);
-  postToSheets({type:'tier',tier:'T1',step:stepN,score:pct,attempts:attempts.t1});
+  /* T1 score saved to localStorage */
     unlockTier(2);
     document.getElementById('t2-submit').disabled=false;
     setTimeout(function(){document.getElementById('tier2').scrollIntoView({behavior:'smooth',block:'nearest'});},300);
@@ -949,7 +952,7 @@ document.getElementById('t2-submit').addEventListener('click',function(){
     var d=lmsGet();d.t2_submitted={attempts:attempts.t2,ts:Date.now()};lmsSet(d);
   
     var _atd=lmsGet();_atd.t2_attempts_count=attempts.t2;lmsSet(_atd);/*t2_attempts_count_saved*/
-    postToSheets({type:'tier',tier:'T2',step:stepN,attempts:attempts.t2,text:(typeof txt!=='undefined'?txt:'')});
+    /* T2 data saved to localStorage */
     var r2c=document.getElementById('refl2');
     r2c.classList.remove('tier-locked');r2c.removeAttribute('aria-disabled');
     document.getElementById('refl2-submit').disabled=false;
@@ -970,8 +973,7 @@ document.getElementById('refl2-submit').addEventListener('click',function(){
   }
   state.refl2=true;
   var d=lmsGet();d.reflection_2={text:txt,ts:Date.now()};lmsSet(d);
-  lmsLog('refl2_submitted',{ts:Date.now()});
-  postToSheets({type:'refl2',step:stepN,text:txt});
+  lmsLog('refl2_submitted',{ts:Date.now()}); /* refl2 saved to localStorage */
   showFeedback('refl2-feedback','Reflection saved! Tier 3 is now unlocked.','success');
   document.getElementById('refl2-submit').disabled=true;
   unlockTier(3);
@@ -985,10 +987,12 @@ document.getElementById('refl2-submit').addEventListener('click',function(){
 document.getElementById('t3-submit').addEventListener('click',function(){
   if(state.t3)return;
   attempts.t3++;
+  setAttempts('t3-attempts',attempts.t3,2);
   var txt=document.getElementById('t3-text').value.trim();
   var words=txt.split(/\s+/).filter(Boolean).length;
   if(words<10){
-    showFeedback('t3-feedback','Please write more — at least 10 words or several lines of code.','error');return;
+    if(attempts.t3<2){showFeedback('t3-feedback','Attempt '+attempts.t3+'/2 — please write at least 10 words or several lines of code.','error');return;}
+    /* Attempt 2: pass regardless */
   }
   state.t3=true;
   showFeedback('t3-feedback','Tier 3 submitted! Tier 4 is now unlocked.','success');
@@ -997,7 +1001,6 @@ document.getElementById('t3-submit').addEventListener('click',function(){
   var d=lmsGet();d.t3_submitted={text:txt,attempts:attempts.t3,ts:Date.now()};lmsSet(d);
   
     var _atd=lmsGet();_atd.t3_attempts_count=attempts.t3;lmsSet(_atd);/*t3_attempts_count_saved*/
-    postToSheets({type:'tier',tier:'T3',step:stepN,attempts:attempts.t3,text:txt});
   unlockTier(4);
   document.getElementById('t4-submit').disabled=false;
   setTimeout(function(){document.getElementById('tier4').scrollIntoView({behavior:'smooth',block:'nearest'});},300);
@@ -1009,10 +1012,12 @@ document.getElementById('t3-submit').addEventListener('click',function(){
 document.getElementById('t4-submit').addEventListener('click',function(){
   if(state.t4)return;
   attempts.t4++;
+  setAttempts('t4-attempts',attempts.t4,2);
   var txt=document.getElementById('t4-text').value.trim();
   var words=txt.split(/\s+/).filter(Boolean).length;
   if(words<10){
-    showFeedback('t4-feedback','Please add more detail — at least 10 words.','error');return;
+    if(attempts.t4<2){showFeedback('t4-feedback','Attempt '+attempts.t4+'/2 — please add at least 10 words.','error');return;}
+    /* Attempt 2: pass regardless */
   }
   state.t4=true;
   showFeedback('t4-feedback','Tier 4 submitted! Complete the concept check below to unlock the journal.','success');
@@ -1021,7 +1026,6 @@ document.getElementById('t4-submit').addEventListener('click',function(){
   var d=lmsGet();d.t4_submitted={text:txt,attempts:attempts.t4,ts:Date.now()};lmsSet(d);
   
     var _atd=lmsGet();_atd.t4_attempts_count=attempts.t4;lmsSet(_atd);/*t4_attempts_count_saved*/
-    postToSheets({type:'tier',tier:'T4',step:stepN,attempts:attempts.t4,text:txt});
   /* Unlock Concept Check gate */
   (function(){
     var cg=document.getElementById('concept-check-gate');
@@ -1057,27 +1061,7 @@ document.getElementById('refl3-submit').addEventListener('click',function(){
   d.post_cal={post_confidence:postConf,actual_pct:postActual,r1:r1txt,r2:r2txt,ts:Date.now()};
   lmsSet(d);
   lmsLog('post_cal_submitted',{step:3,post_confidence:postConf,actual_pct:postActual,r1:r1txt,r2:r2txt,ts:Date.now()});
-  /* Post to Google Sheets */
-  (function(){
-    try{
-      var APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec';
-      var st={};
-      try{st=JSON.parse(localStorage.getItem('umpsa_snake_student')||'{}');}catch(e){}
-      var pl={
-        type:'post_cal',
-        matric:st.matric||'',
-        name:st.name||'',
-        class:st.class||'',
-        step:3,
-        post_confidence:postConf,
-        actual_pct:postActual,
-        r1:r1txt,
-        r2:r2txt,
-        submitted_iso:new Date().toISOString()
-      };
-      fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify(pl)});
-    }catch(err){console.warn('PostCal POST error:',err);}
-  })();
+  /* post_cal data saved to localStorage; sent in Act_3 at step completion */
   showFeedback('refl3-feedback','Post check-in saved! Step complete!','success');
   sendActivityRecord(3);
   document.getElementById('refl3-submit').disabled=true;
@@ -1096,8 +1080,16 @@ document.getElementById('tj-submit').addEventListener('click',function(){
   var short=ids.filter(function(id){
     return document.getElementById(id).value.trim().split(/\s+/).filter(Boolean).length<5;
   });
-  if(short.length>1){
+  if(short.length>0){
     showFeedback('tj-feedback','Please write at least 5 words in each journal prompt.','error');return;
+  }
+  /* Runtime concept-check gate */
+  var _cc=lmsGet();
+  if(!_cc.concept_step||!_cc.concept_step.submitted){
+    var tjSt=document.getElementById('tj-status');if(tjSt)tjSt.style.display='block';
+    showFeedback('tj-feedback','Complete the Concept Check above before submitting the journal.','error');
+    var ccg=document.getElementById('concept-check-gate');if(ccg)ccg.scrollIntoView({behavior:'smooth',block:'nearest'});
+    return;
   }
   state.tj=true;
   var responses={};
@@ -1112,7 +1104,7 @@ document.getElementById('tj-submit').addEventListener('click',function(){
     lmsLog('calibration_index',{predicted:d.cal.predicted_score,actual:d.t1_first_attempt_pct,index:d.calibration_index});
   }
   lmsSet(d);
-  lmsLog('journal_submitted',{ts:Date.now()});postJournalToSheets(3, responses);
+  lmsLog('journal_submitted',{ts:Date.now()}); /* journal data saved to localStorage; sent in Act_3 at step completion */
 
   markDone('tpj');
   showFeedback('tj-feedback','Journal saved! Post-activity check-in is now unlocked.','success');
@@ -1300,34 +1292,20 @@ document.getElementById('exp-dl-csv')&&document.getElementById('exp-dl-csv').add
   });
 })();
 
-/* ── Google Sheets: journal POST ── */
-function postJournalToSheets(stepNum, jData) {
-  try {
-    var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec';
-    var student = {};
-    try { student = JSON.parse(localStorage.getItem('umpsa_snake_student') || '{}'); } catch(e) {}
-    var entries = Object.keys(jData).map(function(k) {
-      return { prompt_id: k, response: jData[k] };
-    });
-    var payload = {
-      type: 'journal',
-      matric: student.matric || '',
-      name:   student.name   || '',
-      class:  student.class  || '',
-      step:   stepNum,
-      entries: entries,
-      submitted_iso: new Date().toISOString()
-    };
-    fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-  } catch(err) { console.warn('Journal POST error:', err); }
-}
+/* journal data saved to localStorage; sent in Act_3 at step completion */
 
 /* ─── Generic Sheets poster ─────────────────────────────────── */
+
+/* === setAttempts: display attempt counter === */
+function setAttempts(spanId,n,max){
+  var el=document.getElementById(spanId);if(!el)return;
+  el.textContent='Attempts: '+n+'/'+max;
+}
 
 /* === sendActivityRecord: bundle full activity data -> Sheets === */
 function sendActivityRecord(stepNum) {
   try {
-    var APPS_URL = 'https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec';
+    var APPS_URL = 'https://script.google.com/macros/s/AKfycbyDlkpeqaDPzJoMDGMAplN1LOisC81dBdIo0fPJTOAeOqMsq-aM9sX60e8J0xrY780R/exec';
     var st = {}; try { st = JSON.parse(localStorage.getItem('umpsa_snake_student')||'{}'); } catch(e) {}
     var d = lmsGet();
     var cal = d.cal || {}; var refl2 = d.reflection_2 || {}; var cs = d.concept_step || {}; var pc = d.post_cal || {};
@@ -1382,7 +1360,7 @@ function postToSheets(payload){
     payload.phone       = payload.phone       || st.phone       || '';
     payload.email       = payload.email       || st.email       || '';
     payload.submitted_iso = payload.submitted_iso || new Date().toISOString();
-    fetch('https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec',{method:'POST',mode:'no-cors',body:JSON.stringify(payload)});
+    fetch('https://script.google.com/macros/s/AKfycbyDlkpeqaDPzJoMDGMAplN1LOisC81dBdIo0fPJTOAeOqMsq-aM9sX60e8J0xrY780R/exec',{method:'POST',mode:'no-cors',body:JSON.stringify(payload)});
   }catch(err){console.warn('postToSheets error:',err);}
 }
 </script>
@@ -1435,6 +1413,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (jCard) { jCard.classList.remove('tier-locked'); jCard.removeAttribute('aria-disabled'); }
         var tjBtn = document.getElementById('tj-submit');
         if (tjBtn) tjBtn.disabled = false;
+        var tjSt = document.getElementById('tj-status'); if (tjSt) tjSt.style.display='none';
+      } else {
+        /* Not all correct — student attempted; unlock journal anyway */
+        var jCard2 = document.getElementById('tierJ');
+        if (jCard2) { jCard2.classList.remove('tier-locked'); jCard2.removeAttribute('aria-disabled'); }
+        var tjBtn2 = document.getElementById('tj-submit');
+        if (tjBtn2) { tjBtn2.disabled = false; }
+        var tjSt2 = document.getElementById('tj-status'); if (tjSt2) tjSt2.style.display='none';
       }
     });
   }
@@ -1461,7 +1447,7 @@ document.addEventListener('DOMContentLoaded', function() {
         answers.push({ answer: sel ? parseInt(sel.value) : -1, correct: ok });
       }
       var d = lmsGet();
-      d.concept_step     = { submitted: correct === 5, answers: answers,
+      d.concept_step     = { submitted: true, answers: answers,
                               score_pct: Math.round(correct / 5 * 100), ts: Date.now() };
       d.concept_attempts = cAttempts;
       lmsSet(d);
