@@ -371,62 +371,88 @@ head_y += dy</code></pre>
   <div class="t-section">
     <h2><span class="sec-icon">🔢</span> Activity Answers — <a href="step-3-activity.html" style="font-size:14px;font-weight:400;color:var(--teal)">step-3-activity.html</a></h2>
 
-    <h3>Tier 1 — Check Understanding</h3>
+    <h3>Tier 1 — Fill in the Blanks (10 blanks)</h3>
+    <p>Students complete a direction-control skeleton using string-based direction ("RIGHT", "DOWN", etc.) and movement math.</p>
     <table class="t-table">
-      <thead><tr><th>Question</th><th>Accepted answer</th></tr></thead>
+      <thead><tr><th style="width:12%">Blank</th><th style="width:40%">Hint shown</th><th>Correct answer</th></tr></thead>
       <tbody>
-        <tr>
-          <td>1. What does <code>dx, dy = 1, 0</code> mean?</td>
-          <td>Move 1 grid cell right per frame, 0 cells vertically.</td>
-        </tr>
-        <tr>
-          <td>2. Why <code>elif</code> instead of <code>if</code> for each direction?</td>
-          <td>We want only one direction to change per frame. Multiple <code>if</code> statements could fire simultaneously, causing diagonal movement.</td>
-        </tr>
-        <tr>
-          <td>3. What does the reverse guard <code>and dy != 1</code> prevent?</td>
-          <td>Pressing UP when already moving DOWN would move the snake's head into its own neck — instant death.</td>
-        </tr>
-        <tr>
-          <td>4. What event type fires when a key is pressed?</td>
-          <td><code>pygame.KEYDOWN</code></td>
-        </tr>
+        <tr><td>1</td><td><code>"______</code></td><td><code>"RIGHT"</code> — the starting direction</td></tr>
+        <tr><td>2</td><td><code>K______</code></td><td><code>KEYDOWN</code> — the pygame event constant for a key press</td></tr>
+        <tr><td>3</td><td><code>"_____</code></td><td><code>"DOWN"</code> — guard: UP is blocked when already going DOWN</td></tr>
+        <tr><td>4</td><td><code>"___</code></td><td><code>"UP"</code> — guard: DOWN is blocked when already going UP</td></tr>
+        <tr><td>5</td><td><code>"______</code></td><td><code>"RIGHT"</code> — guard: LEFT is blocked when already going RIGHT</td></tr>
+        <tr><td>6</td><td><code>"_____</code></td><td><code>"LEFT"</code> — guard: RIGHT is blocked when already going LEFT</td></tr>
+        <tr><td>7</td><td><code>_</code></td><td><code>-</code> — <code>hy -= 1</code>: UP decrements the y coordinate</td></tr>
+        <tr><td>8</td><td><code>_</code></td><td><code>+</code> — <code>hy += 1</code>: DOWN increments y</td></tr>
+        <tr><td>9</td><td><code>_</code></td><td><code>-</code> — <code>hx -= 1</code>: LEFT decrements x</td></tr>
+        <tr><td>10</td><td><code>_</code></td><td><code>+</code> — <code>hx += 1</code>: RIGHT increments x</td></tr>
       </tbody>
     </table>
-
-    <h3>Tier 2 — Fix the Bug</h3>
-    <div class="answer-card">
-      <div class="answer-label">Bug</div>
-      <p style="margin:0;font-size:14px"><code>if event.key == pygame.K_UP and dy == 1:</code> (wrong guard — <code>==</code> instead of <code>!=</code>)</p>
+    <div class="callout" style="margin-top:12px">
+      <span class="callout-icon">💡</span>
+      <p><strong>Common stumble:</strong> blanks 3–6 are the reverse guards. Students often swap the opposite (e.g. write <code>"UP"</code> for the UP guard instead of <code>"DOWN"</code>). Remind them: "What direction would reverse this move?"</p>
     </div>
-    <p><strong>Effect:</strong> You can ONLY press UP when already going down — the controls are inverted and broken.</p>
-    <p><strong>Fix:</strong> Change <code>==</code> to <code>!=</code>: <code>and dy != 1</code></p>
+
+    <h3>Tier 2 — Find &amp; Fix the Bugs (3 bugs)</h3>
+    <div class="answer-card">
+      <div class="answer-label">Bug 1</div>
+      <p style="margin:4px 0 2px;font-size:14px"><strong>Buggy:</strong> <code>if event.key == pygame.K_UP and direction != "UP":</code></p>
+      <p style="margin:0;font-size:14px"><strong>Fix:</strong> <code>if event.key == pygame.K_UP and direction != "DOWN":</code></p>
+      <p style="margin:6px 0 0;font-size:13px;color:var(--muted)">The guard should block the opposite direction, not the same one. <code>!= "UP"</code> blocks the correct direction and lets the reverse happen.</p>
+    </div>
+    <div class="answer-card" style="margin-top:10px">
+      <div class="answer-label">Bug 2</div>
+      <p style="margin:4px 0 2px;font-size:14px"><strong>Buggy:</strong> <code>if direction == "UP":    hx -= 1</code></p>
+      <p style="margin:0;font-size:14px"><strong>Fix:</strong> <code>if direction == "UP":    hy -= 1</code></p>
+      <p style="margin:6px 0 0;font-size:13px;color:var(--muted)">Moving UP changes the row (y-axis), not the column (x-axis). <code>hx</code> is the wrong variable.</p>
+    </div>
+    <div class="answer-card" style="margin-top:10px">
+      <div class="answer-label">Bug 3</div>
+      <p style="margin:4px 0 2px;font-size:14px"><strong>Buggy:</strong> <code>if direction == "LEFT": hx -= 1</code> (standalone second <code>if</code>)</p>
+      <p style="margin:0;font-size:14px"><strong>Fix:</strong> <code>elif direction == "LEFT": hx -= 1</code></p>
+      <p style="margin:6px 0 0;font-size:13px;color:var(--muted)">Without <code>elif</code>, this branch fires independently every frame — the snake double-moves on one step. The chain must use <code>elif</code>.</p>
+    </div>
 
     <h3>Tier 3 — Extend: Add WASD controls</h3>
+    <p>Students add W/A/S/D key handling as an extra <code>elif</code> chain inside the same event loop, each with the correct reverse guard.</p>
     <div class="codebox">
       <button class="copybtn" type="button">Copy</button>
-      <pre><code>elif event.key == pygame.K_w and dy != 1:
-    dx, dy = 0, -1
-elif event.key == pygame.K_s and dy != -1:
-    dx, dy = 0, 1
-elif event.key == pygame.K_a and dx != 1:
-    dx, dy = -1, 0
-elif event.key == pygame.K_d and dx != -1:
-    dx, dy = 1, 0</code></pre>
+      <pre><code># Add inside the KEYDOWN block after the arrow-key elif chain:
+elif event.key == pygame.K_w and direction != "DOWN":
+    direction = "UP"
+elif event.key == pygame.K_s and direction != "UP":
+    direction = "DOWN"
+elif event.key == pygame.K_a and direction != "RIGHT":
+    direction = "LEFT"
+elif event.key == pygame.K_d and direction != "LEFT":
+    direction = "RIGHT"</code></pre>
+    </div>
+    <div class="callout">
+      <span class="callout-icon">💡</span>
+      <p><strong>Watch for:</strong> Students who add separate <code>if event.type == pygame.KEYDOWN:</code> blocks for WASD. Both sets must live inside the same event loop and use <code>elif</code> so only one direction fires per frame.</p>
     </div>
 
-    <h3>Tier 4 — New Task: Pause on spacebar</h3>
+    <h3>Tier 4 — Dictionary Lookup (replace if/elif chain)</h3>
+    <p>Students replace the four-branch <code>if/elif</code> chain with a single dict mapping each key constant to its new direction and the direction it must not be coming from.</p>
     <div class="codebox">
       <button class="copybtn" type="button">Copy</button>
-      <pre><code>paused = False
-# Inside event loop:
-if event.type == pygame.KEYDOWN:
-    if event.key == pygame.K_SPACE:
-        paused = not paused   # toggle
-# In update section:
-if not paused:
-    head_x += dx
-    head_y += dy</code></pre>
+      <pre><code>KEY_MAP = {
+    pygame.K_UP:    ("UP",    "DOWN"),
+    pygame.K_DOWN:  ("DOWN",  "UP"),
+    pygame.K_LEFT:  ("LEFT",  "RIGHT"),
+    pygame.K_RIGHT: ("RIGHT", "LEFT"),
+}
+
+for event in pygame.event.get():
+    if event.type == pygame.KEYDOWN:
+        if event.key in KEY_MAP:
+            new_dir, forbidden = KEY_MAP[event.key]
+            if direction != forbidden:
+                direction = new_dir</code></pre>
+    </div>
+    <div class="callout">
+      <span class="callout-icon">💡</span>
+      <p><strong>Discussion prompt:</strong> "What does the dictionary buy us here?" — removing duplication, adding a new key in one line, separating data from logic. Connect to the DRY principle students will see in Step 6.</p>
     </div>
 
     <h3>Reflective Journal — Suggested Answers</h3>
@@ -434,24 +460,24 @@ if not paused:
       <thead><tr><th style="width:32%">Prompt</th><th>Key ideas a strong answer contains</th></tr></thead>
       <tbody>
         <tr>
-          <td>1. What is a coordinate?</td>
-          <td>A pair of numbers (x, y) that specify a position on a grid. In pygame, x increases to the right and y increases downward.</td>
+          <td>1. Direction storage — how stored, why string/tuple not number?</td>
+          <td>Direction stored as a string (<code>"UP"</code>, <code>"RIGHT"</code> …) or tuple (<code>(0,-1)</code>). A string is readable and self-documenting; a tuple allows direct arithmetic. A bare number (<code>0,1,2,3</code>) works but requires a lookup and is harder to read.</td>
         </tr>
         <tr>
-          <td>2. Difference between KEYDOWN and key held?</td>
-          <td><code>KEYDOWN</code> fires once when the key is first pressed. <code>get_pressed()</code> returns True every frame while the key is held down.</td>
+          <td>2. Blocking reverse — why not allowed, what code prevents it?</td>
+          <td>The head would move into the neck — immediate self-collision. The guard (<code>and direction != "DOWN"</code> etc.) checks the requested direction against the forbidden opposite and ignores the key press if it would reverse.</td>
         </tr>
         <tr>
-          <td>3. Why can't a snake reverse?</td>
-          <td>The head would move into the neck — instant collision. The reverse guard prevents physically impossible moves.</td>
+          <td>3. if-elif-else — why a good fit for four directions? Another way?</td>
+          <td><code>elif</code> ensures only the first matching branch fires — one direction change per frame. Alternatives: a dict lookup (Tier 4), a <code>match</code> statement (Python 3.10+). Trade-off: dict is more data-driven and extensible; <code>elif</code> chain is simpler and familiar.</td>
         </tr>
         <tr>
-          <td>4. What does <code>elif</code> mean in English?</td>
-          <td>"Otherwise, if this condition is true..." — part of a chain where only the first matching condition executes.</td>
+          <td>4. Challenge faced — trickiest part, debugging walk-through</td>
+          <td>Open-ended — mark for honest reflection and clear explanation of what went wrong and what they tried. Good answers name a specific bug and a specific fix, not "I was confused".</td>
         </tr>
         <tr>
-          <td>5. Explain to a classmate?</td>
-          <td>Should cover: arrow key changes dx,dy; each frame adds dx,dy to head position; reverse guard stops illegal moves.</td>
+          <td>5. Real-world connection — similar input-handling in another program</td>
+          <td>Any reasonable analogy: cursor-key navigation in a menu, WASD in a 3D game, swipe direction in a mobile app, drone controller, robot navigation, scroll-wheel direction. Credit understanding that the input is discrete and directional.</td>
         </tr>
       </tbody>
     </table>
