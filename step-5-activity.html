@@ -600,12 +600,20 @@ function sendActivityRecord(stepNum){
     var d=lmsGet();var cal=d.cal||{};var cs=d.concept_step||{};var pc=d.post_cal||{};
     function jv(id){var el=document.getElementById(id);if(el&&el.value)return el.value;return (d.tj_submitted&&d.tj_submitted.responses&&d.tj_submitted.responses[id])?d.tj_submitted.responses[id]:'';}
     var cqa=(cs.answers&&cs.answers.length)?cs.answers:((d.concept_first_answers&&d.concept_first_answers.answers)?d.concept_first_answers.answers:[]);
+    var cqaExpanded={};
+    [0,1,2,3,4].forEach(function(i){
+      cqaExpanded['concept_q'+(i+1)+'_ans']=cqa[i]!==undefined?cqa[i]:'';
+      cqaExpanded['concept_q'+(i+1)+'_cor']=(cqa[i]!==undefined)?(cqa[i]===CQ_ANS[i]?1:0):'';
+    });
     var payload={
       type:'act_'+stepNum,
-      matric:st.matric||'',name:st.name||'',class:st.class||'',gender:st.gender||'',
+      submitted_iso:new Date().toISOString(),
+      sid:'act'+stepNum+'_'+Date.now(),
+      step:stepNum,
+      matric:st.matric||'',name:st.name||'',gender:st.gender||'',
       age:st.age||'',mykid:st.mykid||'',home_state:st.home_state||'',
-      school_code:st.school_code||'',phone:st.phone||'',email:st.email||'',
-      step:stepNum,submitted_iso:new Date().toISOString(),
+      class:st.class||'',school_code:st.school_code||'',
+      phone:st.phone||'',email:st.email||'',
       cal_confidence:cal.confidence!==undefined?cal.confidence:'',
       cal_predicted:cal.predicted_score!==undefined?cal.predicted_score:'',
       cal_reflection:cal.reflection_1||'',
@@ -614,15 +622,19 @@ function sendActivityRecord(stepNum){
       refl2_text:(d.reflection_2||{}).text||'',
       t3_attempts:d.t3_submitted?d.t3_submitted.attempts:'',
       t4_attempts:d.t4_submitted?d.t4_submitted.attempts:'',
-      concept_first_correct:d.concept_first_answers?d.concept_first_answers.correct:'',
-      concept_first_pct:d.concept_first_answers?d.concept_first_answers.pct:'',
       concept_score_pct:cs.score_pct!==undefined?cs.score_pct:'',
       concept_passed:cs.submitted?1:0,
-      concept_answers:cqa.map(function(ans,i){return {answer:ans,correct:(ans===CQ_ANS[i]?1:0)};}),
+      concept_attempts:cs.attempts!==undefined?cs.attempts:(d.concept_first_answers?1:''),
+      concept_q1_ans:cqaExpanded.concept_q1_ans,concept_q1_cor:cqaExpanded.concept_q1_cor,
+      concept_q2_ans:cqaExpanded.concept_q2_ans,concept_q2_cor:cqaExpanded.concept_q2_cor,
+      concept_q3_ans:cqaExpanded.concept_q3_ans,concept_q3_cor:cqaExpanded.concept_q3_cor,
+      concept_q4_ans:cqaExpanded.concept_q4_ans,concept_q4_cor:cqaExpanded.concept_q4_cor,
+      concept_q5_ans:cqaExpanded.concept_q5_ans,concept_q5_cor:cqaExpanded.concept_q5_cor,
       jr1:jv('jr1'),jr2:jv('jr2'),jr3:jv('jr3'),jr4:jv('jr4'),jr5:jv('jr5'),
       post_confidence:pc.post_confidence||'',
       post_actual:pc.actual_pct||'',
       post_r1:pc.r1||'',
+      post_r2:pc.r2||'',
       calibration_index:d.calibration_index!==undefined?d.calibration_index:''
     };
     fetch(GAS_URL,{method:'POST',mode:'no-cors',body:JSON.stringify(payload)});
