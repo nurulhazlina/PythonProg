@@ -1256,7 +1256,7 @@ function sendActivityRecord(stepNum){
       concept_score_pct:cs.score_pct!==undefined?cs.score_pct:'',
       concept_passed:cs.submitted?1:0,
       concept_attempts:cs.attempts||'',
-      concept_answers:cqa.map(function(ans,i){return {answer:ans,correct:(ans===CQ_ANS[i]?1:0)};}),
+      concept_answers:cqa.map(function(ans,i){var CANS=[1,1,2,1,2];return {answer:ans,correct:(ans===CANS[i]?1:0)};}),
       jr1:jv('jr1'),jr2:jv('jr2'),jr3:jv('jr3'),jr4:jv('jr4'),jr5:jv('jr5'),
       post_confidence:pc.post_confidence||'',
       post_actual:pc.actual_pct||'',
