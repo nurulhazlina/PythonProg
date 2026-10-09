@@ -200,8 +200,8 @@ section.hero{background:linear-gradient(135deg,var(--teal-dark) 0%,#063f3b 100%)
 <section class="hero" style="padding:32px 0 24px">
   <div class="container">
     <div class="step-badge">Step 5 — Activity</div>
-    <h1 class="hero-title">Functions</h1>
-    <p class="hero-sub">def • parameters • return values • code organisation</p>
+    <h1 class="hero-title">Bonus Food 🌟</h1>
+    <p class="hero-sub">for loops • range() • list iteration • filter pattern</p>
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
       <a class="btn btn-outline" href="step-5.html">📖 Concept Page</a>
       <a class="btn btn-outline" href="step-4-activity.html">← Step 4</a>
@@ -318,7 +318,7 @@ section.hero{background:linear-gradient(135deg,var(--teal-dark) 0%,#063f3b 100%)
     <span class="tier-desc">2 questions + 1 reflection — unlocks Tier 1</span>
   </div>
   <div class="cal-gate-body">
-    <div class="cal-tip">Think about why we split code into functions: what does each function receive (parameters) and give back (return value)? How do you call a function correctly?</div>
+    <div class="cal-tip">Think about <code>for</code> loops, <code>range()</code>, and <code>enumerate()</code>. When do you use <code>range(n)</code> to repeat something a fixed number of times vs iterating directly over a list? What extra information does <code>enumerate()</code> give you that a plain <code>for item in list:</code> does not?</div>
 
     <label class="cal-label">1. How confident are you right now? <span class="cal-sub">Slide to rate 1 (not sure) → 10 (very confident)</span></label>
     <div class="conf-slider-wrap">
@@ -333,7 +333,7 @@ section.hero{background:linear-gradient(135deg,var(--teal-dark) 0%,#063f3b 100%)
     </label>
     <input type="number" class="pred-input" id="cal-pred" min="0" max="100" placeholder="e.g. 70">
 
-    <label class="cal-label" style="margin-top:14px">3. Reflection 1 — What do you already know about <em>Functions</em>? What are you unsure about?
+    <label class="cal-label" style="margin-top:14px">3. Reflection 1 — What do you already know about <em>for loops</em> and iterating over lists? What are you unsure about?
       <span class="cal-sub">Write at least 10 words.</span>
     </label>
     <textarea class="tier-textarea" id="cal-r1" rows="4" placeholder="Describe your current understanding…"></textarea>
@@ -353,38 +353,40 @@ section.hero{background:linear-gradient(135deg,var(--teal-dark) 0%,#063f3b 100%)
     <span class="tier-desc">Complete the code skeleton — 7 blanks</span>
   </div>
   <div class="tier-body">
-    <p class="tier-intro">Complete the function definitions and calls. Fill each blank with the correct parameter, keyword, or return value.</p>
-    <pre class="code-block"><code id="t1CodeBlock">def <span style="color:var(--orange);font-weight:800">▢1</span>(screen, snake, food):
-    """Draw the game world each tick."""
-    screen.fill(BG)
-    for i, (cx, cy) in <span style="color:var(--orange);font-weight:800">▢2</span>(snake):
-        colour = (0,180,60) if i == 0 else GREEN
-        pygame.draw.rect(screen, colour,
-            pygame.Rect(cx*CELL_SIZE, cy*CELL_SIZE, CELL_SIZE-2, CELL_SIZE-2),
-            border_radius=4)
-    fx, fy = food
-    pygame.draw.circle(screen, RED,
-        (fx*CELL_SIZE+CELL_SIZE//2, fy*CELL_SIZE+CELL_SIZE//2), CELL_SIZE//3)
-    pygame.display.<span style="color:var(--orange);font-weight:800">▢3</span>()
+    <p class="tier-intro">Complete the bonus food code. The four highlighted blanks cover the core Step 5 concepts: <code>range()</code>, <code>append()</code>, <code>enumerate()</code>, and the list filter pattern.</p>
+    <pre class="code-block"><code id="t1CodeBlock">import time
 
-def spawn_food(snake):
-    """Return a random food position not overlapping snake."""
-    while True:
-        pos = (random.randint(0,GRID_COLS-1), random.randint(0,GRID_ROWS-1))
-        if pos <span style="color:var(--orange);font-weight:800">▢4</span> snake:
-            <span style="color:var(--orange);font-weight:800">▢5</span> pos
+bonus_foods = []   # [x, y, spawn_time]
 
-# ── inside the game loop ──
-draw(<span style="color:var(--orange);font-weight:800">▢6</span>, snake, food)
-food = spawn_food(<span style="color:var(--orange);font-weight:800">▢7</span>)</code></pre>
+# Spawn 3 bonus foods at game start
+for _ in <span style="color:var(--orange);font-weight:800">▢1</span>(3):             # 1: repeat 3 times
+    bx = random.randint(0, GRID_COLS-1)
+    by = random.randint(0, GRID_ROWS-1)
+    bonus_foods.<span style="color:var(--orange);font-weight:800">▢2</span>([bx, by, time.time()])  # 2: add to list
+
+# ── Each frame ──
+now = time.time()
+
+# Draw with enumerate so we know each food's index
+for <span style="color:var(--orange);font-weight:800">▢3</span>, bf in <span style="color:var(--orange);font-weight:800">▢4</span>(bonus_foods):   # 3: index  4: gives index+item
+    bx, by, _ = bf
+    pygame.draw.rect(screen, GOLD,
+        (bx*CELL_SIZE, by*CELL_SIZE, CELL_SIZE-2, CELL_SIZE-2))
+
+# Filter pattern — keep only fresh, uneaten foods
+bonus_foods = [
+    bf for bf in <span style="color:var(--orange);font-weight:800">▢5</span>             # 5: the list to filter
+    if snake[0] != (bf[0], bf[<span style="color:var(--orange);font-weight:800">▢6</span>])   # 6: index of y in [x,y,t]
+    and now - bf[<span style="color:var(--orange);font-weight:800">▢7</span>] &lt; 8        # 7: index of spawn_time
+]</code></pre>
     <div style="margin-top:14px">
-<div class="blank-row"><span class="blank-num">1.</span><span class="blank-label">Blank&nbsp;1: <code style="color:var(--muted);font-size:11px">d___</code></span><input class="blank-input" id="t1b1" data-ans="draw" autocomplete="off" spellcheck="false" placeholder="type here"></div>
-<div class="blank-row"><span class="blank-num">2.</span><span class="blank-label">Blank&nbsp;2: <code style="color:var(--muted);font-size:11px">e________</code></span><input class="blank-input" id="t1b2" data-ans="enumerate" autocomplete="off" spellcheck="false" placeholder="type here"></div>
-<div class="blank-row"><span class="blank-num">3.</span><span class="blank-label">Blank&nbsp;3: <code style="color:var(--muted);font-size:11px">f___</code></span><input class="blank-input" id="t1b3" data-ans="flip" autocomplete="off" spellcheck="false" placeholder="type here"></div>
-<div class="blank-row"><span class="blank-num">4.</span><span class="blank-label">Blank&nbsp;4: <code style="color:var(--muted);font-size:11px">n_____</code></span><input class="blank-input" id="t1b4" data-ans="not in" autocomplete="off" spellcheck="false" placeholder="type here"></div>
-<div class="blank-row"><span class="blank-num">5.</span><span class="blank-label">Blank&nbsp;5: <code style="color:var(--muted);font-size:11px">r_____</code></span><input class="blank-input" id="t1b5" data-ans="return" autocomplete="off" spellcheck="false" placeholder="type here"></div>
-<div class="blank-row"><span class="blank-num">6.</span><span class="blank-label">Blank&nbsp;6: <code style="color:var(--muted);font-size:11px">s_____</code></span><input class="blank-input" id="t1b6" data-ans="screen" autocomplete="off" spellcheck="false" placeholder="type here"></div>
-<div class="blank-row"><span class="blank-num">7.</span><span class="blank-label">Blank&nbsp;7: <code style="color:var(--muted);font-size:11px">s____</code></span><input class="blank-input" id="t1b7" data-ans="snake" autocomplete="off" spellcheck="false" placeholder="type here"></div>
+<div class="blank-row"><span class="blank-num">1.</span><span class="blank-label">Blank&nbsp;1: <code style="color:var(--muted);font-size:11px">r____</code> — generates a sequence of numbers to repeat a fixed number of times</span><input class="blank-input" id="t1b1" data-ans="range" autocomplete="off" spellcheck="false" placeholder="type here"></div>
+<div class="blank-row"><span class="blank-num">2.</span><span class="blank-label">Blank&nbsp;2: <code style="color:var(--muted);font-size:11px">a_____</code> — adds one item to the end of a list</span><input class="blank-input" id="t1b2" data-ans="append" autocomplete="off" spellcheck="false" placeholder="type here"></div>
+<div class="blank-row"><span class="blank-num">3.</span><span class="blank-label">Blank&nbsp;3: <code style="color:var(--muted);font-size:11px">i</code> — the loop counter variable (index) that enumerate provides</span><input class="blank-input" id="t1b3" data-ans="i" autocomplete="off" spellcheck="false" placeholder="type here"></div>
+<div class="blank-row"><span class="blank-num">4.</span><span class="blank-label">Blank&nbsp;4: <code style="color:var(--muted);font-size:11px">e_________</code> — built-in that yields (index, item) pairs when iterating</span><input class="blank-input" id="t1b4" data-ans="enumerate" autocomplete="off" spellcheck="false" placeholder="type here"></div>
+<div class="blank-row"><span class="blank-num">5.</span><span class="blank-label">Blank&nbsp;5: <code style="color:var(--muted);font-size:11px">b___________</code> — the list of bonus food items being filtered</span><input class="blank-input" id="t1b5" data-ans="bonus_foods" autocomplete="off" spellcheck="false" placeholder="type here"></div>
+<div class="blank-row"><span class="blank-num">6.</span><span class="blank-label">Blank&nbsp;6: <code style="color:var(--muted);font-size:11px">_</code> — position of y in [x, y, spawn_time] (0-indexed)</span><input class="blank-input" id="t1b6" data-ans="1" autocomplete="off" spellcheck="false" placeholder="type here"></div>
+<div class="blank-row"><span class="blank-num">7.</span><span class="blank-label">Blank&nbsp;7: <code style="color:var(--muted);font-size:11px">_</code> — position of spawn_time in [x, y, spawn_time] (0-indexed)</span><input class="blank-input" id="t1b7" data-ans="2" autocomplete="off" spellcheck="false" placeholder="type here"></div>
 </div>
 
     <div id="t1-feedback" style="margin-top:10px"></div>
@@ -403,50 +405,45 @@ food = spawn_food(<span style="color:var(--orange);font-weight:800">▢7</span>)
   </div>
   <div class="tier-body">
     <p class="tier-intro">The function definitions below have 3 bugs. Type the corrected line for each.</p>
-    <pre class="code-block"><code>def draw(snake, food):    # Bug 1 – missing parameter
-    screen.fill(BG)
-    # ... drawing code ...
-    pygame.display.flip()
+        <pre class="code-block"><code># Bug 1 – range() with no argument
+for _ in range():          # TypeError — range() needs at least one argument
+    bonus_foods.append([random.randint(0, GRID_COLS-1),
+                        random.randint(0, GRID_ROWS-1), time.time()])
 
-def spawn_food(snake):
-    while True:
-        pos = (random.randint(0,GRID_COLS-1), random.randint(0,GRID_ROWS-1))
-        if pos not in snake:
-            pass          # Bug 2 – nothing is returned
+# Bug 2 – modifying the list during iteration
+for bf in bonus_foods:
+    if time.time() - bf[2] >= 8:
+        bonus_foods.remove(bf)   # skips items — some foods never removed!
 
-font = pygame.font.SysFont("Arial", 20, bold=True)
-def draw_score(score):
-    surf = font.render(f"Score: {score}", True, WHITE)
-    screen.blit(surf, (8, 6))
-
-# In the game loop:
-draw(snake)               # Bug 3 – missing argument</code></pre>
+# Bug 3 – enumerate unpacked incorrectly
+for bf in enumerate(bonus_foods):   # enumerate gives (i, bf), not just bf
+    bx, by, _ = bf                  # TypeError: too many values to unpack</code></pre>
     
 <div class="bug-card">
   <h4>Bug 1</h4>
   <p style="font-size:13px;margin:0 0 6px;color:var(--muted)">Buggy line:</p>
-  <div class="bug-line">def draw(snake, food):</div>
+  <div class="bug-line">for _ in range():</div>
   <p style="font-size:13px;margin:6px 0 4px;color:var(--fg-soft)">Your fix:</p>
-  <input class="bug-fix-input" id="t2bug1" data-ans="def draw(screen, snake, food):" autocomplete="off" spellcheck="false" placeholder="type corrected line…">
-  <p class="bug-hint">Hint: The function draws onto `screen` but never receives it — add it as the first parameter.</p>
+  <input class="bug-fix-input" id="t2bug1" data-ans="for _ in range(3):" autocomplete="off" spellcheck="false" placeholder="type corrected line…">
+  <p class="bug-hint">Hint: range() requires at least one argument — the stop value. To repeat 3 times, pass 3.</p>
 </div>
 
 <div class="bug-card">
   <h4>Bug 2</h4>
   <p style="font-size:13px;margin:0 0 6px;color:var(--muted)">Buggy line:</p>
-  <div class="bug-line">pass  # Bug 2 – nothing returned</div>
-  <p style="font-size:13px;margin:6px 0 4px;color:var(--fg-soft)">Your fix:</p>
-  <input class="bug-fix-input" id="t2bug2" data-ans="return pos" autocomplete="off" spellcheck="false" placeholder="type corrected line…">
-  <p class="bug-hint">Hint: The function finds a valid position but never hands it back. What keyword sends a value out of a function?</p>
+  <div class="bug-line">bonus_foods.remove(bf)</div>
+  <p style="font-size:13px;margin:6px 0 4px;color:var(--fg-soft)">Your fix (describe the approach):</p>
+  <input class="bug-fix-input" id="t2bug2" data-ans="bonus_foods = [bf for bf in bonus_foods if time.time() - bf[2] < 8]" autocomplete="off" spellcheck="false" placeholder="type corrected line…">
+  <p class="bug-hint">Hint: Never remove from a list while iterating — it skips items. Build a new list that keeps only what you want.</p>
 </div>
 
 <div class="bug-card">
   <h4>Bug 3</h4>
   <p style="font-size:13px;margin:0 0 6px;color:var(--muted)">Buggy line:</p>
-  <div class="bug-line">draw(snake)</div>
+  <div class="bug-line">for bf in enumerate(bonus_foods):</div>
   <p style="font-size:13px;margin:6px 0 4px;color:var(--fg-soft)">Your fix:</p>
-  <input class="bug-fix-input" id="t2bug3" data-ans="draw(screen, snake, food)" autocomplete="off" spellcheck="false" placeholder="type corrected line…">
-  <p class="bug-hint">Hint: The call must pass every argument the function signature requires — check how many parameters draw() has.</p>
+  <input class="bug-fix-input" id="t2bug3" data-ans="for i, bf in enumerate(bonus_foods):" autocomplete="off" spellcheck="false" placeholder="type corrected line…">
+  <p class="bug-hint">Hint: enumerate() yields pairs — you must unpack both the index AND the item: <code>for i, bf in enumerate(...):</code></p>
 </div>
 
     <div id="t2-feedback" style="margin-top:10px"></div>
@@ -463,7 +460,7 @@ draw(snake)               # Bug 3 – missing argument</code></pre>
     <span class="tier-title" style="font-size:15px">Mid-Point Check-In</span>
   </div>
   <div class="refl-gate-body">
-    <label class="cal-label">Are your functions genuinely reusable, or are they still relying on global variables they should receive as parameters? Give a specific example.
+    <label class="cal-label">Explain the bug in <code>bonus_foods.remove(bf)</code> inside a <code>for bf in bonus_foods:</code> loop. Why does it skip items, and how does the filter pattern (list comprehension) fix it?
       <span class="cal-sub">Write at least 10 words — unlocks Tier 3</span>
     </label>
     <textarea class="tier-textarea" id="refl2-text" rows="4" placeholder="Your reflection…"></textarea>
@@ -482,17 +479,17 @@ draw(snake)               # Bug 3 – missing argument</code></pre>
     <span class="tier-desc">Add the feature described below</span>
   </div>
   <div class="tier-body">
-    <p class="tier-intro">Write a `draw_score(screen, score)` function that renders the score in the top-left corner using `pygame.font.SysFont`. Make sure `screen` is a parameter, not a global.</p>
-    <pre class="starter-code">font = pygame.font.SysFont("Arial", 20, bold=True)
-
-def draw_score(screen, score):
-    # YOUR CODE: render f"Score: {score}" in WHITE
-    # blit it at position (8, 6)
-    pass
-
-# Call it inside your draw() function:
-# draw_score(screen, score)</pre>
-    <label class="cal-label" style="margin-top:10px">Your extended code: <span class="cal-sub">Aim for at least 6 lines.</span></label>
+    <p class="tier-intro">Complete the bonus food draw loop. Use <code>enumerate</code> to get each food's index, then use <code>time.time()</code> to calculate how many seconds it has been on screen. If less than 2 seconds remain (<code>time_left &lt; 2</code>) draw it in a flashing red/gold colour to warn the player.</p>
+    <pre class="starter-code"># Draw bonus foods — add a flash warning when nearly expired
+now = time.time()
+for i, bf in enumerate(bonus_foods):
+    bx, by, spawn_t = bf
+    time_left = 8 - (now - spawn_t)
+    # YOUR CODE:
+    # 1. Choose colour: GOLD normally, RED if time_left < 2
+    # 2. Draw a rect at (bx*CELL_SIZE, by*CELL_SIZE) of size CELL_SIZE
+    pass</pre>
+    <label class="cal-label" style="margin-top:10px">Your code: <span class="cal-sub">Aim for at least 5 lines.</span></label>
     <textarea class="tier-textarea" id="t3-text" rows="10" placeholder="Paste or write your solution here…" style="font-family:monospace;font-size:13px"></textarea>
     <div id="t3-feedback" style="margin-top:10px"></div>
     <button class="btn" id="t3-submit" disabled style="margin-top:10px;background:var(--blue)">Submit &amp; Unlock Tier 4</button>
@@ -509,7 +506,7 @@ def draw_score(screen, score):
     <span class="tier-desc">Open-ended challenge</span>
   </div>
   <div class="tier-body">
-    <p class="tier-intro">**Challenge:** Refactor the entire drawing pipeline so `draw()` calls `draw_score()` internally. Then write a second function `draw_grid(screen)` that overlays a faint grid on the background. Paste both functions and explain how you chose their parameters.</p>
+    <p class="tier-intro"><strong>Challenge:</strong> Add a <em>respawn system</em> — when <code>len(bonus_foods) &lt; 3</code>, automatically spawn enough new items to bring it back to 3, using a <code>for _ in range(...):</code> loop. Each new food gets its own <code>time.time()</code> spawn stamp. Also add a <code>range()</code>-driven score multiplier: for every bonus food eaten in quick succession (within 3 seconds of the last one), the score increases by an extra point per streak. Describe your design and paste your code.</p>
     <label class="cal-label">Your solution: <span class="cal-sub">Aim for at least 10 lines or a clear explanation.</span></label>
     <textarea class="tier-textarea" id="t4-text" rows="12" placeholder="Write your solution or explanation here…" style="font-family:monospace;font-size:13px"></textarea>
     <div id="t4-feedback" style="margin-top:10px"></div>
@@ -531,54 +528,54 @@ def draw_score(screen, score):
   <div class="refl-gate-body">
     <div id="concept-check-wrap" data-step="5">
 <div class="concept-check-inner">
-<p class="concept-desc">Answer all 5 questions, then the Reflective Journal will unlock.</p>
+<p class="concept-desc">Answer all 5 questions. You need 4/5 (80%) to unlock the Reflective Journal.</p>
 <div class="concept-q" id="cq-0">
-  <p class="concept-q-text"><strong>1.</strong> Why is str(score) needed in: 'Score: ' + str(score)?</p>
+  <p class="concept-q-text"><strong>1.</strong> What does <code>for _ in range(5):</code> do?</p>
   <div class="concept-opts">
-    <label class="concept-opt"><input type="radio" name="cq0" value="0"><span>To copy the score</span></label>
-    <label class="concept-opt"><input type="radio" name="cq0" value="1"><span>Because the + operator needs both sides to be the same type (string)</span></label>
-    <label class="concept-opt"><input type="radio" name="cq0" value="2"><span>To sort the score</span></label>
-    <label class="concept-opt"><input type="radio" name="cq0" value="3"><span>To double the score</span></label>
+    <label class="concept-opt"><input type="radio" name="cq0" value="0"><span>Runs the loop body 5 times (0, 1, 2, 3, 4)</span></label>
+    <label class="concept-opt"><input type="radio" name="cq0" value="1"><span>Runs once with _ = 5</span></label>
+    <label class="concept-opt"><input type="radio" name="cq0" value="2"><span>Never runs — _ is not defined</span></label>
+    <label class="concept-opt"><input type="radio" name="cq0" value="3"><span>Runs 4 times (1, 2, 3, 4)</span></label>
   </div>
   <div class="concept-feedback" id="cfb-0" hidden></div>
 </div>
 <div class="concept-q" id="cq-1">
-  <p class="concept-q-text"><strong>2.</strong> What does score += 1 mean?</p>
+  <p class="concept-q-text"><strong>2.</strong> What sequence does <code>range(1, 8, 2)</code> produce?</p>
   <div class="concept-opts">
-    <label class="concept-opt"><input type="radio" name="cq1" value="0"><span>score = 1</span></label>
-    <label class="concept-opt"><input type="radio" name="cq1" value="1"><span>Subtract 1 from score</span></label>
-    <label class="concept-opt"><input type="radio" name="cq1" value="2"><span>Add 1 to score</span></label>
-    <label class="concept-opt"><input type="radio" name="cq1" value="3"><span>Multiply score by 1</span></label>
+    <label class="concept-opt"><input type="radio" name="cq1" value="0"><span>1, 2, 3, 4, 5, 6, 7</span></label>
+    <label class="concept-opt"><input type="radio" name="cq1" value="1"><span>1, 3, 5, 7</span></label>
+    <label class="concept-opt"><input type="radio" name="cq1" value="2"><span>1, 8, 2</span></label>
+    <label class="concept-opt"><input type="radio" name="cq1" value="3"><span>2, 4, 6, 8</span></label>
   </div>
   <div class="concept-feedback" id="cfb-1" hidden></div>
 </div>
 <div class="concept-q" id="cq-2">
-  <p class="concept-q-text"><strong>3.</strong> if score % 5 == 0: level += 1 &mdash; this triggers when:</p>
+  <p class="concept-q-text"><strong>3.</strong> What does <code>for i, bf in enumerate(bonus_foods):</code> give you inside the loop?</p>
   <div class="concept-opts">
-    <label class="concept-opt"><input type="radio" name="cq2" value="0"><span>score equals 5 only</span></label>
-    <label class="concept-opt"><input type="radio" name="cq2" value="1"><span>score is exactly divisible by 5</span></label>
-    <label class="concept-opt"><input type="radio" name="cq2" value="2"><span>score is greater than 5</span></label>
-    <label class="concept-opt"><input type="radio" name="cq2" value="3"><span>Always &mdash; every frame</span></label>
+    <label class="concept-opt"><input type="radio" name="cq2" value="0"><span>Only the items (same as a plain for loop)</span></label>
+    <label class="concept-opt"><input type="radio" name="cq2" value="1"><span>Both the index i and the item bf for each element</span></label>
+    <label class="concept-opt"><input type="radio" name="cq2" value="2"><span>The length of bonus_foods</span></label>
+    <label class="concept-opt"><input type="radio" name="cq2" value="3"><span>A reversed copy of bonus_foods</span></label>
   </div>
   <div class="concept-feedback" id="cfb-2" hidden></div>
 </div>
 <div class="concept-q" id="cq-3">
-  <p class="concept-q-text"><strong>4.</strong> To restart the game when R is pressed, which code is correct?</p>
+  <p class="concept-q-text"><strong>4.</strong> Why does the filter pattern build a <em>new</em> list instead of calling <code>.remove()</code> inside the loop?</p>
   <div class="concept-opts">
-    <label class="concept-opt"><input type="radio" name="cq3" value="0"><span>if event.key == pygame.K_r: reset_game()</span></label>
-    <label class="concept-opt"><input type="radio" name="cq3" value="1"><span>restart = True</span></label>
-    <label class="concept-opt"><input type="radio" name="cq3" value="2"><span>score = 1</span></label>
-    <label class="concept-opt"><input type="radio" name="cq3" value="3"><span>while r:</span></label>
+    <label class="concept-opt"><input type="radio" name="cq3" value="0"><span>New lists are always faster</span></label>
+    <label class="concept-opt"><input type="radio" name="cq3" value="1"><span>Removing items while iterating shifts indices and causes elements to be skipped</span></label>
+    <label class="concept-opt"><input type="radio" name="cq3" value="2"><span>Python's remove() method doesn't work on lists of lists</span></label>
+    <label class="concept-opt"><input type="radio" name="cq3" value="3"><span>The original list is needed as a backup for the next frame</span></label>
   </div>
   <div class="concept-feedback" id="cfb-3" hidden></div>
 </div>
 <div class="concept-q" id="cq-4">
-  <p class="concept-q-text"><strong>5.</strong> Increasing level speed means:</p>
+  <p class="concept-q-text"><strong>5.</strong> <code>bonus_foods = [bf for bf in bonus_foods if now - bf[2] &lt; 8]</code> keeps:</p>
   <div class="concept-opts">
-    <label class="concept-opt"><input type="radio" name="cq4" value="0"><span>More keys can be pressed per second</span></label>
-    <label class="concept-opt"><input type="radio" name="cq4" value="1"><span>A smaller clock.tick() argument (higher FPS cap)</span></label>
-    <label class="concept-opt"><input type="radio" name="cq4" value="2"><span>The snake grows larger</span></label>
-    <label class="concept-opt"><input type="radio" name="cq4" value="3"><span>The screen gets bigger</span></label>
+    <label class="concept-opt"><input type="radio" name="cq4" value="0"><span>All bonus foods, unchanged</span></label>
+    <label class="concept-opt"><input type="radio" name="cq4" value="1"><span>Only foods that spawned less than 8 seconds ago</span></label>
+    <label class="concept-opt"><input type="radio" name="cq4" value="2"><span>Foods that have been on screen for more than 8 seconds</span></label>
+    <label class="concept-opt"><input type="radio" name="cq4" value="3"><span>Only the first food in the list</span></label>
   </div>
   <div class="concept-feedback" id="cfb-4" hidden></div>
 </div>
@@ -599,23 +596,23 @@ def draw_score(screen, score):
   <div class="tier-body" id="tierJ-body">
     <p>Answer each prompt thoughtfully. There are no right or wrong answers &mdash; this is your own reflection.</p>
     <div class="journal-prompt">
-  <label for="jr1"><span class="jp-num">1</span> <strong>Score updating</strong> &mdash; Walk through how the score increases step by step — from the snake eating food to the number appearing on screen.</label>
+  <label for="jr1"><span class="jp-num">1</span> <strong>for vs while</strong> &mdash; When would you use a <code>for</code> loop instead of a <code>while</code> loop? Give one example from the bonus food code and explain the choice.</label>
   <textarea class="tier-textarea" id="jr1" rows="4" placeholder="Write at least 2-3 sentences..."></textarea>
 </div>
 <div class="journal-prompt">
-  <label for="jr2"><span class="jp-num">2</span> <strong>Level progression</strong> &mdash; How does the level system work in your game? What changes when the level goes up, and what code makes that happen?</label>
+  <label for="jr2"><span class="jp-num">2</span> <strong>range() explained</strong> &mdash; Explain what <code>range(0, 10, 2)</code> produces and why the stop value is not included. Give a game scenario where this exact range would be useful.</label>
   <textarea class="tier-textarea" id="jr2" rows="4" placeholder="Write at least 2-3 sentences..."></textarea>
 </div>
 <div class="journal-prompt">
-  <label for="jr3"><span class="jp-num">3</span> <strong>Why initialise to zero?</strong> &mdash; Why do you set score = 0 and level = 1 before the game loop starts? What would happen if you forgot?</label>
+  <label for="jr3"><span class="jp-num">3</span> <strong>Why enumerate?</strong> &mdash; Describe a situation in the bonus food code where knowing the index (from <code>enumerate</code>) is more useful than just the item. What would you do with that index?</label>
   <textarea class="tier-textarea" id="jr3" rows="4" placeholder="Write at least 2-3 sentences..."></textarea>
 </div>
 <div class="journal-prompt">
-  <label for="jr4"><span class="jp-num">4</span> <strong>Challenge you faced</strong> &mdash; What was the hardest part of Step 5 for you? How did you solve it or where did you find help?</label>
+  <label for="jr4"><span class="jp-num">4</span> <strong>Filter pattern</strong> &mdash; Trace through <code>bonus_foods.remove(bf)</code> inside a loop with 3 items, and show how an item gets skipped. Then explain how the list comprehension avoids this.</label>
   <textarea class="tier-textarea" id="jr4" rows="4" placeholder="Write at least 2-3 sentences..."></textarea>
 </div>
 <div class="journal-prompt">
-  <label for="jr5"><span class="jp-num">5</span> <strong>Improvement idea</strong> &mdash; Suggest one way you could make the scoring or level system more interesting. Describe how you would code it.</label>
+  <label for="jr5"><span class="jp-num">5</span> <strong>Design idea</strong> &mdash; Suggest one way to improve the bonus food system using <code>range()</code> or <code>enumerate()</code>. Describe the idea and sketch the key lines of code you would add.</label>
   <textarea class="tier-textarea" id="jr5" rows="4" placeholder="Write at least 2-3 sentences..."></textarea>
 </div>
     <div id="tj-feedback" class="tier-feedback" hidden></div>
@@ -692,8 +689,8 @@ def draw_score(screen, score):
 
 <!-- ── Bottom concept navigation ── -->
 <div class="stepnav" style="max-width:680px;margin-left:auto;margin-right:auto">
-  <a href="step-5.html" class="prev"><small>Previous</small><b>&larr; Step 5: Functions</b></a>
-  <a href="step-6.html" class="next"><small>Next</small><b>Step 6: Boundaries & Wrapping &rarr;</b></a>
+  <a href="step-5.html" class="prev"><small>Previous</small><b>&larr; Step 5: Bonus Food</b></a>
+  <a href="step-6-activity.html" class="next"><small>Next</small><b>Step 6: Functions &rarr;</b></a>
 </div>
 
 </div><!-- /container -->
@@ -762,7 +759,7 @@ function unlockTier(n){
 /* ═══════════════════════════════════════
    TIER 1 ANSWERS
 ═══════════════════════════════════════ */
-var T1_ANSWERS = ['draw', 'enumerate', 'flip', 'not in', 'return', 'screen', 'snake'];
+var T1_ANSWERS = ['range', 'append', 'i', 'enumerate', 'bonus_foods', '1', '2'];
 
 /* ═══════════════════════════════════════
    STUDENT IDENTITY GATE
@@ -1020,7 +1017,7 @@ document.getElementById('t4-submit').addEventListener('click',function(){
   state.t4=true;
   showFeedback('t4-feedback','Tier 4 submitted! Complete the concept check below to unlock the journal.','success');
   document.getElementById('t4-submit').disabled=true;
-  markDone('tp4');document.getElementById('tc4j').classList.add('done');
+  markDone('tp4');(function(){var _tc=document.getElementById('tc4c');if(_tc)_tc.classList.add('done');})();
   var d=lmsGet();d.t4_submitted={text:txt,attempts:attempts.t4,ts:Date.now()};lmsSet(d);
   
     var _atd=lmsGet();_atd.t4_attempts_count=attempts.t4;lmsSet(_atd);/*t4_attempts_count_saved*/
@@ -1038,6 +1035,62 @@ document.getElementById('t4-submit').addEventListener('click',function(){
   })();
   setTimeout(function(){document.getElementById('concept-check-gate').scrollIntoView({behavior:'smooth',block:'nearest'});},300);
 });
+
+
+/* ═══════════════════════════════════════
+   CONCEPT CHECK (Step 5 — for loops)
+═══════════════════════════════════════ */
+var CQ_ANS5 = [0, 1, 1, 1, 1];
+var conceptAttempts5 = 0;
+
+(function initConceptCheck(opts) {
+  window.initConceptCheck = function(o) {};  // no-op on re-call
+  var submitBtn = document.getElementById('concept-submit');
+  if (!submitBtn) return;
+  submitBtn.addEventListener('click', function() {
+    var correct = 0;
+    var answers = [];
+    CQ_ANS5.forEach(function(ans, i) {
+      var sel = document.querySelector('input[name="cq' + i + '"]:checked');
+      var chosen = sel ? parseInt(sel.value) : -1;
+      var ok = (chosen === ans);
+      answers.push(chosen);
+      if (ok) correct++;
+      var fb = document.getElementById('cfb-' + i);
+      if (fb) {
+        fb.hidden = false;
+        fb.className = 'concept-feedback ' + (ok ? 'correct' : 'incorrect');
+        fb.textContent = ok ? '✓ Correct!' : '✗ Not quite — review the Step 5 content page.';
+      }
+    });
+    conceptAttempts5++;
+    var pct = Math.round(correct / CQ_ANS5.length * 100);
+    var d = lmsGet();
+    if (!d.concept_attempts) d.concept_attempts = 0;
+    d.concept_attempts = conceptAttempts5;
+    if (correct >= 4) {
+      d.concept_step = { answers: answers, score_pct: pct, submitted: true, ts: Date.now() };
+      lmsSet(d);
+      submitBtn.disabled = true;
+      submitBtn.textContent = '✓ ' + correct + '/5 correct — Journal unlocked!';
+      var jc = document.getElementById('tierJ');
+      if (jc) { jc.classList.remove('tier-locked'); jc.removeAttribute('aria-disabled'); }
+      var tj = document.getElementById('tj-submit');
+      if (tj) tj.disabled = false;
+      var tpcEl = document.getElementById('tpc');
+      if (tpcEl) { tpcEl.classList.remove('locked'); tpcEl.classList.add('done'); }
+      setTimeout(function() {
+        var jEl = document.getElementById('tierJ');
+        if (jEl) jEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 300);
+    } else {
+      d.concept_step = { answers: answers, score_pct: pct, submitted: false, ts: Date.now() };
+      lmsSet(d);
+      submitBtn.textContent = correct + '/5 — try again (need 4+)';
+      setTimeout(function() { submitBtn.textContent = 'Submit Answers & Unlock Journal'; }, 2000);
+    }
+  });
+})({step: stepN, containerId: 'concept-check-wrap'});
 
 /* ═══════════════════════════════════════
    REFLECTION GATE 3
@@ -1220,7 +1273,7 @@ document.getElementById('tj-submit').addEventListener('click',function(){
     state.t4=true;
     document.getElementById('t4-submit').disabled=true;
     document.getElementById('t4-text').value=d.t4_submitted.text||'';
-    markDone('tp4');document.getElementById('tc4j').classList.add('done');
+    markDone('tp4');(function(){var _tc=document.getElementById('tc4c');if(_tc)_tc.classList.add('done');})();
     (function(){
       var cg=document.getElementById('concept-check-gate');
       if(cg){cg.classList.remove('tier-locked');cg.removeAttribute('aria-disabled');

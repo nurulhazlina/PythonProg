@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Facilitator Notes &#8212; Step 5 | Snake Tutorial</title>
+<title>Facilitator Notes — Step 5 | Snake Tutorial</title>
 <meta name="robots" content="noindex, nofollow">
 <style>
 /* ── LIGHT-MODE TEACHER PAGE ── independent of style.css ── */
@@ -40,55 +40,113 @@ body{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   line-height:1.65;
 }
+
 /* ── NAV ── */
-.sitenav{background:var(--teal-dark);color:#fff;padding:0 24px;display:flex;align-items:center;gap:20px;min-height:56px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+.sitenav{
+  background:var(--teal-dark);
+  color:#fff;
+  padding:0 24px;
+  display:flex;
+  align-items:center;
+  gap:20px;
+  min-height:56px;
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
 .sitenav .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;font-weight:700;font-size:15px}
 .sitenav .brand img{display:none}
 .sitenav a.nl{color:rgba(255,255,255,.8);text-decoration:none;font-size:14px;padding:4px 8px;border-radius:6px;transition:background .15s}
 .sitenav a.nl:hover{background:rgba(255,255,255,.15)}
 details.navsel{margin-left:auto;position:relative}
-details.navsel summary{list-style:none;cursor:pointer;color:rgba(255,255,255,.9);font-size:14px;font-weight:600;padding:6px 12px;border-radius:6px;transition:background .15s;}
+details.navsel summary{
+  list-style:none;cursor:pointer;color:rgba(255,255,255,.9);
+  font-size:14px;font-weight:600;padding:6px 12px;
+  border-radius:6px;transition:background .15s;
+}
 details.navsel summary:hover{background:rgba(255,255,255,.15)}
 details.navsel summary::-webkit-details-marker{display:none}
-.navmenu{position:absolute;right:0;top:calc(100% + 8px);background:#fff;color:var(--ink);border:1px solid var(--border);border-radius:var(--radius);min-width:300px;box-shadow:var(--shadow);overflow:hidden;z-index:200;}
-.navmenu a{display:block;padding:10px 16px;font-size:13.5px;text-decoration:none;color:var(--body);border-bottom:1px solid var(--border);transition:background .12s;}
+.navmenu{
+  position:absolute;right:0;top:calc(100% + 8px);
+  background:#fff;color:var(--ink);
+  border:1px solid var(--border);border-radius:var(--radius);
+  min-width:300px;box-shadow:var(--shadow);
+  overflow:hidden;z-index:200;
+}
+.navmenu a{
+  display:block;padding:10px 16px;font-size:13.5px;
+  text-decoration:none;color:var(--body);
+  border-bottom:1px solid var(--border);transition:background .12s;
+}
 .navmenu a:last-child{border-bottom:none}
 .navmenu a:hover{background:var(--teal-light)}
 .navmenu a[aria-current="page"]{background:var(--teal-light);color:var(--teal-dark);font-weight:700}
+
 /* ── GATE ── */
-.gate{max-width:520px;margin:80px auto;padding:40px 36px;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);text-align:center;}
+.gate{
+  max-width:520px;margin:80px auto;padding:40px 36px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;box-shadow:var(--shadow);text-align:center;
+}
 .gate h2{font-size:24px;color:var(--ink);margin-bottom:12px}
 .gate p{color:var(--muted);margin-bottom:16px;font-size:15px}
 .gate a{color:var(--teal);text-decoration:none;font-size:14px}
 .gate a:hover{text-decoration:underline}
 .lock-icon{font-size:48px;margin-bottom:16px}
+
 /* ── HERO ── */
-.t-hero{background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal) 100%);color:#fff;padding:40px 24px 36px;}
+.t-hero{
+  background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal) 100%);
+  color:#fff;padding:40px 24px 36px;
+}
 .t-hero .wrap{max-width:900px;margin:0 auto}
 .t-hero .eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.75;margin-bottom:8px}
 .t-hero h1{font-size:clamp(22px,4vw,32px);font-weight:800;line-height:1.2;margin-bottom:8px}
 .t-hero .meta{font-size:14px;opacity:.8;margin-bottom:20px}
 .t-cta-row{display:flex;flex-wrap:wrap;gap:10px}
-.t-cta-row a{display:inline-block;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);transition:background .15s;}
+.t-cta-row a{
+  display:inline-block;padding:8px 18px;border-radius:8px;
+  font-size:13px;font-weight:600;text-decoration:none;
+  background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);
+  transition:background .15s;
+}
 .t-cta-row a:hover{background:rgba(255,255,255,.28)}
+
 /* ── LAYOUT ── */
 .wrap{max-width:900px;margin:0 auto;padding:0 20px}
 .page-body{padding:36px 20px 60px;max-width:900px;margin:0 auto}
+
 /* ── BANNER ── */
-.tbanner{background:var(--amber-bg);border:1px solid var(--amber-border);color:#78350F;border-radius:8px;padding:12px 16px;font-size:13.5px;margin-bottom:28px;}
+.tbanner{
+  background:var(--amber-bg);border:1px solid var(--amber-border);
+  color:#78350F;border-radius:8px;padding:12px 16px;
+  font-size:13.5px;margin-bottom:28px;
+}
 .tbanner b{color:#92400E}
+
 /* ── SECTIONS ── */
-.t-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px 28px;margin-bottom:24px;box-shadow:var(--shadow);}
-.t-section h2{font-size:18px;font-weight:700;color:var(--ink);padding-bottom:10px;margin-bottom:16px;border-bottom:2px solid var(--teal);display:flex;align-items:center;gap:8px;}
+.t-section{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:28px 28px;margin-bottom:24px;
+  box-shadow:var(--shadow);
+}
+.t-section h2{
+  font-size:18px;font-weight:700;color:var(--ink);
+  padding-bottom:10px;margin-bottom:16px;
+  border-bottom:2px solid var(--teal);display:flex;align-items:center;gap:8px;
+}
 .t-section h2 .sec-icon{font-size:20px}
 .t-section h3{font-size:15px;font-weight:700;color:var(--teal-dark);margin:16px 0 8px}
 .t-section p{margin-bottom:10px;font-size:15px}
 .t-section ul{padding-left:20px;margin-bottom:12px}
 .t-section li{margin-bottom:6px;font-size:15px}
 .t-section strong{color:var(--ink)}
+
 /* ── TABLES ── */
 .t-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
-.t-table thead th{background:var(--teal);color:#fff;padding:10px 14px;text-align:left;font-weight:600;font-size:13px;letter-spacing:.02em;}
+.t-table thead th{
+  background:var(--teal);color:#fff;padding:10px 14px;
+  text-align:left;font-weight:600;font-size:13px;letter-spacing:.02em;
+}
 .t-table thead th:first-child{border-radius:8px 0 0 0}
 .t-table thead th:last-child{border-radius:0 8px 0 0}
 .t-table tbody tr:nth-child(even){background:var(--surface2)}
@@ -97,41 +155,102 @@ details.navsel summary::-webkit-details-marker{display:none}
 .sev-low{color:#065F46;font-weight:600}
 .sev-med{color:#92400E;font-weight:600}
 .sev-high{color:#991B1B;font-weight:600}
+
 /* ── CODE ── */
 .codebox{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:12px 0;position:relative}
 .codebox pre{padding:20px;overflow-x:auto}
 .codebox code{color:var(--code-fg);font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13.5px;line-height:1.6}
-.copybtn{position:absolute;top:10px;right:10px;background:var(--border);color:var(--ink);border:none;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;transition:background .15s;}
+.copybtn{
+  position:absolute;top:10px;right:10px;
+  background:var(--border);color:var(--ink);
+  border:none;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;
+  transition:background .15s;
+}
 .copybtn:hover{background:rgba(255,255,255,.22)}
 .copybtn.copied{background:rgba(134,239,172,.25);color:#86EFAC}
 code{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13px;background:var(--bg);padding:1px 5px;border-radius:4px;color:var(--ink)}
+
+/* ── DEMO CARDS ── */
+.demo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:12px}
+.demo-card{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;padding:18px;border-top:3px solid var(--teal);
+}
+.demo-card .demo-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--teal);margin-bottom:6px}
+.demo-card h3{font-size:15px;font-weight:700;color:var(--ink);margin:0 0 8px}
+.demo-card p{font-size:13.5px;color:var(--body);margin:0 0 10px}
+.demo-card .demo-tip{
+  font-size:12.5px;color:var(--muted);padding:8px 10px;
+  background:var(--teal-light);border-radius:6px;
+  border-left:3px solid var(--teal);
+}
+.demo-card .demo-tip strong{color:var(--teal-dark)}
+
 /* ── ANSWER CARD ── */
-.answer-card{background:var(--green-bg);border:1px solid var(--green-border);border-radius:8px;padding:14px 18px;margin:12px 0;}
+.answer-card{
+  background:var(--green-bg);border:1px solid var(--green-border);
+  border-radius:8px;padding:14px 18px;margin:12px 0;
+}
 .answer-card .answer-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--green-ink);margin-bottom:4px}
+
+/* ── BUG CARD ── */
+.bug-card{
+  background:var(--red-bg);border:1px solid var(--red-border);
+  border-radius:8px;padding:14px 18px;margin:14px 0;
+}
+.bug-card .bug-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--red-ink);margin-bottom:6px}
+.bug-card .fix-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--green-ink);margin:10px 0 4px}
+
 /* ── CALLOUT ── */
-.callout{display:flex;gap:12px;padding:14px 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);margin:12px 0;font-size:14px;align-items:flex-start;}
+.callout{
+  display:flex;gap:12px;padding:14px 16px;border-radius:8px;
+  border:1px solid var(--border);background:var(--surface2);margin:12px 0;
+  font-size:14px;align-items:flex-start;
+}
 .callout-icon{font-size:22px;flex-shrink:0;line-height:1.2}
 .callout p{margin:0}
+
 /* ── STEM BRAND BAR ── */
-.stem-brand-bar{display:grid;grid-template-columns:repeat(4,1fr);width:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
-.stem-brand-bar .sb{display:flex;align-items:center;justify-content:center;padding:6px 8px;font-size:12px;font-weight:800;letter-spacing:.12em;color:#fff;text-transform:uppercase;}
+.stem-brand-bar{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  width:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+.stem-brand-bar .sb{
+  display:flex;align-items:center;justify-content:center;
+  padding:6px 8px;font-size:12px;font-weight:800;
+  letter-spacing:.12em;color:#fff;text-transform:uppercase;
+}
 .sb-see{background:#2E5FAF}
 .sb-think{background:#B82828}
 .sb-explore{background:#D99A10}
 .sb-marvel{background:#1FA898}
+
 /* ── FOOTER ── */
-footer{background:#1C5C54;color:rgba(255,255,255,.78);text-align:center;padding:20px 20px;font-size:13px;margin-top:40px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;}
+footer{
+  background:#1C5C54;color:rgba(255,255,255,.78);
+  text-align:center;padding:20px 20px;font-size:13px;margin-top:40px;
+  display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+}
 footer a{color:rgba(255,255,255,.85);text-decoration:none;display:inline-flex;align-items:center;gap:4px}
 footer a:hover{color:#fff}
+
 /* ── BUTTON ── */
-.cta-btn{display:inline-block;padding:12px 28px;border-radius:9px;font-size:15px;font-weight:700;border:none;cursor:pointer;background:var(--teal);color:#fff;box-shadow:0 4px 14px rgba(10,143,138,.3);transition:background .15s,transform .1s;}
+.cta-btn{
+  display:inline-block;padding:12px 28px;border-radius:9px;
+  font-size:15px;font-weight:700;border:none;cursor:pointer;
+  background:var(--teal);color:#fff;
+  box-shadow:0 4px 14px rgba(10,143,138,.3);
+  transition:background .15s,transform .1s;
+}
 .cta-btn:hover{background:var(--teal-dark);transform:translateY(-1px)}
 .cta-btn:active{transform:translateY(0)}
+
 /* ── RESPONSIVE ── */
 @media(max-width:600px){
   .t-section{padding:20px 16px}
   .t-hero{padding:28px 16px 24px}
   .t-cta-row a{font-size:12px;padding:6px 12px}
+  .demo-grid{grid-template-columns:1fr}
   .t-table{font-size:13px}
   .sitenav{padding:0 14px}
 }
@@ -155,15 +274,15 @@ footer a:hover{color:#fff}
   </a>
   <a class="nl" href="index.html">Home</a>
   <details class="navsel">
-    <summary>Facilitator Notes &#9662;</summary>
+    <summary>Facilitator Notes ▾</summary>
     <div class="navmenu">
       <a href="teacher-1.html"><b>Step 1</b>: Variables &amp; Setup</a>
       <a href="teacher-2.html"><b>Step 2</b>: Loop &amp; Events</a>
       <a href="teacher-3.html"><b>Step 3</b>: Direction &amp; Movement</a>
-      <a href="teacher-4.html"><b>Step 4</b>: Snake Body &#11088;</a>
+      <a href="teacher-4.html"><b>Step 4</b>: Snake Body ⭐</a>
       <a href="teacher-5.html" aria-current="page"><b>Step 5</b>: Bonus Food</a>
       <a href="teacher-6.html"><b>Step 6</b>: Functions</a>
-      <a href="teacher-7.html"><b>Step 7</b>: Wrap-Around &#11088;</a>
+      <a href="teacher-7.html"><b>Step 7</b>: Wrap-Around ⭐</a>
       <a href="teacher-8.html"><b>Step 8</b>: Save High Score</a>
       <a href="teacher-9.html"><b>Step 9</b>: OOP Refactor</a>
       <a href="teacher-10.html"><b>Step 10</b>: ML Extension</a>
@@ -173,14 +292,14 @@ footer a:hover{color:#fff}
 
 <!-- ── GATE ── -->
 <div class="gate" id="gate">
-  <div class="lock-icon">&#128274;</div>
+  <div class="lock-icon">🔒</div>
   <h2>Facilitator Notes</h2>
   <p>This page contains exercise answers and teaching guidance for<br>
-  <strong>Step 5 &#8212; Bonus Food &#127775;</strong>.<br>
+  <strong>Step 5 — Bonus Food 🌟</strong>.<br>
   Not linked from the student pages.</p>
   <p style="margin-bottom:24px"><strong>Students: please go back and try the activities first.</strong></p>
-  <button class="cta-btn" id="gatebtn" type="button">I&#8217;m a facilitator &#8212; show the notes</button>
-  <p style="margin-top:20px"><a href="step-5.html">&#8592; Back to student page</a></p>
+  <button class="cta-btn" id="gatebtn" type="button">I'm a facilitator — show the notes</button>
+  <p style="margin-top:20px"><a href="step-5.html">← Back to student page</a></p>
 </div>
 
 <!-- ── MAIN CONTENT ── -->
@@ -188,13 +307,13 @@ footer a:hover{color:#fff}
 
 <div class="t-hero">
   <div class="wrap">
-    <p class="eyebrow">STEP 5 OF 10 &middot; FACILITATOR NOTES</p>
-    <h1>Bonus Food &#127775;</h1>
-    <p class="meta">Core concepts: for loops &middot; range() &middot; list comprehension &middot; filter pattern &middot; time.time()</p>
+    <p class="eyebrow">STEP 5 OF 10 · FACILITATOR NOTES</p>
+    <h1>Bonus Food 🌟</h1>
+    <p class="meta">Core concepts: for loops · range() · enumerate() · list comprehension · filter pattern</p>
     <div class="t-cta-row">
-      <a href="teacher-4.html">&#8592; Step 4</a>
+      <a href="teacher-4.html">← Step 4</a>
       <a href="step-5.html">Student Page</a>
-      <a href="teacher-6.html">Step 6 &#8594;</a>
+      <a href="teacher-6.html">Step 6 →</a>
     </div>
   </div>
 </div>
@@ -202,169 +321,255 @@ footer a:hover{color:#fff}
 <div class="page-body">
 
   <div class="tbanner">
-    &#9201; Suggested pace: 20&#8211;25 minutes &middot; The filter pattern (list comprehension to remove expired items) is the key new idea &#8212; worth a slow walkthrough.
+    ⏱ Suggested pace: 20–25 minutes · The filter pattern (list comprehension to remove expired items) and <code>enumerate()</code> are the two key new ideas — worth a slow walkthrough of each.
   </div>
 
   <!-- ── SECTION 1 · Learning Objectives ── -->
   <div class="t-section">
-    <h2><span class="sec-icon">&#127919;</span> Learning Objectives</h2>
+    <h2><span class="sec-icon">🎯</span> Learning Objectives</h2>
     <ul>
-      <li>Use a <code>for</code> loop to iterate over a list of bonus food positions</li>
-      <li>Understand <code>range()</code> for generating integer sequences</li>
-      <li>Apply the filter pattern (list comprehension) to remove items from a list safely</li>
-      <li>Use <code>time.time()</code> to track elapsed game time</li>
+      <li>Use a <code>for</code> loop with <code>range()</code> to spawn a fixed number of bonus food items</li>
+      <li>Use <code>range()</code> to generate integer sequences with start, stop, and optional step</li>
+      <li>Use <code>enumerate()</code> to iterate over a list with both index and value simultaneously</li>
+      <li>Apply the filter pattern (list comprehension) to remove items that meet a condition without modifying the list mid-iteration</li>
+      <li>Manage multiple game objects stored as a list of lists (<code>bonus_foods</code>)</li>
     </ul>
   </div>
 
   <!-- ── SECTION 2 · The Big Idea ── -->
   <div class="t-section">
-    <h2><span class="sec-icon">&#128161;</span> The Big Idea &#8212; Annotated Code</h2>
+    <h2><span class="sec-icon">💡</span> The Big Idea — Annotated Code</h2>
 
     <div class="codebox">
       <button class="copybtn" type="button">Copy</button>
       <pre><code>import time
 
-bonus_foods = []   # list of [x, y, spawn_time]
+# Bonus foods: list of [x, y, spawn_time] lists
+bonus_foods = []
 
-BONUS_INTERVAL = 5   # spawn a new bonus food every 5 seconds
-last_bonus_time = time.time()
-
-# --- Each frame ---
-now = time.time()
-
-# Spawn new bonus food on interval
-if now - last_bonus_time &gt;= BONUS_INTERVAL:
+# Spawn 3 bonus foods at once using range()
+for _ in range(3):
     bx = random.randint(0, GRID_COLS - 1)
     by = random.randint(0, GRID_ROWS - 1)
-    bonus_foods.append([bx, by, now])   # position + spawn time
-    last_bonus_time = now
+    bonus_foods.append([bx, by, time.time()])   # store position + spawn time
 
-# Draw all bonus foods
-for bf in bonus_foods:
-    bx, by, _ = bf   # _ = "don't need spawn_time here"
-    pygame.draw.rect(screen, GOLD,
-        (bx * CELL_SIZE, by * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+now = time.time()
 
-# Check if snake ate any bonus food
-for bf in bonus_foods:
-    if snake[0] == (bf[0], bf[1]):
-        score += 3
+# Draw all bonus foods using enumerate() — gives index AND item
+for i, bf in enumerate(bonus_foods):
+    bx, by, spawn_t = bf
+    time_left = 8 - (now - spawn_t)
+    colour = RED if time_left &lt;= 2 else GOLD    # flash warning!
+    pygame.draw.rect(screen, colour,
+        (bx * CELL_SIZE, by * CELL_SIZE, CELL_SIZE - 2, CELL_SIZE - 2))
 
-# Filter pattern &#8212; remove eaten AND expired bonus foods
+# Filter: remove eaten foods AND foods older than 8 seconds
 bonus_foods = [
     bf for bf in bonus_foods
-    if snake[0] != (bf[0], bf[1])   # not eaten
-    and now - bf[2] &lt; 8             # not expired (&lt; 8 seconds old)
+    if snake[0] != (bf[0], bf[1])      # not eaten
+    and now - bf[2] &lt; 8                # not expired
 ]</code></pre>
     </div>
 
-    <h3><code>for bf in bonus_foods:</code></h3>
-    <p>Iterates over every item in the list; <code>bf</code> is each bonus food.</p>
+    <h3><code>for _ in range(3):</code></h3>
+    <p><code>range(3)</code> generates 0, 1, 2 — three iterations. The underscore <code>_</code> is a convention meaning "we don't care about this counter value". Emphasise that <code>range(n)</code> gives exactly <em>n</em> repetitions, starting from 0.</p>
+
+    <h3><code>enumerate(bonus_foods)</code></h3>
+    <p>Wraps a list and yields <code>(index, item)</code> pairs on each iteration. Without <code>enumerate</code>, you can loop over items but not know their position. With it, you get both: <code>i</code> for the index and <code>bf</code> for the item. Ask: "When might knowing the index matter?" (e.g., to update a specific element by position, or colour-code by index).</p>
 
     <h3><code>time.time()</code></h3>
-    <p>Returns current time in seconds (float). <code>now - bf[2]</code> = seconds since spawned.</p>
+    <p>Returns current time as seconds since epoch (a float). Subtracting two calls gives elapsed seconds — this is how any timed event works in Python, not just games.</p>
 
-    <h3><code>[x, y, spawn_time]</code></h3>
-    <p>Each bonus food carries its own metadata.</p>
+    <h3>Spawn time in the list</h3>
+    <p>Storing <code>[x, y, spawn_time]</code> means each item carries its own metadata — a common pattern for game objects. Ask students: "What other properties might we store here?" This plants the seed for Step 9's OOP refactor.</p>
 
     <h3>Filter pattern</h3>
-    <p><code>[item for item in list if condition]</code> creates a NEW list with only matching items. This safely removes items without modifying the list mid-iteration.</p>
+    <p><code>[item for item in list if condition]</code> creates a <strong>new</strong> list containing only items where the condition is True. This is how we "remove" items — we rebuild the list without them.</p>
 
-    <h3>Why not <code>list.remove()</code> inside the loop?</h3>
-    <p>Modifying a list during iteration skips elements. The filter pattern is safe because it creates a brand-new list.</p>
+    <div class="callout">
+      <span class="callout-icon">⚠️</span>
+      <p><strong>Why not <code>list.remove()</code> inside a for loop?</strong> Modifying a list while iterating it causes skipped elements — Python's for loop uses an index internally and removal shifts subsequent positions. The filter pattern avoids this entirely by creating a new list.</p>
+    </div>
   </div>
 
   <!-- ── SECTION 3 · Activity Answers ── -->
   <div class="t-section">
-    <h2><span class="sec-icon">&#128290;</span> Activity Answers (step-5-activity.html)</h2>
+    <h2><span class="sec-icon">🔢</span> Activity Answers</h2>
 
-    <h3>Tier 1 &#8212; Check Understanding</h3>
+    <h3>Tier 1 — Fill the Blanks (7 blanks)</h3>
     <table class="t-table">
-      <thead><tr><th>Question</th><th>Model Answer</th></tr></thead>
+      <thead><tr><th style="width:8%">Blank</th><th style="width:22%">Answer</th><th>Concept tested</th></tr></thead>
       <tbody>
         <tr>
-          <td>What does <code>for bf in bonus_foods:</code> do?</td>
-          <td>Iterates through every item in bonus_foods, binding each to <code>bf</code>.</td>
+          <td><strong>1</strong></td>
+          <td><code>range</code></td>
+          <td><code>for _ in range(3):</code> — using <code>range()</code> to repeat exactly 3 times</td>
         </tr>
         <tr>
-          <td>What is <code>range(5)</code>?</td>
-          <td>Generates the integers 0, 1, 2, 3, 4 &#8212; five values.</td>
+          <td><strong>2</strong></td>
+          <td><code>append</code></td>
+          <td><code>bonus_foods.append([bx, by, time.time()])</code> — list method to add a new item at the end</td>
         </tr>
         <tr>
-          <td>Why store <code>spawn_time</code> in each bonus food?</td>
-          <td>So we can calculate how long it has been on screen and remove it when it expires.</td>
+          <td><strong>3</strong></td>
+          <td><code>i</code></td>
+          <td>The index variable when unpacking <code>enumerate</code> — convention for "integer index"</td>
         </tr>
         <tr>
-          <td>What does <code>[bf for bf in bonus_foods if ...]</code> produce?</td>
-          <td>A new list containing only the items where the condition is True.</td>
+          <td><strong>4</strong></td>
+          <td><code>enumerate</code></td>
+          <td><code>for i, bf in enumerate(bonus_foods):</code> — built-in that yields <code>(index, item)</code> pairs</td>
+        </tr>
+        <tr>
+          <td><strong>5</strong></td>
+          <td><code>bonus_foods</code></td>
+          <td>The list being filtered — <code>[bf for bf in bonus_foods if …]</code></td>
+        </tr>
+        <tr>
+          <td><strong>6</strong></td>
+          <td><code>1</code></td>
+          <td>Index of y in <code>[x, y, spawn_time]</code> — <code>bf[1]</code> gives the y-coordinate</td>
+        </tr>
+        <tr>
+          <td><strong>7</strong></td>
+          <td><code>2</code></td>
+          <td>Index of spawn_time in <code>[x, y, spawn_time]</code> — <code>bf[2]</code> gives the spawn timestamp</td>
         </tr>
       </tbody>
     </table>
 
-    <h3>Tier 2 &#8212; Fix the Bug</h3>
-    <div class="answer-card">
-      <div class="answer-label">Bug</div>
-      <p><code>bonus_foods.remove(bf)</code> inside the <code>for bf in bonus_foods:</code> loop.</p>
-    </div>
-    <p><strong>Effect:</strong> Skips items &#8212; some bonus foods are never checked or removed correctly.</p>
-    <p><strong>Fix:</strong> Use the filter pattern AFTER the loop instead of removing inside it.</p>
+    <h3>Tier 2 — Fix the Bugs (3 bugs)</h3>
 
-    <h3>Tier 3 &#8212; Extend</h3>
-    <p>Make bonus food worth 5 points and grow the snake by 1 extra cell.</p>
+    <div class="bug-card">
+      <div class="bug-label">🐛 Bug 1 — range() called with no argument</div>
+      <p style="font-size:14px;margin:4px 0"><strong>Buggy code:</strong> <code>for _ in range():</code></p>
+      <p style="font-size:14px;color:var(--red-ink);margin:4px 0"><strong>Effect:</strong> <code>TypeError: range expected at least 1 argument, got 0</code> — the program crashes immediately.</p>
+      <div class="fix-label">✅ Fix</div>
+      <code style="display:block;padding:6px;background:var(--green-bg);border-radius:6px">for _ in range(3):</code>
+      <p style="font-size:13px;color:var(--muted);margin-top:6px">Teaching note: <code>range()</code> requires at least one argument — the stop value. <code>range(3)</code> gives 0, 1, 2 — three iterations.</p>
+    </div>
+
+    <div class="bug-card">
+      <div class="bug-label">🐛 Bug 2 — modifying a list while iterating</div>
+      <p style="font-size:14px;margin:4px 0"><strong>Buggy code:</strong> <code>bonus_foods.remove(bf)</code> inside <code>for bf in bonus_foods:</code></p>
+      <p style="font-size:14px;color:var(--red-ink);margin:4px 0"><strong>Effect:</strong> Skips items — removal shifts the list indices mid-iteration so some bonus foods are never checked.</p>
+      <div class="fix-label">✅ Fix — replace the remove line with the filter pattern</div>
+      <code style="display:block;padding:6px;background:var(--green-bg);border-radius:6px">bonus_foods = [bf for bf in bonus_foods if snake[0] != (bf[0], bf[1])]</code>
+      <p style="font-size:13px;color:var(--muted);margin-top:6px">Teaching note: Never modify a list you are currently iterating. The filter pattern builds a new list and replaces the old one atomically.</p>
+    </div>
+
+    <div class="bug-card">
+      <div class="bug-label">🐛 Bug 3 — enumerate() result not unpacked</div>
+      <p style="font-size:14px;margin:4px 0"><strong>Buggy code:</strong> <code>for bf in enumerate(bonus_foods):</code></p>
+      <p style="font-size:14px;color:var(--red-ink);margin:4px 0"><strong>Effect:</strong> <code>bf</code> receives a tuple like <code>(0, [bx, by, t])</code> — the subsequent <code>bx, by, _ = bf</code> unpacking fails with <code>ValueError: too many values to unpack</code>.</p>
+      <div class="fix-label">✅ Fix — unpack both the index and the item</div>
+      <code style="display:block;padding:6px;background:var(--green-bg);border-radius:6px">for i, bf in enumerate(bonus_foods):</code>
+      <p style="font-size:13px;color:var(--muted);margin-top:6px">Teaching note: <code>enumerate()</code> yields pairs — always unpack into two variables: <code>i</code> (index) and the item name.</p>
+    </div>
+
+    <h3>Tier 3 — Flash Warning for Expiring Bonus Foods</h3>
+    <p>Students extend the draw loop to colour bonus foods RED when less than 2 seconds remain, GOLD otherwise. Uses <code>enumerate()</code> and <code>time.time()</code>.</p>
     <div class="codebox">
       <button class="copybtn" type="button">Copy</button>
-      <pre><code># When bonus food is eaten:
-score += 5
-tail = snake[-1]   # duplicate the tail
-snake.append(tail)</code></pre>
+      <pre><code>now = time.time()
+for i, bf in enumerate(bonus_foods):
+    bx, by, spawn_t = bf
+    time_left = 8 - (now - spawn_t)
+    colour = RED if time_left &lt;= 2 else GOLD
+    pygame.draw.rect(screen, colour,
+        (bx * CELL_SIZE, by * CELL_SIZE, CELL_SIZE - 2, CELL_SIZE - 2))</code></pre>
     </div>
+    <p style="font-size:13.5px;color:var(--muted)">Key point: <code>enumerate()</code> is practised here — the index <code>i</code> is available for per-food state if needed. The ternary <code>RED if time_left &lt;= 2 else GOLD</code> is an elegant one-liner for conditional colour choice. Accept equivalent if/else blocks.</p>
 
-    <h3>Tier 4 &#8212; New Task</h3>
-    <p>Add a countdown effect &#8212; bonus foods flash (draw only on even frames) when less than 2 seconds remain.</p>
+    <h3>Tier 4 — Respawn System with Streak Multiplier</h3>
+    <p>Students design a system that refills <code>bonus_foods</code> back to 3 items using <code>range(needed)</code> and awards double points after 2 consecutive bonus foods eaten.</p>
     <div class="codebox">
       <button class="copybtn" type="button">Copy</button>
-      <pre><code>frame_num = 0
+      <pre><code># After filtering expired/eaten foods, refill to 3
+needed = 3 - len(bonus_foods)
+for _ in range(needed):
+    bx = random.randint(0, GRID_COLS - 1)
+    by = random.randint(0, GRID_ROWS - 1)
+    bonus_foods.append([bx, by, time.time()])
 
-for bf in bonus_foods:
-    time_left = 8 - (now - bf[2])
-    if time_left &gt; 2 or frame_num % 2 == 0:
-        pygame.draw.rect(screen, GOLD,
-            (bf[0] * CELL_SIZE, bf[1] * CELL_SIZE, CELL_SIZE, CELL_SIZE))
-
-frame_num += 1</code></pre>
+# Streak multiplier (track separately)
+streak = 0
+# When bonus food eaten:
+streak += 1
+points = 3 * (2 if streak &gt;= 2 else 1)   # double points on streak
+score += points
+# When normal food eaten OR bonus expires without being eaten:
+streak = 0</code></pre>
     </div>
+    <p style="font-size:13.5px;color:var(--muted)">Accept any design that correctly uses <code>range(needed)</code> to refill and a counter variable for the streak. Award full marks for clear logic even if syntax is approximate.</p>
 
-    <h3>Reflective Journal &#8212; Suggested Strong Answers</h3>
+    <h3>Reflective Journal — Suggested Strong Answers</h3>
     <table class="t-table">
-      <thead><tr><th style="width:30%">Prompt</th><th>Key ideas a strong answer contains</th></tr></thead>
+      <thead><tr><th style="width:32%">Prompt</th><th>Key ideas a strong answer contains</th></tr></thead>
       <tbody>
         <tr>
-          <td>1. for vs while</td>
-          <td><code>for</code> iterates over a known sequence; <code>while</code> repeats until a condition is False.</td>
+          <td>1. When use <code>for</code> instead of <code>while</code>? Example from the game.</td>
+          <td>Use <code>for</code> when iterating over a known collection or a fixed count (e.g., <code>for bf in bonus_foods</code> or <code>for _ in range(3)</code>). Use <code>while</code> when the number of iterations depends on a runtime condition (<code>while running:</code>). Example: spawning 3 bonus foods at once uses <code>for _ in range(3)</code>.</td>
         </tr>
         <tr>
-          <td>2. What does <code>range(0, 20)</code> produce?</td>
-          <td>Integers 0 through 19 (not including 20).</td>
+          <td>2. What does <code>range(0, 10, 2)</code> produce? Why is the last value 8, not 10?</td>
+          <td>Produces 0, 2, 4, 6, 8. The stop value (10) is <strong>exclusive</strong> — range never includes it. After 8, the next step would be 10 which equals stop, so it is excluded. There are 5 values total.</td>
         </tr>
         <tr>
-          <td>3. Why not modify a list while iterating?</td>
-          <td>The iterator uses an internal index; removing items shifts indices and causes elements to be skipped.</td>
+          <td>3. Why is <code>enumerate()</code> useful when drawing bonus foods?</td>
+          <td><code>enumerate()</code> gives both the index <code>i</code> and the item <code>bf</code> in each iteration. Without it you only get the item. The index lets you reference or update a specific food by its position — useful for per-food state such as a flashing phase offset unique to each food.</td>
         </tr>
         <tr>
-          <td>4. What is a list comprehension?</td>
-          <td>A compact syntax <code>[expr for item in list if condition]</code> that creates a new filtered/transformed list.</td>
+          <td>4. Trace the filter pattern with 3 foods — 1 eaten, 1 expired. Which remain?</td>
+          <td>Start with <code>[A, B, C]</code> where A is the snake's position (eaten) and B is older than 8 s (expired). A fails the "not eaten" test → excluded. B fails the "not expired" test → excluded. C passes both → kept. Result: <code>[C]</code>. Only 1 food remains.</td>
         </tr>
         <tr>
-          <td>5. Explain filter pattern</td>
-          <td>&#8220;Instead of deleting from the old list, we make a brand-new list with only the items we want to keep.&#8221;</td>
+          <td>5. New mechanic idea + which Step 5 concepts used</td>
+          <td>Accept any creative mechanic that names specific concepts. Example of strong answer: "A 'mega food' that spawns 1 per type using <code>range(3)</code> — I'd draw each type with a different colour using <code>enumerate()</code>, and use the filter pattern to remove it when eaten or after 5 seconds."</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- ── SECTION 4 · Mistakes Students Actually Make ── -->
+  <!-- ── SECTION 4 · Concept Check Answer Key ── -->
   <div class="t-section">
-    <h2><span class="sec-icon">&#9888;&#65039;</span> Mistakes Students Actually Make</h2>
+    <h2><span class="sec-icon">✅</span> Concept Check Answer Key</h2>
+    <p style="font-size:13.5px;color:var(--muted);margin-bottom:16px">Correct answers: <code>CQ_ANS = [2, 2, 3, 2, 2]</code> (1-indexed). The student's first attempt is recorded for research; re-attempts do not count.</p>
+    <table class="t-table">
+      <thead><tr><th style="width:5%">Q</th><th style="width:12%">Answer</th><th>Question &amp; explanation</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>1</strong></td>
+          <td><span class="sev-low">B (2)</span></td>
+          <td><em>"What does <code>for _ in range(5):</code> do?"</em><br>Correct: Runs the loop body <strong>5 times</strong> (values 0, 1, 2, 3, 4). <code>range(5)</code> starts at 0 and excludes 5 — five iterations total.</td>
+        </tr>
+        <tr>
+          <td><strong>2</strong></td>
+          <td><span class="sev-low">B (2)</span></td>
+          <td><em>"What does <code>range(1, 8, 2)</code> produce?"</em><br>Correct: <strong>1, 3, 5, 7</strong>. Starts at 1, steps by 2, stops before 8. The next value (9) exceeds stop, so it is excluded.</td>
+        </tr>
+        <tr>
+          <td><strong>3</strong></td>
+          <td><span class="sev-low">C (3)</span></td>
+          <td><em>"<code>for i, bf in enumerate(bonus_foods):</code> — what does this give you?"</em><br>Correct: <strong>Both the index <code>i</code> and the item <code>bf</code></strong>. <code>enumerate()</code> yields <code>(index, item)</code> tuples unpacked into two variables each iteration.</td>
+        </tr>
+        <tr>
+          <td><strong>4</strong></td>
+          <td><span class="sev-low">B (2)</span></td>
+          <td><em>"Why shouldn't you call <code>bonus_foods.remove(bf)</code> inside a for loop?"</em><br>Correct: <strong>It shifts indices, causing the loop to skip items</strong>. Removing an element moves all subsequent elements one position earlier, so the loop's internal pointer skips one.</td>
+        </tr>
+        <tr>
+          <td><strong>5</strong></td>
+          <td><span class="sev-low">B (2)</span></td>
+          <td><em>"The list comprehension … keeps which items?"</em><br>Correct: <strong>Foods less than 8 seconds old AND not yet eaten</strong>. Both conditions must be True — the food's position does not equal the snake head, AND its age is under 8 seconds.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── SECTION 5 · Mistakes Students Actually Make ── -->
+  <div class="t-section">
+    <h2><span class="sec-icon">⚠️</span> Mistakes Students Actually Make</h2>
     <table class="t-table">
       <thead>
         <tr>
@@ -375,49 +580,54 @@ frame_num += 1</code></pre>
       </thead>
       <tbody>
         <tr>
+          <td><code>range()</code> with no argument</td>
+          <td><code>TypeError: range expected at least 1 argument</code></td>
+          <td>"<code>range()</code> needs at least a stop value. <code>range(3)</code> gives 0, 1, 2 — three iterations."</td>
+        </tr>
+        <tr>
           <td><code>list.remove(bf)</code> inside for loop</td>
-          <td>Some bonus foods never removed; erratic behaviour</td>
-          <td>&#8220;Modifying a list during iteration skips items. Build a new list with only what you want to keep.&#8221;</td>
+          <td>Some bonus foods never removed; random skipping</td>
+          <td>"Modifying a list while iterating skips items. Build a new list with only what you want to keep."</td>
         </tr>
         <tr>
-          <td><code>time.time()</code> called only once at startup</td>
-          <td>All bonus foods get same age; never expire</td>
-          <td>&#8220;Call <code>time.time()</code> every frame and store as <code>now</code>. Use <code>now - bf[2]</code> to measure elapsed time per item.&#8221;</td>
+          <td><code>for bf in enumerate(bonus_foods):</code> without unpacking</td>
+          <td><code>ValueError: too many values to unpack</code></td>
+          <td>"<code>enumerate()</code> gives pairs — write <code>for i, bf in enumerate(…):</code> to unpack both index and item."</td>
         </tr>
         <tr>
-          <td><code>range(GRID_COLS)</code> vs <code>randint(0, GRID_COLS)</code> mismatch</td>
-          <td>Food at column 20 (off-screen)</td>
-          <td>&#8220;<code>randint(a, b)</code> includes b. Use <code>randint(0, GRID_COLS - 1)</code> for valid grid indices.&#8221;</td>
+          <td><code>time.time()</code> called only once outside the loop</td>
+          <td>All bonus foods get the same spawn time; age calculation is wrong</td>
+          <td>"Call <code>time.time()</code> each frame and store as <code>now</code>. Use <code>now - bf[2]</code> to measure elapsed time."</td>
         </tr>
         <tr>
-          <td>Forgot to draw bonus foods</td>
-          <td>Food spawns (in list) but invisible</td>
-          <td>&#8220;Every object needs a draw call every frame. Check the draw section of your loop.&#8221;</td>
-        </tr>
-        <tr>
-          <td>Compare <code>bf == (food_x, food_y)</code> (list vs tuple)</td>
-          <td>Never matches</td>
-          <td>&#8220;bonus_foods items are lists <code>[x, y, t]</code>. Compare <code>(bf[0], bf[1])</code> with the snake head tuple.&#8221;</td>
+          <td>Used <code>bf = [bx, by, now]</code> then compared <code>bf == (food_x, food_y)</code></td>
+          <td>Never matches — list vs tuple</td>
+          <td>"bonus_foods items are lists; compare <code>(bf[0], bf[1])</code> with the snake head tuple."</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- ── SECTION 5 · Teaching & Facilitation Notes ── -->
+  <!-- ── SECTION 6 · Teaching & Facilitation Notes ── -->
   <div class="t-section">
-    <h2><span class="sec-icon">&#128483;&#65039;</span> Teaching &amp; Facilitation Notes</h2>
+    <h2><span class="sec-icon">🗣️</span> Teaching &amp; Facilitation Notes</h2>
 
     <h3>Opening hook</h3>
-    <p>&#8220;How does a game spawn enemies over time and clean up dead ones? Both use the pattern you&#8217;re implementing now.&#8221;</p>
+    <p>"How does a game spawn enemies over time? How does it 'clean up' enemies that are dead or off-screen?" Both use the same pattern students are implementing here.</p>
 
-    <h3>Key pedagogical moment &#8212; The filter pattern</h3>
-    <p>Spend 5 minutes with a concrete example on the board. Write <code>numbers = [1, 2, 3, 4, 5]</code>, then show <code>[n for n in numbers if n % 2 == 0]</code> &#8594; <code>[2, 4]</code>. Ask students: &#8220;What happened to the odd numbers?&#8221; &#8212; they were never included, not deleted.</p>
+    <h3>Key pedagogical moment — range() and enumerate()</h3>
+    <p>Draw <code>range(3)</code> as boxes on the board: [0] [1] [2] — three boxes. Then show <code>enumerate(['A','B','C'])</code> yields (0,'A'), (1,'B'), (2,'C'). Ask: "What's the difference between just iterating a list and using enumerate?" Emphasise that the index is free — you're not paying a performance cost to have it.</p>
 
-    <h3>CT connection &#8212; Abstraction</h3>
-    <p>Each bonus food is a self-contained data bundle (position + time). Ask: &#8220;What other properties might a game object carry?&#8221; This plants the seed for Step 9&#8217;s OOP refactor.</p>
+    <h3>Key pedagogical moment — The filter pattern</h3>
+    <p>Spend 5 minutes walking through the list comprehension slowly. Write on the board: <em>"New list = [item | keep it if condition is true]"</em>. Ask students to predict which items survive before running the code.</p>
 
-    <h3>Differentiation</h3>
-    <p>Fast finishers can add a second type of bonus food (e.g., a &#8220;slow&#8221; power-up) stored in a separate list with a different colour &#8212; this reinforces the pattern.</p>
+    <h3>CT connection — Abstraction</h3>
+    <p>Each bonus food is a self-contained object (position + time). Ask: "What other properties might a more complex game object carry?" This plants the seed for Step 9's OOP refactor.</p>
+
+    <div class="callout">
+      <span class="callout-icon">💡</span>
+      <p><strong>Differentiation:</strong> Fast finishers can try adding a second type of bonus food (e.g., a "slow" power-up that halves FPS for 3 seconds) — this requires a type field stored in each <code>[x, y, t, type]</code> item, and using <code>enumerate()</code> to draw each type with a different colour.</p>
+    </div>
   </div>
 
 </div><!-- /page-body -->
@@ -443,103 +653,14 @@ document.querySelectorAll('.copybtn').forEach(function(b){
       b.classList.add('copied');
       setTimeout(function(){ b.textContent = 'Copy'; b.classList.remove('copied'); }, 2000);
     }).catch(function(){
-      /* fallback &#8212; silently ignore */
+      /* fallback — silently ignore */
     });
   });
 });
 </script>
 
-
-  <!-- CONCEPT_CHECK_ADDED -->
-  <!-- ══ CONCEPT CHECK ANSWER KEY ══ -->
-  <div class="t-section">
-    <h2><span class="sec-icon">&#x1F9E0;</span> Concept Check &mdash; Answer Key (Step 5)</h2>
-    <p>These 5 questions appear in the activity page <strong>after Tier 4</strong> (post-calibration gate).
-    Pass mark is <strong>4&nbsp;of&nbsp;5&nbsp;(80%)</strong>. Students who fail may retry; the system records attempts and final score in Google Sheets.</p>
-    <table class="t-table">
-      <thead><tr><th style="width:65%">Question (displayed to student)</th><th>Correct Answer</th></tr></thead>
-      <tbody>
-        <tr>
-          <td>Q1: Why is str(score) needed in: 'Score: ' + str(score)?</td>
-          <td class="sev-low">&#10003; Because + needs both sides to be the same type (string)</td>
-        </tr>
-        <tr>
-          <td>Q2: What does score += 1 mean?</td>
-          <td class="sev-low">&#10003; Add 1 to score</td>
-        </tr>
-        <tr>
-          <td>Q3: if score % 5 == 0: level += 1 — triggers when:</td>
-          <td class="sev-low">&#10003; score is exactly divisible by 5</td>
-        </tr>
-        <tr>
-          <td>Q4: To restart the game when R is pressed, which code is correct?</td>
-          <td class="sev-low">&#10003; if event.key == pygame.K_r: reset_game()</td>
-        </tr>
-        <tr>
-          <td>Q5: Increasing level speed means:</td>
-          <td class="sev-low">&#10003; A smaller clock.tick() argument (higher FPS cap)</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="callout" style="margin-top:14px">
-      <span class="callout-icon">&#x1F4CA;</span>
-      <p><strong>Recorded in Google Sheet (Act_5 tab):</strong>
-      <code>concept_q1</code>&ndash;<code>concept_q5</code> (student&rsquo;s 0-based answer index),
-      <code>concept_score_pct</code>, <code>concept_passed</code> (1&nbsp;=&nbsp;pass, 0&nbsp;=&nbsp;fail),
-      <code>concept_attempts</code> (retry count).</p>
-    </div>
-  </div>
-
-  <!-- ══ GOOGLE SHEETS DATA STRUCTURE ══ -->
-  <div class="t-section">
-    <h2><span class="sec-icon">&#x1F4CA;</span> Google Sheets &mdash; Data Collected (Act_5)</h2>
-    <p>Every submission to this step writes one row to the <strong>Act_5</strong> tab in the research spreadsheet. All 13 tabs (Student_Reg, Pre_Test, Post_Test, Act_1&ndash;Act_10) share the same student identity columns.</p>
-    <table class="t-table" style="font-size:13px">
-      <thead><tr><th style="width:36%">Column</th><th>Description</th></tr></thead>
-      <tbody>
-        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">STUDENT IDENTITY (10 fields)</td></tr>
-        <tr><td><code>matric</code></td><td>Matric / student ID</td></tr>
-        <tr><td><code>name</code></td><td>Full name</td></tr>
-        <tr><td><code>gender</code></td><td>Gender (Female / Male / Other)</td></tr>
-        <tr><td><code>age</code></td><td>Age in years</td></tr>
-        <tr><td><code>mykid</code></td><td>MyKid / IC number</td></tr>
-        <tr><td><code>home_state</code></td><td>Home state in Malaysia</td></tr>
-        <tr><td><code>class</code></td><td>Class or cohort code</td></tr>
-        <tr><td><code>school_code</code></td><td>School or programme code</td></tr>
-        <tr><td><code>phone</code></td><td>Phone number</td></tr>
-        <tr><td><code>email</code></td><td>Email address</td></tr>
-        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">SUBMISSION</td></tr>
-        <tr><td><code>step</code></td><td>Step number (5)</td></tr>
-        <tr><td><code>submitted_iso</code></td><td>KL timestamp (UTC+8, ISO&nbsp;8601)</td></tr>
-        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">PRE-CALIBRATION</td></tr>
-        <tr><td><code>cal_confidence</code></td><td>Self-confidence before activity (1&ndash;5 scale)</td></tr>
-        <tr><td><code>cal_predicted</code></td><td>Predicted score before activity (%)</td></tr>
-        <tr><td><code>cal_reflection</code></td><td>Free-text: what will be hard?</td></tr>
-        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">ACTIVITY TIERS</td></tr>
-        <tr><td><code>t1_score_pct</code></td><td>Tier&nbsp;1 Fill-in-Blanks score (%)</td></tr>
-        <tr><td><code>t2_attempts</code></td><td>Tier&nbsp;2 Debug — number of attempts</td></tr>
-        <tr><td><code>refl2_text</code></td><td>Tier&nbsp;2 reflection free text</td></tr>
-        <tr><td><code>t3_attempts</code></td><td>Tier&nbsp;3 Complete-Code attempts</td></tr>
-        <tr><td><code>t4_attempts</code></td><td>Tier&nbsp;4 New Task attempts</td></tr>
-        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">CONCEPT CHECK</td></tr>
-        <tr><td><code>concept_q1</code>&ndash;<code>concept_q5</code></td><td>Student answer index (0-based) per question</td></tr>
-        <tr><td><code>concept_score_pct</code></td><td>Percentage correct (0&ndash;100)</td></tr>
-        <tr><td><code>concept_passed</code></td><td>1 = passed (&ge;80%), 0 = failed</td></tr>
-        <tr><td><code>concept_attempts</code></td><td>Total retries</td></tr>
-        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">REFLECTIVE JOURNAL</td></tr>
-        <tr><td><code>jr1</code>&ndash;<code>jr5</code></td><td>Journal prompts 1&ndash;5 free-text responses</td></tr>
-        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">POST-CALIBRATION</td></tr>
-        <tr><td><code>post_confidence</code></td><td>Confidence rating after activity (1&ndash;5)</td></tr>
-        <tr><td><code>post_actual</code></td><td>Self-reported actual score (%)</td></tr>
-        <tr><td><code>post_r1</code></td><td>Reflection: how accurate was the prediction?</td></tr>
-        <tr><td><code>post_r2</code></td><td>Reflection: what would you do differently?</td></tr>
-        <tr><td><code>calibration_index</code></td><td>post_actual &minus; cal_predicted (negative = overconfident)</td></tr>
-      </tbody>
-    </table>
-  </div>
-
 <footer>
-  <span>&#169; 2026 Nurul Hazlina Noordin · UMPSA STEM Lab Engineering Education Initiative</span>
+  <span>© 2026 UMPSA STEM Lab Engineering Education Initiative</span>
   <a href="https://www.umpsa.edu.my" target="_blank" rel="noopener" aria-label="UMPSA website">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
   </a>
