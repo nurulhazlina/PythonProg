@@ -971,7 +971,7 @@ document.getElementById('t4-submit').addEventListener('click',function(){
   var CQ_ANS=[1,1,2,1,2]; // correct answer indices for Q1-Q5 (used for scoring only, not gating)
   document.getElementById('concept-submit').addEventListener('click',function(){
     var d=lmsGet();
-    if(d.concept_step&&d.concept_step.submitted)return;
+    if(d.concept_step&&d.concept_step.submitted&&d.concept_step.answers&&d.concept_step.answers.length)return;
     var answers=[];
     var correct=0;
     var allAnswered=true;
