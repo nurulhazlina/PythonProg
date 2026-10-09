@@ -393,45 +393,82 @@ if snake[0] in snake[1:]:
   <div class="t-section">
     <h2><span class="sec-icon">🔢</span> Activity Answers — <a href="step-4-activity.html" style="font-size:14px;font-weight:400;color:var(--teal)">step-4-activity.html</a></h2>
 
-    <h3>Tier 1 — Check Understanding</h3>
+    <h3>Tier 1 — Fill in the Blanks (5 blanks)</h3>
+    <p style="font-size:13px;color:var(--muted)">Students complete a code skeleton for the snake body update loop. Accepted answers (case-sensitive):</p>
     <table class="t-table">
-      <thead><tr><th>Question</th><th>Accepted answer</th></tr></thead>
+      <thead><tr><th>Blank</th><th>Hint shown</th><th>Correct answer</th><th>What it does</th></tr></thead>
       <tbody>
         <tr>
-          <td>1. Why is the snake stored as a list?</td>
-          <td>A list can grow (append) and shrink (pop) as the snake eats food and moves. A single variable can't represent a multi-segment body.</td>
+          <td>1</td><td><code>_</code></td>
+          <td><code>0</code></td>
+          <td>Index for <code>snake.insert(0, new_head)</code> — inserts at the front.</td>
         </tr>
         <tr>
-          <td>2. What does <code>snake.insert(0, new_head)</code> do?</td>
-          <td>Adds the new head position to the front (index 0) of the list, shifting all other segments back by one index.</td>
+          <td>2</td><td><code>f___</code></td>
+          <td><code>food</code></td>
+          <td>Variable name: <code>ate_food = (new_head == food)</code>.</td>
         </tr>
         <tr>
-          <td>3. Why don't we <code>pop()</code> when the snake eats food?</td>
-          <td>We want the snake to grow — keeping the tail means the body is one cell longer after eating.</td>
+          <td>3</td><td><code>i_____</code></td>
+          <td><code>insert</code></td>
+          <td>List method that adds the new head at position 0.</td>
         </tr>
         <tr>
-          <td>4. What does <code>snake[0] in snake[1:]</code> check?</td>
-          <td>Whether the head's position appears anywhere in the rest of the body (self-collision check).</td>
+          <td>4</td><td><code>p__</code></td>
+          <td><code>pop</code></td>
+          <td><code>snake.pop()</code> — removes the tail (last element) when the snake moves without eating.</td>
+        </tr>
+        <tr>
+          <td>5</td><td><code>_</code></td>
+          <td><code>+</code></td>
+          <td>Used in score calculation: <code>score = score + 1</code> or inline operator.</td>
         </tr>
       </tbody>
     </table>
 
-    <h3>Tier 2 — Fix the Bug</h3>
-    <div class="answer-card">
-      <div class="answer-label">Bug</div>
-      <p style="margin:0;font-size:14px"><code>snake.pop(0)</code> instead of <code>snake.pop()</code> — pops from the front (removes the head!) instead of the tail.</p>
+    <h3>Tier 2 — Find &amp; Fix 3 Bugs</h3>
+    <p style="font-size:13px;color:var(--muted)">Buggy code shown to students:</p>
+    <div class="codebox" style="margin-bottom:8px">
+      <pre><code>snake.append(new_head)     # Bug 1 – wrong end
+    snake.pop(0)           # Bug 2 – pops from wrong end; also should only pop when NOT eating
+score += 1                 # Bug 3 – score always increments</code></pre>
     </div>
-    <p><strong>Effect:</strong> Snake shrinks from the front — it appears to "reverse eat" itself and disappears.</p>
-    <p><strong>Fix:</strong> <code>snake.pop()</code> with no argument removes the last element (the tail).</p>
 
-    <h3>Tier 3 — Extend: Show score on window title</h3>
+    <div class="answer-card" style="margin-bottom:10px">
+      <div class="answer-label">Bug 1</div>
+      <p style="margin:0;font-size:14px">Buggy: <code>snake.append(new_head)</code><br>
+      Fix: <code>snake.insert(0, new_head)</code><br>
+      <em>Reason:</em> <code>append</code> adds to the tail. The new head must go to index 0 (front).</p>
+    </div>
+    <div class="answer-card" style="margin-bottom:10px">
+      <div class="answer-label">Bug 2</div>
+      <p style="margin:0;font-size:14px">Buggy: <code>snake.pop(0)</code> (always pops, and from the wrong end)<br>
+      Fix: <code>if not ate_food:&nbsp;&nbsp;snake.pop()</code><br>
+      <em>Reason:</em> <code>pop(0)</code> removes the head. <code>pop()</code> removes the tail. And we must only pop when NOT eating — if we ate food, the snake grows (no pop).</p>
+    </div>
+    <div class="answer-card">
+      <div class="answer-label">Bug 3</div>
+      <p style="margin:0;font-size:14px">Buggy: <code>score += 1</code> (always increments)<br>
+      Fix: <code>if ate_food:&nbsp;&nbsp;score += 1</code><br>
+      <em>Reason:</em> Score should only increase when the snake actually eats food.</p>
+    </div>
+
+    <h3>Tier 3 — Extend: Add wall collision detection</h3>
+    <p style="font-size:13px;color:var(--muted)">Task: if the new head is outside the grid boundaries (hx &lt; 0, hx &gt;= GRID_COLS, hy &lt; 0, hy &gt;= GRID_ROWS), set <code>running = False</code>.</p>
     <div class="codebox">
       <button class="copybtn" type="button">Copy</button>
-      <pre><code>score = len(snake) - 3   # initial length is 3
-pygame.display.set_caption(f"Snake — Score: {score}")</code></pre>
+      <pre><code>hx, hy = new_head
+if hx &lt; 0 or hx &gt;= GRID_COLS or hy &lt; 0 or hy &gt;= GRID_ROWS:
+    running = False
+else:
+    ate_food = (new_head == food)
+    snake.insert(0, new_head)
+    if not ate_food:
+        snake.pop()</code></pre>
     </div>
 
-    <h3>Tier 4 — New Task: Food never spawns on the snake</h3>
+    <h3>Tier 4 — Create: Spawn food that avoids the snake body</h3>
+    <p style="font-size:13px;color:var(--muted)">Task: write a <code>spawn_food(snake)</code> function that loops until it finds a position not in the snake list, then call it whenever food is eaten. Expected ~10 lines.</p>
     <div class="codebox">
       <button class="copybtn" type="button">Copy</button>
       <pre><code>def spawn_food(snake):
@@ -439,36 +476,40 @@ pygame.display.set_caption(f"Snake — Score: {score}")</code></pre>
         fx = random.randint(0, GRID_COLS - 1)
         fy = random.randint(0, GRID_ROWS - 1)
         if (fx, fy) not in snake:
-            return fx, fy
+            return (fx, fy)
 
-food_x, food_y = spawn_food(snake)
-# After eating:
-food_x, food_y = spawn_food(snake)</code></pre>
+# Initial food placement:
+food = spawn_food(snake)
+
+# After eating (inside the game loop):
+if ate_food:
+    score += 1
+    food = spawn_food(snake)</code></pre>
     </div>
 
     <h3>Reflective Journal — Suggested Answers</h3>
     <table class="t-table">
-      <thead><tr><th style="width:32%">Prompt</th><th>Key ideas a strong answer contains</th></tr></thead>
+      <thead><tr><th style="width:34%">Prompt</th><th>Key ideas a strong answer contains</th></tr></thead>
       <tbody>
         <tr>
-          <td>1. Most confusing part?</td>
-          <td>Usually the insert/pop pattern. Key explanation: the list represents a "train" — a new carriage at the front, one removed at the back = same length.</td>
+          <td>1. Random food placement — how is <code>random.randint</code> used? Why multiply by CELL_SIZE?</td>
+          <td><code>random.randint(0, GRID_W-1)</code> gives a random column index. Multiplying by <code>CELL_SIZE</code> converts from grid coordinates to pixel coordinates so the food aligns with grid cells on screen.</td>
         </tr>
         <tr>
-          <td>2. What is a list in Python?</td>
-          <td>An ordered, mutable collection of items. Items can be added, removed, and accessed by index.</td>
+          <td>2. Collision detection — describe wall and self collision. Which is easier?</td>
+          <td>Wall collision: check if hx or hy is outside [0, GRID_COLS/ROWS). Self collision: check if head is in the body list. Wall is easier — just a boundary check. Self collision needs the <code>snake[1:]</code> slice to avoid matching the head itself.</td>
         </tr>
         <tr>
-          <td>3. Why use a tuple for each body segment?</td>
-          <td><code>(x, y)</code> is a fixed pair — it shouldn't change. A tuple signals immutability. Also makes the <code>in</code> check work correctly by value comparison.</td>
+          <td>3. Growing the snake — what happens when eating / not eating?</td>
+          <td>On eat: <code>insert(0, new_head)</code> adds the head; no <code>pop()</code> so the tail stays — the snake is one cell longer. On no eat: same <code>insert</code> but <code>pop()</code> removes the tail — the snake shifts forward without growing.</td>
         </tr>
         <tr>
-          <td>4. What is a slice?</td>
-          <td><code>snake[1:]</code> is a slice — a copy of the list from index 1 to the end. It doesn't modify the original list.</td>
+          <td>4. Challenge faced and how you got unstuck?</td>
+          <td>Open-ended. Accept any genuine reflection: debugging pop direction, understanding insert vs append, getting collision to trigger correctly.</td>
         </tr>
         <tr>
-          <td>5. Explain to a classmate?</td>
-          <td>Should cover: snake is a list; every frame, add new head to front, remove tail from back (unless ate food); check if head is off-screen or touching body.</td>
+          <td>5. Design question — food only in top half?</td>
+          <td>Change <code>random.randint(0, GRID_ROWS - 1)</code> to <code>random.randint(0, GRID_ROWS // 2 - 1)</code> for the y coordinate. The x stays the same.</td>
         </tr>
       </tbody>
     </table>

@@ -617,7 +617,7 @@ if not ate_food:
 </div>
     <div id="tj-feedback" class="tier-feedback" hidden></div>
     <div class="tier-actions">
-      <button class="tier-btn tj-btn" id="tj-submit" disabled>Submit Reflective Journal ✓</button>
+      <button class="tier-btn tj-btn" id="tj-submit">Submit Reflective Journal ✓</button>
     </div>
   </div>
 </div>
@@ -875,7 +875,7 @@ window.editIdentity  = editIdentity;
     var calData={confidence:conf,predicted_score:pred,reflection_1:r1,ts:Date.now()};
     var d=lmsGet();d.cal=calData;lmsSet(d);
     lmsLog('cal_submitted',{confidence:conf,predicted_score:pred});
-  postToSheets({type:'pre_cal',step:stepN,confidence:conf,predicted_score:pred,what_hardest:r1});
+
     showFeedback('cal-feedback','Calibration saved! Tier 1 is now unlocked. Good luck!','success');
     document.getElementById('cal-submit').disabled=true;
     markDone('tp0');document.getElementById('tc01').classList.add('done');
@@ -915,7 +915,7 @@ document.getElementById('t1-submit').addEventListener('click',function(){
     document.getElementById('t1-submit').disabled=true;
     markDone('tp1');document.getElementById('tc12').classList.add('done');
     var d=lmsGet();d.t1_submitted={score:pct,attempts:attempts.t1,ts:Date.now()};lmsSet(d);
-  postToSheets({type:'tier',tier:'T1',step:stepN,score:pct,attempts:attempts.t1});
+
     unlockTier(2);
     document.getElementById('t2-submit').disabled=false;
     setTimeout(function(){document.getElementById('tier2').scrollIntoView({behavior:'smooth',block:'nearest'});},300);
@@ -949,7 +949,7 @@ document.getElementById('t2-submit').addEventListener('click',function(){
     var d=lmsGet();d.t2_submitted={attempts:attempts.t2,ts:Date.now()};lmsSet(d);
   
     var _atd=lmsGet();_atd.t2_attempts_count=attempts.t2;lmsSet(_atd);/*t2_attempts_count_saved*/
-    postToSheets({type:'tier',tier:'T2',step:stepN,attempts:attempts.t2,text:(typeof txt!=='undefined'?txt:'')});
+
     var r2c=document.getElementById('refl2');
     r2c.classList.remove('tier-locked');r2c.removeAttribute('aria-disabled');
     document.getElementById('refl2-submit').disabled=false;
@@ -971,7 +971,7 @@ document.getElementById('refl2-submit').addEventListener('click',function(){
   state.refl2=true;
   var d=lmsGet();d.reflection_2={text:txt,ts:Date.now()};lmsSet(d);
   lmsLog('refl2_submitted',{ts:Date.now()});
-  postToSheets({type:'refl2',step:stepN,text:txt});
+
   showFeedback('refl2-feedback','Reflection saved! Tier 3 is now unlocked.','success');
   document.getElementById('refl2-submit').disabled=true;
   unlockTier(3);
@@ -997,7 +997,7 @@ document.getElementById('t3-submit').addEventListener('click',function(){
   var d=lmsGet();d.t3_submitted={text:txt,attempts:attempts.t3,ts:Date.now()};lmsSet(d);
   
     var _atd=lmsGet();_atd.t3_attempts_count=attempts.t3;lmsSet(_atd);/*t3_attempts_count_saved*/
-    postToSheets({type:'tier',tier:'T3',step:stepN,attempts:attempts.t3,text:txt});
+
   unlockTier(4);
   document.getElementById('t4-submit').disabled=false;
   setTimeout(function(){document.getElementById('tier4').scrollIntoView({behavior:'smooth',block:'nearest'});},300);
@@ -1017,11 +1017,11 @@ document.getElementById('t4-submit').addEventListener('click',function(){
   state.t4=true;
   showFeedback('t4-feedback','Tier 4 submitted! Complete the concept check below to unlock the journal.','success');
   document.getElementById('t4-submit').disabled=true;
-  markDone('tp4');document.getElementById('tc4j').classList.add('done');
+  markDone('tp4');document.getElementById('tc4c').classList.add('done');
   var d=lmsGet();d.t4_submitted={text:txt,attempts:attempts.t4,ts:Date.now()};lmsSet(d);
   
     var _atd=lmsGet();_atd.t4_attempts_count=attempts.t4;lmsSet(_atd);/*t4_attempts_count_saved*/
-    postToSheets({type:'tier',tier:'T4',step:stepN,attempts:attempts.t4,text:txt});
+
   /* Unlock Concept Check gate */
   (function(){
     var cg=document.getElementById('concept-check-gate');
@@ -1030,7 +1030,7 @@ document.getElementById('t4-submit').addEventListener('click',function(){
       cg.removeAttribute('aria-disabled');
       var li=cg.querySelector('.lock-icon');
       if(li)li.textContent='\u2705';
-      initConceptCheck({step:stepN,containerId:'concept-check-wrap'});
+      /* initConceptCheck removed */
     }
   })();
   setTimeout(function(){document.getElementById('concept-check-gate').scrollIntoView({behavior:'smooth',block:'nearest'});},300);
@@ -1060,7 +1060,7 @@ document.getElementById('refl3-submit').addEventListener('click',function(){
   /* Post to Google Sheets */
   (function(){
     try{
-      var APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec';
+      var APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbyDlkpeqaDPzJoMDGMAplN1LOisC81dBdIo0fPJTOAeOqMsq-aM9sX60e8J0xrY780R/exec';
       var st={};
       try{st=JSON.parse(localStorage.getItem('umpsa_snake_student')||'{}');}catch(e){}
       var pl={
@@ -1112,7 +1112,7 @@ document.getElementById('tj-submit').addEventListener('click',function(){
     lmsLog('calibration_index',{predicted:d.cal.predicted_score,actual:d.t1_first_attempt_pct,index:d.calibration_index});
   }
   lmsSet(d);
-  lmsLog('journal_submitted',{ts:Date.now()});postJournalToSheets(4, responses);
+  lmsLog('journal_submitted',{ts:Date.now()});
 
   markDone('tpj');
   showFeedback('tj-feedback','Journal saved! Post-activity check-in is now unlocked.','success');
@@ -1217,12 +1217,12 @@ document.getElementById('tj-submit').addEventListener('click',function(){
     state.t4=true;
     document.getElementById('t4-submit').disabled=true;
     document.getElementById('t4-text').value=d.t4_submitted.text||'';
-    markDone('tp4');document.getElementById('tc4j').classList.add('done');
+    markDone('tp4');document.getElementById('tc4c').classList.add('done');
     (function(){
       var cg=document.getElementById('concept-check-gate');
       if(cg){cg.classList.remove('tier-locked');cg.removeAttribute('aria-disabled');
         var li=cg.querySelector('.lock-icon');if(li)li.textContent='\u2705';}
-      initConceptCheck({step:stepN,containerId:'concept-check-wrap'});
+      /* initConceptCheck removed */
       if(d.concept_step&&d.concept_step.submitted){
         var jc=document.getElementById('tierJ');
         if(jc){jc.classList.remove('tier-locked');jc.removeAttribute('aria-disabled');}
@@ -1303,7 +1303,7 @@ document.getElementById('exp-dl-csv')&&document.getElementById('exp-dl-csv').add
 /* ── Google Sheets: journal POST ── */
 function postJournalToSheets(stepNum, jData) {
   try {
-    var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec';
+    var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyDlkpeqaDPzJoMDGMAplN1LOisC81dBdIo0fPJTOAeOqMsq-aM9sX60e8J0xrY780R/exec';
     var student = {};
     try { student = JSON.parse(localStorage.getItem('umpsa_snake_student') || '{}'); } catch(e) {}
     var entries = Object.keys(jData).map(function(k) {
@@ -1327,7 +1327,7 @@ function postJournalToSheets(stepNum, jData) {
 /* === sendActivityRecord: bundle full activity data -> Sheets === */
 function sendActivityRecord(stepNum) {
   try {
-    var APPS_URL = 'https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec';
+    var APPS_URL = 'https://script.google.com/macros/s/AKfycbyDlkpeqaDPzJoMDGMAplN1LOisC81dBdIo0fPJTOAeOqMsq-aM9sX60e8J0xrY780R/exec';
     var st = {}; try { st = JSON.parse(localStorage.getItem('umpsa_snake_student')||'{}'); } catch(e) {}
     var d = lmsGet();
     var cal = d.cal || {}; var refl2 = d.reflection_2 || {}; var cs = d.concept_step || {}; var pc = d.post_cal || {};
@@ -1382,7 +1382,7 @@ function postToSheets(payload){
     payload.phone       = payload.phone       || st.phone       || '';
     payload.email       = payload.email       || st.email       || '';
     payload.submitted_iso = payload.submitted_iso || new Date().toISOString();
-    fetch('https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec',{method:'POST',mode:'no-cors',body:JSON.stringify(payload)});
+    fetch('https://script.google.com/macros/s/AKfycbyDlkpeqaDPzJoMDGMAplN1LOisC81dBdIo0fPJTOAeOqMsq-aM9sX60e8J0xrY780R/exec',{method:'POST',mode:'no-cors',body:JSON.stringify(payload)});
   }catch(err){console.warn('postToSheets error:',err);}
 }
 </script>
