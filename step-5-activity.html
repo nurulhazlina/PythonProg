@@ -882,6 +882,80 @@ document.getElementById('exp-dl-csv')&&document.getElementById('exp-dl-csv').add
   flat(d,'');var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
   var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='lms_step5.csv';a.click();
 });
+
+
+/* STUDENT IDENTITY */
+function saveIdentity() {
+  var nameVal   = ((document.getElementById('id-name')   ||{}).value||'').trim();
+  var matricVal = ((document.getElementById('id-matric') ||{}).value||'').trim();
+  var classVal  = ((document.getElementById('id-class')  ||{}).value||'').trim();
+  var genderVal = ((document.getElementById('id-gender') ||{}).value||'').trim();
+  var ageVal    = ((document.getElementById('id-age')    ||{}).value||'').trim();
+  var notice    = document.getElementById('idNotice');
+  if (!nameVal || !matricVal || !classVal || !genderVal || !ageVal) {
+    if (notice) { notice.style.display='block'; notice.textContent='⚠ Please fill in all required fields (★): Name, Matric No., Class, Gender and Age.'; }
+    return;
+  }
+  var st = {
+    name: nameVal, matric: matricVal, class: classVal,
+    gender: genderVal, age: ageVal,
+    mykid:       ((document.getElementById('id-mykid')  ||{}).value||'').trim(),
+    home_state:  ((document.getElementById('id-state')  ||{}).value||'').trim(),
+    school_code: ((document.getElementById('id-school') ||{}).value||'').trim(),
+    phone:       ((document.getElementById('id-phone')  ||{}).value||'').trim(),
+    email:       ((document.getElementById('id-email')  ||{}).value||'').trim()
+  };
+  try { localStorage.setItem(ID_KEY, JSON.stringify(st)); } catch(e) {}
+  if (notice) notice.style.display = 'none';
+  _setIdentityConfirmed(st);
+}
+
+function editIdentity() {
+  _idConfirmed = false;
+  var block = document.getElementById('idBlock');
+  var form  = document.getElementById('idForm');
+  var conf  = document.getElementById('idConfirmed');
+  if (block) block.classList.remove('id-confirmed');
+  if (form)  form.style.display = '';
+  if (conf)  conf.style.display = 'none';
+}
+window.saveIdentity = saveIdentity;
+window.editIdentity  = editIdentity;
+
+(function _initIdentity() {
+  try {
+    var st = JSON.parse(localStorage.getItem(ID_KEY) || '{}');
+    if (st.name) {
+      var map = {
+        'id-name': st.name, 'id-matric': st.matric, 'id-class': st.class,
+        'id-gender': st.gender, 'id-age': st.age, 'id-mykid': st.mykid,
+        'id-state': st.home_state, 'id-school': st.school_code,
+        'id-phone': st.phone, 'id-email': st.email
+      };
+      Object.keys(map).forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el && map[id]) el.value = map[id];
+      });
+      if (st.name && st.matric && st.class && st.gender && st.age) _setIdentityConfirmed(st);
+    }
+  } catch(e) {}
+  var calBtn = document.getElementById('cal-submit');
+  if (calBtn) {
+    calBtn.addEventListener('click', function(e) {
+      if (!_idConfirmed) {
+        e.stopImmediatePropagation();
+        var notice = document.getElementById('idNotice');
+        if (notice) { notice.style.display='block'; notice.textContent='⚠ Please fill in and confirm your details above before starting.'; }
+        var block = document.getElementById('idBlock');
+        if (block) block.scrollIntoView({behavior:'smooth',block:'start'});
+      }
+    }, false);
+  }
+})();
+
+/* ═══════════════════════════════════════
+   LMS HELPERS
+═══════════════════════════════════════ */
 </script>
 </body>
 </html>
