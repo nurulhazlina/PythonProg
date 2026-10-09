@@ -137,7 +137,456 @@ pre.code.good{border:1.5px solid rgba(86,211,100,.4)!important;margin:0!importan
     <button class="replay-btn" id="btn-reset" style="padding:8px 14px">↺ Reset</button>
   </div>
 
-  <h3>Why a list and not individual variables?</h3>
+  
+<!-- ══ Snake Movement Animation v2 ══ -->
+<div style="margin:18px 0 24px;">
+  <button onclick="(function(){var b=document.getElementById('s4anim-panel');var v=b.style.display!=='none';b.style.display=v?'none':'block';document.getElementById('s4anim-chev').textContent=v?'▼':'▲';})()" style="width:100%;background:linear-gradient(135deg,#02ADA5,#056b66);color:#fff;border:none;border-radius:10px;padding:13px 18px;font-size:15px;font-weight:700;cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:10px">
+    <span>🐍 Interactive: How the Snake List Works</span>
+    <span id="s4anim-chev" style="font-size:18px">▼</span>
+  </button>
+  <div id="s4anim-panel" style="display:none;background:var(--card,#131d27);border:1.5px solid rgba(2,173,165,.3);border-radius:0 0 10px 10px;overflow:hidden">
+<style>
+/* ── wrapper ── */
+.s4v{padding:16px 14px}
+.s4v-tabs{display:flex;gap:6px;margin-bottom:14px}
+.s4v-tab{flex:1;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);border-radius:8px;color:rgba(255,255,255,.6);font-size:13px;font-weight:600;padding:9px 6px;cursor:pointer;transition:all .2s;font-family:inherit}
+.s4v-tab.s4v-on{background:rgba(2,173,165,.22);border-color:#02ADA5;color:#fff}
+.s4v-pane{display:none}.s4v-pane.s4v-show{display:flex;flex-direction:column;gap:12px}
+/* ── two-column layout ── */
+.s4v-row{display:flex;gap:12px;flex-wrap:wrap}
+.s4v-canvas-col{flex:0 0 auto}
+.s4v-state-col{flex:1;min-width:200px;display:flex;flex-direction:column;gap:8px}
+/* ── canvas ── */
+.s4v-cw{background:#0a1520;border-radius:10px;padding:10px;display:inline-block}
+canvas.s4v-cv{border-radius:6px;display:block;max-width:100%}
+/* ── Python List State ── */
+.ls-box{background:#0F1B22;border-radius:10px;padding:12px 14px;border:1px solid rgba(2,173,165,.2)}
+.ls-title{font-size:10px;letter-spacing:.1em;color:rgba(2,173,165,.8);font-weight:700;margin-bottom:8px;font-family:monospace}
+.ls-bracket{font-family:monospace;font-size:13px;color:#E6EDF3;margin:2px 0}
+.ls-cells{display:flex;gap:5px;flex-wrap:wrap;margin:6px 0;min-height:44px;align-items:center}
+.lc{border-radius:7px;padding:6px 8px;text-align:center;font-family:monospace;font-size:12.5px;border:2px solid;transition:all .3s;min-width:64px}
+.lc-head{border-color:#56d364;background:rgba(86,211,100,.18);color:#56d364}
+.lc-body{border-color:rgba(2,173,165,.5);background:rgba(2,173,165,.1);color:#8FD9D5}
+.lc-tail{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.05);color:#6b7a87}
+.lc-new{border-color:#F5A21D;background:rgba(245,162,29,.18);color:#F5A21D;animation:s4v-pop .35s ease}
+@keyframes s4v-pop{from{transform:scale(0) translateX(-12px);opacity:0}to{transform:scale(1);opacity:1}}
+.lc-lbl{font-size:9.5px;color:inherit;opacity:.7;margin-top:2px}
+.ls-len{font-family:monospace;font-size:13px;color:#56d364;margin-left:6px}
+/* ── Operations panel ── */
+.ls-ops{margin-top:8px;background:#060e16;border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+.ls-op-row{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.06);font-family:monospace;font-size:12px;color:#C9D1D9}
+.ls-op-row:last-child{border-bottom:none}
+.ls-op-row.ls-skip{opacity:.45}
+.ls-badge{display:inline-flex;align-items:center;border-radius:5px;padding:2px 7px;font-size:10px;font-weight:700;letter-spacing:.04em;white-space:nowrap;flex-shrink:0;margin-top:1px}
+.lb-dir{background:rgba(245,162,29,.25);color:#F5A21D;border:1px solid rgba(245,162,29,.4)}
+.lb-ins{background:rgba(86,211,100,.2);color:#56d364;border:1px solid rgba(86,211,100,.35)}
+.lb-pop{background:rgba(255,123,114,.2);color:#FF7B72;border:1px solid rgba(255,123,114,.35)}
+.ls-op-text{flex:1;line-height:1.5}.ls-op-text .hi{color:#79C0FF}.ls-op-text .gr{color:#56d364}.ls-op-text .rd{color:#FF7B72}.ls-op-text .yw{color:#F5A21D}
+.ls-note{font-size:11px;opacity:.65}
+/* ── Key insight ── */
+.ls-key{background:rgba(245,162,29,.07);border:1px solid rgba(245,162,29,.2);border-radius:8px;padding:9px 12px;font-size:13px;color:#E6EDF3;line-height:1.5}
+/* ── controls ── */
+.s4v-ctrl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.s4v-btn{background:rgba(2,173,165,.18);border:1.5px solid #02ADA5;color:#fff;border-radius:7px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+.s4v-btn:hover{background:rgba(2,173,165,.32)}
+.s4v-ctrl label{font-size:12px;color:rgba(255,255,255,.55)}
+.s4v-ctrl input[type=range]{accent-color:#02ADA5;width:80px;vertical-align:middle}
+/* ── D-pad ── */
+.s4v-dpad{display:grid;grid-template-columns:repeat(3,36px);gap:3px;justify-content:center}
+.s4v-dp{width:36px;height:36px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);border-radius:6px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit}
+.s4v-dp:hover{background:rgba(2,173,165,.28)}
+/* ── op log ── */
+.s4v-log{background:#060e16;border-radius:8px;padding:8px 10px;font-family:monospace;font-size:11.5px;max-height:110px;overflow-y:auto}
+.s4v-le{padding:2px 0;border-bottom:1px solid rgba(255,255,255,.05);color:#C9D1D9}
+.s4v-le.ll-ins{color:#56d364}.s4v-le.ll-ate{color:#F5A21D}.s4v-le.ll-die{color:#FF7B72}
+</style>
+<div class="s4v">
+  <div class="s4v-tabs">
+    <button class="s4v-tab s4v-on" id="s4v-ta" onclick="s4vMode('auto')">🔄 Step-by-Step</button>
+    <button class="s4v-tab" id="s4v-tp" onclick="s4vMode('play')">🕹️ You Control It</button>
+  </div>
+
+  <!-- AUTO PANE -->
+  <div class="s4v-pane s4v-show" id="s4v-auto">
+    <div class="s4v-row">
+      <div class="s4v-canvas-col">
+        <div class="s4v-cw"><canvas class="s4v-cv" id="s4v-ac" width="240" height="240"></canvas></div>
+      </div>
+      <div class="s4v-state-col">
+        <div class="ls-box" id="s4v-als">
+          <div class="ls-title">PYTHON LIST STATE</div>
+          <div class="ls-bracket">snake&nbsp;=&nbsp;[</div>
+          <div class="ls-cells" id="s4v-acells"></div>
+          <div class="ls-bracket">]&nbsp;<span class="ls-len" id="s4v-alen"></span></div>
+          <div class="ls-ops" id="s4v-aops"></div>
+        </div>
+        <div class="ls-key" id="s4v-akey">Press Play to start the animation.</div>
+      </div>
+    </div>
+    <div class="s4v-ctrl">
+      <button class="s4v-btn" id="s4v-aplay" onclick="s4vPlayAuto()">▶ Play</button>
+      <label>Speed <input type="range" id="s4v-aspd" min="1" max="5" value="2" oninput="s4vASpd()"></label>
+    </div>
+  </div>
+
+  <!-- PLAY PANE -->
+  <div class="s4v-pane" id="s4v-play">
+    <div class="s4v-row">
+      <div class="s4v-canvas-col">
+        <div class="s4v-cw"><canvas class="s4v-cv" id="s4v-pc" width="240" height="240"></canvas></div>
+        <div class="s4v-dpad" style="margin-top:10px">
+          <div></div><button class="s4v-dp" onclick="s4vDir(0,-1)">▲</button><div></div>
+          <button class="s4v-dp" onclick="s4vDir(-1,0)">◀</button><div></div><button class="s4v-dp" onclick="s4vDir(1,0)">▶</button>
+          <div></div><button class="s4v-dp" onclick="s4vDir(0,1)">▼</button><div></div>
+        </div>
+      </div>
+      <div class="s4v-state-col">
+        <div class="ls-box" id="s4v-pls">
+          <div class="ls-title">PYTHON LIST STATE</div>
+          <div class="ls-bracket">snake&nbsp;=&nbsp;[</div>
+          <div class="ls-cells" id="s4v-pcells"></div>
+          <div class="ls-bracket">]&nbsp;<span class="ls-len" id="s4v-plen"></span></div>
+          <div class="ls-ops" id="s4v-pops"></div>
+        </div>
+        <div class="ls-key" id="s4v-pkey">Use ⬆⬇⬆⬇ or keyboard arrows to move the snake.</div>
+        <div class="s4v-log" id="s4v-plog"><span style="color:rgba(255,255,255,.3)">Operations appear here as you move…</span></div>
+      </div>
+    </div>
+    <div class="s4v-ctrl">
+      <button class="s4v-btn" id="s4v-pbtn" onclick="s4vPlayPlay()">▶ Start</button>
+      <button class="s4v-btn" onclick="s4vReset()">↺ Reset</button>
+      <label>Speed <input type="range" id="s4v-pspd" min="1" max="8" value="4" oninput="s4vPSpd()"></label>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+var GRID=10,CW=240,CH=240,PAD=2,CS=Math.floor((CW-2*PAD)/GRID);
+var inited=false,mode='auto';
+
+function $id(id){return document.getElementById(id);}
+
+/* ─── canvas drawing ─── */
+function gx(c){return PAD+c*CS;}
+function gy(r){return PAD+r*CS;}
+
+function drawScene(canvasId,snake,food,deadHead){
+  var c=$id(canvasId);if(!c)return;
+  var ctx=c.getContext('2d');
+  // grid bg
+  ctx.fillStyle='#0a1520';ctx.fillRect(0,0,CW,CH);
+  ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=1;
+  for(var i=0;i<=GRID;i++){
+    ctx.beginPath();ctx.moveTo(gx(i),PAD);ctx.lineTo(gx(i),PAD+GRID*CS);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(PAD,gy(i));ctx.lineTo(PAD+GRID*CS,gy(i));ctx.stroke();
+  }
+  // food
+  if(food){
+    var fx=gx(food[0])+CS/2,fy=gy(food[1])+CS/2,fr=CS/2-4;
+    ctx.fillStyle='#C80000';ctx.beginPath();ctx.arc(fx,fy,fr,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#ff6b6b';ctx.beginPath();ctx.arc(fx-3,fy-3,3,0,Math.PI*2);ctx.fill();
+  }
+  // snake
+  snake.forEach(function(seg,i){
+    var x=gx(seg[0])+2,y=gy(seg[1])+2,s=CS-4;
+    if(deadHead&&i===0){
+      ctx.fillStyle='rgba(255,70,70,.7)';
+      ctx.beginPath();if(ctx.roundRect)ctx.roundRect(x,y,s,s,4);else ctx.rect(x,y,s,s);ctx.fill();
+    } else if(i===0){
+      ctx.fillStyle='#02ADA5';
+      ctx.beginPath();if(ctx.roundRect)ctx.roundRect(x,y,s,s,5);else ctx.rect(x,y,s,s);ctx.fill();
+      ctx.fillStyle='#fff';
+      ctx.beginPath();ctx.arc(x+s*.72,y+s*.3,3,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.arc(x+s*.72,y+s*.72,3,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#000';
+      ctx.beginPath();ctx.arc(x+s*.72+1,y+s*.3,1.5,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.arc(x+s*.72+1,y+s*.72,1.5,0,Math.PI*2);ctx.fill();
+    } else if(i===snake.length-1){
+      ctx.fillStyle='#084a46';
+      ctx.beginPath();if(ctx.roundRect)ctx.roundRect(x+3,y+3,s-6,s-6,3);else ctx.rect(x+3,y+3,s-6,s-6);ctx.fill();
+    } else {
+      ctx.fillStyle='#067a72';
+      ctx.beginPath();if(ctx.roundRect)ctx.roundRect(x+1,y+1,s-2,s-2,4);else ctx.rect(x+1,y+1,s-2,s-2);ctx.fill();
+    }
+    // index
+    ctx.fillStyle='rgba(255,255,255,.4)';
+    ctx.font='bold 8px monospace';ctx.textAlign='center';ctx.textBaseline='bottom';
+    ctx.fillText('['+i+']',gx(seg[0])+CS/2,gy(seg[1])+CS-1);
+  });
+}
+
+/* ─── List State panel ─── */
+function dirName(dx,dy){return dx===1?'RIGHT':dx===-1?'LEFT':dy===-1?'UP':'DOWN';}
+
+function renderLS(cellsId,lenId,opsId,keyId,snake,dx,dy,newHead,ate,dead){
+  // cells
+  var cw=$id(cellsId);
+  if(cw){
+    cw.innerHTML=snake.map(function(seg,i){
+      var isHead=i===0,isTail=i===snake.length-1;
+      var cls=isHead?'lc lc-head':isTail?'lc lc-tail':'lc lc-body';
+      var lbl=isHead?'HEAD':isTail&&snake.length>1?'TAIL':'';
+      return '<div class="'+cls+'"><div>('+seg[0]+','+seg[1]+')</div>'+(lbl?'<div class="lc-lbl">'+lbl+'</div>':'')+'</div>';
+    }).join('');
+  }
+  // len
+  var lw=$id(lenId);if(lw)lw.textContent='len = '+snake.length;
+  // ops
+  var ow=$id(opsId);
+  if(ow&&newHead!==null){
+    var dn=dirName(dx,dy);
+    var popRow=ate
+      ? '<div class="ls-op-row ls-skip"><span class="ls-badge lb-pop">POP</span><div class="ls-op-text"><s>snake.pop()</s> <span class="ls-note">← skipped — snake grows! 🎉</span></div></div>'
+      : '<div class="ls-op-row"><span class="ls-badge lb-pop">POP</span><div class="ls-op-text"><span class="rd">snake.pop()</span> <span class="ls-note">← remove tail</span></div></div>';
+    ow.innerHTML=
+      '<div class="ls-op-row"><span class="ls-badge lb-dir">DIR</span><div class="ls-op-text"><span class="yw">new_head</span> = ('+newHead[0]+','+newHead[1]+') <span class="ls-note">← moving '+dn+'</span></div></div>'+
+      '<div class="ls-op-row"><span class="ls-badge lb-ins">INSERT</span><div class="ls-op-text"><span class="gr">snake.insert(0, new_head)</span>'+(ate?' <span class="yw">🍎 ate food!</span>':'')+'</div></div>'+
+      popRow;
+  } else if(ow) {
+    ow.innerHTML='<div class="ls-op-row" style="color:rgba(255,255,255,.35)"><span class="ls-badge" style="background:rgba(255,255,255,.07);color:rgba(255,255,255,.3);border-color:rgba(255,255,255,.1)">···</span><div>Operations show here when snake moves</div></div>';
+  }
+  // key
+  var kw=$id(keyId);
+  if(kw&&newHead!==null){
+    if(dead){kw.innerHTML='💀 <b>Game over!</b> Snake hit a wall or itself.';}
+    else if(ate){kw.innerHTML='🍎 <b>Ate food!</b> <code>insert(0,…)</code> adds new head. <code>pop()</code> is <b>skipped</b> — list grows by 1. New length: <b>'+snake.length+'</b>';}
+    else{kw.innerHTML='💡 <b>Key:</b> Each cell ends up at the position the cell <em>ahead</em> of it used to be. No cell coordinates actually change — only the list grows shorter at the tail.';}
+  }
+}
+
+/* ═══════════ AUTO MODE ═══════════ */
+var aSnake,aFood,aFrames=[],aIdx=0,aTimer=null,aRunning=false,aIvl=700;
+// planned food spots to guarantee 3 eats on the scripted path
+var AFOODS=[[7,2],[4,6],[2,3]];
+var aFoodI=0;
+
+function aBuild(){
+  aFrames=[];
+  var snake=[[4,5],[3,5],[2,5]];  // start: 3 cells moving right, row 5
+  var food=[AFOODS[0][0],AFOODS[0][1]];
+  var fi=0;
+  // scripted moves designed to hit food at [7,2], [4,6], [2,3]
+  var moves=[
+    // right x3 → (5,5)(6,5)(7,5), then up x3 → (7,4)(7,3)(7,2) ← eat food[0]
+    [1,0],[1,0],[1,0],[0,-1],[0,-1],[0,-1],
+    // left x3 → (6,2)(5,2)(4,2), down x4 → (4,3)(4,4)(4,5)(4,6) ← eat food[1]
+    [-1,0],[-1,0],[-1,0],[0,1],[0,1],[0,1],[0,1],
+    // left x2 → (3,6)(2,6), up x3 → (2,5)(2,4)(2,3) ← eat food[2]
+    [-1,0],[-1,0],[0,-1],[0,-1],[0,-1],
+    // right x4 → (3,3)(4,3)(5,3)(6,3), down x2 → (6,4)(6,5)
+    [1,0],[1,0],[1,0],[1,0],[0,1],[0,1],
+    // right x2 → (7,5)(8,5), up x2 → (8,4)(8,3)
+    [1,0],[1,0],[0,-1],[0,-1],
+    // left x3 → (7,3)(6,3)(5,3)
+    [-1,0],[-1,0],[-1,0]
+  ];
+  moves.forEach(function(m){
+    var h=snake[0];
+    var nc=h[0]+m[0],nr=h[1]+m[1];
+    // wrap for display variety
+    nc=((nc%GRID)+GRID)%GRID; nr=((nr%GRID)+GRID)%GRID;
+    var ate=(nc===food[0]&&nr===food[1]);
+    var newHead=[nc,nr];
+    var newSnake=[[nc,nr]].concat(snake.slice());
+    if(ate){
+      fi=(fi+1)%AFOODS.length;
+      food=[AFOODS[fi][0],AFOODS[fi][1]];
+      // find a spot not on snake
+      while(newSnake.some(function(s){return s[0]===food[0]&&s[1]===food[1];})){
+        fi=(fi+1)%AFOODS.length;food=[AFOODS[fi][0],AFOODS[fi][1]];
+      }
+    } else {
+      newSnake.pop();
+    }
+    aFrames.push({snake:newSnake,food:[food[0],food[1]],dx:m[0],dy:m[1],nh:newHead,ate:ate});
+    snake=newSnake;
+  });
+}
+
+function aRender(){
+  if(aFrames.length===0)return;
+  if(aIdx>=aFrames.length)aIdx=0;
+  var f=aFrames[aIdx];
+  drawScene('s4v-ac',f.snake,f.food,false);
+  renderLS('s4v-acells','s4v-alen','s4v-aops','s4v-akey',f.snake,f.dx,f.dy,f.nh,f.ate,false);
+}
+
+function s4vPlayAuto(){
+  if(!inited)s4vInit();
+  aRunning=!aRunning;
+  $id('s4v-aplay').textContent=aRunning?'⏸ Pause':'▶ Play';
+  if(aRunning){aTimer=setInterval(function(){aIdx++;aRender();},aIvl);}
+  else{clearInterval(aTimer);aTimer=null;}
+}
+
+function s4vASpd(){
+  aIvl=[1400,700,350,180,80][parseInt($id('s4v-aspd').value)-1];
+  if(aRunning){clearInterval(aTimer);aTimer=setInterval(function(){aIdx++;aRender();},aIvl);}
+}
+
+function aReset(){
+  clearInterval(aTimer);aTimer=null;aRunning=false;
+  aBuild();aIdx=0;aRender();
+  $id('s4v-aplay').textContent='▶ Play';
+}
+
+/* ═══════════ PLAY MODE ═══════════ */
+var pSnake,pFood,pDx,pDy,pTimer=null,pRunning=false,pIvl=300,pLogN=0,pSeed=1234;
+
+function pRand(){pSeed=(pSeed*1664525+1013904223)&0x7fffffff;return pSeed;}
+function pNewFood(snake){
+  var c,r,tries=0;
+  do{c=pRand()%GRID;r=pRand()%GRID;tries++;}
+  while(tries<40&&snake.some(function(s){return s[0]===c&&s[1]===r;}));
+  return[c,r];
+}
+
+function pResetState(){
+  pSnake=[[4,5],[3,5],[2,5]];
+  pFood=[7,3];
+  pDx=1;pDy=0;
+  pSeed=1234;
+}
+
+function pRender(){
+  drawScene('s4v-pc',pSnake,pFood,false);
+  renderLS('s4v-pcells','s4v-plen','s4v-pops','s4v-pkey',pSnake,pDx,pDy,null,false,false);
+}
+
+function pAddLog(msg,cls){
+  var log=$id('s4v-plog');if(!log)return;
+  if(pLogN===0)log.innerHTML='';
+  var d=document.createElement('div');
+  d.className='s4v-le '+(cls||'');d.textContent=msg;
+  log.insertBefore(d,log.firstChild);
+  pLogN++;
+  var kids=log.querySelectorAll('.s4v-le');
+  if(kids.length>20)kids[kids.length-1].remove();
+}
+
+function pTick(){
+  if(!pRunning)return;
+  var head=pSnake[0];
+  var nc=head[0]+pDx,nr=head[1]+pDy;
+  // no wrap in play mode — wall collision ends game
+  if(nc<0||nc>=GRID||nr<0||nr>=GRID){
+    pRunning=false;clearInterval(pTimer);pTimer=null;
+    $id('s4v-pbtn').textContent='▶ Start';
+    drawScene('s4v-pc',pSnake,pFood,true);
+    var kw=$id('s4v-pkey');if(kw)kw.innerHTML='💀 <b>Wall hit!</b> Game over. Hit Reset to try again.';
+    pAddLog('WALL HIT at ('+nc+','+nr+') — game over','s4v-le ll-die');
+    return;
+  }
+  // self collision (after insert, check snake[1:])
+  var newSnake=[[nc,nr]].concat(pSnake.slice());
+  var ate=(nc===pFood[0]&&nr===pFood[1]);
+  if(!ate)newSnake.pop();
+  // self check on slice [1:]
+  var body=newSnake.slice(1);
+  if(body.some(function(s){return s[0]===nc&&s[1]===nr;})){
+    pRunning=false;clearInterval(pTimer);pTimer=null;
+    $id('s4v-pbtn').textContent='▶ Start';
+    drawScene('s4v-pc',pSnake,pFood,true);
+    var kw2=$id('s4v-pkey');if(kw2)kw2.innerHTML='💀 <b>Self hit!</b> Game over. Hit Reset to try again.';
+    pAddLog('SELF HIT at ('+nc+','+nr+') — game over','s4v-le ll-die');
+    return;
+  }
+  pSnake=newSnake;
+  if(ate){
+    pFood=pNewFood(pSnake);
+    pAddLog('insert(0,('+nc+','+nr+')) 🍎 ate! len='+pSnake.length,'s4v-le ll-ate');
+  } else {
+    pAddLog('insert(0,('+nc+','+nr+')) + pop → len='+pSnake.length,'s4v-le ll-ins');
+  }
+  drawScene('s4v-pc',pSnake,pFood,false);
+  renderLS('s4v-pcells','s4v-plen','s4v-pops','s4v-pkey',pSnake,pDx,pDy,[nc,nr],ate,false);
+}
+
+function s4vDir(dx,dy){
+  if(!inited)s4vInit();
+  if(mode!=='play')return;
+  // block 180° reverse
+  if(pSnake.length>1&&dx===-pDx&&dy===-pDy)return;
+  pDx=dx;pDy=dy;
+  if(!pRunning){
+    pRunning=true;
+    $id('s4v-pbtn').textContent='⏸ Pause';
+    pTimer=setInterval(pTick,pIvl);
+  }
+}
+
+function s4vPlayPlay(){
+  if(!inited)s4vInit();
+  pRunning=!pRunning;
+  $id('s4v-pbtn').textContent=pRunning?'⏸ Pause':'▶ Start';
+  if(pRunning){pTimer=setInterval(pTick,pIvl);}
+  else{clearInterval(pTimer);pTimer=null;}
+}
+
+function s4vPSpd(){
+  pIvl=[800,500,300,200,120,80,50,30][parseInt($id('s4v-pspd').value)-1];
+  if(pRunning){clearInterval(pTimer);pTimer=setInterval(pTick,pIvl);}
+}
+
+function s4vReset(){
+  clearInterval(pTimer);pTimer=null;pRunning=false;pLogN=0;
+  pResetState();
+  $id('s4v-pbtn').textContent='▶ Start';
+  $id('s4v-plog').innerHTML='<span style="color:rgba(255,255,255,.3)">Operations appear here as you move…</span>';
+  pRender();
+  var kw=$id('s4v-pkey');if(kw)kw.innerHTML='Use ⬆⬇◀▶ or keyboard arrows to move the snake.';
+  renderLS('s4v-pcells','s4v-plen','s4v-pops','s4v-pkey',pSnake,1,0,null,false,false);
+}
+
+/* ─── shared ─── */
+function s4vInit(){
+  inited=true;
+  aReset();
+  pResetState();
+  pRender();
+  renderLS('s4v-pcells','s4v-plen','s4v-pops','s4v-pkey',pSnake,1,0,null,false,false);
+  document.addEventListener('keydown',function(e){
+    if(mode!=='play')return;
+    var map={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]};
+    var d=map[e.key];
+    if(d){e.preventDefault();s4vDir(d[0],d[1]);}
+  });
+}
+
+function s4vMode(m){
+  if(!inited)s4vInit();
+  mode=m;
+  $id('s4v-ta').classList.toggle('s4v-on',m==='auto');
+  $id('s4v-tp').classList.toggle('s4v-on',m==='play');
+  $id('s4v-auto').classList.toggle('s4v-show',m==='auto');
+  $id('s4v-play').classList.toggle('s4v-show',m==='play');
+}
+window.s4vMode=s4vMode;
+window.s4vPlayAuto=s4vPlayAuto;
+window.s4vASpd=s4vASpd;
+window.s4vDir=s4vDir;
+window.s4vPlayPlay=s4vPlayPlay;
+window.s4vPSpd=s4vPSpd;
+window.s4vReset=s4vReset;
+
+// Lazy init when panel opens
+var panel=$id('s4anim-panel');
+if(panel){
+  new MutationObserver(function(muts){
+    muts.forEach(function(m){
+      if(m.attributeName==='style'&&panel.style.display!=='none'&&!inited){
+        setTimeout(s4vInit,40);
+      }
+    });
+  }).observe(panel,{attributes:true});
+}
+})();
+</script>
+  </div>
+</div>
+
+<h3>Why a list and not individual variables?</h3>
   <div class="grid2">
     <div class="mini"><h4>❌ Individual variables (bad)</h4>
       <pre style="font-size:12px;margin:4px 0;padding:8px;background:rgba(200,0,0,.07);border-radius:6px;overflow-x:auto">hx0,hy0 = 10,7  # head
