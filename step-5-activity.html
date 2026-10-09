@@ -21,13 +21,14 @@ section.hero{background:linear-gradient(135deg,var(--teal-dark) 0%,#063f3b 100%)
 .hero-title{font-size:clamp(22px,4vw,30px);font-weight:800;margin:0 0 8px;line-height:1.2}
 .hero-sub{font-size:15px;margin:0;opacity:.85;line-height:1.5}
 .tier-progress{display:flex;gap:0;margin:24px 0 0;overflow-x:auto;padding-bottom:4px}
-.tp-step{display:flex;align-items:center;gap:0}
-.tp-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:2px solid var(--border);background:var(--surface);color:var(--muted);flex-shrink:0;transition:all .3s}
-.tp-dot.done{background:var(--teal);border-color:var(--teal);color:#fff}
-.tp-dot.active{background:#f5a623;border-color:#f5a623;color:#fff}
-.tp-dot.locked{background:var(--surface);border-color:var(--border);color:var(--muted)}
-.tp-line{width:24px;height:2px;background:var(--border);flex-shrink:0;transition:background .3s}
-.tp-line.done{background:var(--teal)}
+.tier-progress{display:flex;align-items:center;margin-bottom:24px;padding:14px 0;overflow-x:auto}
+.tier-step{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:60px}
+.tier-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;background:var(--line);color:var(--muted);transition:background .3s,color .3s}
+.tier-step.active .tier-num{background:var(--teal);color:#fff}
+.tier-step.done .tier-num{background:var(--teal-dark);color:#fff}
+.tier-label{font-size:11px;font-weight:600;color:var(--muted);white-space:nowrap}
+.tier-connector{flex:1;min-width:14px;height:3px;background:var(--line);transition:background .3s;align-self:flex-start;margin-top:19px}
+.tier-connector.done{background:var(--teal)}.tp-line.done{background:var(--teal)}
 .tier-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:20px;transition:opacity .3s}
 .tier-card.tier-locked{opacity:.45;pointer-events:none}
 .tier-badge{display:inline-flex;align-items:center;gap:6px;background:var(--teal-light,#e0f7f5);color:var(--teal-dark);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:700;letter-spacing:.04em;margin-bottom:10px}
@@ -99,16 +100,15 @@ section.hero{background:linear-gradient(135deg,var(--teal-dark) 0%,#063f3b 100%)
   </div>
 </header>
 
-<section class="hero">
-  <div class="container" style="padding-top:32px;padding-bottom:32px">
-    <span class="step-badge">Step 5 of 10</span>
-    <h1 class="hero-title">Bonus Food &#x1F31F;</h1>
-    <p class="hero-sub">Use <code>for</code> loops and <code>range()</code> to spawn multiple bonus food items.<br>
-       Iterate with <code>enumerate()</code> and keep lists clean with the filter pattern.</p>
-    <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
-      <a class="btn btn-outline" href="step-4-activity.html" style="color:#fff;border-color:rgba(255,255,255,.4)">&#x2190; Step 4</a>
-      <a class="btn" href="step-5.html" style="background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.3)">Concept Notes</a>
-      <a class="btn" href="step-6-activity.html" style="background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.3)">Step 6 &#x2192;</a>
+<section class="hero" style="padding:32px 0 24px">
+  <div class="container">
+    <div class="step-badge">Step 5 — Activity</div>
+    <h1 class="hero-title">Bonus Food 🌟</h1>
+    <p class="hero-sub">for loops · range() · enumerate() · list comprehension · filter pattern</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+      <a class="btn btn-outline" href="step-5.html">📖 Concept Page</a>
+      <a class="btn btn-outline" href="step-4-activity.html">← Step 4</a>
+      <a class="btn" href="step-6-activity.html">Step 6 →</a>
     </div>
   </div>
 </section>
@@ -116,20 +116,20 @@ section.hero{background:linear-gradient(135deg,var(--teal-dark) 0%,#063f3b 100%)
 <div class="container">
 <div class="main-content">
 
-<div class="tier-progress" role="list">
-  <div class="tp-step"><div class="tp-dot locked" id="tp0" role="listitem">0</div></div>
-  <div class="tp-line" id="tc01"></div>
-  <div class="tp-step"><div class="tp-dot locked" id="tp1" role="listitem">T1</div></div>
-  <div class="tp-line" id="tc12"></div>
-  <div class="tp-step"><div class="tp-dot locked" id="tp2" role="listitem">T2</div></div>
-  <div class="tp-line" id="tc23"></div>
-  <div class="tp-step"><div class="tp-dot locked" id="tp3" role="listitem">T3</div></div>
-  <div class="tp-line" id="tc34"></div>
-  <div class="tp-step"><div class="tp-dot locked" id="tp4" role="listitem">T4</div></div>
-  <div class="tp-line" id="tc4c"></div>
-  <div class="tp-step"><div class="tp-dot locked" id="tpc" role="listitem">&#x2713;</div></div>
-  <div class="tp-line" id="tccj"></div>
-  <div class="tp-step"><div class="tp-dot locked" id="tpj" role="listitem">&#x1F4D3;</div></div>
+<div class="tier-progress" id="tierProgress">
+  <div class="tier-step active" id="tp0"><span class="tier-num">🎯</span><span class="tier-label">Calibrate</span></div>
+  <div class="tier-connector" id="tc01"></div>
+  <div class="tier-step locked" id="tp1"><span class="tier-num">1</span><span class="tier-label">Fill-in</span></div>
+  <div class="tier-connector" id="tc12"></div>
+  <div class="tier-step locked" id="tp2"><span class="tier-num">2</span><span class="tier-label">Debug</span></div>
+  <div class="tier-connector" id="tc23"></div>
+  <div class="tier-step locked" id="tp3"><span class="tier-num">3</span><span class="tier-label">Extend</span></div>
+  <div class="tier-connector" id="tc34"></div>
+  <div class="tier-step locked" id="tp4"><span class="tier-num">4</span><span class="tier-label">Create</span></div>
+  <div class="tier-connector" id="tc4c"></div>
+  <div class="tier-step locked" id="tpc"><span class="tier-num">🧠</span><span class="tier-label">Check</span></div>
+  <div class="tier-connector" id="tccj"></div>
+  <div class="tier-step locked" id="tpj"><span class="tier-num">📓</span><span class="tier-label">Journal</span></div>
 </div>
 
 <!-- CALIBRATION GATE -->
