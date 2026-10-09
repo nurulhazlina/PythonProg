@@ -491,7 +491,7 @@ if not ate_food:
   <div class="refl-gate-body">
     <div id="concept-check-wrap">
       <div class="concept-check-inner">
-        <p class="concept-desc">Answer all 5 questions. Your <strong>first attempt is recorded</strong> for research. Pass ≥ 4/5 (80%) to unlock the journal — you can retry until you pass.</p>
+        <p class="concept-desc">Answer all 5 questions honestly. Your responses are recorded for research. Submit once to unlock the Reflective Journal.</p>
         <div class="concept-q" id="cq-0">
           <p class="concept-q-text"><strong>1.</strong> Which code correctly adds a new head to the <em>front</em> of the snake list?</p>
           <div class="concept-opts">
@@ -968,8 +968,7 @@ document.getElementById('t4-submit').addEventListener('click',function(){
    CONCEPT CHECK SUBMIT
 ═══════════════════════════════════════ */
 (function(){
-  var CQ_ANS=[1,1,2,1,2]; // correct answer indices for Q1-Q5
-  var conceptAttempts=0;
+  var CQ_ANS=[1,1,2,1,2]; // correct answer indices for Q1-Q5 (used for scoring only, not gating)
   document.getElementById('concept-submit').addEventListener('click',function(){
     var d=lmsGet();
     if(d.concept_step&&d.concept_step.submitted)return;
@@ -985,43 +984,31 @@ document.getElementById('t4-submit').addEventListener('click',function(){
       if(parseInt(sel.value)===CQ_ANS[i]){
         correct++;
         fb.className='concept-feedback correct';
-        fb.textContent='✓ Correct!';
+        fb.textContent='✓ Correct';
       } else {
         fb.className='concept-feedback incorrect';
-        fb.textContent='✗ Not quite — try again!';
+        fb.textContent='✗ Incorrect';
       }
     }
     if(!allAnswered){
       showFeedback('concept-feedback','Please answer all 5 questions before submitting.','error');
       return;
     }
-    conceptAttempts++;
     var pct=Math.round(correct/5*100);
-    var passed=(correct>=4);
-    // Always record FIRST attempt for research measurement
-    if(conceptAttempts===1){
-      d.concept_first_answers={answers:answers,correct:correct,pct:pct,ts:Date.now()};
-      lmsLog('concept_first_attempt',{answers:answers,correct:correct,pct:pct});
-    }
-    if(passed){
-      d.concept_step={answers:answers,correct:correct,score_pct:pct,submitted:true,attempts:conceptAttempts,ts:Date.now()};
-      lmsSet(d);
-      lmsLog('concept_passed',{pct:pct,attempts:conceptAttempts});
-      showFeedback('concept-feedback',correct+'/5 correct ('+pct+'%) — Passed! 🎉 The Reflective Journal is now unlocked.','success');
-      document.getElementById('concept-submit').disabled=true;
-      document.getElementById('tpc').classList.remove('active');document.getElementById('tpc').classList.add('done');
-      document.getElementById('tccj').classList.add('done');
-      unlockTier('J');
-      document.getElementById('tj-submit').disabled=false;
-      setTimeout(function(){document.getElementById('tierJ').scrollIntoView({behavior:'smooth',block:'nearest'});},300);
-    } else {
-      d.concept_step=d.concept_step||{};
-      d.concept_step.attempts=conceptAttempts;
-      d.concept_step.last_answers=answers;
-      d.concept_step.last_pct=pct;
-      lmsSet(d);
-      showFeedback('concept-feedback',correct+'/5 ('+pct+'%) — need 4/5 to pass. Review and try again!','error');
-    }
+    // Record answers for research — one attempt, genuine response
+    d.concept_first_answers={answers:answers,correct:correct,pct:pct,ts:Date.now()};
+    d.concept_step={answers:answers,correct:correct,score_pct:pct,submitted:true,attempts:1,ts:Date.now()};
+    lmsSet(d);
+    lmsLog('concept_submitted',{answers:answers,correct:correct,pct:pct});
+    showFeedback('concept-feedback','Submitted! You got '+correct+'/5 — the Reflective Journal is now unlocked. 📖','success');
+    document.getElementById('concept-submit').disabled=true;
+    // Disable all radio buttons so answers can't be changed after submit
+    document.querySelectorAll('.concept-opts input[type=radio]').forEach(function(r){r.disabled=true;});
+    document.getElementById('tpc').classList.remove('active');document.getElementById('tpc').classList.add('done');
+    document.getElementById('tccj').classList.add('done');
+    unlockTier('J');
+    document.getElementById('tj-submit').disabled=false;
+    setTimeout(function(){document.getElementById('tierJ').scrollIntoView({behavior:'smooth',block:'nearest'});},300);
   });
 })();
 
@@ -1243,13 +1230,31 @@ function sendActivityRecord(stepNum){
       refl2_text:(d.reflection_2||{}).text||'',
       t3_attempts:d.t3_submitted?d.t3_submitted.attempts:'',
       t4_attempts:d.t4_submitted?d.t4_submitted.attempts:'',
-      concept_first_answers:d.concept_first_answers?JSON.stringify(d.concept_first_answers.answers):'',
       concept_first_correct:d.concept_first_answers?d.concept_first_answers.correct:'',
       concept_first_pct:d.concept_first_answers?d.concept_first_answers.pct:'',
-      concept_answers:cs.answers?JSON.stringify(cs.answers):'',
+      concept_first_q1_an:d.concept_first_answers&&d.concept_first_answers.answers?d.concept_first_answers.answers[0]:'',
+      concept_first_q1_co:d.concept_first_answers&&d.concept_first_answers.answers?(d.concept_first_answers.answers[0]===1?1:0):'',
+      concept_first_q2_an:d.concept_first_answers&&d.concept_first_answers.answers?d.concept_first_answers.answers[1]:'',
+      concept_first_q2_co:d.concept_first_answers&&d.concept_first_answers.answers?(d.concept_first_answers.answers[1]===1?1:0):'',
+      concept_first_q3_an:d.concept_first_answers&&d.concept_first_answers.answers?d.concept_first_answers.answers[2]:'',
+      concept_first_q3_co:d.concept_first_answers&&d.concept_first_answers.answers?(d.concept_first_answers.answers[2]===2?1:0):'',
+      concept_first_q4_an:d.concept_first_answers&&d.concept_first_answers.answers?d.concept_first_answers.answers[3]:'',
+      concept_first_q4_co:d.concept_first_answers&&d.concept_first_answers.answers?(d.concept_first_answers.answers[3]===1?1:0):'',
+      concept_first_q5_an:d.concept_first_answers&&d.concept_first_answers.answers?d.concept_first_answers.answers[4]:'',
+      concept_first_q5_co:d.concept_first_answers&&d.concept_first_answers.answers?(d.concept_first_answers.answers[4]===2?1:0):'',
       concept_score_pct:cs.score_pct!==undefined?cs.score_pct:'',
       concept_passed:cs.submitted?1:0,
       concept_attempts:cs.attempts||'',
+      concept_q1_an:cs.answers?cs.answers[0]:'',
+      concept_q1_co:cs.answers?(cs.answers[0]===1?1:0):'',
+      concept_q2_an:cs.answers?cs.answers[1]:'',
+      concept_q2_co:cs.answers?(cs.answers[1]===1?1:0):'',
+      concept_q3_an:cs.answers?cs.answers[2]:'',
+      concept_q3_co:cs.answers?(cs.answers[2]===2?1:0):'',
+      concept_q4_an:cs.answers?cs.answers[3]:'',
+      concept_q4_co:cs.answers?(cs.answers[3]===1?1:0):'',
+      concept_q5_an:cs.answers?cs.answers[4]:'',
+      concept_q5_co:cs.answers?(cs.answers[4]===2?1:0):'',
       jr1:jv('jr1'),jr2:jv('jr2'),jr3:jv('jr3'),jr4:jv('jr4'),jr5:jv('jr5'),
       post_confidence:pc.post_confidence||'',
       post_actual:pc.actual_pct||'',
