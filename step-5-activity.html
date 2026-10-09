@@ -78,6 +78,29 @@ section.hero{background:linear-gradient(135deg,var(--teal-dark) 0%,#063f3b 100%)
 #export-panel{background:#fff8e1;border:1px solid #ffc107;border-radius:8px;padding:16px;margin:20px 0;display:none}
 #step-complete-banner{display:none;background:linear-gradient(135deg,var(--teal-dark),var(--teal));color:#fff;border-radius:12px;padding:28px;text-align:center;margin-top:24px}
 #step-complete-banner h2{font-size:22px;margin-bottom:8px}
+.id-block{background:linear-gradient(135deg,#08312F,#0a3d39);border-radius:12px;padding:20px 22px;margin-bottom:22px;border:2px solid rgba(2,173,165,.3)}
+.id-block.id-confirmed{border-color:#02ADA5;background:linear-gradient(135deg,#052e16,#073d2e)}
+.id-block-title{font-weight:800;font-size:15px;color:#fff;display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.id-required-badge{background:#02ADA5;color:#fff;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;letter-spacing:.05em;flex-shrink:0}
+.id-subtitle{font-weight:400;font-size:13px;color:rgba(255,255,255,.6)}
+.id-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px 12px;align-items:end}
+.id-field{display:flex;flex-direction:column;gap:5px}
+.id-field.id-w2{grid-column:span 2}
+.id-field label{font-size:11px;font-weight:700;color:rgba(255,255,255,.65);letter-spacing:.06em;text-transform:uppercase}
+.id-req{color:#f5a21d;margin-left:2px}
+.id-field input,.id-field select{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);border-radius:7px;padding:9px 12px;color:#fff;font-size:13px;font-family:inherit;width:100%;box-sizing:border-box;transition:border-color .2s}
+.id-field select{cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,.5)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.id-field select option{background:#0a3d39;color:#fff}
+.id-field input:focus,.id-field select:focus{outline:none;border-color:#02ADA5;background:rgba(2,173,165,.12)}
+.id-field input::placeholder{color:rgba(255,255,255,.3)}
+.id-save-btn{background:#02ADA5;color:#fff;border:none;border-radius:8px;padding:11px 22px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;transition:opacity .2s;width:100%;margin-top:14px}
+.id-save-btn:hover{opacity:.88}
+.id-confirmed-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.id-confirmed-name{font-weight:700;font-size:16px;color:#fff}
+.id-confirmed-meta{color:rgba(255,255,255,.65);font-size:13px}
+.id-edit-btn{background:transparent;border:1.5px solid rgba(255,255,255,.35);color:rgba(255,255,255,.75);border-radius:6px;padding:5px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+.id-edit-btn:hover{border-color:#fff;color:#fff}
+.id-notice{background:rgba(245,162,29,.12);border:1.5px solid rgba(245,162,29,.45);border-radius:8px;padding:9px 14px;color:#f5a21d;font-size:13px;font-weight:600;margin-top:12px;display:none}
 </style>
 </head>
 <body>
@@ -130,6 +153,84 @@ section.hero{background:linear-gradient(135deg,var(--teal-dark) 0%,#063f3b 100%)
   <div class="tier-step locked" id="tpc"><span class="tier-num">🧠</span><span class="tier-label">Check</span></div>
   <div class="tier-connector" id="tccj"></div>
   <div class="tier-step locked" id="tpj"><span class="tier-num">📓</span><span class="tier-label">Journal</span></div>
+</div>
+
+<!-- ── STUDENT IDENTITY ── -->
+<div class="id-block" id="idBlock">
+  <div class="id-block-title">
+    &#x1F464; Your Details
+    <span class="id-required-badge">REQUIRED</span>
+    <span class="id-subtitle">&#8212; fill in before you begin (<span style="color:#f5a21d">&#9733;</span> = required)</span>
+  </div>
+  <div id="idForm">
+    <div class="id-grid">
+      <div class="id-field id-w2">
+        <label>Full Name <span class="id-req">&#9733;</span></label>
+        <input type="text" id="id-name" placeholder="Ahmad bin Ali" autocomplete="name">
+      </div>
+      <div class="id-field">
+        <label>Matric No. <span class="id-req">&#9733;</span></label>
+        <input type="text" id="id-matric" placeholder="RE25001" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>Class <span class="id-req">&#9733;</span></label>
+        <input type="text" id="id-class" placeholder="01A" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>Gender <span class="id-req">&#9733;</span></label>
+        <select id="id-gender">
+          <option value="">-- select --</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Prefer not to say</option>
+        </select>
+      </div>
+      <div class="id-field">
+        <label>Age <span class="id-req">&#9733;</span></label>
+        <input type="number" id="id-age" min="10" max="30" placeholder="e.g. 19" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>Home State</label>
+        <select id="id-state">
+          <option value="">-- select --</option>
+          <option>Johor</option><option>Kedah</option><option>Kelantan</option>
+          <option>Melaka</option><option>Negeri Sembilan</option><option>Pahang</option>
+          <option>Perak</option><option>Perlis</option><option>Pulau Pinang</option>
+          <option>Sabah</option><option>Sarawak</option><option>Selangor</option>
+          <option>Terengganu</option><option>Kuala Lumpur</option><option>Labuan</option>
+          <option>Putrajaya</option>
+        </select>
+      </div>
+      <div class="id-field id-w2">
+        <label>IC / MyKid No.</label>
+        <input type="text" id="id-mykid" placeholder="e.g. 050101-01-1234" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>School Code</label>
+        <input type="text" id="id-school" placeholder="e.g. JBA0001" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>Phone</label>
+        <input type="tel" id="id-phone" placeholder="0123456789" autocomplete="tel">
+      </div>
+      <div class="id-field id-w2">
+        <label>Email</label>
+        <input type="email" id="id-email" placeholder="name@example.com" autocomplete="email">
+      </div>
+    </div>
+    <div class="id-notice" id="idNotice"></div>
+    <button class="id-save-btn" onclick="saveIdentity()">&#10003; Confirm My Details</button>
+  </div>
+  <div id="idConfirmed" style="display:none">
+    <div class="id-confirmed-row">
+      <span style="font-size:20px">&#9989;</span>
+      <div>
+        <div class="id-confirmed-name" id="idConfName"></div>
+        <div class="id-confirmed-meta" id="idConfMeta"></div>
+      </div>
+      <button class="id-edit-btn" onclick="editIdentity()">Edit</button>
+    </div>
+  </div>
 </div>
 
 <!-- CALIBRATION GATE -->
