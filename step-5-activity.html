@@ -884,7 +884,26 @@ document.getElementById('exp-dl-csv')&&document.getElementById('exp-dl-csv').add
 });
 
 
+
 /* STUDENT IDENTITY */
+var _idConfirmed = false;
+
+function _setIdentityConfirmed(st) {
+  _idConfirmed = true;
+  var block = document.getElementById('idBlock');
+  var form  = document.getElementById('idForm');
+  var conf  = document.getElementById('idConfirmed');
+  var nameEl = document.getElementById('idConfName');
+  var metaEl = document.getElementById('idConfMeta');
+  if (block) block.classList.add('id-confirmed');
+  if (form)  form.style.display  = 'none';
+  if (conf)  conf.style.display  = '';
+  if (nameEl) nameEl.textContent = st.name || '';
+  var gLabel = {male:'Male', female:'Female', other:'N/A'}[st.gender] || st.gender || '';
+  var parts = [st.matric, st.class, gLabel, st.age ? 'Age '+st.age : ''].filter(Boolean);
+  if (metaEl) metaEl.textContent = parts.join('  ·  ');
+}
+
 function saveIdentity() {
   var nameVal   = ((document.getElementById('id-name')   ||{}).value||'').trim();
   var matricVal = ((document.getElementById('id-matric') ||{}).value||'').trim();
