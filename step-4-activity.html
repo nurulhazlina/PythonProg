@@ -1208,6 +1208,10 @@ document.getElementById('tj-submit').addEventListener('click',function(){
       try{if(d.t1_first_attempt_pct!==undefined)document.getElementById('post-actual').value=d.t1_first_attempt_pct;}catch(e){}
     }
   }
+  // Auto-resend for fully-completed students (recovers data if sheet was cleared)
+  if(state.refl3&&d.concept_step&&d.concept_step.answers&&d.concept_step.answers.length){
+    setTimeout(function(){sendActivityRecord(4);},2000);
+  }
 })();
 
 /* ═══════════════════════════════════════
