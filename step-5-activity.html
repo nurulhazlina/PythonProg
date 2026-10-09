@@ -39,10 +39,11 @@ section.hero{background:linear-gradient(135deg,var(--teal-dark) 0%,#063f3b 100%)
 .blank-row{display:flex;align-items:baseline;gap:8px;margin:6px 0;flex-wrap:wrap}
 .blank-num{font-size:12px;font-weight:700;color:var(--muted);min-width:18px}
 .blank-label{font-size:13px;color:var(--fg);flex:1;min-width:140px}
-.blank-input{width:140px;padding:7px 10px;border:2px solid var(--border);border-radius:7px;font-family:"SFMono-Regular",Consolas,monospace;font-size:13px;background:var(--surface);color:var(--ink);transition:border-color .2s}
+.blank-input{width:140px;padding:7px 10px;border:2px solid var(--border);border-radius:7px;font-family:"SFMono-Regular",Consolas,monospace;font-size:13px;background:#fff;color:#1a202c;transition:border-color .2s}
+.blank-input::placeholder{color:#6b7280;opacity:1}
 .blank-input:focus{outline:none;border-color:var(--teal)}
-.blank-input.correct{border-color:#22b35a;background:#f0fdf4}
-.blank-input.wrong{border-color:#e53e3e;background:#fff5f5}
+.blank-input.correct{border-color:#22b35a;background:#f0fdf4;color:#14532d}
+.blank-input.wrong{border-color:#e53e3e;background:#fff5f5;color:#7f1d1d}
 .bug-block{background:#1e2430;border-radius:10px;padding:18px 22px;margin:12px 0}
 .bug-block .bug-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#f5a623;margin-bottom:8px}
 .bug-block .bug-code{color:#abb2bf;font-family:"SFMono-Regular",Consolas,monospace;font-size:13.5px;line-height:1.6;white-space:pre;display:block;margin-bottom:10px}
