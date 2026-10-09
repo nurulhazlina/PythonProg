@@ -1216,6 +1216,8 @@ function sendActivityRecord(stepNum){
     var d=lmsGet();
     var cal=d.cal||{};var cs=d.concept_step||{};var pc=d.post_cal||{};
     function jv(id){var el=document.getElementById(id);if(el&&el.value)return el.value;return (d.tj_submitted&&d.tj_submitted.responses&&d.tj_submitted.responses[id])?d.tj_submitted.responses[id]:'';}
+    // concept answers: prefer concept_step.answers, fall back to concept_first_answers.answers
+    var cqa=(cs.answers&&cs.answers.length)?cs.answers:((d.concept_first_answers&&d.concept_first_answers.answers)?d.concept_first_answers.answers:[]);
     var payload={
       type:'act_'+stepNum,
       matric:st.matric||'',name:st.name||'',class:st.class||'',gender:st.gender||'',
@@ -1245,16 +1247,16 @@ function sendActivityRecord(stepNum){
       concept_score_pct:cs.score_pct!==undefined?cs.score_pct:'',
       concept_passed:cs.submitted?1:0,
       concept_attempts:cs.attempts||'',
-      concept_q1_an:cs.answers?cs.answers[0]:'',
-      concept_q1_co:cs.answers?(cs.answers[0]===1?1:0):'',
-      concept_q2_an:cs.answers?cs.answers[1]:'',
-      concept_q2_co:cs.answers?(cs.answers[1]===1?1:0):'',
-      concept_q3_an:cs.answers?cs.answers[2]:'',
-      concept_q3_co:cs.answers?(cs.answers[2]===2?1:0):'',
-      concept_q4_an:cs.answers?cs.answers[3]:'',
-      concept_q4_co:cs.answers?(cs.answers[3]===1?1:0):'',
-      concept_q5_an:cs.answers?cs.answers[4]:'',
-      concept_q5_co:cs.answers?(cs.answers[4]===2?1:0):'',
+      concept_q1_an:cqa.length>0?cqa[0]:'',
+      concept_q1_co:cqa.length>0?(cqa[0]===1?1:0):'',
+      concept_q2_an:cqa.length>1?cqa[1]:'',
+      concept_q2_co:cqa.length>1?(cqa[1]===1?1:0):'',
+      concept_q3_an:cqa.length>2?cqa[2]:'',
+      concept_q3_co:cqa.length>2?(cqa[2]===2?1:0):'',
+      concept_q4_an:cqa.length>3?cqa[3]:'',
+      concept_q4_co:cqa.length>3?(cqa[3]===1?1:0):'',
+      concept_q5_an:cqa.length>4?cqa[4]:'',
+      concept_q5_co:cqa.length>4?(cqa[4]===2?1:0):'',
       jr1:jv('jr1'),jr2:jv('jr2'),jr3:jv('jr3'),jr4:jv('jr4'),jr5:jv('jr5'),
       post_confidence:pc.post_confidence||'',
       post_actual:pc.actual_pct||'',
