@@ -999,6 +999,7 @@ document.getElementById('t4-submit').addEventListener('click',function(){
     d.concept_first_answers={answers:answers,correct:correct,pct:pct,ts:Date.now()};
     d.concept_step={answers:answers,correct:correct,score_pct:pct,submitted:true,attempts:1,ts:Date.now()};
     lmsSet(d);
+    if(state.refl3){sendActivityRecord(4);}
     lmsLog('concept_submitted',{answers:answers,correct:correct,pct:pct});
     showFeedback('concept-feedback','Submitted! You got '+correct+'/5 — the Reflective Journal is now unlocked. 📖','success');
     document.getElementById('concept-submit').disabled=true;
@@ -1166,10 +1167,14 @@ document.getElementById('tj-submit').addEventListener('click',function(){
     var cgc=document.getElementById('concept-check-gate');
     cgc.classList.remove('tier-locked');cgc.removeAttribute('aria-disabled');
     if(d.concept_step&&d.concept_step.submitted){
-      document.getElementById('concept-submit').disabled=true;
+      if(d.concept_step.answers&&d.concept_step.answers.length){
+        document.getElementById('concept-submit').disabled=true;
+        showFeedback('concept-feedback','Concept Check passed ('+d.concept_step.score_pct+'%).','success');
+      } else {
+        showFeedback('concept-feedback','⚠ Please re-answer the 5 questions above — your previous answers were not recorded. Re-answering will resend your data automatically.','error');
+      }
       document.getElementById('tpc').classList.remove('active');document.getElementById('tpc').classList.add('done');
       document.getElementById('tccj').classList.add('done');
-      showFeedback('concept-feedback','Concept Check passed ('+d.concept_step.score_pct+'%).','success');
       unlockTier('J');document.getElementById('tj-submit').disabled=false;
     }
   }
