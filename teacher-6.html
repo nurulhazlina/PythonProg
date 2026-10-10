@@ -279,36 +279,64 @@ while running:
   <div class="t-section">
     <h2><span class="sec-icon">&#128290;</span> Activity Answers (step-6-activity.html)</h2>
 
-    <h3>Tier 1 &#8212; Check Understanding</h3>
+    <h3>Tier 1 &#8212; Fill in the Blanks</h3>
+    <p>Students complete 6 blanks in the <code>draw_snake</code> / <code>is_alive</code> code fragment. Answer key:</p>
     <table class="t-table">
-      <thead><tr><th>Question</th><th>Model Answer</th></tr></thead>
+      <thead><tr><th style="width:10%">Blank</th><th style="width:30%">Answer</th><th>Why</th></tr></thead>
       <tbody>
         <tr>
-          <td>What keyword defines a function in Python?</td>
-          <td><code>def</code></td>
+          <td>1</td>
+          <td><code>draw_snake</code></td>
+          <td>The function name &#8212; draws every segment of the snake onto the surface.</td>
         </tr>
         <tr>
-          <td>What is the DRY principle?</td>
-          <td>Don&#8217;t Repeat Yourself &#8212; if you write the same code more than once, put it in a function.</td>
+          <td>2</td>
+          <td><code>enumerate</code></td>
+          <td>Built-in that returns <code>(index, value)</code> pairs; lets us check <code>i == 0</code> for the head.</td>
         </tr>
         <tr>
-          <td>Difference between parameter and argument?</td>
-          <td>Parameter = name in the definition (placeholder); argument = actual value passed at the call.</td>
+          <td>3</td>
+          <td><code>0</code></td>
+          <td>Index of the head segment; <code>i == 0</code> selects <code>DKGREEN</code> for the head colour.</td>
         </tr>
         <tr>
-          <td>What does <code>enumerate(snake)</code> return?</td>
-          <td>Pairs of (index, value) for each item &#8212; e.g. <code>(0, (10, 7))</code>, <code>(1, (9, 7))</code>.</td>
+          <td>4</td>
+          <td><code>surface</code></td>
+          <td>First parameter of <code>draw_snake</code> &#8212; the Pygame surface to draw on.</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><code>draw_snake</code></td>
+          <td>Calling the function &#8212; defines above, then calls here to actually run it.</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><code>in</code></td>
+          <td>Python membership operator: <code>head in body[1:]</code> is <code>True</code> when head overlaps a body segment.</td>
         </tr>
       </tbody>
     </table>
+    <p><em>Score logged as percentage correct on first attempt (<code>t1_score_pct</code>).</em></p>
 
-    <h3>Tier 2 &#8212; Fix the Bug</h3>
+    <h3>Tier 2 &#8212; Fix the Bugs (3 bugs)</h3>
     <div class="answer-card">
-      <div class="answer-label">Bug</div>
-      <p><code>def draw_snake(snake):</code> (missing <code>surface</code> parameter), then <code>draw_snake(screen, snake)</code> at call site.</p>
+      <div class="answer-label">Bug 1</div>
+      <p><strong>Buggy:</strong> <code>def draw_food(food_x, food_y):</code></p>
+      <p><strong>Error:</strong> <code>TypeError: draw_food() takes 2 positional arguments but 3 were given</code></p>
+      <p><strong>Fix:</strong> <code>def draw_food(surface, food_x, food_y):</code> &#8212; surface parameter was missing.</p>
     </div>
-    <p><strong>Error:</strong> <code>TypeError: draw_snake() takes 1 positional argument but 2 were given</code></p>
-    <p><strong>Fix:</strong> <code>def draw_snake(surface, snake):</code></p>
+    <div class="answer-card">
+      <div class="answer-label">Bug 2</div>
+      <p><strong>Buggy:</strong> <code>print(hx &lt; 0 or hx &gt;= GRID_COLS or hy &lt; 0 or hy &gt;= GRID_ROWS)</code></p>
+      <p><strong>Error:</strong> Prints to terminal instead of returning; caller always receives <code>None</code>.</p>
+      <p><strong>Fix:</strong> <code>return hx &lt; 0 or hx &gt;= GRID_COLS or hy &lt; 0 or hy &gt;= GRID_ROWS</code></p>
+    </div>
+    <div class="answer-card">
+      <div class="answer-label">Bug 3</div>
+      <p><strong>Buggy:</strong> <code>def show_score(surface, score)</code> (missing colon)</p>
+      <p><strong>Error:</strong> <code>SyntaxError: expected ':'</code></p>
+      <p><strong>Fix:</strong> <code>def show_score(surface, score):</code></p>
+    </div>
 
     <h3>Tier 3 &#8212; Extend</h3>
     <p>Add <code>draw_score(surface, score)</code> that renders the score as text.</p>
