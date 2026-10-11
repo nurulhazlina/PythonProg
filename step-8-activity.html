@@ -299,12 +299,12 @@ def save_high_score(score):
             f.write(str(score))
         return True
     return False</div>
-    <div class="blank-row"><span class="blank-num">1</span><span class="blank-label">open(SCORE_FILE, "___") as f  — file mode for reading</span><input class="blank-input" id="t1b1" placeholder='e.g. "r"'></div>
-    <div class="blank-row"><span class="blank-num">2</span><span class="blank-label">return ___(f.read().strip())  — convert string to integer</span><input class="blank-input" id="t1b2" placeholder="e.g. int"></div>
-    <div class="blank-row"><span class="blank-num">3</span><span class="blank-label">except FileNotFoundError: return ___  — default score if no file</span><input class="blank-input" id="t1b3" placeholder="e.g. 0"></div>
-    <div class="blank-row"><span class="blank-num">4</span><span class="blank-label">best = ___()  — call the function that loads the score</span><input class="blank-input" id="t1b4" placeholder="e.g. load_high_score"></div>
-    <div class="blank-row"><span class="blank-num">5</span><span class="blank-label">if score ___ best  — only save if new score is higher</span><input class="blank-input" id="t1b5" placeholder="e.g. >"></div>
-    <div class="blank-row"><span class="blank-num">6</span><span class="blank-label">open(SCORE_FILE, "___") as f  — file mode for writing</span><input class="blank-input" id="t1b6" placeholder='e.g. "w"'></div>
+    <div class="blank-row"><span class="blank-num">1</span><span class="blank-label">open(SCORE_FILE, "___") as f  — file mode for reading</span><input class="blank-input" id="t1b1" placeholder="file mode string"></div>
+    <div class="blank-row"><span class="blank-num">2</span><span class="blank-label">return ___(f.read().strip())  — convert string to integer</span><input class="blank-input" id="t1b2" placeholder="built-in function"></div>
+    <div class="blank-row"><span class="blank-num">3</span><span class="blank-label">except FileNotFoundError: return ___  — default score if no file</span><input class="blank-input" id="t1b3" placeholder="a number"></div>
+    <div class="blank-row"><span class="blank-num">4</span><span class="blank-label">best = ___()  — call the function that loads the score</span><input class="blank-input" id="t1b4" placeholder="function name"></div>
+    <div class="blank-row"><span class="blank-num">5</span><span class="blank-label">if score ___ best  — only save if new score is higher</span><input class="blank-input" id="t1b5" placeholder="comparison operator"></div>
+    <div class="blank-row"><span class="blank-num">6</span><span class="blank-label">open(SCORE_FILE, "___") as f  — file mode for writing</span><input class="blank-input" id="t1b6" placeholder="file mode string"></div>
     <br>
     <button class="tier-btn" id="t1-submit" disabled>Check Answers</button>
     <div id="t1-feedback" style="margin-top:10px"></div>
