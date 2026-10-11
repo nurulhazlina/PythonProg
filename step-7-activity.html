@@ -943,7 +943,6 @@ document.getElementById('refl3-submit').addEventListener('click',function(){
   var postActual=document.getElementById('post-actual').value||'';
   var d=lmsGet();d.post_cal={post_confidence:postConf,actual_pct:postActual,r1:txt,ts:Date.now()};lmsSet(d);
   lmsLog('post_cal_submitted',{step:7,post_confidence:postConf,actual_pct:postActual});
-  sendActivityRecord(7);
   showFeedback('refl3-feedback','Saved! The Reflective Journal is now unlocked. 📖','success');
   document.getElementById('refl3-submit').disabled=true;
   unlockTier('J');document.getElementById('tj-submit').disabled=false;
