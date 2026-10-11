@@ -381,116 +381,174 @@ def update_leaderboard(name, score):
   <div class="t-section">
     <h2><span class="sec-icon">&#128290;</span> Activity Answers</h2>
 
-    <h3>Tier 1 &mdash; Check Understanding</h3>
+    <h3>Tier 1 &mdash; Fill in the Blanks</h3>
+    <p>Students complete two function skeletons: <code>load_high_score()</code> and <code>save_high_score(score)</code>. Six blanks in total.</p>
     <table class="t-table">
-      <thead><tr><th>Question</th><th>Accepted answer</th></tr></thead>
+      <thead><tr><th style="width:30%">Blank</th><th>Correct answer</th><th>Why</th></tr></thead>
       <tbody>
         <tr>
-          <td>What does <code>open(file, "w")</code> do if the file already exists?</td>
-          <td>Overwrites it completely &mdash; the old content is lost.</td>
+          <td>Blank 1 &mdash; file mode in <code>load_high_score</code></td>
+          <td><code>"r"</code></td>
+          <td>Reading an existing file requires read mode.</td>
         </tr>
         <tr>
-          <td>Why use <code>try / except FileNotFoundError</code>?</td>
-          <td>The file won&#39;t exist on the first run. Without the try/except, the program crashes immediately.</td>
+          <td>Blank 2 &mdash; wrapper around <code>f.read().strip()</code></td>
+          <td><code>int</code></td>
+          <td>The file stores the score as text; <code>int()</code> converts it to a number for comparison.</td>
         </tr>
         <tr>
-          <td>What does <code>.strip()</code> remove?</td>
-          <td>Whitespace at the start and end of a string &mdash; including spaces, tabs, and newlines (<code>
-</code>).</td>
+          <td>Blank 3 &mdash; return value in <code>except FileNotFoundError</code></td>
+          <td><code>0</code></td>
+          <td>First run: no file yet, so the default high score is 0.</td>
         </tr>
         <tr>
-          <td>What does the <code>f</code> in <code>f"Score: {score}"</code> do?</td>
-          <td>Creates an f-string &mdash; Python replaces <code>{score}</code> with the variable&#39;s value.</td>
+          <td>Blank 4 &mdash; function called at start of <code>save_high_score</code></td>
+          <td><code>load_high_score</code></td>
+          <td>Must fetch the current best before deciding whether to overwrite it.</td>
+        </tr>
+        <tr>
+          <td>Blank 5 &mdash; comparison operator</td>
+          <td><code>&gt;</code></td>
+          <td>Only save when the new score beats the previous best.</td>
+        </tr>
+        <tr>
+          <td>Blank 6 &mdash; file mode in <code>save_high_score</code></td>
+          <td><code>"w"</code></td>
+          <td>Write mode creates or overwrites the file with the new best score.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="codebox">
+      <button class="copybtn" type="button">Copy</button>
+      <pre><code>SCORE_FILE = "highscore.txt"
+
+def load_high_score():
+    try:
+        with open(SCORE_FILE, "r") as f:        # blank 1: "r"
+            return int(f.read().strip())        # blank 2: int
+    except FileNotFoundError:
+        return 0                                # blank 3: 0
+
+def save_high_score(score):
+    best = load_high_score()                    # blank 4: load_high_score
+    if score > best:                            # blank 5: >
+        with open(SCORE_FILE, "w") as f:        # blank 6: "w"
+            f.write(str(score))</code></pre>
+    </div>
+
+    <h3>Tier 2 &mdash; Fix the Bugs (3 bugs)</h3>
+    <table class="t-table">
+      <thead><tr><th style="width:8%">Bug</th><th>Buggy line</th><th>Fixed line</th><th>Explanation</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>1</strong></td>
+          <td><code>with open(SCORE_FILE, "a") as f:</code></td>
+          <td><code>with open(SCORE_FILE, "r") as f:</code></td>
+          <td>Mode <code>"a"</code> (append) opens for writing only, not reading. Used inside <code>load_high_score</code> it returns nothing readable. Must be <code>"r"</code>.</td>
+        </tr>
+        <tr>
+          <td><strong>2</strong></td>
+          <td><code>return f.read().strip()</code></td>
+          <td><code>return int(f.read().strip())</code></td>
+          <td>Without <code>int()</code>, the function returns a string like <code>'42'</code>. Comparing a string with <code>&gt;</code> to an integer causes a <code>TypeError</code>.</td>
+        </tr>
+        <tr>
+          <td><strong>3</strong></td>
+          <td><code>if score &lt; best:</code></td>
+          <td><code>if score &gt; best:</code></td>
+          <td>The logic is inverted: using <code>&lt;</code> saves the score only when it is <em>worse</em> than the record. Must use <code>&gt;</code> to overwrite only when beaten.</td>
         </tr>
       </tbody>
     </table>
 
-    <h3>Tier 2 &mdash; Fix the Bug</h3>
-    <p><strong>Bug:</strong> <code>high_score = int(f.read())</code> without <code>.strip()</code> &mdash; crashes if file has a trailing newline.</p>
-    <p><strong>Error:</strong> <code>ValueError: invalid literal for int() with base 10: &#39;42
-&#39;</code></p>
-    <p><strong>Fix:</strong> <code>high_score = int(f.read().strip())</code></p>
-
-    <h3>Tier 3 &mdash; Extend: Save the leaderboard to a CSV file</h3>
+    <h3>Tier 3 &mdash; Extend: add two helper functions</h3>
+    <p>Students add <code>display_high_score()</code> using an f-string and <code>reset_high_score()</code> that writes <code>0</code> back to the file.</p>
     <div class="codebox">
       <button class="copybtn" type="button">Copy</button>
-      <pre><code>import csv
+      <pre><code>def display_high_score():
+    best = load_high_score()
+    print(f"&#128081; High Score: {best}")
 
-def save_leaderboard(leaderboard, filename="leaderboard.csv"):
-    with open(filename, "w", newline="") as f:
-        writer = csv.writer(f)
-        writer.writerow(["Name", "Score"])
-        for name, score in sorted(leaderboard.items(), key=lambda x: -x[1]):
-            writer.writerow([name, score])
-
-def load_leaderboard(filename="leaderboard.csv"):
-    scores = {}
-    try:
-        with open(filename, "r") as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                scores[row["Name"]] = int(row["Score"])
-    except FileNotFoundError:
-        pass
-    return scores</code></pre>
+def reset_high_score():
+    with open(SCORE_FILE, "w") as f:
+        f.write("0")
+    print("High score has been reset to 0.")</code></pre>
     </div>
+    <p><em>Accept any f-string that includes the score value. Accept deleting the file via <code>os.remove(SCORE_FILE)</code> as an alternative to writing 0.</em></p>
 
-    <h3>Tier 4 &mdash; New Task: Ask the player&#39;s name at game over and add to leaderboard</h3>
+    <h3>Tier 4 &mdash; Create: ScoreManager class</h3>
+    <p>Students build a <code>ScoreManager</code> that wraps all file operations and run a demo loop over <code>[12, 45, 30, 67, 55]</code>.</p>
     <div class="codebox">
       <button class="copybtn" type="button">Copy</button>
-      <pre><code>import pygame
-# After running = False (game over):
-pygame.event.clear()
-font = pygame.font.SysFont("monospace", 24)
-player_name = ""
-asking = True
-while asking:
-    for event in pygame.event.get():
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RETURN:
-                asking = False
-            elif event.key == pygame.K_BACKSPACE:
-                player_name = player_name[:-1]
-            elif len(player_name) &lt; 10:
-                player_name += event.unicode
-    screen.fill(BG)
-    prompt = font.render(f"Enter name: {player_name}_", True, WHITE)
-    screen.blit(prompt, (20, WINDOW_H // 2))
-    pygame.display.flip()
+      <pre><code>class ScoreManager:
+    def __init__(self, filename="highscore.txt"):
+        self.filename = filename
 
-if player_name:
-    update_leaderboard(player_name, score)
-    save_leaderboard(leaderboard)</code></pre>
+    def load(self):
+        try:
+            with open(self.filename, "r") as f:
+                return int(f.read().strip())
+        except FileNotFoundError:
+            return 0
+
+    def save(self, score):
+        best = self.load()
+        if score > best:
+            with open(self.filename, "w") as f:
+                f.write(str(score))
+            print(f"&#128081; New high score: {score}!")
+        else:
+            print(f"Score {score} did not beat the record ({best}).")
+
+    def display(self):
+        print(f"Current high score: {self.load()}")
+
+    def reset(self):
+        with open(self.filename, "w") as f:
+            f.write("0")
+        print("High score reset.")
+
+
+# Demo
+sm = ScoreManager()
+sm.reset()
+for score in [12, 45, 30, 67, 55]:
+    print(f"\nGame ended with score: {score}")
+    sm.save(score)
+sm.display()</code></pre>
     </div>
+    <p><em>Expected output: new high score at 12, 45, 67. Scores 30 and 55 do not beat record. Final display shows 67.</em></p>
 
     <h3>Reflective Journal &mdash; Suggested Strong Answers</h3>
     <table class="t-table">
       <thead><tr><th>Prompt</th><th>Key ideas a strong answer contains</th></tr></thead>
       <tbody>
         <tr>
-          <td>1. What happens to data when a program ends?</td>
-          <td>Variables in RAM are lost. Only data written to a file (or database) persists.</td>
+          <td>1. Why is <code>except FileNotFoundError</code> safer than bare <code>except:</code>?</td>
+          <td>Bare <code>except:</code> silently catches everything &mdash; including <code>KeyboardInterrupt</code> and <code>SystemExit</code> &mdash; hiding real bugs. A specific exception catches only the expected failure and lets unexpected errors surface.</td>
         </tr>
         <tr>
-          <td>2. What is a file "mode"?</td>
-          <td>The string passed to <code>open()</code> that specifies how to open the file: <code>"r"</code> = read, <code>"w"</code> = write, <code>"a"</code> = append.</td>
+          <td>2. What does the <code>with</code> statement guarantee?</td>
+          <td>The file is automatically closed when the block exits, even if an error occurs inside. Without it, forgetting <code>f.close()</code> can cause data loss or file locks if the program crashes mid-write.</td>
         </tr>
         <tr>
-          <td>3. When should you use try/except?</td>
-          <td>When an operation might fail for predictable reasons &mdash; file not found, network error, invalid input. Handle specific exceptions, not bare <code>except:</code>.</td>
+          <td>3. Why is <code>int(f.read().strip())</code> needed &mdash; not just <code>f.read()</code>?</td>
+          <td>Files store everything as text. <code>f.read()</code> returns a string like <code>'42
+'</code>. <code>.strip()</code> removes the trailing newline; <code>int()</code> converts the string to a number so comparisons with <code>&gt;</code> work correctly.</td>
         </tr>
         <tr>
-          <td>4. What is an f-string?</td>
-          <td>A string literal prefixed with <code>f</code> that allows Python expressions inside <code>{}</code> to be evaluated and embedded.</td>
+          <td>4. When would you choose <code>"a"</code> (append) instead of <code>"w"</code> (write)?</td>
+          <td>Use <code>"a"</code> when you want to add new lines without erasing existing content &mdash; a log file, for example. Use <code>"w"</code> when you want to replace the entire file, such as updating the single best score.</td>
         </tr>
         <tr>
-          <td>5. Explain file I/O to a classmate</td>
-          <td>"Reading a file is like opening a book; writing is like printing on a page. The <code>with</code> statement is like using a bookmark &mdash; it keeps your place and closes the book when done."</td>
+          <td>5. How would you store the top 3 high scores instead of just one?</td>
+          <td>Read the file into a list, append the new score, sort descending, keep only the top 3, then write all three back &mdash; one per line. Or use JSON: <code>json.dump([...], f)</code> and <code>json.load(f)</code>.</td>
         </tr>
       </tbody>
     </table>
   </div>
 
+  <!-- ── SECTION 4 · Mistakes ── -->
   <!-- ── SECTION 4 · Mistakes ── -->
   <div class="t-section">
     <h2><span class="sec-icon">&#9888;&#65039;</span> Mistakes Students Actually Make</h2>
@@ -593,34 +651,45 @@ document.querySelectorAll('.copybtn').forEach(function(b){
     <p>These 5 questions appear in the activity page <strong>after Tier 4</strong> (post-calibration gate).
     Pass mark is <strong>4&nbsp;of&nbsp;5&nbsp;(80%)</strong>. Students who fail may retry; the system records attempts and final score in Google Sheets.</p>
     <table class="t-table">
-      <thead><tr><th style="width:65%">Question (displayed to student)</th><th>Correct Answer</th></tr></thead>
+      <thead><tr><th style="width:6%">#</th><th style="width:50%">Question (displayed to student)</th><th>Correct option (0-indexed)</th><th>Correct Answer</th></tr></thead>
       <tbody>
         <tr>
-          <td>Q1: TypeError: 'int' and 'str' operands — usually means:</td>
-          <td class="sev-low">&#10003; You tried to add an integer and a string directly</td>
+          <td>Q1</td>
+          <td>Which file mode is used to <em>read</em> an existing file?</td>
+          <td class="sev-low">0</td>
+          <td class="sev-low">&#10003; <code>"r"</code></td>
         </tr>
         <tr>
-          <td>Q2: Why read a Python traceback from the bottom up?</td>
-          <td class="sev-low">&#10003; The most specific error information appears at the bottom</td>
+          <td>Q2</td>
+          <td>What does <code>except FileNotFoundError:</code> do?</td>
+          <td class="sev-low">1</td>
+          <td class="sev-low">&#10003; Handles the case where the file does not exist yet, so the program does not crash on first run</td>
         </tr>
         <tr>
-          <td>Q3: Adding print(snake_body) inside the game loop helps because:</td>
-          <td class="sev-low">&#10003; You can see the exact state of the list each frame</td>
+          <td>Q3</td>
+          <td>Why use <code>with open(...) as f:</code> instead of just <code>open()</code>?</td>
+          <td class="sev-low">1</td>
+          <td class="sev-low">&#10003; It automatically closes the file when the block exits, even if an error occurs</td>
         </tr>
         <tr>
-          <td>Q4: IndentationError means:</td>
-          <td class="sev-low">&#10003; Python found inconsistent or unexpected indentation</td>
+          <td>Q4</td>
+          <td>What does <code>int(f.read().strip())</code> do?</td>
+          <td class="sev-low">1</td>
+          <td class="sev-low">&#10003; Reads the file content as text, removes surrounding whitespace, then converts the result to an integer</td>
         </tr>
         <tr>
-          <td>Q5: 'Rubber-duck debugging' means:</td>
-          <td class="sev-low">&#10003; Explaining your code line-by-line to spot logic errors</td>
+          <td>Q5</td>
+          <td>Why does <code>save_high_score(score)</code> call <code>load_high_score()</code> first?</td>
+          <td class="sev-low">1</td>
+          <td class="sev-low">&#10003; To retrieve the previous best so it can compare and only overwrite when the new score is higher</td>
         </tr>
       </tbody>
     </table>
     <div class="callout" style="margin-top:14px">
       <span class="callout-icon">&#x1F4CA;</span>
       <p><strong>Recorded in Google Sheet (Act_8 tab):</strong>
-      <code>concept_q1</code>&ndash;<code>concept_q5</code> (student&rsquo;s 0-based answer index),
+      <code>concept_q1_ans</code>&ndash;<code>concept_q5_ans</code> (student&#39;s 0-based answer index),
+      <code>concept_q1_cor</code>&ndash;<code>concept_q5_cor</code> (1&nbsp;=&nbsp;correct, 0&nbsp;=&nbsp;wrong),
       <code>concept_score_pct</code>, <code>concept_passed</code> (1&nbsp;=&nbsp;pass, 0&nbsp;=&nbsp;fail),
       <code>concept_attempts</code> (retry count).</p>
     </div>
