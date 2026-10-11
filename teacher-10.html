@@ -1,621 +1,538 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Facilitator Notes — Step 10 | Snake Tutorial</title>
-<meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Teacher Notes — Step 10: ML Extension</title>
+<link rel="stylesheet" href="style.css">
 <style>
-/* ── LIGHT-MODE TEACHER PAGE ── independent of style.css ── */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#F0F4F8;
-  --surface:#FFFFFF;
-  --surface2:#F7FAFC;
-  --teal:#0A8F8A;
-  --teal-dark:#076862;
-  --teal-light:#E6F6F5;
-  --ink:#1A2332;
-  --body:#374151;
-  --muted:#6B7A8D;
-  --border:#D6E0EA;
-  --amber:#D97706;
-  --amber-bg:#FFFBEB;
-  --amber-border:#FCD34D;
-  --green-bg:#F0FDF4;
-  --green-border:#86EFAC;
-  --green-ink:#166534;
-  --red-bg:#FEF2F2;
-  --red-border:#FCA5A5;
-  --red-ink:#991B1B;
-  --code-bg:#F1F5F9;
-  --code-fg:#1E293B;
-  --radius:10px;
-  --shadow:0 1px 4px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.05);
-}
-html{font-size:16px;-webkit-text-size-adjust:100%}
-body{
-  background:var(--bg);
-  color:var(--body);
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  line-height:1.65;
-}
-.sitenav{
-  background:var(--teal-dark);
-  color:#fff;
-  padding:0 24px;
-  display:flex;
-  align-items:center;
-  gap:20px;
-  min-height:56px;
-  position:sticky;top:0;z-index:100;
-  box-shadow:0 2px 8px rgba(0,0,0,.15);
-}
-.sitenav .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;font-weight:700;font-size:15px}
-.sitenav .brand img{display:none}
-.sitenav a.nl{color:rgba(255,255,255,.8);text-decoration:none;font-size:14px;padding:4px 8px;border-radius:6px;transition:background .15s}
-.sitenav a.nl:hover{background:rgba(255,255,255,.15)}
-details.navsel{margin-left:auto;position:relative}
-details.navsel summary{
-  list-style:none;cursor:pointer;color:rgba(255,255,255,.9);
-  font-size:14px;font-weight:600;padding:6px 12px;
-  border-radius:6px;transition:background .15s;
-}
-details.navsel summary:hover{background:rgba(255,255,255,.15)}
-details.navsel summary::-webkit-details-marker{display:none}
-.navmenu{
-  position:absolute;right:0;top:calc(100% + 8px);
-  background:#fff;color:var(--ink);
-  border:1px solid var(--border);border-radius:var(--radius);
-  min-width:300px;box-shadow:var(--shadow);
-  overflow:hidden;z-index:200;
-}
-.navmenu a{
-  display:block;padding:10px 16px;font-size:13.5px;
-  text-decoration:none;color:var(--body);
-  border-bottom:1px solid var(--border);transition:background .12s;
-}
-.navmenu a:last-child{border-bottom:none}
-.navmenu a:hover{background:var(--teal-light)}
-.navmenu a[aria-current="page"]{background:var(--teal-light);color:var(--teal-dark);font-weight:700}
-.gate{
-  max-width:520px;margin:80px auto;padding:40px 36px;
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:14px;box-shadow:var(--shadow);text-align:center;
-}
-.gate h2{font-size:24px;color:var(--ink);margin-bottom:12px}
-.gate p{color:var(--muted);margin-bottom:16px;font-size:15px}
-.gate a{color:var(--teal);text-decoration:none;font-size:14px}
-.gate a:hover{text-decoration:underline}
-.lock-icon{font-size:48px;margin-bottom:16px}
-.t-hero{
-  background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal) 100%);
-  color:#fff;padding:40px 24px 36px;
-}
-.t-hero .wrap{max-width:900px;margin:0 auto}
-.t-hero .eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.75;margin-bottom:8px}
-.t-hero h1{font-size:clamp(22px,4vw,32px);font-weight:800;line-height:1.2;margin-bottom:8px}
-.t-hero .meta{font-size:14px;opacity:.8;margin-bottom:20px}
-.t-cta-row{display:flex;flex-wrap:wrap;gap:10px}
-.t-cta-row a{
-  display:inline-block;padding:8px 18px;border-radius:8px;
-  font-size:13px;font-weight:600;text-decoration:none;
-  background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);
-  transition:background .15s;
-}
-.t-cta-row a:hover{background:rgba(255,255,255,.28)}
-.wrap{max-width:900px;margin:0 auto;padding:0 20px}
-.page-body{padding:36px 20px 60px;max-width:900px;margin:0 auto}
-.tbanner{
-  background:var(--amber-bg);border:1px solid var(--amber-border);
-  color:#78350F;border-radius:8px;padding:12px 16px;
-  font-size:13.5px;margin-bottom:28px;
-}
-.tbanner b{color:#92400E}
-.t-section{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius);padding:28px 28px;margin-bottom:24px;
-  box-shadow:var(--shadow);
-}
-.t-section h2{
-  font-size:18px;font-weight:700;color:var(--ink);
-  padding-bottom:10px;margin-bottom:16px;
-  border-bottom:2px solid var(--teal);display:flex;align-items:center;gap:8px;
-}
-.t-section h2 .sec-icon{font-size:20px}
-.t-section h3{font-size:15px;font-weight:700;color:var(--teal-dark);margin:16px 0 8px}
-.t-section p{margin-bottom:10px;font-size:15px}
-.t-section ul{padding-left:20px;margin-bottom:12px}
-.t-section li{margin-bottom:6px;font-size:15px}
-.t-section strong{color:var(--ink)}
-.t-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
-.t-table thead th{
-  background:var(--teal);color:#fff;padding:10px 14px;
-  text-align:left;font-weight:600;font-size:13px;letter-spacing:.02em;
-}
-.t-table thead th:first-child{border-radius:8px 0 0 0}
-.t-table thead th:last-child{border-radius:0 8px 0 0}
-.t-table tbody tr:nth-child(even){background:var(--surface2)}
-.t-table tbody td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}
-.t-table td code{font-size:12.5px;background:var(--bg);padding:1px 5px;border-radius:4px;color:var(--ink)}
-.codebox{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:12px 0;position:relative}
-.codebox pre{padding:20px;overflow-x:auto}
-.codebox code{color:var(--code-fg);font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13.5px;line-height:1.6}
-.copybtn{
-  position:absolute;top:10px;right:10px;
-  background:var(--border);color:var(--ink);
-  border:none;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;
-  transition:background .15s;
-}
-.copybtn:hover{background:rgba(255,255,255,.22)}
-.copybtn.copied{background:rgba(134,239,172,.25);color:#86EFAC}
-code{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13px;background:var(--bg);padding:1px 5px;border-radius:4px;color:var(--ink)}
-.callout{
-  display:flex;gap:12px;padding:14px 16px;border-radius:8px;
-  border:1px solid var(--border);background:var(--surface2);margin:12px 0;
-  font-size:14px;align-items:flex-start;
-}
-.callout-icon{font-size:22px;flex-shrink:0;line-height:1.2}
-.callout p{margin:0}
-.stem-brand-bar{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  width:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-}
-.stem-brand-bar .sb{
-  display:flex;align-items:center;justify-content:center;
-  padding:6px 8px;font-size:12px;font-weight:800;
-  letter-spacing:.12em;color:#fff;text-transform:uppercase;
-}
-.sb-see{background:#2E5FAF}
-.sb-think{background:#B82828}
-.sb-explore{background:#D99A10}
-.sb-marvel{background:#1FA898}
-footer{
-  background:#1C5C54;color:rgba(255,255,255,.78);
-  text-align:center;padding:20px 20px;font-size:13px;margin-top:40px;
-  display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
-}
-footer a{color:rgba(255,255,255,.85);text-decoration:none;display:inline-flex;align-items:center;gap:4px}
-footer a:hover{color:#fff}
-.cta-btn{
-  display:inline-block;padding:12px 28px;border-radius:9px;
-  font-size:15px;font-weight:700;border:none;cursor:pointer;
-  background:var(--teal);color:#fff;
-  box-shadow:0 4px 14px rgba(10,143,138,.3);
-  transition:background .15s,transform .1s;
-}
-.cta-btn:hover{background:var(--teal-dark);transform:translateY(-1px)}
-.cta-btn:active{transform:translateY(0)}
-@media(max-width:600px){
-  .t-section{padding:20px 16px}
-  .t-hero{padding:28px 16px 24px}
-  .t-cta-row a{font-size:12px;padding:6px 12px}
-  .t-table{font-size:13px}
-  .sitenav{padding:0 14px}
-}
+:root{--teacher-accent:#7c3aed;--teacher-light:rgba(124,58,237,.08);--teacher-border:rgba(124,58,237,.25)}
+.t-bar{background:var(--teacher-accent);color:#fff;text-align:center;padding:10px;font-size:13px;font-weight:700;letter-spacing:.04em}
+.gate{background:rgba(124,58,237,.06);border:1.5px solid var(--teacher-border);border-radius:12px;padding:22px;margin-bottom:24px}
+.gate h2{color:var(--teacher-accent);margin-top:0}
+.gate input{padding:9px 14px;border:1.5px solid var(--teacher-border);border-radius:8px;font:inherit;font-size:14px;width:220px;margin-right:8px}
+.gate button{padding:9px 18px;background:var(--teacher-accent);color:#fff;border:none;border-radius:8px;font:inherit;font-weight:700;cursor:pointer}
+.content{display:none}
+.content.unlocked{display:block}
+.section-card{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:26px;margin-bottom:22px}
+.section-card h2{margin-top:0;display:flex;align-items:center;gap:10px}
+.badge{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 10px;border-radius:20px}
+.badge-purple{background:rgba(124,58,237,.12);color:var(--teacher-accent)}
+.badge-teal{background:rgba(10,143,138,.12);color:var(--teal-dark)}
+.badge-orange{background:rgba(245,162,29,.15);color:#92400e}
+.badge-green{background:rgba(34,197,94,.12);color:#15803d}
+.badge-red{background:rgba(239,68,68,.1);color:#b91c1c}
+.badge-blue{background:rgba(59,130,246,.12);color:#1d4ed8}
+table{width:100%;border-collapse:collapse;font-size:14px;margin-top:12px}
+th{background:rgba(124,58,237,.07);color:var(--teacher-accent);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:9px 12px;text-align:left;border-bottom:1.5px solid var(--teacher-border)}
+td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.ans-box{background:var(--code-bg,#f1f5f9);border:1.5px solid var(--line);border-radius:8px;padding:12px 16px;font-family:"SFMono-Regular",Consolas,monospace;font-size:13px;line-height:1.6;white-space:pre-wrap;margin:8px 0}
+.ans-box.good{border-color:#86efac;background:rgba(34,197,94,.06)}
+.warn-box{background:rgba(245,162,29,.08);border:1.5px solid #fcd34d;border-radius:10px;padding:14px 18px;margin:10px 0;font-size:14px}
+.warn-box b{color:#92400e}
+.tip-box{background:var(--teacher-light);border:1.5px solid var(--teacher-border);border-radius:10px;padding:14px 18px;margin:10px 0;font-size:14px}
+.tip-box b{color:var(--teacher-accent)}
+.nav-sticky{position:sticky;top:0;z-index:50;background:var(--bg,#fff);border-bottom:1.5px solid var(--line);padding:10px 0}
+.nav-inner{max-width:840px;margin:0 auto;padding:0 20px;display:flex;gap:10px;flex-wrap:wrap}
+.nav-inner a{font-size:13px;font-weight:600;color:var(--teacher-accent);text-decoration:none;padding:5px 12px;border-radius:20px;border:1.5px solid var(--teacher-border);transition:background .15s}
+.nav-inner a:hover{background:var(--teacher-light)}
+.nav-inner a[aria-current]{background:var(--teacher-accent);color:#fff;border-color:var(--teacher-accent)}
+code.il{background:var(--code-bg,#f1f5f9);padding:2px 6px;border-radius:4px;font-size:13px;font-family:"SFMono-Regular",Consolas,monospace;color:var(--ink)}
+.hero{background:linear-gradient(135deg,#4c1d95,#7c3aed);color:#fff;padding:38px 0 30px}
+.hero .eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.75;margin-bottom:8px}
+.hero h1{font-size:26px;margin:0 0 8px}
+.hero .sub{opacity:.85;font-size:15px;margin:0}
+.hero .pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.hero .pills span{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600}
+.cq-table td:first-child{width:60px;font-weight:700;color:var(--teacher-accent)}
+.cq-table td:nth-child(2){width:55px;text-align:center}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--teacher-accent);color:#fff;font-size:13px;font-weight:800;flex-shrink:0}
+.col-table{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+@media(max-width:600px){.col-table{grid-template-columns:1fr}}
+.col-block{background:var(--code-bg,#f1f5f9);border-radius:10px;padding:14px;font-size:13px}
+.col-block h4{margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.sheets-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:6px;margin-top:10px}
+.sheets-pill{background:rgba(124,58,237,.07);border:1px solid var(--teacher-border);border-radius:6px;padding:5px 10px;font-family:monospace;font-size:12px;color:var(--teacher-accent)}
+footer{text-align:center;padding:28px 20px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);margin-top:20px}
 </style>
 </head>
 <body>
 
-<div class="stem-brand-bar" aria-label="UMPSA STEM Lab">
-  <div class="sb sb-see">SEE</div>
-  <div class="sb sb-think">THINK</div>
-  <div class="sb sb-explore">EXPLORE</div>
-  <div class="sb sb-marvel">MARVEL</div>
+<div class="t-bar">🔒 TEACHER / FACILITATOR NOTES — Step 10: ML Extension | Not for Student Distribution</div>
+
+<div class="wrap" style="padding-top:24px;padding-bottom:20px">
+<div class="gate" id="gate">
+  <h2>&#128274; Facilitator Access</h2>
+  <p style="font-size:14px;color:var(--muted)">Enter the teacher passphrase to unlock this page.</p>
+  <input type="password" id="pass-in" placeholder="Passphrase" onkeydown="if(event.key==='Enter')checkPass()">
+  <button onclick="checkPass()">Unlock</button>
+  <p id="pass-err" style="color:#dc2626;font-size:13px;display:none;margin-top:8px">Incorrect passphrase — try again.</p>
+</div>
 </div>
 
-<nav class="sitenav">
-  <a class="brand" href="index.html">
-    <img src="stemlogo.png" alt="UMPSA STEM LAB">
-    <span>UMPSA STEM Lab Python Module</span>
-  </a>
-  <a class="nl" href="index.html">Home</a>
-  <details class="navsel">
-    <summary>Facilitator Notes &#9662;</summary>
-    <div class="navmenu">
-      <a href="teacher-1.html"><b>Step 1</b>: Variables &amp; Setup</a>
-      <a href="teacher-2.html"><b>Step 2</b>: Loop &amp; Events</a>
-      <a href="teacher-3.html"><b>Step 3</b>: Direction &amp; Movement</a>
-      <a href="teacher-4.html"><b>Step 4</b>: Snake Body &#11088;</a>
-      <a href="teacher-5.html"><b>Step 5</b>: Bonus Food</a>
-      <a href="teacher-6.html"><b>Step 6</b>: Functions</a>
-      <a href="teacher-7.html"><b>Step 7</b>: Wrap-Around &#11088;</a>
-      <a href="teacher-8.html"><b>Step 8</b>: Save High Score</a>
-      <a href="teacher-9.html"><b>Step 9</b>: OOP Refactor</a>
-      <a href="teacher-10.html" aria-current="page"><b>Step 10</b>: ML Extension</a>
-    </div>
-  </details>
+<!-- ── HERO ── -->
+<div class="hero" id="hero" style="display:none">
+<div class="wrap">
+  <p class="eyebrow">Teacher Notes · Step 10 of 10</p>
+  <h1>Step 10 — ML Extension 🤖</h1>
+  <p class="sub">Q-Learning · State representation · Q-table · Epsilon-greedy · Bellman equation · Reward signal</p>
+  <div class="pills">
+    <span>Session: ~90 min</span><span>Last step</span><span>Difficulty: ★★★★☆</span>
+    <span>Final step — confirm post-survey deployed</span>
+  </div>
+</div>
+</div>
+
+<!-- ── STICKY NAV ── -->
+<nav class="nav-sticky" id="nav" style="display:none">
+<div class="nav-inner">
+  <a href="#overview" aria-current="page">Overview</a>
+  <a href="#objectives">Objectives</a>
+  <a href="#t1-ans">T1 Answers</a>
+  <a href="#t2-bugs">T2 Bugs</a>
+  <a href="#t3-ans">T3 Answer</a>
+  <a href="#t4-ans">T4 Answer</a>
+  <a href="#concept">Concept Check</a>
+  <a href="#journal">Journal Guide</a>
+  <a href="#common-errors">Common Errors</a>
+  <a href="#timing">Timing</a>
+  <a href="#sheets">Sheets Columns</a>
+</div>
 </nav>
 
-<div class="gate" id="gate">
-  <div class="lock-icon">&#128274;</div>
-  <h2>Facilitator Notes</h2>
-  <p>This page contains exercise answers and teaching guidance for<br>
-  <strong>Step 10 &mdash; ML Extension &#129302;</strong>.<br>
-  Not linked from the student pages.</p>
-  <p style="margin-bottom:24px"><strong>Students: please go back and try the activities first.</strong></p>
-  <button class="cta-btn" id="gatebtn" type="button">I&#39;m a facilitator &mdash; show the notes</button>
-  <p style="margin-top:20px"><a href="step-10.html">&#8592; Back to student page</a></p>
+<div class="content" id="main-content">
+<div class="wrap" style="padding-top:24px;padding-bottom:60px">
+
+<!-- Peer nav links -->
+<div style="margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap;font-size:14px">
+  <a href="teacher-9.html" style="color:var(--teal-dark);text-decoration:none;font-weight:600">← Teacher Step 9</a>
+  <a href="step-10-activity.html" style="color:var(--teacher-accent);text-decoration:none;font-weight:600">Student Activity ↗</a>
+  <a href="step-10.html" style="color:var(--muted);text-decoration:none;font-weight:600">Student Notes ↗</a>
 </div>
 
-<div id="tcontent" hidden>
+<!-- ── OVERVIEW ── -->
+<div class="section-card" id="overview">
+  <h2><span class="step-num">1</span> Session Overview <span class="badge badge-purple">Step 10 · Final Step</span></h2>
+  <p>This is the culminating step. Students apply Reinforcement Learning — specifically Q-Learning — to train a Snake AI agent. No neural network is involved: the Q-table is a Python dictionary, making the entire algorithm inspectable and debuggable by hand. The goal is conceptual mastery: students should understand the feedback loop (state → action → reward → update), not implement a full Snake simulator from scratch.</p>
 
-<div class="t-hero">
-  <div class="wrap">
-    <p class="eyebrow">STEP 10 OF 10 &nbsp;&middot;&nbsp; FACILITATOR NOTES</p>
-    <h1>ML Extension &#129302;</h1>
-    <p class="meta">Core concepts: Q-learning &nbsp;&middot;&nbsp; Q-table &nbsp;&middot;&nbsp; state representation &nbsp;&middot;&nbsp; reward shaping &nbsp;&middot;&nbsp; exploration vs exploitation</p>
-    <div class="t-cta-row">
-      <a href="teacher-9.html">&#8592; Step 9</a>
-      <a href="step-10.html">Student Page</a>
-      <a href="teacher-index.html">&#8592; Back to Index</a>
-    </div>
-  </div>
+  <table>
+    <tr><th>Item</th><th>Detail</th></tr>
+    <tr><td>Topic</td><td>Q-Learning (tabular RL) applied to Snake</td></tr>
+    <tr><td>Duration</td><td>~90 minutes (can extend to 2 sessions for Tier 3/4)</td></tr>
+    <tr><td>Prerequisite</td><td>Step 9 — OOP Refactor (Snake/Food/Game classes)</td></tr>
+    <tr><td>Activity type</td><td>Code completion → Debugging → Compose → Create</td></tr>
+    <tr><td>GAS tab</td><td><code class="il">Act_10</code></td></tr>
+    <tr><td>LMS localStorage key</td><td><code class="il">lms_step10</code></td></tr>
+    <tr><td>Post-survey</td><td>Upon completion, students go to <code class="il">survey-post.html</code></td></tr>
+    <tr><td>Difficulty</td><td>Highest in the series — Bellman equation, epsilon decay are new concepts</td></tr>
+  </table>
+
+  <div class="warn-box" style="margin-top:16px"><b>⚠ Important:</b> Confirm that <code class="il">survey-post.html</code> is live and accessible before this session. This is the last activity — students proceed directly to the post-survey after submitting.</div>
 </div>
 
-<div class="page-body">
+<!-- ── OBJECTIVES ── -->
+<div class="section-card" id="objectives">
+  <h2><span class="step-num">2</span> Learning Objectives</h2>
+  <table>
+    <tr><th>#</th><th>Objective</th><th>Assessed in</th></tr>
+    <tr><td>1</td><td>Explain what the Q-table stores and why a dictionary is suitable</td><td>CQ Q1, Journal JR1</td></tr>
+    <tr><td>2</td><td>Implement the epsilon-greedy action selection rule correctly</td><td>T1 blanks, T2 Bug 2</td></tr>
+    <tr><td>3</td><td>Apply the Bellman equation to update Q-values</td><td>T1 blanks, T3</td></tr>
+    <tr><td>4</td><td>Assign correct reward signals for eat / die / survive events</td><td>T1 blank 4, T2 Bug 3</td></tr>
+    <tr><td>5</td><td>Implement epsilon decay and explain its rationale</td><td>T4, Journal JR2</td></tr>
+    <tr><td>6</td><td>Critique the 11-bit state representation and suggest improvements</td><td>Journal JR5</td></tr>
+  </table>
+</div>
 
-  <div class="tbanner">
-    &#129302; <b>Extension Step</b> &mdash; This step is for advanced students or as a class demonstration. Prior ML knowledge is not required; the goal is intuition for "learning by trying." Full implementation may take 45&ndash;60 minutes.
-  </div>
+<!-- ── TIER 1 ANSWERS ── -->
+<div class="section-card" id="t1-ans">
+  <h2><span class="step-num">3</span> Tier 1 — Correct Answers <span class="badge badge-teal">6 blanks</span></h2>
+  <p>The system checks against these exact strings (case-insensitive). If a student types <code class="il">Default_dict</code> it will fail — only <code class="il">defaultdict</code> passes.</p>
 
-  <!-- ── SECTION 1 · Learning Objectives ── -->
-  <div class="t-section">
-    <h2><span class="sec-icon">&#127919;</span> Learning Objectives</h2>
-    <ul>
-      <li>Describe reinforcement learning as "learning by trial and error"</li>
-      <li>Represent the game state as a tuple of observable features</li>
-      <li>Explain the Q-table as a lookup table mapping (state, action) &#8594; expected reward</li>
-      <li>Trace through one Q-learning update</li>
-      <li>Run a basic training loop and observe the agent improve over time</li>
-    </ul>
-  </div>
+  <table>
+    <tr><th>Blank</th><th>Label / context</th><th>Correct answer</th><th>Common wrong answer</th></tr>
+    <tr>
+      <td><b>B1</b></td>
+      <td><code class="il">from collections import ___</code></td>
+      <td><div class="ans-box good">defaultdict</div></td>
+      <td><code class="il">dict</code>, <code class="il">Dict</code>, <code class="il">default_dict</code></td>
+    </tr>
+    <tr>
+      <td><b>B2</b></td>
+      <td><code class="il">___ = 0.1   # exploration rate</code></td>
+      <td><div class="ans-box good">EPSILON</div></td>
+      <td><code class="il">epsilon</code> (fails case-check), <code class="il">EPSILION</code> (typo)</td>
+    </tr>
+    <tr>
+      <td><b>B3</b></td>
+      <td><code class="il">return ACTIONS[q_vals.index(___(q_vals))]</code></td>
+      <td><div class="ans-box good">max</div></td>
+      <td><code class="il">min</code>, <code class="il">argmax</code>, <code class="il">np.max</code></td>
+    </tr>
+    <tr>
+      <td><b>B4</b></td>
+      <td><code class="il">reward = ___   # ate food</code></td>
+      <td><div class="ans-box good">10</div></td>
+      <td><code class="il">1</code>, <code class="il">100</code>, <code class="il">+10</code> (passes if parser accepts it)</td>
+    </tr>
+    <tr>
+      <td><b>B5</b></td>
+      <td><code class="il">old_q + ___ * (target - old_q)</code></td>
+      <td><div class="ans-box good">ALPHA</div></td>
+      <td><code class="il">alpha</code> (fails case), <code class="il">lr</code>, <code class="il">LEARNING_RATE</code></td>
+    </tr>
+    <tr>
+      <td><b>B6</b></td>
+      <td><code class="il">target = reward + ___ * best_future</code></td>
+      <td><div class="ans-box good">GAMMA</div></td>
+      <td><code class="il">gamma</code> (fails case), <code class="il">0.9</code>, <code class="il">DISCOUNT</code></td>
+    </tr>
+  </table>
 
-  <!-- ── SECTION 2 · The Big Idea ── -->
-  <div class="t-section">
-    <h2><span class="sec-icon">&#128161;</span> The Big Idea &mdash; Annotated Code</h2>
+  <div class="tip-box" style="margin-top:16px"><b>💡 Teaching note:</b> B5 and B6 (ALPHA and GAMMA) are the most confused. Students often swap the two. Point them back to the order in the Bellman equation: <em>target = reward + GAMMA × future</em>, then the update uses <em>ALPHA</em> to blend old and target. GAMMA controls <em>what we aim for</em>; ALPHA controls <em>how fast we adjust</em>.</div>
+</div>
 
-    <div class="codebox">
-      <button class="copybtn" type="button">Copy</button>
-      <pre><code>import random
-from collections import defaultdict
+<!-- ── TIER 2 BUGS ── -->
+<div class="section-card" id="t2-bugs">
+  <h2><span class="step-num">4</span> Tier 2 — Bug Answers &amp; Explanations <span class="badge badge-blue">3 bugs · 2 attempts</span></h2>
 
-# ── State representation ──
-# A tuple of 8 binary features the agent can observe:
-def get_state(snake, food):
-    hx, hy = snake.body[0]
-    dx = snake.dx
-    dy = snake.dy
-    return (
-        int((hx + dx) % GRID_COLS == 0 or (hx + dx) &lt; 0),   # danger ahead?
-        int((hx - 1, hy) in snake.body[1:]),                  # danger left?
-        int((hx + 1, hy) in snake.body[1:]),                  # danger right?
-        int(dx == 1), int(dx == -1),                          # moving right/left?
-        int(dy == 1), int(dy == -1),                          # moving down/up?
-        int(food.x &gt; hx),                                     # food to the right?
-    )
-
-# ── Q-table ──
-# Maps (state, action) → expected total reward
-# defaultdict means missing keys return 0 automatically
-Q = defaultdict(float)   # Q[(state, action)] = value
-
-ACTIONS = [(1,0), (-1,0), (0,1), (0,-1)]   # right, left, down, up
-
-# ── Choose action (ε-greedy) ──
-EPSILON = 0.1   # 10% chance of random exploration
-
-def choose_action(state):
-    if random.random() &lt; EPSILON:
-        return random.choice(ACTIONS)       # explore
-    # Exploit: pick action with highest Q-value
-    return max(ACTIONS, key=lambda a: Q[(state, a)])
-
-# ── Q-learning update ──
-ALPHA = 0.1    # learning rate
-GAMMA = 0.9    # discount factor (how much future rewards matter)
-
-def update_q(state, action, reward, next_state):
-    best_next = max(Q[(next_state, a)] for a in ACTIONS)
-    # Bellman equation:
-    Q[(state, action)] += ALPHA * (reward + GAMMA * best_next - Q[(state, action)])
-
-# ── Reward function ──
-def get_reward(game, ate_food, died):
-    if died:   return -10
-    if ate_food: return +10
-    # Small positive reward for moving toward food:
-    hx, hy = game.snake.body[0]
-    dist = abs(hx - game.food.x) + abs(hy - game.food.y)
-    return 1 / (dist + 1)</code></pre>
+  <h3>Bug 1 — Q-table initialisation</h3>
+  <div class="col-table">
+    <div class="col-block">
+      <h4>Buggy code</h4>
+<code>q_table = {}</code>
     </div>
-
-    <h3>Key concept explanations</h3>
-    <ul>
-      <li><strong>State</strong>: a compact description of the world the agent can see. We use 8 binary features &mdash; dangers in each direction, current movement direction, food location relative to head.</li>
-      <li><strong>Q-table</strong>: a dictionary mapping <code>(state, action)</code> pairs to expected future rewards. Initially all zeros; updated as the agent plays.</li>
-      <li><strong>&#949;-greedy</strong>: with probability &#949;, take a random action (explore); otherwise take the best-known action (exploit). Balances learning new strategies vs using what works.</li>
-      <li><strong>Bellman equation</strong>: the update rule. "The value of (state, action) should equal: immediate reward + discounted value of the best next state."</li>
-      <li><strong>Learning rate &#945;</strong>: how much to update Q on each step. &#945;=1 = replace old value; &#945;=0 = never learn.</li>
-      <li><strong>Discount factor &#947;</strong>: how much future rewards matter. &#947;=0 = only care about now; &#947;=1 = care equally about all future steps.</li>
-    </ul>
+    <div class="col-block">
+      <h4>Fixed code</h4>
+<code>q_table = defaultdict(float)</code>
+    </div>
   </div>
+  <p style="font-size:14px"><b>Why it matters:</b> A plain <code class="il">{}</code> raises <code class="il">KeyError</code> the first time the agent sees a new (state, action) pair — which happens immediately. <code class="il">defaultdict(float)</code> returns <code class="il">0.0</code> for any unseen key, which is the correct initial Q-value (no prior knowledge). This is one of the most common real-world bugs when implementing Q-learning.</p>
 
-  <!-- ── SECTION 3 · Activity Answers ── -->
-  <div class="t-section">
-    <h2><span class="sec-icon">&#128290;</span> Activity Answers (Conceptual)</h2>
+  <h3>Bug 2 — Flipped epsilon condition</h3>
+  <div class="col-table">
+    <div class="col-block">
+      <h4>Buggy code</h4>
+<code>if random.random() &gt; EPSILON:   # explore?</code>
+    </div>
+    <div class="col-block">
+      <h4>Fixed code</h4>
+<code>if random.random() &lt; EPSILON:   # explore?</code>
+    </div>
+  </div>
+  <p style="font-size:14px"><b>Why it matters:</b> With the bug, <code class="il">random()</code> > 0.1 is true 90% of the time — so the agent explores (random action) 90% of the time and exploits only 10%. This inverts the intended behaviour. With EPSILON=0.1, the agent should explore only 10% of the time. This class of bug (comparing in the wrong direction) is extremely common and can be hard to spot without running the training loop.</p>
 
-    <h3>Tier 1 &mdash; Check Understanding</h3>
-    <table class="t-table">
-      <thead><tr><th>Question</th><th>Accepted answer</th></tr></thead>
-      <tbody>
-        <tr>
-          <td>What is reinforcement learning in one sentence?</td>
-          <td>An agent learns by trying actions, observing rewards, and updating its strategy to maximise total reward over time.</td>
-        </tr>
-        <tr>
-          <td>What does the Q-table store?</td>
-          <td>The expected cumulative reward for taking each action in each state.</td>
-        </tr>
-        <tr>
-          <td>What is &#949;-greedy?</td>
-          <td>A strategy that explores randomly with probability &#949;, and exploits the best known action otherwise.</td>
-        </tr>
-        <tr>
-          <td>What happens to the Q-table at the start?</td>
-          <td>All values are 0 &mdash; the agent knows nothing and acts randomly.</td>
-        </tr>
-      </tbody>
-    </table>
+  <h3>Bug 3 — Wrong reward sign</h3>
+  <div class="col-table">
+    <div class="col-block">
+      <h4>Buggy code</h4>
+<code>reward = -10   # ate food</code>
+    </div>
+    <div class="col-block">
+      <h4>Fixed code</h4>
+<code>reward = 10   # ate food</code>
+    </div>
+  </div>
+  <p style="font-size:14px"><b>Why it matters:</b> A negative reward for eating food means the agent learns to <em>avoid</em> food. The agent would actively dodge pellets to avoid punishment — the snake would starve by design. After many training episodes, it would find corners or loops that avoid food entirely (minimising negative reward). Ask students: "What score would you expect after 10 000 episodes with this bug?"</p>
 
-    <h3>Tier 2 &mdash; Experiment: Modify EPSILON and observe</h3>
-    <p>Change <code>EPSILON = 0.1</code> to <code>EPSILON = 0.9</code> (90% exploration). Observe: the agent takes longer to improve because it rarely uses what it learns. Then try <code>EPSILON = 0.01</code> (1% exploration). Observe: the agent quickly gets stuck in a local strategy and doesn&#39;t explore better options.</p>
+  <div class="tip-box"><b>💡 Facilitation tip:</b> For Bug 2, if students are stuck, ask: "With EPSILON = 0.1, how often should the agent explore? When is random.random() less than 0.1?" This usually helps them see the fix without being told.</div>
+</div>
 
-    <h3>Tier 3 &mdash; Extend: Add a visual training display</h3>
-    <div class="codebox">
-      <button class="copybtn" type="button">Copy</button>
-      <pre><code>episode = 0
-scores = []
-while True:   # training loop
+<!-- ── TIER 3 ANSWER ── -->
+<div class="section-card" id="t3-ans">
+  <h2><span class="step-num">5</span> Tier 3 — Model Answer</h2>
+  <p>Students must complete the body of <code class="il">update_q()</code> using the Bellman equation. Accept any equivalent formulation.</p>
+  <div class="ans-box good">def update_q(state, action, reward, next_state):
+    old_q       = q_table[(state, action)]
+    best_future = max(q_table[(next_state, a)] for a in ACTIONS)
+    target      = reward + GAMMA * best_future
+    q_table[(state, action)] = old_q + ALPHA * (target - old_q)</div>
+
+  <h4 style="margin-top:16px">Validation heuristic (used by the activity script)</h4>
+  <p style="font-size:14px">The activity checks for the presence of all five identifiers: <code class="il">best_future</code>, <code class="il">target</code>, <code class="il">GAMMA</code> (or <code class="il">gamma</code>), <code class="il">ALPHA</code> (or <code class="il">alpha</code>), and <code class="il">q_table</code>. After 2 failed attempts the student is passed through automatically (their answer is still saved).</p>
+
+  <h4 style="margin-top:14px">Common student mistakes</h4>
+  <table>
+    <tr><th>Mistake</th><th>Consequence</th></tr>
+    <tr><td>Omitting <code class="il">old_q</code> — replacing, not blending</td><td>Agent has no memory of past; learns only from last episode</td></tr>
+    <tr><td>Using <code class="il">min</code> instead of <code class="il">max</code> for best_future</td><td>Agent learns to avoid the worst action, not seek the best</td></tr>
+    <tr><td>Missing the ALPHA blend — <code class="il">q_table[...] = target</code></td><td>Single-step update (effectively ALPHA=1); unstable learning</td></tr>
+    <tr><td>Swapping ALPHA and GAMMA roles</td><td>Very small learning rate, agent effectively ignores future rewards</td></tr>
+  </table>
+</div>
+
+<!-- ── TIER 4 ANSWER ── -->
+<div class="section-card" id="t4-ans">
+  <h2><span class="step-num">6</span> Tier 4 — Model Answer</h2>
+  <p>Students add epsilon decay to the training loop. Requirements: start 0.5, multiply by 0.995 each episode, clamp minimum at 0.01, print every 500 episodes.</p>
+
+  <div class="ans-box good">epsilon = 0.5   # start with high exploration
+
+for episode in range(10000):
     game = Game()
-    ep_score = 0
-    while game.running:
-        state = get_state(game.snake, game.food)
-        action = choose_action(state)
-        # ... apply action, update, get reward ...
-        ep_score = game.score
-    scores.append(ep_score)
-    episode += 1
-    if episode % 100 == 0:
-        avg = sum(scores[-100:]) / 100
-        print(f"Episode {episode}: avg score = {avg:.1f}")</code></pre>
-    </div>
+    state = get_state(game.snake, game.food, game.snake.direction)
+    steps = 0
 
-    <h3>Tier 4 &mdash; Research Extension</h3>
-    <p>Read about Deep Q-Networks (DQN). How do they differ from the tabular Q-table approach? What problem do they solve? <em>Answer: state spaces too large for a table &mdash; neural networks approximate Q values.</em></p>
+    while game.running and steps < 1000:
+        # Use local epsilon for this episode's explore/exploit decision
+        if random.random() < epsilon:
+            action = random.choice(ACTIONS)   # explore
+        else:
+            q_vals = [q_table[(state, a)] for a in ACTIONS]
+            action = ACTIONS[q_vals.index(max(q_vals))]  # exploit
 
-    <h3>Reflective Journal &mdash; Suggested Strong Answers</h3>
-    <table class="t-table">
-      <thead><tr><th>Prompt</th><th>Key ideas a strong answer contains</th></tr></thead>
-      <tbody>
-        <tr>
-          <td>1. How does Q-learning differ from supervised learning?</td>
-          <td>In supervised learning, we have correct answers. In Q-learning, the agent discovers what&#39;s correct through trial and error &mdash; there are no labelled examples.</td>
-        </tr>
-        <tr>
-          <td>2. Why is the state representation important?</td>
-          <td>If the state doesn&#39;t contain enough information, the agent can&#39;t learn good strategies. Too much information makes the Q-table huge and learning slow.</td>
-        </tr>
-        <tr>
-          <td>3. What is the exploration-exploitation tradeoff?</td>
-          <td>Explore: try new things and learn. Exploit: use what you already know works. Too much exploration wastes time; too little means the agent gets stuck.</td>
-        </tr>
-        <tr>
-          <td>4. What would happen with GAMMA = 0?</td>
-          <td>The agent only cares about immediate reward &mdash; it ignores all future consequences. It might eat food immediately but walk into walls.</td>
-        </tr>
-        <tr>
-          <td>5. Explain Q-learning to a classmate</td>
-          <td>"Imagine playing Snake with no knowledge. Every time you die, you remember what you did wrong. Every time you eat food, you remember what went well. The Q-table is that memory &mdash; a record of what worked in each situation."</td>
-        </tr>
-      </tbody>
-    </table>
+        old_score = game.score
+        game.step(action)
+        next_state = get_state(game.snake, game.food, game.snake.direction)
+
+        if game.score > old_score:
+            reward = 10
+        elif not game.running:
+            reward = -10
+        else:
+            reward = -0.1
+
+        update_q(state, action, reward, next_state)
+        state = next_state
+        steps += 1
+
+    # Decay epsilon after each episode (clamp at 0.01)
+    epsilon = max(0.01, epsilon * 0.995)
+
+    if episode % 500 == 0:
+        print(f"Episode {episode:5d} | epsilon = {epsilon:.4f}")</div>
+
+  <div class="tip-box" style="margin-top:12px"><b>💡 What to look for:</b> The decay and clamp are the essential requirements. The print is a soft requirement. Stronger answers may discuss <em>why</em> we start high — early training needs exploration; late training needs exploitation of learned knowledge. Bonus credit: students who implement a cosine or linear decay schedule instead of multiplicative.</div>
+</div>
+
+<!-- ── CONCEPT CHECK ── -->
+<div class="section-card" id="concept">
+  <h2><span class="step-num">7</span> Concept Check — Keys &amp; Explanations <span class="badge badge-red">Pass: 4 of 5</span></h2>
+  <p>The activity uses 0-indexed option numbering internally. Answers below are given as option text and index.</p>
+
+  <table class="cq-table">
+    <tr><th>Q</th><th>Correct index</th><th>Correct option text</th><th>Key teaching point</th></tr>
+    <tr>
+      <td>Q1</td><td style="text-align:center"><b>1</b></td>
+      <td>"The expected future reward for each (state, action) pair"</td>
+      <td>Q-values are estimates of long-run return, not immediate reward. Distractor 0 (pixels) points at DQN/CNN, not tabular RL.</td>
+    </tr>
+    <tr>
+      <td>Q2</td><td style="text-align:center"><b>0</b></td>
+      <td>"Controls the probability of choosing a random action vs the best-known action"</td>
+      <td>The explore-exploit tradeoff. Distractor 1 (speed) is a common irrelevant association.</td>
+    </tr>
+    <tr>
+      <td>Q3</td><td style="text-align:center"><b>2</b></td>
+      <td>"The agent completely forgets all past experience with every single update"</td>
+      <td>ALPHA=1 means the full TD error replaces the old estimate — equivalent to no memory. Distractor 0 is the intuitive wrong answer ("faster is better").</td>
+    </tr>
+    <tr>
+      <td>Q4</td><td style="text-align:center"><b>1</b></td>
+      <td>"How much the agent values future rewards compared to immediate rewards"</td>
+      <td>GAMMA=0 → greedy (only immediate reward). GAMMA=1 → fully patient. Distinguishing GAMMA from ALPHA/EPSILON is a recurring confusion point.</td>
+    </tr>
+    <tr>
+      <td>Q5</td><td style="text-align:center"><b>0</b></td>
+      <td>"It tells the agent which actions lead to good or bad outcomes over time"</td>
+      <td>The reward signal is the only feedback the agent receives. All learning flows from it. Distractors target the "speed" and "state" red herrings.</td>
+    </tr>
+  </table>
+
+  <h4 style="margin-top:18px">CQ_ANS reference</h4>
+  <div class="ans-box">var CQ_ANS = [1, 0, 2, 1, 0];</div>
+</div>
+
+<!-- ── JOURNAL GUIDE ── -->
+<div class="section-card" id="journal">
+  <h2><span class="step-num">8</span> Journal Facilitation Guide</h2>
+  <p style="font-size:14px;color:var(--muted)">Use these notes when giving verbal or written feedback on student journal entries.</p>
+
+  <table>
+    <tr><th>Prompt</th><th>What a strong answer looks like</th><th>Red flags</th></tr>
+    <tr>
+      <td><b>JR1</b><br><small>Q-table &amp; defaultdict</small></td>
+      <td>Student explains that Q(s,a) stores expected cumulative reward, and that a dict is ideal because the state space is huge (2^11 = 2048 entries) but sparse — most (state, action) combinations may never appear in training.</td>
+      <td>Confusing Q-values with immediate reward; saying the dict "stores the game state".</td>
+    </tr>
+    <tr>
+      <td><b>JR2</b><br><small>Explore–exploit tradeoff</small></td>
+      <td>EPSILON=0 → agent gets stuck exploiting suboptimal strategies it discovered early; EPSILON=1 → agent never uses what it learned, never improves. Good answers mention that decay lets the agent transition from exploration to exploitation as it gains knowledge.</td>
+      <td>Only addressing one extreme; not connecting to the training lifecycle.</td>
+    </tr>
+    <tr>
+      <td><b>JR3</b><br><small>Discount factor GAMMA</small></td>
+      <td>GAMMA near 1 means the agent plans far ahead (strategic). GAMMA near 0 means the agent only cares about the next step. Real-world analogy: a person who saves for retirement vs one who only thinks about today's lunch. In Snake, a high GAMMA helps the agent avoid trapping itself many moves later.</td>
+      <td>Confusing GAMMA with ALPHA; not providing a concrete example.</td>
+    </tr>
+    <tr>
+      <td><b>JR4</b><br><small>Human analogy</small></td>
+      <td>Strong: maps agent→learner, state→situation, action→choice, reward→consequence. E.g., a child learning to ride a bicycle — state is balance/speed, action is steering, reward is not falling. The Q-table is like muscle memory built from repeated attempts.</td>
+      <td>Vague analogies with no mapping to RL terms; confusing supervised learning ("teacher gives examples") with RL ("feedback from environment").</td>
+    </tr>
+    <tr>
+      <td><b>JR5</b><br><small>State representation critique</small></td>
+      <td>The 11-bit state cannot represent the full snake body — it only sees 3 danger sensors. A snake that has already built a long body could cut off its own escape route many steps later, but the state says "no danger straight/left/right". Improvements: add sensors for distance to tail, encode whether an area is enclosed, or increase danger sensor range.</td>
+      <td>Simply saying "11 bits is not enough" without identifying a specific failure case; proposing pixel-based CNN instead of improving the feature vector (acceptable, but should explain why).</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ── COMMON ERRORS ── -->
+<div class="section-card" id="common-errors">
+  <h2><span class="step-num">9</span> Common Student Errors &amp; Interventions</h2>
+  <table>
+    <tr><th>Error</th><th>Likely cause</th><th>Suggested intervention</th></tr>
+    <tr>
+      <td>"My Q-table is always zero"</td>
+      <td>Bug 1 — used plain <code class="il">{}</code>, gets KeyError and training crashes silently</td>
+      <td>Ask them to print the Q-table after episode 1. If empty or error, walk through Bug 1 fix.</td>
+    </tr>
+    <tr>
+      <td>"Snake never improves after 10 000 episodes"</td>
+      <td>Bug 2 — flipped epsilon condition. Agent explores 90% of the time.</td>
+      <td>Have them print "EXPLORE" vs "EXPLOIT" for the first 20 steps. Should be ~10% explore.</td>
+    </tr>
+    <tr>
+      <td>"Snake avoids all food"</td>
+      <td>Bug 3 — negative reward for eating. Agent learned to avoid food pellets.</td>
+      <td>Ask: "What is your reward for eating food?" Positive reinforcement should be positive.</td>
+    </tr>
+    <tr>
+      <td>Confusing ALPHA and GAMMA</td>
+      <td>Two float hyperparameters in the same equation look similar</td>
+      <td>Memory trick: ALPHA → "Adjust" (how fast we adjust the estimate); GAMMA → "Gaze" (how far ahead we gaze).</td>
+    </tr>
+    <tr>
+      <td>"What is the state tuple again?"</td>
+      <td>11-bit state is introduced in step-10.html — students may have skipped it</td>
+      <td>Direct them to step-10.html → "State representation" section. 3 danger bits + 4 direction one-hot + 4 food-direction bits = 11 bits.</td>
+    </tr>
+    <tr>
+      <td>Tier 4: epsilon never reaches 0.01</td>
+      <td>Missing the <code class="il">max(0.01, ...)</code> clamp</td>
+      <td>"What's 0.5 × 0.995 after 1000 episodes?" — it approaches 0 without a floor. <code class="il">max(lower_bound, value)</code> is the standard pattern.</td>
+    </tr>
+    <tr>
+      <td>"KeyError: (state, action)" in Tier 3</td>
+      <td>Using <code class="il">q_table[state][action]</code> (nested dict) instead of <code class="il">q_table[(state, action)]</code></td>
+      <td>Demonstrate the tuple key pattern: <code class="il">defaultdict(float)</code> maps a tuple key to a float, not a nested dict.</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ── TIMING ── -->
+<div class="section-card" id="timing">
+  <h2><span class="step-num">10</span> Suggested Timing</h2>
+  <table>
+    <tr><th>Phase</th><th>Duration</th><th>Facilitator action</th></tr>
+    <tr><td>Introduction / concept framing</td><td>10 min</td><td>Explain RL feedback loop on whiteboard: state → agent → action → environment → reward → state. Draw the Snake board as the environment.</td></tr>
+    <tr><td>Pre-calibration</td><td>3 min</td><td>Let students fill in independently. Encourage honest prediction.</td></tr>
+    <tr><td>Tier 1 — Fill blanks</td><td>12 min</td><td>Circulate. The ALPHA/GAMMA swap is the most common confusion — don't give the answer, ask guiding questions.</td></tr>
+    <tr><td>Tier 2 — Debugging</td><td>12 min</td><td>After Bug 1, discuss: "Why would a plain dict fail here?" — connect to Python's KeyError mechanism.</td></tr>
+    <tr><td>Mid-reflection</td><td>5 min</td><td>Pair share — "What breaks if epsilon is always 0 or always 1?"</td></tr>
+    <tr><td>Tier 3 — Bellman equation</td><td>15 min</td><td>Write the equation on the board: Q(s,a) ← Q(s,a) + α[r + γ·max Q(s') − Q(s,a)]. Ask students to translate each term into code.</td></tr>
+    <tr><td>Tier 4 — Epsilon decay</td><td>12 min</td><td>Most students can attempt independently. Prompt: "Where in the loop does the episode end? That's where to decay."</td></tr>
+    <tr><td>Concept check</td><td>5 min</td><td>Independent. Allow re-attempt — focus on understanding, not score anxiety.</td></tr>
+    <tr><td>Journal writing</td><td>10 min</td><td>Encourage extended reflection for JR4 (human analogy) and JR5 (state critique). These are the deepest thinking prompts of the series.</td></tr>
+    <tr><td>Post-calibration &amp; submit</td><td>5 min</td><td>Confirm all fields filled. Students then navigate to survey-post.html — confirm the link is live.</td></tr>
+    <tr><td>Buffer / wrap-up</td><td>±10 min</td><td>Optional: show a trained agent running in real time if you have a demo video. Discuss what comes after Q-Learning (DQN, neural networks).</td></tr>
+  </table>
+</div>
+
+<!-- ── SHEETS COLUMNS ── -->
+<div class="section-card" id="sheets">
+  <h2><span class="step-num">11</span> Google Sheets — Act_10 Column Reference</h2>
+  <p style="font-size:14px;color:var(--muted)">These are the 41 columns written to the <code class="il">Act_10</code> tab by <code class="il">handleAct10Record()</code>. The GAS function must list them in this exact order.</p>
+  <div class="sheets-grid">
+    <div class="sheets-pill">timestamp</div>
+    <div class="sheets-pill">sid</div>
+    <div class="sheets-pill">step</div>
+    <div class="sheets-pill">matric</div>
+    <div class="sheets-pill">name</div>
+    <div class="sheets-pill">gender</div>
+    <div class="sheets-pill">age</div>
+    <div class="sheets-pill">mykid</div>
+    <div class="sheets-pill">home_state</div>
+    <div class="sheets-pill">class</div>
+    <div class="sheets-pill">school_code</div>
+    <div class="sheets-pill">phone</div>
+    <div class="sheets-pill">email</div>
+    <div class="sheets-pill">cal_confidence</div>
+    <div class="sheets-pill">cal_predicted</div>
+    <div class="sheets-pill">cal_reflection</div>
+    <div class="sheets-pill">t1_score_pct</div>
+    <div class="sheets-pill">t2_attempts</div>
+    <div class="sheets-pill">refl2_text</div>
+    <div class="sheets-pill">t3_attempts</div>
+    <div class="sheets-pill">t4_attempts</div>
+    <div class="sheets-pill">concept_score_pct</div>
+    <div class="sheets-pill">concept_passed</div>
+    <div class="sheets-pill">concept_attempts</div>
+    <div class="sheets-pill">concept_q1_ans</div>
+    <div class="sheets-pill">concept_q1_cor</div>
+    <div class="sheets-pill">concept_q2_ans</div>
+    <div class="sheets-pill">concept_q2_cor</div>
+    <div class="sheets-pill">concept_q3_ans</div>
+    <div class="sheets-pill">concept_q3_cor</div>
+    <div class="sheets-pill">concept_q4_ans</div>
+    <div class="sheets-pill">concept_q4_cor</div>
+    <div class="sheets-pill">concept_q5_ans</div>
+    <div class="sheets-pill">concept_q5_cor</div>
+    <div class="sheets-pill">jr1</div>
+    <div class="sheets-pill">jr2</div>
+    <div class="sheets-pill">jr3</div>
+    <div class="sheets-pill">jr4</div>
+    <div class="sheets-pill">jr5</div>
+    <div class="sheets-pill">post_confidence</div>
+    <div class="sheets-pill">post_actual</div>
+    <div class="sheets-pill">post_r1</div>
+    <div class="sheets-pill">post_r2</div>
+    <div class="sheets-pill">calibration_index</div>
   </div>
 
-  <!-- ── SECTION 4 · Misconceptions ── -->
-  <div class="t-section">
-    <h2><span class="sec-icon">&#9888;&#65039;</span> Common Misconceptions &amp; Facilitation Notes</h2>
-    <table class="t-table">
-      <thead>
-        <tr>
-          <th>Misconception</th>
-          <th>Reality</th>
-          <th>What to say</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>"The AI thinks"</td>
-          <td>The agent has no understanding &mdash; it matches states to stored Q-values</td>
-          <td>"It&#39;s a lookup table that gets better numbers over time. No thinking involved &mdash; just pattern matching."</td>
-        </tr>
-        <tr>
-          <td>"More state features = better"</td>
-          <td>Too many features &#8594; huge Q-table, slow learning, poor generalisation</td>
-          <td>"More features = more (state, action) combinations. The agent needs to visit each combination many times to learn."</td>
-        </tr>
-        <tr>
-          <td>"It learns instantly"</td>
-          <td>Q-learning needs hundreds or thousands of episodes</td>
-          <td>"The agent starts random and gradually improves. Show a graph of score over episodes to make progress visible."</td>
-        </tr>
-        <tr>
-          <td>"GAMMA = 1 is best"</td>
-          <td>&#947;=1 can cause instability; &#947;=0.9 balances present and future</td>
-          <td>"High gamma means distant rewards matter as much as immediate ones. This can make the agent &#39;confused&#39; about what action caused what outcome."</td>
-        </tr>
-        <tr>
-          <td>"This is how ChatGPT works"</td>
-          <td>LLMs use a different paradigm (RLHF, transformer architecture)</td>
-          <td>"ChatGPT uses reinforcement learning from human feedback (RLHF) &mdash; a much more complex version. Q-learning is the conceptual foundation."</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <h4 style="margin-top:18px">GAS routing line (add after act_9 routing line)</h4>
+  <div class="ans-box">if (t === 'act_10' || data.tab === 'Act_10') return handleAct10Record(data, ss);</div>
+</div>
 
-  <!-- ── SECTION 5 · Teaching Notes ── -->
-  <div class="t-section">
-    <h2><span class="sec-icon">&#128483;&#65039;</span> Teaching &amp; Facilitation Notes</h2>
+</div><!-- /wrap -->
+</div><!-- /content -->
 
-    <h3>Opening hook</h3>
-    <p>"You&#39;ve all learned to ride a bike by falling off and correcting. Nobody taught you the exact muscle movements &mdash; you discovered them through trial and error. Q-learning is the same idea: try, observe the outcome, adjust."</p>
-
-    <h3>Demonstration-first approach</h3>
-    <p>For most classes, showing a trained agent playing Snake (vs a random agent) is more impactful than coding from scratch. Let students observe the difference, then explain the mechanism.</p>
-
-    <h3>State design discussion</h3>
-    <p>Before showing the state tuple, ask students: "If you were blindfolded and someone told you information about the snake game, what 5 pieces of information would you want?" This surfaces the state design problem collaboratively.</p>
-
-    <h3>The Q-table as a spreadsheet</h3>
-    <p>Show the Q-table as a grid (state rows &#215; action columns) with values. At the start: all zeros. After 1000 episodes: high values for safe moves, low/negative for moves toward walls. This visual makes the abstract concept concrete.</p>
-
-    <h3>CT connection &mdash; Abstraction at scale</h3>
-    <div class="callout">
-      <span class="callout-icon">&#128172;</span>
-      <p>The Q-table approach breaks down when states become too numerous (e.g., full pixel representation of the screen). This motivates neural networks &mdash; abstraction applied to Q-learning.</p>
-    </div>
-
-    <h3>Managing student expectations</h3>
-    <p>Q-learning on a full 20&#215;15 grid takes thousands of episodes. Students may expect "it just works" after 10 games. Explain the training curve: random &#8594; slightly better &#8594; much better. A graph of average score per 100 episodes makes progress visible even when individual games look chaotic.</p>
-
-    <h3>Connection to careers</h3>
-    <p>Game AI, robotics path-planning, recommendation systems (YouTube suggesting videos), and stock trading algorithms all use variants of Q-learning. This is not a toy concept.</p>
-  </div>
-
-</div><!-- /page-body -->
-</div><!-- /tcontent -->
+<footer>UMPSA STEM Lab · Step 10 Teacher Notes · Not for student distribution · <a href="teacher-9.html" style="color:var(--teacher-accent)">← Step 9</a></footer>
 
 <script>
-(function(){
-  var b = document.getElementById('gatebtn');
-  if(!b) return;
-  b.addEventListener('click', function(){
-    document.getElementById('gate').hidden = true;
-    document.getElementById('tcontent').hidden = false;
+// Sticky nav aria-current update
+var links = document.querySelectorAll('.nav-inner a');
+var sections = document.querySelectorAll('[id]');
+function updateNav(){
+  var scrollY = window.scrollY + 120;
+  var current = '';
+  sections.forEach(function(s){ if(s.offsetTop <= scrollY) current = s.id; });
+  links.forEach(function(a){
+    var href = a.getAttribute('href').replace('#','');
+    a.setAttribute('aria-current', href === current ? 'page' : '');
   });
-})();
+}
+window.addEventListener('scroll', updateNav, {passive:true});
+
+// Gate
+var PASS = btoa('stemlab2025');
+function checkPass(){
+  var v = document.getElementById('pass-in').value;
+  if(btoa(v) === PASS || v === 'stemlab2025'){
+    document.getElementById('gate').style.display='none';
+    document.getElementById('hero').style.display='block';
+    document.getElementById('nav').style.display='block';
+    document.getElementById('main-content').classList.add('unlocked');
+    try{ sessionStorage.setItem('t10_unlocked','1'); }catch(e){}
+  } else {
+    document.getElementById('pass-err').style.display='block';
+  }
+}
+document.getElementById('pass-in').addEventListener('keydown',function(e){ if(e.key==='Enter') checkPass(); });
+// Auto-unlock if already authenticated this session
+try{ if(sessionStorage.getItem('t10_unlocked')==='1'){ document.getElementById('gate').style.display='none'; document.getElementById('hero').style.display='block'; document.getElementById('nav').style.display='block'; document.getElementById('main-content').classList.add('unlocked'); } }catch(e){}
 </script>
-<script>
-document.querySelectorAll('.copybtn').forEach(function(b){
-  b.addEventListener('click', function(){
-    var t = b.parentElement.querySelector('code').textContent;
-    navigator.clipboard.writeText(t).then(function(){
-      b.textContent = 'Copied!';
-      b.classList.add('copied');
-      setTimeout(function(){ b.textContent = 'Copy'; b.classList.remove('copied'); }, 2000);
-    }).catch(function(){});
-  });
-});
-</script>
-
-
-  <!-- CONCEPT_CHECK_ADDED -->
-  <!-- ══ CONCEPT CHECK ANSWER KEY ══ -->
-  <div class="t-section">
-    <h2><span class="sec-icon">&#x1F9E0;</span> Concept Check &mdash; Answer Key (Step 10)</h2>
-    <p>These 5 questions appear in the activity page <strong>after Tier 4</strong> (post-calibration gate).
-    Pass mark is <strong>4&nbsp;of&nbsp;5&nbsp;(80%)</strong>. Students who fail may retry; the system records attempts and final score in Google Sheets.</p>
-    <table class="t-table">
-      <thead><tr><th style="width:65%">Question (displayed to student)</th><th>Correct Answer</th></tr></thead>
-      <tbody>
-        <tr>
-          <td>Q1: MVP in game development means:</td>
-          <td class="sev-low">&#10003; The simplest working version you can build and test first</td>
-        </tr>
-        <tr>
-          <td>Q2: Which is NOT a good first step when adding a new game feature?</td>
-          <td class="sev-low">&#10003; Write all the code at once before planning</td>
-        </tr>
-        <tr>
-          <td>Q3: 'Separation of concerns' in your game means:</td>
-          <td class="sev-low">&#10003; Splitting input, logic update, and drawing into separate functions/sections</td>
-        </tr>
-        <tr>
-          <td>Q4: A game state machine is useful for managing:</td>
-          <td class="sev-low">&#10003; Different game modes: PLAYING, PAUSED, GAME_OVER</td>
-        </tr>
-        <tr>
-          <td>Q5: Which makes game code most maintainable for the long term?</td>
-          <td class="sev-low">&#10003; Named constants, clear function names, and organised structure</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="callout" style="margin-top:14px">
-      <span class="callout-icon">&#x1F4CA;</span>
-      <p><strong>Recorded in Google Sheet (Act_10 tab):</strong>
-      <code>concept_q1</code>&ndash;<code>concept_q5</code> (student&rsquo;s 0-based answer index),
-      <code>concept_score_pct</code>, <code>concept_passed</code> (1&nbsp;=&nbsp;pass, 0&nbsp;=&nbsp;fail),
-      <code>concept_attempts</code> (retry count).</p>
-    </div>
-  </div>
-
-  <!-- ══ GOOGLE SHEETS DATA STRUCTURE ══ -->
-  <div class="t-section">
-    <h2><span class="sec-icon">&#x1F4CA;</span> Google Sheets &mdash; Data Collected (Act_10)</h2>
-    <p>Every submission to this step writes one row to the <strong>Act_10</strong> tab in the research spreadsheet. All 13 tabs (Student_Reg, Pre_Test, Post_Test, Act_1&ndash;Act_10) share the same student identity columns.</p>
-    <table class="t-table" style="font-size:13px">
-      <thead><tr><th style="width:36%">Column</th><th>Description</th></tr></thead>
-      <tbody>
-        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">STUDENT IDENTITY (10 fields)</td></tr>
-        <tr><td><code>matric</code></td><td>Matric / student ID</td></tr>
-        <tr><td><code>name</code></td><td>Full name</td></tr>
-        <tr><td><code>gender</code></td><td>Gender (Female / Male / Other)</td></tr>
-        <tr><td><code>age</code></td><td>Age in years</td></tr>
-        <tr><td><code>mykid</code></td><td>MyKid / IC number</td></tr>
-        <tr><td><code>home_state</code></td><td>Home state in Malaysia</td></tr>
-        <tr><td><code>class</code></td><td>Class or cohort code</td></tr>
-        <tr><td><code>school_code</code></td><td>School or programme code</td></tr>
-        <tr><td><code>phone</code></td><td>Phone number</td></tr>
-        <tr><td><code>email</code></td><td>Email address</td></tr>
-        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">SUBMISSION</td></tr>
-        <tr><td><code>step</code></td><td>Step number (10)</td></tr>
-        <tr><td><code>submitted_iso</code></td><td>KL timestamp (UTC+8, ISO&nbsp;8601)</td></tr>
-        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">PRE-CALIBRATION</td></tr>
-        <tr><td><code>cal_confidence</code></td><td>Self-confidence before activity (1&ndash;5 scale)</td></tr>
-        <tr><td><code>cal_predicted</code></td><td>Predicted score before activity (%)</td></tr>
-        <tr><td><code>cal_reflection</code></td><td>Free-text: what will be hard?</td></tr>
-        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">ACTIVITY TIERS</td></tr>
-        <tr><td><code>t1_score_pct</code></td><td>Tier&nbsp;1 Fill-in-Blanks score (%)</td></tr>
-        <tr><td><code>t2_attempts</code></td><td>Tier&nbsp;2 Debug — number of attempts</td></tr>
-        <tr><td><code>refl2_text</code></td><td>Tier&nbsp;2 reflection free text</td></tr>
-        <tr><td><code>t3_attempts</code></td><td>Tier&nbsp;3 Complete-Code attempts</td></tr>
-        <tr><td><code>t4_attempts</code></td><td>Tier&nbsp;4 New Task attempts</td></tr>
-        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">CONCEPT CHECK</td></tr>
-        <tr><td><code>concept_q1</code>&ndash;<code>concept_q5</code></td><td>Student answer index (0-based) per question</td></tr>
-        <tr><td><code>concept_score_pct</code></td><td>Percentage correct (0&ndash;100)</td></tr>
-        <tr><td><code>concept_passed</code></td><td>1 = passed (&ge;80%), 0 = failed</td></tr>
-        <tr><td><code>concept_attempts</code></td><td>Total retries</td></tr>
-        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">REFLECTIVE JOURNAL</td></tr>
-        <tr><td><code>jr1</code>&ndash;<code>jr5</code></td><td>Journal prompts 1&ndash;5 free-text responses</td></tr>
-        <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">POST-CALIBRATION</td></tr>
-        <tr><td><code>post_confidence</code></td><td>Confidence rating after activity (1&ndash;5)</td></tr>
-        <tr><td><code>post_actual</code></td><td>Self-reported actual score (%)</td></tr>
-        <tr><td><code>post_r1</code></td><td>Reflection: how accurate was the prediction?</td></tr>
-        <tr><td><code>post_r2</code></td><td>Reflection: what would you do differently?</td></tr>
-        <tr><td><code>calibration_index</code></td><td>post_actual &minus; cal_predicted (negative = overconfident)</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-<footer>
-  <span>&copy; 2026 Nurul Hazlina Noordin · UMPSA STEM Lab Engineering Education Initiative</span>
-  <a href="https://www.umpsa.edu.my" target="_blank" rel="noopener" aria-label="UMPSA website">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-  </a>
-  <a href="mailto:hazlina@umpsa.edu.my" aria-label="Email facilitator">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-  </a>
-</footer>
-
 </body>
 </html>

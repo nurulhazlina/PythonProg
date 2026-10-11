@@ -3,1529 +3,756 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Step 10 Activity – Review & Extension | Snake Game Tutorial</title>
+<title>Step 10 Activity — ML Extension | Snake Game Tutorial</title>
 <link rel="stylesheet" href="style.css">
 <style>
-
-/* ── Variable aliases (--fg/--fg-soft not in style.css) ── */
-:root{--fg:var(--ink,#1f2933);--fg-soft:var(--muted,#5b7284)}
-/* ── Site header ── */
-.site-header{background:var(--teal-dark);color:#fff;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.28)}
-.header-inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:52px;gap:16px}
-.logo{color:#fff;text-decoration:none;font-weight:800;font-size:17px;white-space:nowrap;letter-spacing:-.01em}
-.logo:hover{opacity:.85}
-.step-nav{display:flex;gap:3px;align-items:center;flex-wrap:wrap}
-.step-nav a{color:rgba(255,255,255,.75);text-decoration:none;font-size:13px;font-weight:600;padding:5px 9px;border-radius:6px;transition:background .15s,color .15s;line-height:1}
-.step-nav a:hover{background:rgba(255,255,255,.15);color:#fff}
-.step-nav a.active{background:rgba(255,255,255,.22);color:#fff;font-weight:800}
-/* ── Container & main layout ── */
-.container{max-width:1100px;margin:0 auto;padding:0 20px}
-.main-content{padding:28px 0 64px}
-/* ── Hero section (override style.css generic section rule) ── */
-section.hero{background:linear-gradient(135deg,var(--teal-dark) 0%,#063f3b 100%);color:#fff;border:none;border-radius:0;margin:0}
-.step-badge{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:12px}
-.hero-title{font-size:clamp(22px,4vw,30px);font-weight:800;margin:0 0 8px;line-height:1.2}
-.hero-sub{font-size:15px;margin:0;opacity:.85;line-height:1.5}
-/* ── Buttons ── */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--teal);color:#fff;font-weight:700;font-size:14px;padding:10px 22px;border-radius:8px;text-decoration:none;border:none;cursor:pointer;transition:opacity .15s;white-space:nowrap;line-height:1;font-family:inherit}
-.btn:hover{opacity:.85}
-.btn-outline{background:transparent;border:2px solid rgba(255,255,255,.55);color:#fff}
-.btn-outline:hover{background:rgba(255,255,255,.1);opacity:1}
-/* ── Tier progress bar ── */
-.tier-progress{display:flex;align-items:center;margin-bottom:24px;padding:14px 0;overflow-x:auto}
-.tier-step{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:60px}
-.tier-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;background:var(--line);color:var(--muted);transition:background .3s,color .3s}
-.tier-step.active .tier-num{background:var(--teal);color:#fff}
-.tier-step.done .tier-num{background:var(--teal-dark);color:#fff}
-.tier-label{font-size:11px;font-weight:600;color:var(--muted);white-space:nowrap}
-.tier-connector{flex:1;min-width:14px;height:3px;background:var(--line);transition:background .3s;align-self:flex-start;margin-top:19px}
-.tier-connector.done{background:var(--teal)}
-/* ── Tier cards ── */
-.tier-card{border:1.5px solid var(--line);border-radius:12px;margin-bottom:20px;overflow:hidden;background:var(--card)}
-.tier-card.tier-locked{opacity:.45;pointer-events:none}
-.tier-card:not(.tier-locked){opacity:1;pointer-events:auto}
-.tier-header{padding:13px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--line);background:rgba(0,0,0,.025)}
-.tier-body{padding:18px}
-.tier-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.05em;padding:3px 10px;border-radius:20px;background:var(--teal);color:#fff;white-space:nowrap;text-transform:uppercase}
-.tier-title{font-size:15px;font-weight:700;color:var(--ink)}
-.tier-desc{font-size:13px;color:var(--muted)}
-.tier-intro{font-size:14px;color:var(--ink);margin:0 0 12px;line-height:1.6}
-/* ── Code blocks ── */
-.code-block{background:var(--code-bg);border-radius:8px;padding:14px 16px;font-family:"SFMono-Regular",Consolas,monospace;font-size:13px;line-height:1.65;overflow-x:auto;margin-bottom:12px;color:#cdd;white-space:pre}
-/* ── Textareas ── */
-.tier-textarea{width:100%;background:var(--code-bg);border:1px solid rgba(100,130,150,.35);border-radius:6px;color:#cdd;font-size:13px;font-family:inherit;padding:10px 12px;resize:vertical;box-sizing:border-box;line-height:1.5}
-.tier-textarea:focus{outline:none;border-color:var(--teal)}
-/* ── Journal prompts ── */
-.journal-prompt{margin-bottom:16px}
-.journal-prompt label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;line-height:1.5}
-.jp-num{display:inline-flex;align-items:center;justify-content:center;background:var(--blue);color:#fff;font-size:11px;font-weight:800;width:20px;height:20px;border-radius:50%;margin-right:4px;vertical-align:middle}
-/* ── Calibration gate ── */
-.cal-gate{background:linear-gradient(135deg,rgba(11,79,75,.12),rgba(2,173,165,.06));border:2px solid var(--teal);border-radius:12px;margin-bottom:24px;overflow:hidden}
-.cal-gate-header{background:linear-gradient(90deg,rgba(2,173,165,.2),transparent);padding:12px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.cal-gate-body{padding:18px}
-.cal-label{font-weight:700;font-size:14px;margin-bottom:6px;display:block;line-height:1.5}
-.cal-sub{font-size:13px;color:var(--muted);margin-bottom:10px;display:block}
-.conf-slider-wrap{display:flex;align-items:center;gap:10px;margin:8px 0 16px}
-.conf-slider-wrap input[type=range]{flex:1;accent-color:var(--teal)}
-.conf-val{min-width:2em;font-family:monospace;font-weight:800;font-size:20px;color:var(--teal);text-align:center}
-.pred-input{background:var(--code-bg);border:1px solid var(--line);border-radius:6px;color:var(--fg);font-family:monospace;font-size:16px;padding:8px 12px;width:110px;text-align:center;font-weight:700}
-.pred-input:focus{outline:none;border-color:var(--teal)}
-.cal-tip{background:rgba(2,173,165,.08);border-left:3px solid var(--teal);border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:16px;font-size:13px;line-height:1.6}
-/* ── Reflection gates ── */
-.refl-gate{border:1.5px solid rgba(13,85,167,.4);border-radius:12px;margin-bottom:20px;overflow:hidden;background:rgba(13,85,167,.04)}
-.refl-gate.tier-locked{opacity:.45;pointer-events:none}
-.refl-gate:not(.tier-locked){opacity:1;pointer-events:auto}
-.refl-gate-header{background:linear-gradient(90deg,rgba(13,85,167,.15),transparent);padding:12px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.refl-badge{font-size:11px;font-weight:700;letter-spacing:.06em;padding:3px 8px;border-radius:20px;background:var(--blue);color:#fff;white-space:nowrap}
-.refl-gate-body{padding:18px}
-/* ── Tier fill-in-blank ── */
-.blank-row{display:flex;align-items:center;gap:10px;margin:4px 0;flex-wrap:wrap}
-.blank-num{min-width:22px;font-size:12px;font-weight:700;color:var(--muted)}
-.blank-label{font-size:13px;font-family:monospace;color:var(--fg-soft);flex:1;min-width:160px}
-.blank-input{background:var(--code-bg);border:1px solid var(--line);border-radius:5px;color:var(--fg);font-family:monospace;font-size:14px;padding:5px 10px;width:180px}
-.blank-input:focus{outline:none;border-color:var(--teal)}
-.blank-input.correct{border-color:#22b;background:rgba(0,180,0,.08)}
-.blank-input.wrong{border-color:var(--red);background:rgba(200,0,0,.06)}
-/* ── Debug bugs ── */
-.bug-card{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin-bottom:12px;background:var(--bg)}
-.bug-card h4{margin:0 0 8px;font-size:14px;color:var(--orange)}
-.bug-line{font-family:monospace;font-size:13px;background:var(--code-bg);padding:6px 10px;border-radius:5px;margin:6px 0;color:#f88;word-break:break-all}
-.bug-fix-input{width:100%;background:var(--code-bg);border:1px solid var(--line);border-radius:5px;color:var(--fg);font-family:monospace;font-size:13px;padding:6px 10px;box-sizing:border-box}
-.bug-fix-input:focus{outline:none;border-color:var(--blue)}
-.bug-hint{font-size:12px;color:var(--muted);margin-top:4px;font-style:italic}
-/* ── Tier-3/4 code block ── */
-.starter-code{background:var(--code-bg);border-radius:8px;padding:14px 16px;font-family:monospace;font-size:13px;line-height:1.6;overflow-x:auto;margin-bottom:12px;white-space:pre;color:#cdd}
-/* ── Step complete banner ── */
-.complete-banner{background:linear-gradient(135deg,rgba(2,173,165,.15),rgba(11,79,75,.1));border:2px solid var(--teal);border-radius:12px;padding:20px 24px;text-align:center;margin-top:24px}
-.complete-banner h2{margin:0 0 8px;color:var(--teal-dark)}
-.complete-banner p{margin:0;color:var(--muted)}
-
-
-/* ── Quick Re-ID Modal ── */
-#qrid-overlay{position:fixed;inset:0;background:rgba(15,23,42,.72);
-  display:flex;align-items:center;justify-content:center;z-index:9999;
-  backdrop-filter:blur(4px);padding:16px}
-#qrid-box{background:var(--card,#fff);border-radius:16px;padding:32px 28px;
-  max-width:420px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.35)}
-#qrid-box h2{margin:0 0 4px;font-size:1.25rem;color:var(--text,#1e293b)}
-#qrid-box p{margin:0 0 20px;font-size:.875rem;color:var(--muted,#64748b);line-height:1.5}
-.qrid-field{margin-bottom:14px}
-.qrid-field label{display:block;font-size:.8rem;font-weight:600;
-  color:var(--text,#1e293b);margin-bottom:4px;letter-spacing:.02em}
-.qrid-field input,.qrid-field select{width:100%;box-sizing:border-box;
-  border:1.5px solid var(--line,#e2e8f0);border-radius:8px;
-  padding:9px 12px;font-size:.95rem;background:var(--bg,#f8fafc);
-  color:var(--text,#1e293b);outline:none;transition:border-color .2s}
-.qrid-field input:focus,.qrid-field select:focus{
-  border-color:var(--teal,#02ada5);box-shadow:0 0 0 3px rgba(2,173,165,.15)}
-#qrid-submit{width:100%;margin-top:6px;padding:11px;border:none;border-radius:8px;
-  background:var(--teal,#02ada5);color:#fff;font-size:1rem;font-weight:700;
-  cursor:pointer;transition:opacity .2s}
-#qrid-submit:hover{opacity:.88}
-#qrid-err{color:#e53e3e;font-size:.82rem;margin-top:8px;display:none}
-
+.t-blank{display:inline-block;min-width:130px;border-bottom:2px solid var(--teal);background:transparent;font-family:inherit;font-size:14px;padding:2px 6px;color:var(--ink);outline:none;text-align:center;border-radius:4px 4px 0 0;transition:border-color .2s,background .2s}
+.t-blank:focus{border-color:var(--orange);background:rgba(245,162,29,.07)}
+.t-blank.correct{border-color:#22c55e;background:rgba(34,197,94,.08);color:#15803d}
+.t-blank.wrong{border-color:var(--red,#dc2626);background:rgba(220,38,38,.07);color:#dc2626;animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.debug-editor{width:100%;font-family:"SFMono-Regular",Consolas,monospace;font-size:13px;background:var(--code-bg,#f1f5f9);border:1.5px solid var(--line,#dde3ec);border-radius:10px;padding:14px;color:var(--ink);resize:vertical;line-height:1.6;min-height:60px}
+.debug-editor.correct{border-color:#22c55e;background:rgba(34,197,94,.06)}
+.debug-editor.wrong{border-color:#dc2626}
+.tier-section{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:28px;margin-bottom:22px;display:none}
+.tier-section.active{display:block}
+.tier-label{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-bottom:12px}
+.tier-label.t1{background:rgba(10,143,138,.12);color:var(--teal-dark)}
+.tier-label.t2{background:rgba(59,130,246,.12);color:#1d4ed8}
+.tier-label.t3{background:rgba(245,162,29,.15);color:#92400e}
+.tier-label.t4{background:rgba(168,85,247,.12);color:#6d28d9}
+.tier-label.tcq{background:rgba(239,68,68,.1);color:#b91c1c}
+.tier-label.tjr{background:rgba(34,197,94,.12);color:#15803d}
+.tier-label.tpc{background:rgba(99,102,241,.12);color:#3730a3}
+code.il{background:var(--code-bg,#f1f5f9);padding:1px 6px;border-radius:4px;font-size:13px;font-family:"SFMono-Regular",Consolas,monospace;color:var(--ink)}
+.hint-chip{display:inline-block;font-size:11px;color:var(--muted);background:rgba(0,0,0,.04);border:1px solid var(--line);border-radius:10px;padding:1px 8px;margin-left:6px;font-style:italic}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:11px 22px;border-radius:9px;font-size:14px;font-weight:700;border:none;cursor:pointer;font-family:inherit;transition:background .15s,transform .1s;text-decoration:none}
+.btn:active{transform:translateY(1px)}
+.btn-teal{background:var(--teal-dark);color:#fff}
+.btn-teal:hover{background:#065056}
+.btn-outline{background:transparent;color:var(--teal-dark);border:2px solid var(--teal-dark)}
+.btn-outline:hover{background:rgba(10,143,138,.07)}
+.btn-green{background:#16a34a;color:#fff}
+.btn-green:hover{background:#15803d}
+.btn-red{background:#dc2626;color:#fff}
+.btn-red:hover{background:#b91c1c}
+.fb{margin-top:14px;padding:12px 16px;border-radius:8px;font-size:14px;display:none}
+.fb.show{display:block}
+.fb.ok{background:rgba(34,197,94,.1);border:1px solid #86efac;color:#15803d}
+.fb.err{background:rgba(220,38,38,.08);border:1px solid #fca5a5;color:#dc2626}
+.fb.warn{background:rgba(245,162,29,.1);border:1px solid #fcd34d;color:#92400e}
+.cq-opt{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-radius:9px;border:1.5px solid var(--line);background:transparent;cursor:pointer;font-size:14px;font-family:inherit;color:var(--ink);text-align:left;transition:border-color .15s,background .15s;margin-bottom:8px;width:100%}
+.cq-opt:hover:not(:disabled){border-color:var(--teal);background:rgba(10,143,138,.05)}
+.cq-opt.selected-ok{border-color:#22c55e;background:rgba(34,197,94,.09);color:#15803d}
+.cq-opt.selected-err{border-color:#dc2626;background:rgba(220,38,38,.07);color:#dc2626}
+.cq-opt:disabled{cursor:default}
+.jr-area{width:100%;min-height:90px;border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;font-family:inherit;font-size:14px;color:var(--ink);background:var(--card);resize:vertical;line-height:1.6}
+.jr-area:focus{outline:none;border-color:var(--teal)}
+.cal-row{display:flex;gap:16px;flex-wrap:wrap}
+.cal-group{flex:1;min-width:180px}
+.cal-label{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px}
+.cal-slider{width:100%;accent-color:var(--teal)}
+.cal-val{font-size:13px;color:var(--teal-dark);font-weight:700}
+.progress-strip{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px}
+.ps-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;border:2px solid var(--line);color:var(--muted);background:transparent}
+.ps-dot.done{background:var(--teal);border-color:var(--teal);color:#fff}
+.ps-dot.active{border-color:var(--teal-dark);color:var(--teal-dark);background:rgba(10,143,138,.09)}
+.score-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:700}
+.score-ok{background:rgba(34,197,94,.12);color:#15803d;border:1px solid #86efac}
+.score-bad{background:rgba(220,38,38,.08);color:#dc2626;border:1px solid #fca5a5}
+.ident-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:14px 0}
+.ident-grid label{font-size:13px;color:var(--muted);display:block;margin-bottom:4px}
+.ident-grid input,.ident-grid select{width:100%;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;font:inherit;font-size:14px;background:var(--card);color:var(--ink)}
+.export-panel{background:rgba(99,102,241,.05);border:1.5px solid rgba(99,102,241,.2);border-radius:12px;padding:18px 20px;margin-top:18px}
+.export-panel h4{margin:0 0 10px;font-size:15px;color:#3730a3}
+.complete-banner{background:linear-gradient(135deg,var(--teal-dark),#1FA898);color:#fff;border-radius:14px;padding:28px;text-align:center;margin-top:24px}
+.complete-banner h2{font-size:22px;margin-bottom:8px}
+.complete-banner p{opacity:.88;margin-bottom:18px}
+pre.code-block{background:var(--code-bg,#f1f5f9);border:1px solid var(--line);border-radius:10px;padding:16px;overflow-x:auto;font-family:"SFMono-Regular",Consolas,monospace;font-size:13px;line-height:1.6;color:var(--ink);margin:12px 0}
 </style>
-
-<style>
-/* Concept Check Component */
-.concept-check-inner { padding:4px 0; }
-.concept-desc { font-size:14px; color:var(--muted); margin-bottom:12px; }
-.concept-q { background:var(--code-bg); border:1px solid var(--line); border-radius:8px; padding:14px 16px; margin-bottom:14px; color:var(--fg); }
-.concept-q-text { margin:0 0 10px; font-size:15px; line-height:1.5; color:var(--fg); font-weight:500; }
-.concept-opts { display:flex; flex-direction:column; gap:8px; }
-.concept-opt { display:flex; align-items:flex-start; gap:10px; cursor:pointer; font-size:14px; line-height:1.4; color:var(--fg); }
-.concept-opt span { color:var(--fg); }
-.concept-opt input[type=radio] { margin-top:3px; flex-shrink:0; cursor:pointer; }
-.concept-feedback { margin-top:8px; font-size:13px; padding:6px 10px; border-radius:6px; }
-.concept-feedback.correct { background:#16a34a22; color:#16a34a; border:1px solid #16a34a44; }
-.concept-feedback.incorrect { background:#dc262622; color:#dc2626; border:1px solid #dc262644; }
-.tier-btn{padding:9px 22px;border:none;border-radius:8px;background:var(--teal);color:#fff;font-weight:700;font-size:14px;cursor:pointer;transition:opacity .2s;font-family:inherit}
-.tier-btn:hover:not(:disabled){opacity:.85}
-.tier-btn:disabled{opacity:.4;cursor:not-allowed}
-</style>
-
-
-<style>
-/* ── Student Identity Block ── */
-.id-block{background:linear-gradient(135deg,#08312F,#0a3d39);border-radius:12px;padding:20px 22px;margin-bottom:22px;border:2px solid rgba(2,173,165,.3)}
-.id-block.id-confirmed{border-color:#02ADA5;background:linear-gradient(135deg,#052e16,#073d2e)}
-.id-block-title{font-weight:800;font-size:15px;color:#fff;display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
-.id-required-badge{background:#02ADA5;color:#fff;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;letter-spacing:.05em;flex-shrink:0}
-.id-subtitle{font-weight:400;font-size:13px;color:rgba(255,255,255,.6)}
-.id-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px 12px;align-items:end}
-.id-field{display:flex;flex-direction:column;gap:5px}
-.id-field.id-w2{grid-column:span 2}
-.id-field label{font-size:11px;font-weight:700;color:rgba(255,255,255,.65);letter-spacing:.06em;text-transform:uppercase}
-.id-req{color:#f5a21d;margin-left:2px}
-.id-field input,.id-field select{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);border-radius:7px;padding:9px 12px;color:#fff;font-size:13px;font-family:inherit;width:100%;box-sizing:border-box;transition:border-color .2s}
-.id-field select{cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,.5)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
-.id-field select option{background:#0a3d39;color:#fff}
-.id-field input:focus,.id-field select:focus{outline:none;border-color:#02ADA5;background:rgba(2,173,165,.12)}
-.id-field input::placeholder{color:rgba(255,255,255,.3)}
-.id-save-btn{background:#02ADA5;color:#fff;border:none;border-radius:8px;padding:11px 22px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;transition:opacity .2s;width:100%;margin-top:14px}
-.id-save-btn:hover{opacity:.88}
-.id-confirmed-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.id-confirmed-name{font-weight:700;font-size:16px;color:#fff}
-.id-confirmed-meta{color:rgba(255,255,255,.65);font-size:13px}
-.id-edit-btn{background:transparent;border:1.5px solid rgba(255,255,255,.35);color:rgba(255,255,255,.75);border-radius:6px;padding:5px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
-.id-edit-btn:hover{border-color:#fff;color:#fff}
-.id-notice{background:rgba(245,162,29,.12);border:1.5px solid rgba(245,162,29,.45);border-radius:8px;padding:9px 14px;color:#f5a21d;font-size:13px;font-weight:600;margin-top:12px;display:none}
-</style>
-
 </head>
 <body>
-<script>
-/* Registration gate */
-/* qrid-modal handles registration */
-</script>
-<header class="site-header">
-  <div class="header-inner">
-    <a class="logo" href="index.html">🐍 Snake Tutorial</a>
-    <nav class="step-nav">
-      <a href="step-1-activity.html">1</a>
-<a href="step-2-activity.html">2</a>
-<a href="step-3-activity.html">3</a>
-<a href="step-4-activity.html">4</a>
-<a href="step-5-activity.html">5</a>
-<a href="step-6-activity.html">6</a>
-<a href="step-7-activity.html">7</a>
-<a href="step-8-activity.html">8</a>
-<a href="step-9-activity.html">9</a>
-<a href="step-10-activity.html" class="active">10</a>
+<div class="chev" id="chev"><span id="see-box">See</span><span>Think</span><span>Explore</span><span>Marvel</span></div>
+<nav class="sitenav"><div class="wrap">
+  <a class="brand" href="index.html">Snake Game <span>Python Tutorial</span></a>
+  <details class="navsel"><summary>Steps</summary><div class="navmenu" role="menu">
+    <a href="step-1-activity.html"><b>Step 1</b>: Variables &amp; Setup</a>
+    <a href="step-2-activity.html"><b>Step 2</b>: Loop &amp; Events</a>
+    <a href="step-3-activity.html"><b>Step 3</b>: Direction Control</a>
+    <a href="step-4-activity.html"><b>Step 4</b>: Snake Body ⭐</a>
+    <a href="step-5-activity.html"><b>Step 5</b>: Bonus Food 🌟</a>
+    <a href="step-6-activity.html"><b>Step 6</b>: Functions</a>
+    <a href="step-7-activity.html"><b>Step 7</b>: Wrap-Around ⭐</a>
+    <a href="step-8-activity.html"><b>Step 8</b>: Save High Score</a>
+    <a href="step-9-activity.html"><b>Step 9</b>: OOP Refactor</a>
+    <a href="step-10-activity.html" class="active"><b>Step 10</b>: ML Extension 🤖</a>
+  </div></details>
+  <a class="nl" href="step-10.html">Notes</a>
+</div></nav>
 
-    </nav>
+<header class="hero"><div class="wrap">
+  <p class="eyebrow">UMPSA STEM LAB · Step 10 of 10 · Activities</p>
+  <h1>Step 10 — ML Extension 🤖</h1>
+  <p class="sub">Apply Q-Learning to let the Snake teach itself to play. You'll complete the Q-table, debug the reward logic, and build an epsilon-decay training loop.</p>
+  <div class="pills">
+    <span class="pill">Q-Learning</span><span class="pill">Q-table</span><span class="pill">epsilon-greedy</span><span class="pill">Bellman equation</span><span class="pill">Reward signal</span>
   </div>
-</header>
+</div></header>
+<div class="progress-bar"><div class="wrap"><div class="track"><i style="width:100%"></i></div><b>Step 10 / 10</b></div></div>
 
-<section class="hero" style="padding:32px 0 24px">
-  <div class="container">
-    <div class="step-badge">Step 10 — Activity</div>
-    <h1 class="hero-title">Review & Extension</h1>
-    <p class="hero-sub">code quality • testing • stretch challenges</p>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
-      <a class="btn btn-outline" href="step-10.html">📖 Concept Page</a>
-      <a class="btn btn-outline" href="step-9-activity.html">← Step 9</a>
-      <a class="btn" href="index.html">🏠 Home</a>
-    </div>
-  </div>
-</section>
+<div class="wrap" style="padding-top:28px;padding-bottom:60px">
 
-<main class="main-content">
-<div class="container">
-
-<!-- ── PROGRESS BAR ── -->
-<div class="tier-progress" id="tierProgress">
-  <div class="tier-step active" id="tp0"><span class="tier-num">🎯</span><span class="tier-label">Calibrate</span></div>
-  <div class="tier-connector" id="tc01"></div>
-  <div class="tier-step locked" id="tp1"><span class="tier-num">1</span><span class="tier-label">Fill-in</span></div>
-  <div class="tier-connector" id="tc12"></div>
-  <div class="tier-step locked" id="tp2"><span class="tier-num">2</span><span class="tier-label">Debug</span></div>
-  <div class="tier-connector" id="tc23"></div>
-  <div class="tier-step locked" id="tp3"><span class="tier-num">3</span><span class="tier-label">Extend</span></div>
-  <div class="tier-connector" id="tc34"></div>
-  <div class="tier-step locked" id="tp4"><span class="tier-num">4</span><span class="tier-label">Create</span></div>
-  <div class="tier-connector" id="tc4c"></div>
-  <div class="tier-step locked" id="tpc"><span class="tier-num">🧠</span><span class="tier-label">Concept</span></div>
-  <div class="tier-connector" id="tccj"></div>
-  <div class="tier-step locked" id="tpj"><span class="tier-num">📓</span><span class="tier-label">Reflect</span></div>
+<!-- PROGRESS DOTS -->
+<div class="progress-strip" id="progress-strip">
+  <div class="ps-dot" id="pd0" title="Calibrate">C</div>
+  <div class="ps-dot" id="pd1" title="Tier 1">T1</div>
+  <div class="ps-dot" id="pd2" title="Tier 2">T2</div>
+  <div class="ps-dot" id="pd3" title="Reflect">R</div>
+  <div class="ps-dot" id="pd4" title="Tier 3">T3</div>
+  <div class="ps-dot" id="pd5" title="Tier 4">T4</div>
+  <div class="ps-dot" id="pd6" title="Concept Check">CQ</div>
+  <div class="ps-dot" id="pd7" title="Journal">JR</div>
+  <div class="ps-dot" id="pd8" title="Post-Calibrate">PC</div>
 </div>
 
-<!-- ── STUDENT IDENTITY ── -->
-<div class="id-block" id="idBlock">
-  <div class="id-block-title">
-    &#x1F464; Your Details
-    <span class="id-required-badge">REQUIRED</span>
-    <span class="id-subtitle">&#8212; fill in before you begin (<span style="color:#f5a21d">&#9733;</span> = required)</span>
+<!-- ── PRE-CALIBRATION ── -->
+<div class="tier-section active" id="sec-cal">
+  <span class="tier-label t1">Pre-Calibration</span>
+  <h2 style="margin-top:0">Before you begin — how confident are you?</h2>
+  <p style="color:var(--muted);font-size:14px">Answer honestly. This is for research — not graded.</p>
+  <div class="cal-row" style="margin-top:16px">
+    <div class="cal-group">
+      <div class="cal-label">Confidence level (1 = not at all, 10 = very confident)</div>
+      <input type="range" class="cal-slider" id="cal-conf" min="1" max="10" value="5">
+      <div class="cal-val" id="cal-conf-val">5</div>
+    </div>
+    <div class="cal-group">
+      <div class="cal-label">I predict I'll score ___ % on the fill-in-blank exercise</div>
+      <input type="range" class="cal-slider" id="cal-pred" min="0" max="100" step="5" value="50">
+      <div class="cal-val" id="cal-pred-val">50 %</div>
+    </div>
   </div>
-  <div id="idForm">
-    <div class="id-grid">
-      <div class="id-field id-w2">
-        <label>Full Name <span class="id-req">&#9733;</span></label>
-        <input type="text" id="id-name" placeholder="Ahmad bin Ali" autocomplete="name">
+  <div style="margin-top:16px">
+    <label style="font-size:14px;font-weight:600">What do you already know about Q-Learning or AI agents? (free text)</label>
+    <textarea class="jr-area" id="cal-refl" rows="3" placeholder="Write anything — prior knowledge, experience, hunches…" style="margin-top:6px"></textarea>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-teal" onclick="finishCal()">Start Activities →</button>
+  </div>
+</div>
+
+<!-- ── TIER 1: Fill in the Blanks ── -->
+<div class="tier-section" id="sec-t1">
+  <span class="tier-label t1">Tier 1 — Fill in the Blanks</span>
+  <h2 style="margin-top:0">Complete the Q-Learning core functions</h2>
+  <p>Each blank is a single Python identifier, number, or keyword. Read the surrounding code and comments carefully.</p>
+
+  <h3 style="margin-top:20px">Block A — Q-table setup &amp; action selection</h3>
+  <pre class="code-block">from collections import <input class="t-blank" id="b1" placeholder="collection type" autocomplete="off" spellcheck="false">
+
+# Q-table maps (state, action) pairs → expected future reward
+q_table = defaultdict(float)
+
+ACTIONS = [0, 1, 2]           # 0=straight, 1=left, 2=right
+<input class="t-blank" id="b2" placeholder="rate variable"> = 0.1    # exploration rate (10% random)
+
+def choose_action(state):
+    if random.random() &lt; EPSILON:
+        return random.choice(ACTIONS)      # explore!
+    q_vals = [q_table[(state, a)] for a in ACTIONS]
+    return ACTIONS[q_vals.index(<input class="t-blank" id="b3" placeholder="built-in fn">(q_vals))]  # exploit!</pre>
+
+  <h3 style="margin-top:20px">Block B — Reward signal &amp; Q-update</h3>
+  <pre class="code-block">ALPHA = 0.1    # learning rate
+GAMMA = 0.9    # discount factor
+
+if game.score &gt; old_score:
+    reward = <input class="t-blank" id="b4" placeholder="positive reward">   # ate food — good!
+elif not game.running:
+    reward = -10               # died — bad!
+else:
+    reward = -0.1              # survived step — small penalty
+
+def update_q(state, action, reward, next_state):
+    old_q       = q_table[(state, action)]
+    best_future = max(q_table[(next_state, a)] for a in ACTIONS)
+    target      = reward + <input class="t-blank" id="b6" placeholder="discount factor"> * best_future
+    q_table[(state, action)] = old_q + <input class="t-blank" id="b5" placeholder="learning rate"> * (target - old_q)</pre>
+
+  <div class="fb" id="t1-fb"></div>
+  <div class="btn-row">
+    <button class="btn btn-teal" onclick="checkT1()">Check Answers</button>
+  </div>
+</div>
+
+<!-- ── TIER 2: Debug ── -->
+<div class="tier-section" id="sec-t2">
+  <span class="tier-label t2">Tier 2 — Debug the Code</span>
+  <h2 style="margin-top:0">Three Q-Learning bugs — find and fix each one</h2>
+  <p>Each code block contains exactly one bug. Type the corrected line (or full corrected code block) in the editable area below each snippet. You have <strong>2 attempts</strong>.</p>
+
+  <!-- Bug 1 -->
+  <div style="margin-bottom:24px">
+    <h3>Bug 1</h3>
+    <pre class="code-block" style="border-color:#fca5a5">q_table = {}        # create the Q-table</pre>
+    <p style="font-size:14px;color:var(--muted)">Fix the Q-table initialisation so missing keys return 0.0 automatically.</p>
+    <textarea class="debug-editor" id="bug1" rows="2" spellcheck="false" data-ans="q_table = defaultdict(float)">q_table = {}        # create the Q-table</textarea>
+    <div class="fb" id="bug1-fb"></div>
+  </div>
+
+  <!-- Bug 2 -->
+  <div style="margin-bottom:24px">
+    <h3>Bug 2</h3>
+    <pre class="code-block" style="border-color:#fca5a5">def choose_action(state):
+    if random.random() &gt; EPSILON:   # explore?
+        return random.choice(ACTIONS)
+    q_vals = [q_table[(state, a)] for a in ACTIONS]
+    return ACTIONS[q_vals.index(max(q_vals))]</pre>
+    <p style="font-size:14px;color:var(--muted)">The exploration branch never fires correctly. Fix the one buggy line.</p>
+    <textarea class="debug-editor" id="bug2" rows="2" spellcheck="false" data-ans="if random.random() < EPSILON:">    if random.random() &gt; EPSILON:   # explore?</textarea>
+    <div class="fb" id="bug2-fb"></div>
+  </div>
+
+  <!-- Bug 3 -->
+  <div style="margin-bottom:24px">
+    <h3>Bug 3</h3>
+    <pre class="code-block" style="border-color:#fca5a5">if game.score &gt; old_score:
+    reward = -10   # ate food</pre>
+    <p style="font-size:14px;color:var(--muted)">The reward for eating food is wrong. Fix the reward value.</p>
+    <textarea class="debug-editor" id="bug3" rows="2" spellcheck="false" data-ans="reward = 10">    reward = -10   # ate food</textarea>
+    <div class="fb" id="bug3-fb"></div>
+  </div>
+
+  <div class="fb" id="t2-fb"></div>
+  <div class="btn-row">
+    <button class="btn btn-teal" onclick="checkT2()">Check Fixes</button>
+  </div>
+</div>
+
+<!-- ── REFLECTION 2 ── -->
+<div class="tier-section" id="sec-refl2">
+  <span class="tier-label t2">Mid-Activity Reflection</span>
+  <h2 style="margin-top:0">Think about exploration vs exploitation</h2>
+  <p>What happens when the agent <strong>never</strong> explores (EPSILON = 0)? And what if it <strong>always</strong> explores (EPSILON = 1)?</p>
+  <textarea class="jr-area" id="refl2" rows="4" placeholder="Write your thoughts here…"></textarea>
+  <div class="btn-row">
+    <button class="btn btn-teal" onclick="finishRefl2()">Continue →</button>
+  </div>
+</div>
+
+<!-- ── TIER 3: Complete ── -->
+<div class="tier-section" id="sec-t3">
+  <span class="tier-label t3">Tier 3 — Complete the Code</span>
+  <h2 style="margin-top:0">Write the full Q-Learning update rule</h2>
+  <p>The skeleton below is missing the Bellman equation inside <code class="il">update_q()</code>. Complete the function so it correctly updates the Q-table.</p>
+  <pre class="code-block">ALPHA = 0.1
+GAMMA = 0.9
+
+def update_q(state, action, reward, next_state):
+    old_q = q_table[(state, action)]
+    # --- Complete from here ---
+    # 1. Find the best possible Q-value from the next state
+    # 2. Calculate the Bellman target
+    # 3. Update the Q-table entry using the learning rate
+    pass   # ← replace this</pre>
+
+  <textarea class="debug-editor" id="t3-ans" rows="7" spellcheck="false" placeholder="Write your complete update_q() body here…"></textarea>
+  <div class="fb" id="t3-fb"></div>
+  <div class="btn-row">
+    <button class="btn btn-teal" onclick="checkT3()">Submit Tier 3</button>
+  </div>
+</div>
+
+<!-- ── TIER 4: Create ── -->
+<div class="tier-section" id="sec-t4">
+  <span class="tier-label t4">Tier 4 — Create</span>
+  <h2 style="margin-top:0">Add epsilon decay to the training loop</h2>
+  <p>A fixed EPSILON means the agent keeps exploring randomly even after it has learned a good strategy. Your task: modify the training loop to <strong>decay epsilon over time</strong> so the agent explores less as it gains experience.</p>
+  <p style="color:var(--muted);font-size:14px;margin-top:6px"><b>Requirements:</b> Start with <code class="il">epsilon = 0.5</code>. After each episode, decay it by multiplying by 0.995. Clamp the minimum at 0.01 so the agent always has a tiny chance to explore. Print the current epsilon every 500 episodes.</p>
+  <textarea class="debug-editor" id="t4-ans" rows="10" spellcheck="false" placeholder="Write your training loop with epsilon decay here…"></textarea>
+  <div class="fb" id="t4-fb"></div>
+  <div class="btn-row">
+    <button class="btn btn-teal" onclick="checkT4()">Submit Tier 4</button>
+  </div>
+</div>
+
+<!-- ── CONCEPT CHECK ── -->
+<div class="tier-section" id="sec-cq">
+  <span class="tier-label tcq">Concept Check</span>
+  <h2 style="margin-top:0">5 Questions — pass 4 of 5 to continue</h2>
+  <p id="cq-attempts-msg" style="font-size:13px;color:var(--muted)"></p>
+  <div id="cq-questions"></div>
+  <div class="fb" id="cq-fb"></div>
+  <div class="btn-row">
+    <button class="btn btn-teal" id="cq-btn" onclick="checkCQ()">Submit Answers</button>
+  </div>
+</div>
+
+<!-- ── JOURNAL ── -->
+<div class="tier-section" id="sec-jr">
+  <span class="tier-label tjr">Reflective Journal</span>
+  <h2 style="margin-top:0">Five prompts — write at least 2–3 sentences each</h2>
+  <div id="jr-prompts"></div>
+  <div class="btn-row">
+    <button class="btn btn-teal" onclick="finishJournal()">Continue to Post-Calibration →</button>
+  </div>
+</div>
+
+<!-- ── POST-CALIBRATION ── -->
+<div class="tier-section" id="sec-post">
+  <span class="tier-label tpc">Post-Calibration</span>
+  <h2 style="margin-top:0">Reflect on how you actually performed</h2>
+  <div class="cal-row">
+    <div class="cal-group">
+      <div class="cal-label">Confidence now (1–10)</div>
+      <input type="range" class="cal-slider" id="post-conf" min="1" max="10" value="5">
+      <div class="cal-val" id="post-conf-val">5</div>
+    </div>
+    <div class="cal-group">
+      <div class="cal-label">My actual Tier 1 score was about ___ %</div>
+      <input type="range" class="cal-slider" id="post-actual" min="0" max="100" step="5" value="50">
+      <div class="cal-val" id="post-actual-val">50 %</div>
+    </div>
+  </div>
+  <div style="margin-top:16px">
+    <label style="font-size:14px;font-weight:600">Was your prediction accurate? What surprised you?</label>
+    <textarea class="jr-area" id="post-r1" rows="3" placeholder="Compare your prediction with your actual score…" style="margin-top:6px"></textarea>
+  </div>
+  <div style="margin-top:12px">
+    <label style="font-size:14px;font-weight:600">What was the hardest concept in Step 10 for you?</label>
+    <textarea class="jr-area" id="post-r2" rows="3" placeholder="Q-table, Bellman equation, epsilon-greedy, state representation…" style="margin-top:6px"></textarea>
+  </div>
+
+  <!-- Student identity confirmation -->
+  <details style="margin-top:22px">
+    <summary style="cursor:pointer;font-size:14px;font-weight:600;color:var(--teal-dark)">Confirm student details (click to expand)</summary>
+    <div class="ident-grid" style="margin-top:12px">
+      <div><label>Name</label><input id="sid-name" type="text" placeholder="Full name"></div>
+      <div><label>Matric No.</label><input id="sid-matric" type="text" placeholder="e.g. CA23001"></div>
+      <div><label>Class</label><input id="sid-class" type="text" placeholder="e.g. 2BKAA"></div>
+      <div><label>School Code</label><input id="sid-school" type="text" placeholder="e.g. FKEE"></div>
+      <div><label>Gender</label>
+        <select id="sid-gender"><option value="">—</option><option>Male</option><option>Female</option></select>
       </div>
-      <div class="id-field">
-        <label>Matric No. <span class="id-req">&#9733;</span></label>
-        <input type="text" id="id-matric" placeholder="RE25001" autocomplete="off">
-      </div>
-      <div class="id-field">
-        <label>Class <span class="id-req">&#9733;</span></label>
-        <input type="text" id="id-class" placeholder="01A" autocomplete="off">
-      </div>
-      <div class="id-field">
-        <label>Gender <span class="id-req">&#9733;</span></label>
-        <select id="id-gender">
-          <option value="">-- select --</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Prefer not to say</option>
+      <div><label>Age</label><input id="sid-age" type="number" min="10" max="99" placeholder="e.g. 20"></div>
+      <div><label>MyKid / IC</label><input id="sid-mykid" type="text" placeholder="e.g. 030512-11-1234"></div>
+      <div><label>Home State</label>
+        <select id="sid-state">
+          <option value="">—</option>
+          <option>Johor</option><option>Kedah</option><option>Kelantan</option><option>Melaka</option>
+          <option>Negeri Sembilan</option><option>Pahang</option><option>Penang</option><option>Perak</option>
+          <option>Perlis</option><option>Sabah</option><option>Sarawak</option><option>Selangor</option>
+          <option>Terengganu</option><option>Kuala Lumpur</option><option>Labuan</option><option>Putrajaya</option>
         </select>
       </div>
-      <div class="id-field">
-        <label>Age <span class="id-req">&#9733;</span></label>
-        <input type="number" id="id-age" min="10" max="30" placeholder="e.g. 19" autocomplete="off">
-      </div>
-      <div class="id-field">
-        <label>Home State</label>
-        <select id="id-state">
-          <option value="">-- select --</option>
-          <option>Johor</option><option>Kedah</option><option>Kelantan</option>
-          <option>Melaka</option><option>Negeri Sembilan</option><option>Pahang</option>
-          <option>Perak</option><option>Perlis</option><option>Pulau Pinang</option>
-          <option>Sabah</option><option>Sarawak</option><option>Selangor</option>
-          <option>Terengganu</option><option>Kuala Lumpur</option><option>Labuan</option>
-          <option>Putrajaya</option>
-        </select>
-      </div>
-      <div class="id-field id-w2">
-        <label>IC / MyKid No.</label>
-        <input type="text" id="id-mykid" placeholder="e.g. 050101-01-1234" autocomplete="off">
-      </div>
-      <div class="id-field">
-        <label>School Code</label>
-        <input type="text" id="id-school" placeholder="e.g. JBA0001" autocomplete="off">
-      </div>
-      <div class="id-field">
-        <label>Phone</label>
-        <input type="tel" id="id-phone" placeholder="0123456789" autocomplete="tel">
-      </div>
-      <div class="id-field id-w2">
-        <label>Email</label>
-        <input type="email" id="id-email" placeholder="name@example.com" autocomplete="email">
-      </div>
+      <div><label>Phone</label><input id="sid-phone" type="tel" placeholder="e.g. 0123456789"></div>
+      <div><label>Email</label><input id="sid-email" type="email" placeholder="your@email.com"></div>
     </div>
-    <div class="id-notice" id="idNotice"></div>
-    <button class="id-save-btn" onclick="saveIdentity()">&#10003; Confirm My Details</button>
+  </details>
+
+  <div class="btn-row">
+    <button class="btn btn-green" onclick="submitAll()">&#10003; Submit Step 10 Record</button>
   </div>
-  <div id="idConfirmed" style="display:none">
-    <div class="id-confirmed-row">
-      <span style="font-size:20px">&#9989;</span>
-      <div>
-        <div class="id-confirmed-name" id="idConfName"></div>
-        <div class="id-confirmed-meta" id="idConfMeta"></div>
-      </div>
-      <button class="id-edit-btn" onclick="editIdentity()">Edit</button>
-    </div>
-  </div>
+  <div class="fb" id="post-fb"></div>
 </div>
 
-<!-- ═══════════════════════════════════════
-     CALIBRATION GATE
-═══════════════════════════════════════ -->
-<div class="cal-gate" id="calGate">
-  <div class="cal-gate-header">
-    <span class="tier-badge" style="background:#0B4F4B">🎯 Before You Begin</span>
-    <span class="tier-title">Calibration Check</span>
-    <span class="tier-desc">2 questions + 1 reflection — unlocks Tier 1</span>
-  </div>
-  <div class="cal-gate-body">
-    <div class="cal-tip">Think about how confident you feel reading the entire snake.py from top to bottom. Can you explain every line? What would you improve?</div>
-
-    <label class="cal-label">1. How confident are you right now? <span class="cal-sub">Slide to rate 1 (not sure) → 10 (very confident)</span></label>
-    <div class="conf-slider-wrap">
-      <span style="font-size:12px;color:var(--muted)">1</span>
-      <input type="range" id="cal-conf" min="1" max="10" value="5">
-      <span style="font-size:12px;color:var(--muted)">10</span>
-      <span class="conf-val" id="cal-conf-val">5</span>
-    </div>
-
-    <label class="cal-label">2. What score do you predict you'll get on Tier 1 (0–100)?
-      <span class="cal-sub">Your honest best guess — it won't affect your grade.</span>
-    </label>
-    <input type="number" class="pred-input" id="cal-pred" min="0" max="100" placeholder="e.g. 70">
-
-    <label class="cal-label" style="margin-top:14px">3. Reflection 1 — What do you already know about <em>Review & Extension</em>? What are you unsure about?
-      <span class="cal-sub">Write at least 10 words.</span>
-    </label>
-    <textarea class="tier-textarea" id="cal-r1" rows="4" placeholder="Describe your current understanding…"></textarea>
-
-    <div id="cal-feedback" style="margin-top:10px"></div>
-    <button class="btn" id="cal-submit" style="margin-top:10px">Start Tier 1 →</button>
+<!-- ── COMPLETE BANNER ── -->
+<div class="complete-banner" id="sec-done" style="display:none">
+  <div style="font-size:40px;margin-bottom:10px">🎉🤖</div>
+  <h2>You've completed all 10 steps!</h2>
+  <p>From <code>print("Hello, World!")</code> to training an AI agent — you built an entire Snake game and an RL learner. That's remarkable.</p>
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+    <a class="btn btn-teal" href="survey-post.html">Take the Post-Survey →</a>
+    <a class="btn btn-outline" style="color:#fff;border-color:rgba(255,255,255,.6)" href="index.html">← Back to Index</a>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════
-     TIER 1 — Fill-in-blank
-═══════════════════════════════════════ -->
-<div class="tier-card tier-locked" id="tier1" aria-disabled="true">
-  <div class="tier-header">
-    <span class="tier-badge">Tier 1</span>
-    <span class="tier-title">Fill in the Blanks</span>
-    <span class="tier-desc">Complete the code skeleton — 11 blanks</span>
-  </div>
-  <div class="tier-body">
-    <p class="tier-intro">Review the completed game by filling in the missing pieces of the final integration.</p>
-    <pre class="code-block"><code id="t1CodeBlock"># ── Full game integration ──
-class Game:
-    def __init__(self):
-        self.snake  = Snake(<span style="color:var(--orange);font-weight:800">▢1</span>, 7)
-        self.food   = self._spawn_food()
-        self.score  = <span style="color:var(--orange);font-weight:800">▢2</span>
-        self.running = <span style="color:var(--orange);font-weight:800">▢3</span>
-
-    def _spawn_food(self):
-        while True:
-            pos = (random.randint(0, GRID_COLS-1),
-                   random.randint(0, <span style="color:var(--orange);font-weight:800">▢4</span>-1))
-            if pos not in self.snake.body_set:
-                return <span style="color:var(--orange);font-weight:800">▢5</span>
-
-    def update(self):
-        self.snake.<span style="color:var(--orange);font-weight:800">▢6</span>()
-        if not self.snake.is_alive():
-            self.running = <span style="color:var(--orange);font-weight:800">▢7</span>
-            return
-        if self.snake.body[0] == self.food:
-            self.snake.grew = <span style="color:var(--orange);font-weight:800">▢8</span>
-            self.score += 1
-            self.food = self.<span style="color:var(--orange);font-weight:800">▢9</span>()
-
-    def run(self):
-        clock = pygame.time.Clock()
-        while self.running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-                if event.type == pygame.KEYDOWN:
-                    key_map = {pygame.K_UP:"UP", pygame.K_DOWN:"DOWN",
-                               pygame.K_LEFT:"LEFT", pygame.K_RIGHT:"RIGHT"}
-                    if event.key in key_map:
-                        self.snake.<span style="color:var(--orange);font-weight:800">▢10</span>(key_map[event.key])
-            self.update()
-            self.<span style="color:var(--orange);font-weight:800">▢11</span>()
-            clock.tick(SNAKE_SPEED)
-        pygame.quit()</code></pre>
-    <div style="margin-top:14px">
-<div class="blank-row"><span class="blank-num">1.</span><span class="blank-label">Blank&nbsp;1: <code style="color:var(--muted);font-size:11px">1_</code></span><input class="blank-input" id="t1b1" data-ans="10" autocomplete="off" spellcheck="false" placeholder="type here"></div>
-<div class="blank-row"><span class="blank-num">2.</span><span class="blank-label">Blank&nbsp;2: <code style="color:var(--muted);font-size:11px">_</code></span><input class="blank-input" id="t1b2" data-ans="0" autocomplete="off" spellcheck="false" placeholder="type here"></div>
-<div class="blank-row"><span class="blank-num">3.</span><span class="blank-label">Blank&nbsp;3: <code style="color:var(--muted);font-size:11px">T___</code></span><input class="blank-input" id="t1b3" data-ans="True" autocomplete="off" spellcheck="false" placeholder="type here"></div>
-<div class="blank-row"><span class="blank-num">4.</span><span class="blank-label">Blank&nbsp;4: <code style="color:var(--muted);font-size:11px">G________</code></span><input class="blank-input" id="t1b4" data-ans="GRID_ROWS" autocomplete="off" spellcheck="false" placeholder="type here"></div>
-<div class="blank-row"><span class="blank-num">5.</span><span class="blank-label">Blank&nbsp;5: <code style="color:var(--muted);font-size:11px">p__</code></span><input class="blank-input" id="t1b5" data-ans="pos" autocomplete="off" spellcheck="false" placeholder="type here"></div>
-<div class="blank-row"><span class="blank-num">6.</span><span class="blank-label">Blank&nbsp;6: <code style="color:var(--muted);font-size:11px">m___</code></span><input class="blank-input" id="t1b6" data-ans="move" autocomplete="off" spellcheck="false" placeholder="type here"></div>
-<div class="blank-row"><span class="blank-num">7.</span><span class="blank-label">Blank&nbsp;7: <code style="color:var(--muted);font-size:11px">F____</code></span><input class="blank-input" id="t1b7" data-ans="False" autocomplete="off" spellcheck="false" placeholder="type here"></div>
-<div class="blank-row"><span class="blank-num">8.</span><span class="blank-label">Blank&nbsp;8: <code style="color:var(--muted);font-size:11px">T___</code></span><input class="blank-input" id="t1b8" data-ans="True" autocomplete="off" spellcheck="false" placeholder="type here"></div>
-<div class="blank-row"><span class="blank-num">9.</span><span class="blank-label">Blank&nbsp;9: <code style="color:var(--muted);font-size:11px">___________</code></span><input class="blank-input" id="t1b9" data-ans="_spawn_food" autocomplete="off" spellcheck="false" placeholder="type here"></div>
-<div class="blank-row"><span class="blank-num">10.</span><span class="blank-label">Blank&nbsp;10: <code style="color:var(--muted);font-size:11px">t___</code></span><input class="blank-input" id="t1b10" data-ans="turn" autocomplete="off" spellcheck="false" placeholder="type here"></div>
-<div class="blank-row"><span class="blank-num">11.</span><span class="blank-label">Blank&nbsp;11: <code style="color:var(--muted);font-size:11px">d___</code></span><input class="blank-input" id="t1b11" data-ans="draw" autocomplete="off" spellcheck="false" placeholder="type here"></div>
-</div>
-
-    <div id="t1-feedback" style="margin-top:10px"></div>
-    <button class="btn" id="t1-submit" disabled style="margin-top:10px">Check Answers</button>
+<!-- EXPORT PANEL -->
+<div class="export-panel" id="export-panel" style="margin-top:30px">
+  <h4>&#128190; Your Progress Data</h4>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Download or clear your saved Step 10 data.</p>
+  <div class="btn-row" style="margin-top:0">
+    <button class="btn btn-outline" onclick="exportData()" style="font-size:13px;padding:8px 16px">Download JSON</button>
+    <button class="btn" onclick="clearData()" style="font-size:13px;padding:8px 16px;background:rgba(220,38,38,.08);color:#dc2626;border:1.5px solid #fca5a5">Clear Progress</button>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════
-     TIER 2 — Debug
-═══════════════════════════════════════ -->
-<div class="tier-card tier-locked" id="tier2" aria-disabled="true">
-  <div class="tier-header">
-    <span class="tier-badge" style="background:var(--orange)">Tier 2</span>
-    <span class="tier-title">Find &amp; Fix the Bugs</span>
-    <span class="tier-desc">3 bugs to correct</span>
-  </div>
-  <div class="tier-body">
-    <p class="tier-intro">The integrated Game class below has 3 bugs. Type the corrected line for each.</p>
-    <pre class="code-block"><code>class Game:
-    def __init__(self):
-        self.snake   = Snake(10, 7)
-        self.food    = self._spawn_food()
-        self.running = True
-
-    def update(self):
-        self.snake.move()
-        if self.snake.body[0] == food:       # Bug 1 – missing self.
-            self.snake.grew = True
-        if not self.snake.is_alive():
-            running = False                  # Bug 2 – missing self.
-
-    def draw(self, screen):
-        screen.fill(BG)
-        for i,(cx,cy) in enumerate(self.snake):   # Bug 3 – wrong iterable
-            colour = (0,180,60) if i==0 else GREEN
-            pygame.draw.rect(screen, colour,
-                pygame.Rect(cx*CELL_SIZE,cy*CELL_SIZE,CELL_SIZE-2,CELL_SIZE-2), border_radius=4)</code></pre>
-    
-<div class="bug-card">
-  <h4>Bug 1</h4>
-  <p style="font-size:13px;margin:0 0 6px;color:var(--muted)">Buggy line:</p>
-  <div class="bug-line">if self.snake.body[0] == food:</div>
-  <p style="font-size:13px;margin:6px 0 4px;color:var(--fg-soft)">Your fix:</p>
-  <input class="bug-fix-input" id="t2bug1" data-ans="if self.snake.body[0] == self.food:" autocomplete="off" spellcheck="false" placeholder="type corrected line…">
-  <p class="bug-hint">Hint: `food` is an attribute of Game, not a standalone variable. Prefix with `self.` to access it.</p>
-</div>
-
-<div class="bug-card">
-  <h4>Bug 2</h4>
-  <p style="font-size:13px;margin:0 0 6px;color:var(--muted)">Buggy line:</p>
-  <div class="bug-line">running = False</div>
-  <p style="font-size:13px;margin:6px 0 4px;color:var(--fg-soft)">Your fix:</p>
-  <input class="bug-fix-input" id="t2bug2" data-ans="self.running = False" autocomplete="off" spellcheck="false" placeholder="type corrected line…">
-  <p class="bug-hint">Hint: Without `self.`, this creates a new local variable that disappears after `update()` returns — the game never stops.</p>
-</div>
-
-<div class="bug-card">
-  <h4>Bug 3</h4>
-  <p style="font-size:13px;margin:0 0 6px;color:var(--muted)">Buggy line:</p>
-  <div class="bug-line">for i,(cx,cy) in enumerate(self.snake):</div>
-  <p style="font-size:13px;margin:6px 0 4px;color:var(--fg-soft)">Your fix:</p>
-  <input class="bug-fix-input" id="t2bug3" data-ans="for i,(cx,cy) in enumerate(self.snake.body):" autocomplete="off" spellcheck="false" placeholder="type corrected line…">
-  <p class="bug-hint">Hint: `self.snake` is a Snake object; you need to iterate over `self.snake.body` (the list of positions).</p>
-</div>
-
-    <div id="t2-feedback" style="margin-top:10px"></div>
-    <button class="btn" id="t2-submit" disabled style="margin-top:10px">Check Fixes</button>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════
-     REFLECTION GATE 2
-═══════════════════════════════════════ -->
-<div class="refl-gate tier-locked" id="refl2" aria-disabled="true">
-  <div class="refl-gate-header">
-    <span class="refl-badge">Reflection 2</span>
-    <span class="tier-title" style="font-size:15px">Mid-Point Check-In</span>
-  </div>
-  <div class="refl-gate-body">
-    <label class="cal-label">After writing unit tests, did you discover any edge cases you hadn't considered? If not, can you think of one now?
-      <span class="cal-sub">Write at least 10 words — unlocks Tier 3</span>
-    </label>
-    <textarea class="tier-textarea" id="refl2-text" rows="4" placeholder="Your reflection…"></textarea>
-    <div id="refl2-feedback" style="margin-top:8px"></div>
-    <button class="btn" id="refl2-submit" disabled style="margin-top:8px;background:var(--blue)">Save &amp; Unlock Tier 3</button>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════
-     TIER 3 — Semi-complete
-═══════════════════════════════════════ -->
-<div class="tier-card tier-locked" id="tier3" aria-disabled="true">
-  <div class="tier-header">
-    <span class="tier-badge" style="background:var(--blue)">Tier 3</span>
-    <span class="tier-title">Extend the Code</span>
-    <span class="tier-desc">Add the feature described below</span>
-  </div>
-  <div class="tier-body">
-    <p class="tier-intro">Write **unit tests** for three functions: `Snake.turn()` (can't reverse), `Snake.is_alive()` (boundary), and `Game._spawn_food()` (not on snake). Use Python's `assert` statement.</p>
-    <pre class="starter-code"># No pygame display needed for unit tests
-import pygame
-pygame.init()
-pygame.display.set_mode((400,300))   # minimal surface
-
-snake = Snake(10, 7)
-
-# Test 1: Snake cannot reverse direction
-snake.direction = "RIGHT"
-snake.turn("LEFT")   # should be blocked
-assert snake.direction == {{"RIGHT"}}, "Reversal guard failed"
-
-# Test 2: Snake.is_alive() returns False for out-of-bounds head
-snake.body[0] = (-1, 7)
-assert snake.is_alive() == {{False}}, "Boundary check failed"
-
-# Test 3: Food does not spawn on the snake
-game = Game()
-for _ in range(50):
-    food = game._spawn_food()
-    assert food not in snake.body_set, "Food spawned on snake!"
-
-print("All tests passed!")</pre>
-    <label class="cal-label" style="margin-top:10px">Your extended code: <span class="cal-sub">Aim for at least 6 lines.</span></label>
-    <textarea class="tier-textarea" id="t3-text" rows="10" placeholder="Paste or write your solution here…" style="font-family:monospace;font-size:13px"></textarea>
-    <div id="t3-feedback" style="margin-top:10px"></div>
-    <button class="btn" id="t3-submit" disabled style="margin-top:10px;background:var(--blue)">Submit &amp; Unlock Tier 4</button>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════
-     TIER 4 — New task
-═══════════════════════════════════════ -->
-<div class="tier-card tier-locked" id="tier4" aria-disabled="true">
-  <div class="tier-header">
-    <span class="tier-badge" style="background:var(--red)">Tier 4</span>
-    <span class="tier-title">Create from Scratch</span>
-    <span class="tier-desc">Open-ended challenge</span>
-  </div>
-  <div class="tier-body">
-    <p class="tier-intro">**Final Challenge:** Add one meaningful extension to the complete game. Ideas: multi-food mode, speed ramp-up, obstacle walls, two-player mode, or a simple sprite for the head. Paste the code for your chosen feature and explain how it fits into the class structure.</p>
-    <label class="cal-label">Your solution: <span class="cal-sub">Aim for at least 10 lines or a clear explanation.</span></label>
-    <textarea class="tier-textarea" id="t4-text" rows="12" placeholder="Write your solution or explanation here…" style="font-family:monospace;font-size:13px"></textarea>
-    <div id="t4-feedback" style="margin-top:10px"></div>
-    <button class="btn" id="t4-submit" disabled style="margin-top:10px;background:var(--red)">Submit Tier 4</button>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════
-     REFLECTION GATE 3
-═══════════════════════════════════════ -->
-<!-- ─── Per-Step Concept Check ───────────────────────────── -->
-<div class="refl-gate tier-locked" id="concept-check-gate" aria-disabled="true">
-  <div class="refl-gate-header">
-    <span class="refl-badge">&#129504; Concept Check</span>
-    <span class="tier-title" style="font-size:14px">Test Your Understanding</span>
-    <span class="tier-desc">5 quick questions — required before the Reflective Journal</span>
-    <span class="lock-icon">&#128274;</span>
-  </div>
-  <div class="refl-gate-body">
-    <div id="concept-check-wrap" data-step="10">
-<div class="concept-check-inner">
-<p class="concept-desc">Answer all 5 questions, then the Reflective Journal will unlock.</p>
-<div class="concept-q" id="cq-0">
-  <p class="concept-q-text"><strong>1.</strong> MVP in game development means:</p>
-  <div class="concept-opts">
-    <label class="concept-opt"><input type="radio" name="cq0" value="0"><span>Most Valuable Player</span></label>
-    <label class="concept-opt"><input type="radio" name="cq0" value="1"><span>The simplest working version you can build and test first</span></label>
-    <label class="concept-opt"><input type="radio" name="cq0" value="2"><span>Maximum Video Processing</span></label>
-    <label class="concept-opt"><input type="radio" name="cq0" value="3"><span>Minimum Variable Program</span></label>
-  </div>
-  <div class="concept-feedback" id="cfb-0" hidden></div>
-</div>
-<div class="concept-q" id="cq-1">
-  <p class="concept-q-text"><strong>2.</strong> Which is NOT a good first step when adding a new game feature?</p>
-  <div class="concept-opts">
-    <label class="concept-opt"><input type="radio" name="cq1" value="0"><span>Plan the logic on paper</span></label>
-    <label class="concept-opt"><input type="radio" name="cq1" value="1"><span>Write pseudocode</span></label>
-    <label class="concept-opt"><input type="radio" name="cq1" value="2"><span>Write all the code at once before planning</span></label>
-    <label class="concept-opt"><input type="radio" name="cq1" value="3"><span>Identify what the feature needs to know and do</span></label>
-  </div>
-  <div class="concept-feedback" id="cfb-1" hidden></div>
-</div>
-<div class="concept-q" id="cq-2">
-  <p class="concept-q-text"><strong>3.</strong> 'Separation of concerns' in your game means:</p>
-  <div class="concept-opts">
-    <label class="concept-opt"><input type="radio" name="cq2" value="0"><span>Keeping all code inside one giant function</span></label>
-    <label class="concept-opt"><input type="radio" name="cq2" value="1"><span>Splitting input, logic update, and drawing into separate functions/sections</span></label>
-    <label class="concept-opt"><input type="radio" name="cq2" value="2"><span>Using only global variables</span></label>
-    <label class="concept-opt"><input type="radio" name="cq2" value="3"><span>Never using functions</span></label>
-  </div>
-  <div class="concept-feedback" id="cfb-2" hidden></div>
-</div>
-<div class="concept-q" id="cq-3">
-  <p class="concept-q-text"><strong>4.</strong> A game state machine is useful for managing:</p>
-  <div class="concept-opts">
-    <label class="concept-opt"><input type="radio" name="cq3" value="0"><span>The snake's body list positions</span></label>
-    <label class="concept-opt"><input type="radio" name="cq3" value="1"><span>Different game modes: PLAYING, PAUSED, GAME_OVER</span></label>
-    <label class="concept-opt"><input type="radio" name="cq3" value="2"><span>Food random positions</span></label>
-    <label class="concept-opt"><input type="radio" name="cq3" value="3"><span>Screen background colours</span></label>
-  </div>
-  <div class="concept-feedback" id="cfb-3" hidden></div>
-</div>
-<div class="concept-q" id="cq-4">
-  <p class="concept-q-text"><strong>5.</strong> Which of these makes game code most maintainable for the long term?</p>
-  <div class="concept-opts">
-    <label class="concept-opt"><input type="radio" name="cq4" value="0"><span>Writing everything in one long file</span></label>
-    <label class="concept-opt"><input type="radio" name="cq4" value="1"><span>No comments &mdash; 'clean' code explains itself</span></label>
-    <label class="concept-opt"><input type="radio" name="cq4" value="2"><span>Named constants, clear function names, and organised structure</span></label>
-    <label class="concept-opt"><input type="radio" name="cq4" value="3"><span>Running at maximum possible speed</span></label>
-  </div>
-  <div class="concept-feedback" id="cfb-4" hidden></div>
-</div>
-<button class="tier-btn" id="concept-submit" style="margin-top:12px">Submit Answers &amp; Unlock Journal</button>
-</div>
-</div>
-  </div>
-</div>
-
-<!-- ─── Reflective Journal ─────────────────────────────── -->
-<div class="tier-card tier-locked" id="tierJ" aria-disabled="true">
-  <div class="tier-header tj-header">
-    <span class="tier-badge" style="font-size:16px;padding:2px 6px">&#128211;</span>
-    <span class="tier-title">Reflective Journal</span>
-    <span class="tier-desc">5 prompts &mdash; required before Step 10 is marked complete</span>
-    <span class="lock-icon">&#128274;</span>
-  </div>
-  <div class="tier-body" id="tierJ-body">
-    <p>Answer each prompt thoughtfully. There are no right or wrong answers &mdash; this is your own reflection.</p>
-    <div class="journal-prompt">
-  <label for="jr1"><span class="jp-num">1</span> <strong>Full project reflection</strong> &mdash; Looking back at all 10 steps, what was the most important programming concept you learned? Why was it the most important?</label>
-  <textarea class="tier-textarea" id="jr1" rows="4" placeholder="Write at least 2-3 sentences..."></textarea>
-</div>
-<div class="journal-prompt">
-  <label for="jr2"><span class="jp-num">2</span> <strong>Biggest challenge</strong> &mdash; What was the hardest moment in building the full snake game? Describe the problem and how you worked through it.</label>
-  <textarea class="tier-textarea" id="jr2" rows="4" placeholder="Write at least 2-3 sentences..."></textarea>
-</div>
-<div class="journal-prompt">
-  <label for="jr3"><span class="jp-num">3</span> <strong>Growth as a programmer</strong> &mdash; How has your approach to coding changed from Step 1 to Step 10? Give a specific example of how you think or work differently now.</label>
-  <textarea class="tier-textarea" id="jr3" rows="4" placeholder="Write at least 2-3 sentences..."></textarea>
-</div>
-<div class="journal-prompt">
-  <label for="jr4"><span class="jp-num">4</span> <strong>Advice to a beginner</strong> &mdash; If you had to give one piece of advice to a student just starting this course, what would it be and why?</label>
-  <textarea class="tier-textarea" id="jr4" rows="4" placeholder="Write at least 2-3 sentences..."></textarea>
-</div>
-<div class="journal-prompt">
-  <label for="jr5"><span class="jp-num">5</span> <strong>Next steps</strong> &mdash; What would you add or improve if you had more time? Describe your idea and the programming concepts it would need.</label>
-  <textarea class="tier-textarea" id="jr5" rows="4" placeholder="Write at least 2-3 sentences..."></textarea>
-</div>
-    <div id="tj-feedback" class="tier-feedback" hidden></div>
-    <div class="tier-actions">
-      <button class="tier-btn tj-btn" id="tj-submit" disabled>Submit Reflective Journal ✓</button>
-    </div>
-  </div>
-</div>
-
-<div class="refl-gate tier-locked" id="refl3" aria-disabled="true">
-  <div class="refl-gate-header">
-    <span class="refl-badge">&#127919; Post-Activity Check-In</span>
-    <span class="tier-title" style="font-size:14px">After Completing All Tiers</span>
-    <span class="tier-desc">Complete after the Reflective Journal to finish this step</span>
-    <span class="lock-icon">&#128274;</span>
-  </div>
-  <div class="refl-gate-body">
-
-    <!-- 1. Post-confidence slider -->
-    <div style="margin-bottom:18px">
-      <span class="cal-label">1. How confident do you feel about this step&#8217;s concepts <em>now</em>?
-        <em style="font-weight:400;color:var(--muted)">(1&nbsp;=&nbsp;not confident, 10&nbsp;=&nbsp;very confident)</em>
-      </span>
-      <div class="conf-slider-wrap">
-        <span style="font-size:13px;color:var(--muted)">1</span>
-        <input type="range" id="post-conf" min="1" max="10" value="5" step="1">
-        <span style="font-size:13px;color:var(--muted)">10</span>
-        <span class="conf-val" id="post-conf-val">5</span>
-      </div>
-    </div>
-
-    <!-- 2. Actual Tier 1 first-attempt score (auto-filled) -->
-    <div style="margin-bottom:18px">
-      <span class="cal-label">2. Your Tier 1 first-attempt score <em style="font-weight:400;color:var(--muted)">(auto-filled)</em></span>
-      <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
-        <input type="number" id="post-actual" class="pred-input" min="0" max="100"
-               placeholder="&#8212;" readonly style="background:var(--surface,#f0f4f0);cursor:default">
-        <span style="font-size:14px;color:var(--muted)">%</span>
-      </div>
-      <span class="cal-sub" id="post-actual-hint" style="display:block;margin-top:4px"></span>
-    </div>
-
-    <!-- 3. Reflection: prediction vs actual -->
-    <div style="margin-bottom:14px">
-      <label for="refl3-text" class="cal-label">3. How did your actual performance compare to your prediction?
-        <span class="cal-sub">Write at least 2&#8211;3 sentences.</span>
-      </label>
-      <textarea class="tier-textarea" id="refl3-text" rows="4"
-        placeholder="I predicted __% but I actually got __% because&#8230;"></textarea>
-    </div>
-
-    <!-- 4. Reflection: hardest part -->
-    <div style="margin-bottom:14px">
-      <label for="post-r2" class="cal-label">4. What was the hardest part, and how did you handle it?
-        <span class="cal-sub">Write at least 2&#8211;3 sentences.</span>
-      </label>
-      <textarea class="tier-textarea" id="post-r2" rows="4"
-        placeholder="The hardest part was&#8230; I handled it by&#8230;"></textarea>
-    </div>
-
-    <div id="refl3-feedback" style="margin-top:8px"></div>
-    <div class="tier-actions" style="margin-top:12px">
-      <button class="tier-btn" id="refl3-submit">Save &amp; Complete Step 10 &#10003;</button>
-    </div>
-  </div>
-</div>
-
-
-<!-- Step complete banner (hidden until journal submitted) -->
-<div class="complete-banner" id="step-complete-banner" style="display:none">
-  <h2>🎉 Step 10 Complete!</h2>
-  <p>You've finished all tiers and the reflective journal. You've completed all 10 steps — amazing work!</p>
-</div>
-
-<!-- ── Bottom concept navigation ── -->
-<div class="stepnav" style="max-width:680px;margin-left:auto;margin-right:auto">
-  <a href="step-10.html" class="prev"><small>Previous</small><b>&larr; Step 10: Review & Extension</b></a>
-  <a href="index.html" class="next"><small>Done!</small><b>&#127968; Home &rarr;</b></a>
-</div>
-
-</div><!-- /container -->
-</main>
-
-<!-- ═══════════════════════════════════════
-     EXPORT PANEL
-═══════════════════════════════════════ -->
-<div id="export-panel" style="display:none;position:fixed;bottom:20px;right:20px;z-index:9999;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px 20px;box-shadow:0 4px 20px rgba(0,0,0,.15);min-width:260px">
-  <h4 style="margin:0 0 10px;font-size:14px">📤 Export LMS Data</h4>
-  <div style="display:flex;flex-direction:column;gap:8px">
-    <button class="btn btn-outline" id="exp-copy" style="font-size:12px">Copy JSON</button>
-    <button class="btn btn-outline" id="exp-dl-json" style="font-size:12px">Download JSON</button>
-    <button class="btn btn-outline" id="exp-dl-csv" style="font-size:12px">Download CSV</button>
-  </div>
-</div>
+</div><!-- /wrap -->
 
 <script>
-/* ═══════════════════════════════════════
-   LMS HELPERS
-═══════════════════════════════════════ */
-var LMS_KEY = 'lms_step10';
+// ── CONSTANTS ──────────────────────────────────────────────────────────
+var LMS_KEY    = 'lms_step10';
+var ID_KEY     = 'umpsa_snake_student';
+var GAS_URL    = 'https://script.google.com/macros/s/AKfycbyDlkpeqaDPzJoMDGMAplN1LOisC81dBdIo0fPJTOAeOqMsq-aM9sX60e8J0xrY780R/exec';
+var T1_ANSWERS = ['defaultdict', 'EPSILON', 'max', '10', 'ALPHA', 'GAMMA'];
+var CQ_ANS     = [1, 0, 2, 1, 0];   // 0-indexed correct option per question
+var CQ_QS = [
+  { q: 'What does the Q-table store?',
+    opts: ['The raw pixel values of the game screen at each frame',
+           'The expected future reward for each (state, action) pair',
+           'The complete history of moves the agent made during training',
+           'The current (x, y) position of the snake\'s head'] },
+  { q: 'What is epsilon (ε) used for in epsilon-greedy exploration?',
+    opts: ['It controls the probability of choosing a random action vs the best-known action',
+           'It sets the speed at which the snake moves inside the game window',
+           'It determines how many training episodes to run',
+           'It controls how many boolean features are in the state vector'] },
+  { q: 'What happens if the learning rate ALPHA is set to 1.0?',
+    opts: ['Training is faster because the agent absorbs each lesson fully in one step',
+           'The agent explores the state space more thoroughly',
+           'The agent completely forgets all past experience with every single update',
+           'The Q-table grows much larger than with a smaller learning rate'] },
+  { q: 'What does the discount factor GAMMA control?',
+    opts: ['How fast the snake moves during the training game',
+           'How much the agent values future rewards compared to immediate rewards',
+           'The rate at which epsilon decays during training',
+           'The maximum size the Q-table dictionary is allowed to grow to'] },
+  { q: 'What is the purpose of the reward signal in Q-learning?',
+    opts: ['It tells the agent which actions lead to good or bad outcomes over time',
+           'It directly controls the movement speed of the snake every frame',
+           'It decides which 11 boolean features to include in the state vector',
+           'It determines the architecture of the neural network layer sizes'] }
+];
+var JR_PROMPTS = [
+  'In your own words, explain what the Q-table stores and why a Python dictionary (defaultdict) is a good data structure for it.',
+  'Why is the explore–exploit tradeoff important in RL? What goes wrong if EPSILON is always 0? What if it is always 1?',
+  'What does the discount factor GAMMA control? Why might the agent value a reward received now more than the same reward received in 100 steps?',
+  'Reinforcement Learning is inspired by how humans and animals learn. Give one real-life example where reward and punishment shapes behaviour — and map it onto the RL terms: agent, state, action, reward.',
+  'Our 11-bit state cannot represent the full shape of the snake\'s body. Describe one specific situation where this causes the agent to make a bad decision, and propose one improvement to the state design.'
+];
 
-function lmsGet(){
-  try{return JSON.parse(localStorage.getItem(LMS_KEY)||'{}')}catch(e){return {}}
+// ── STATE ──────────────────────────────────────────────────────────────
+var state = {};
+function loadState(){ try{ var s=localStorage.getItem(LMS_KEY); if(s) state=JSON.parse(s); }catch(e){} }
+function saveState(){ try{ localStorage.setItem(LMS_KEY, JSON.stringify(state)); }catch(e){} }
+loadState();
+
+// ── SECTION NAVIGATION ─────────────────────────────────────────────────
+var SECTIONS = ['cal','t1','t2','refl2','t3','t4','cq','jr','post'];
+var DOT_LABELS = ['C','T1','T2','R','T3','T4','CQ','JR','PC'];
+function showSection(id){
+  SECTIONS.forEach(function(s){ document.getElementById('sec-'+s).classList.remove('active'); });
+  document.getElementById('sec-'+id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
 }
-function lmsSet(d){
-  try{localStorage.setItem(LMS_KEY,JSON.stringify(d))}catch(e){}
-}
-function lmsLog(event,data){
-  var d=lmsGet();
-  if(!d._log)d._log=[];
-  d._log.push({event:event,ts:Date.now(),data:data});
-  lmsSet(d);
-}
-
-/* ═══════════════════════════════════════
-   STATE
-═══════════════════════════════════════ */
-var stepN=10;
-var state={cal:false,t1:false,t2:false,refl2:false,t3:false,t4:false,refl3:false,tj:false};
-var attempts={t1:0,t2:0,t3:0,t4:0,tj:0};
-var firstAttemptScore=null;
-
-/* ═══════════════════════════════════════
-   UI HELPERS
-═══════════════════════════════════════ */
-function showFeedback(id,msg,type){
-  var el=document.getElementById(id);
-  if(!el)return;
-  el.innerHTML='<div class="feedback-'+type+' feedback-anim">'+msg+'</div>';
-}
-function markDone(id){
-  var el=document.getElementById(id);
-  if(el){el.classList.remove('locked','active');el.classList.add('done');}
-}
-function unlockTier(n){
-  var map={1:'tier1',2:'tier2',3:'tier3',4:'tier4','J':'tierJ'};
-  var tmap={1:'tp1',2:'tp2',3:'tp3',4:'tp4','J':'tpj'};
-  var card=document.getElementById(map[n]);
-  var prog=document.getElementById(tmap[n]);
-  if(card){card.classList.remove('tier-locked');card.removeAttribute('aria-disabled');}
-  if(prog){prog.classList.remove('locked');prog.classList.add('active');}
-}
-
-/* ═══════════════════════════════════════
-   TIER 1 ANSWERS
-═══════════════════════════════════════ */
-var T1_ANSWERS = ['10', '0', 'True', 'GRID_ROWS', 'pos', 'move', 'False', 'True', '_spawn_food', 'turn', 'draw'];
-
-/* ═══════════════════════════════════════
-   STUDENT IDENTITY GATE
-═══════════════════════════════════════ */
-var ID_KEY = 'umpsa_snake_student';
-var _idConfirmed = false;
-
-function _setIdentityConfirmed(st) {
-  _idConfirmed = true;
-  var block = document.getElementById('idBlock');
-  var form  = document.getElementById('idForm');
-  var conf  = document.getElementById('idConfirmed');
-  var nameEl = document.getElementById('idConfName');
-  var metaEl = document.getElementById('idConfMeta');
-  if (block) block.classList.add('id-confirmed');
-  if (form)  form.style.display  = 'none';
-  if (conf)  conf.style.display  = '';
-  if (nameEl) nameEl.textContent = st.name || '';
-  var gLabel = {male:'Male', female:'Female', other:'N/A'}[st.gender] || st.gender || '';
-  var parts = [st.matric, st.class, gLabel, st.age ? 'Age '+st.age : ''].filter(Boolean);
-  if (metaEl) metaEl.textContent = parts.join('  ·  ');
-}
-
-function saveIdentity() {
-  var nameVal   = ((document.getElementById('id-name')   ||{}).value||'').trim();
-  var matricVal = ((document.getElementById('id-matric') ||{}).value||'').trim();
-  var classVal  = ((document.getElementById('id-class')  ||{}).value||'').trim();
-  var genderVal = ((document.getElementById('id-gender') ||{}).value||'').trim();
-  var ageVal    = ((document.getElementById('id-age')    ||{}).value||'').trim();
-  var notice    = document.getElementById('idNotice');
-  if (!nameVal || !matricVal || !classVal || !genderVal || !ageVal) {
-    if (notice) { notice.style.display='block'; notice.textContent='⚠ Please fill in all required fields (★): Name, Matric No., Class, Gender and Age.'; }
-    return;
-  }
-  var st = {
-    name: nameVal, matric: matricVal, class: classVal,
-    gender: genderVal, age: ageVal,
-    mykid:       ((document.getElementById('id-mykid')  ||{}).value||'').trim(),
-    home_state:  ((document.getElementById('id-state')  ||{}).value||'').trim(),
-    school_code: ((document.getElementById('id-school') ||{}).value||'').trim(),
-    phone:       ((document.getElementById('id-phone')  ||{}).value||'').trim(),
-    email:       ((document.getElementById('id-email')  ||{}).value||'').trim()
-  };
-  try { localStorage.setItem(ID_KEY, JSON.stringify(st)); } catch(e) {}
-  if (notice) notice.style.display = 'none';
-  _setIdentityConfirmed(st);
-}
-
-function editIdentity() {
-  _idConfirmed = false;
-  var block = document.getElementById('idBlock');
-  var form  = document.getElementById('idForm');
-  var conf  = document.getElementById('idConfirmed');
-  if (block) block.classList.remove('id-confirmed');
-  if (form)  form.style.display = '';
-  if (conf)  conf.style.display = 'none';
-}
-window.saveIdentity = saveIdentity;
-window.editIdentity  = editIdentity;
-
-(function _initIdentity() {
-  try {
-    var st = JSON.parse(localStorage.getItem(ID_KEY) || '{}');
-    if (st.name) {
-      var map = {
-        'id-name': st.name, 'id-matric': st.matric, 'id-class': st.class,
-        'id-gender': st.gender, 'id-age': st.age, 'id-mykid': st.mykid,
-        'id-state': st.home_state, 'id-school': st.school_code,
-        'id-phone': st.phone, 'id-email': st.email
-      };
-      Object.keys(map).forEach(function(id) {
-        var el = document.getElementById(id);
-        if (el && map[id]) el.value = map[id];
-      });
-      if (st.name && st.matric && st.class && st.gender && st.age) _setIdentityConfirmed(st);
-    }
-  } catch(e) {}
-  var calBtn = document.getElementById('cal-submit');
-  if (calBtn) {
-    calBtn.addEventListener('click', function(e) {
-      if (!_idConfirmed) {
-        e.stopImmediatePropagation();
-        var notice = document.getElementById('idNotice');
-        if (notice) { notice.style.display='block'; notice.textContent='⚠ Please fill in and confirm your details above before starting.'; }
-        var block = document.getElementById('idBlock');
-        if (block) block.scrollIntoView({behavior:'smooth',block:'start'});
-      }
-    }, false);
-  }
-})();
-
-/* ═══════════════════════════════════════
-   CALIBRATION GATE
-═══════════════════════════════════════ */
-(function(){
-  var confEl=document.getElementById('cal-conf');
-  var confVal=document.getElementById('cal-conf-val');
-  if(confEl) confEl.addEventListener('input',function(){confVal.textContent=confEl.value;});
-
-  document.getElementById('cal-submit').addEventListener('click',function(){
-    if(state.cal)return;
-    var conf=+document.getElementById('cal-conf').value;
-    var predRaw=document.getElementById('cal-pred').value.trim();
-    var r1=document.getElementById('cal-r1').value.trim();
-    if(predRaw===''||isNaN(+predRaw)||+predRaw<0||+predRaw>100){
-      showFeedback('cal-feedback','Please enter a predicted score between 0 and 100.','error');return;
-    }
-    if(r1.split(/\s+/).filter(Boolean).length<10){
-      showFeedback('cal-feedback','Please write at least 10 words in your reflection.','error');return;
-    }
-    state.cal=true;
-    var pred=+predRaw;
-    var calData={confidence:conf,predicted_score:pred,reflection_1:r1,ts:Date.now()};
-    var d=lmsGet();d.cal=calData;lmsSet(d);
-    lmsLog('cal_submitted',{confidence:conf,predicted_score:pred});
-  postToSheets({type:'pre_cal',step:stepN,confidence:conf,predicted_score:pred,what_hardest:r1});
-    showFeedback('cal-feedback','Calibration saved! Tier 1 is now unlocked. Good luck!','success');
-    document.getElementById('cal-submit').disabled=true;
-    markDone('tp0');document.getElementById('tc01').classList.add('done');
-    unlockTier(1);
-    document.getElementById('t1-submit').disabled=false;
-    setTimeout(function(){document.getElementById('tier1').scrollIntoView({behavior:'smooth',block:'nearest'});},300);
+function updateDots(){
+  var cur = state.currentSection || 0;
+  SECTIONS.forEach(function(s,i){
+    var d=document.getElementById('pd'+i);
+    if(!d) return;
+    if(i < cur){ d.classList.add('done'); d.classList.remove('active'); }
+    else if(i===cur){ d.classList.add('active'); d.classList.remove('done'); }
+    else{ d.classList.remove('done','active'); }
   });
-})();
+}
 
-/* ═══════════════════════════════════════
-   TIER 1 SUBMIT
-═══════════════════════════════════════ */
-document.getElementById('t1-submit').addEventListener('click',function(){
-  if(state.t1)return;
-  attempts.t1++;
-  var correct=0;
-  T1_ANSWERS.forEach(function(ans,i){
-    var inp=document.getElementById('t1b'+(i+1));
-    if(!inp)return;
-    var val=inp.value.trim();
-    // flexible matching: strip quotes, case-insensitive for keywords
-    var norm=function(s){return s.replace(/['"]/g,'').toLowerCase().trim();};
-    var ok=(norm(val)===norm(ans));
-    inp.classList.toggle('correct',ok);
-    inp.classList.toggle('wrong',!ok);
-    if(ok)correct++;
+// ── HELPERS ────────────────────────────────────────────────────────────
+function fb(id,msg,type){
+  var el=document.getElementById(id);
+  el.innerHTML=msg; el.className='fb show '+(type||'ok');
+}
+
+// ── CAL ────────────────────────────────────────────────────────────────
+function initSliders(){
+  ['cal-conf','cal-pred','post-conf','post-actual'].forEach(function(id){
+    var el=document.getElementById(id); if(!el) return;
+    var valEl=document.getElementById(id+'-val');
+    el.addEventListener('input',function(){
+      valEl.textContent = id.includes('pred')||id.includes('actual') ? el.value+' %' : el.value;
+    });
   });
-  var pct=Math.round(correct/T1_ANSWERS.length*100);
-  if(attempts.t1===1){
-    firstAttemptScore=pct;
-    var d=lmsGet();d.t1_first_attempt_pct=pct;lmsSet(d);
-    lmsLog('t1_first_attempt',{pct:pct,correct:correct,total:T1_ANSWERS.length});
-  }
-  if(correct===T1_ANSWERS.length){
-    state.t1=true;
-    showFeedback('t1-feedback','All '+T1_ANSWERS.length+' blanks correct! 🎉 Tier 2 unlocked.','success');
-    document.getElementById('t1-submit').disabled=true;
-    markDone('tp1');document.getElementById('tc12').classList.add('done');
-    var d=lmsGet();d.t1_submitted={score:pct,attempts:attempts.t1,ts:Date.now()};lmsSet(d);
-  postToSheets({type:'tier',tier:'T1',step:stepN,score:pct,attempts:attempts.t1});
-    unlockTier(2);
-    document.getElementById('t2-submit').disabled=false;
-    setTimeout(function(){document.getElementById('tier2').scrollIntoView({behavior:'smooth',block:'nearest'});},300);
+}
+function finishCal(){
+  state.cal_confidence = document.getElementById('cal-conf').value;
+  state.cal_predicted  = document.getElementById('cal-pred').value;
+  state.cal_reflection = document.getElementById('cal-refl').value;
+  state.currentSection = 1;
+  saveState(); updateDots(); showSection('t1');
+}
+
+// ── TIER 1 ─────────────────────────────────────────────────────────────
+var t1Attempts = 0;
+function checkT1(){
+  var ids = ['b1','b2','b3','b4','b5','b6'];
+  var correct = 0;
+  ids.forEach(function(id,i){
+    var el=document.getElementById(id);
+    var val = el.value.trim().toLowerCase();
+    var ans = T1_ANSWERS[i].toLowerCase();
+    if(val === ans){ el.classList.add('correct'); el.classList.remove('wrong'); correct++; }
+    else{ el.classList.add('wrong'); el.classList.remove('correct'); }
+  });
+  var pct = Math.round(correct/ids.length*100);
+  state.t1_score_pct = pct;
+  if(correct === ids.length){
+    fb('t1-fb','&#10003; All 6 correct! Score: '+pct+'%','ok');
+    setTimeout(function(){ state.currentSection=2; saveState(); updateDots(); showSection('t2'); },1200);
   } else {
-    showFeedback('t1-feedback',correct+'/'+T1_ANSWERS.length+' correct — red boxes need fixing. Try again!','error');
+    t1Attempts++;
+    fb('t1-fb',correct+' of '+ids.length+' correct ('+pct+'%). Check the red boxes and try again.','err');
   }
-});
+  saveState();
+}
 
-/* ═══════════════════════════════════════
-   TIER 2 SUBMIT
-═══════════════════════════════════════ */
-document.getElementById('t2-submit').addEventListener('click',function(){
-  if(state.t2)return;
-  attempts.t2++;
-  var correct=0;
-  [document.getElementById("t2bug1"),document.getElementById("t2bug2"),document.getElementById("t2bug3")].forEach(function(inp){
-    if(!inp)return;
-    var ans=inp.dataset.ans||'';
-    var val=inp.value.trim();
-    var norm=function(s){return s.replace(/\s+/g,' ').trim().toLowerCase();};
-    var ok=(norm(val)===norm(ans));
-    inp.style.borderColor=ok?'#22b':'var(--red)';
-    if(ok)correct++;
-  });
-  var total=3;
-  if(correct===total){
-    state.t2=true;
-    showFeedback('t2-feedback','All '+total+' bugs fixed! Complete the mid-point reflection to unlock Tier 3.','success');
-    document.getElementById('t2-submit').disabled=true;
-    markDone('tp2');document.getElementById('tc23').classList.add('done');
-    var d=lmsGet();d.t2_submitted={attempts:attempts.t2,ts:Date.now()};lmsSet(d);
-  
-    var _atd=lmsGet();_atd.t2_attempts_count=attempts.t2;lmsSet(_atd);/*t2_attempts_count_saved*/
-    postToSheets({type:'tier',tier:'T2',step:stepN,attempts:attempts.t2,text:(typeof txt!=='undefined'?txt:'')});
-    var r2c=document.getElementById('refl2');
-    r2c.classList.remove('tier-locked');r2c.removeAttribute('aria-disabled');
-    document.getElementById('refl2-submit').disabled=false;
-    setTimeout(function(){r2c.scrollIntoView({behavior:'smooth',block:'nearest'});},300);
-  } else {
-    showFeedback('t2-feedback',correct+'/'+total+' fixed — red borders need correcting. Try again!','error');
-  }
-});
-
-/* ═══════════════════════════════════════
-   REFLECTION GATE 2
-═══════════════════════════════════════ */
-document.getElementById('refl2-submit').addEventListener('click',function(){
-  if(state.refl2)return;
-  var txt=document.getElementById('refl2-text').value.trim();
-  if(txt.split(/\s+/).filter(Boolean).length<10){
-    showFeedback('refl2-feedback','Please write more (aim for 10+ words).','error');return;
-  }
-  state.refl2=true;
-  var d=lmsGet();d.reflection_2={text:txt,ts:Date.now()};lmsSet(d);
-  lmsLog('refl2_submitted',{ts:Date.now()});
-  postToSheets({type:'refl2',step:stepN,text:txt});
-  showFeedback('refl2-feedback','Reflection saved! Tier 3 is now unlocked.','success');
-  document.getElementById('refl2-submit').disabled=true;
-  unlockTier(3);
-  document.getElementById('t3-submit').disabled=false;
-  setTimeout(function(){document.getElementById('tier3').scrollIntoView({behavior:'smooth',block:'nearest'});},300);
-});
-
-/* ═══════════════════════════════════════
-   TIER 3 SUBMIT
-═══════════════════════════════════════ */
-document.getElementById('t3-submit').addEventListener('click',function(){
-  if(state.t3)return;
-  attempts.t3++;
-  var txt=document.getElementById('t3-text').value.trim();
-  var words=txt.split(/\s+/).filter(Boolean).length;
-  if(words<10){
-    showFeedback('t3-feedback','Please write more — at least 10 words or several lines of code.','error');return;
-  }
-  state.t3=true;
-  showFeedback('t3-feedback','Tier 3 submitted! Tier 4 is now unlocked.','success');
-  document.getElementById('t3-submit').disabled=true;
-  markDone('tp3');document.getElementById('tc34').classList.add('done');
-  var d=lmsGet();d.t3_submitted={text:txt,attempts:attempts.t3,ts:Date.now()};lmsSet(d);
-  
-    var _atd=lmsGet();_atd.t3_attempts_count=attempts.t3;lmsSet(_atd);/*t3_attempts_count_saved*/
-    postToSheets({type:'tier',tier:'T3',step:stepN,attempts:attempts.t3,text:txt});
-  unlockTier(4);
-  document.getElementById('t4-submit').disabled=false;
-  setTimeout(function(){document.getElementById('tier4').scrollIntoView({behavior:'smooth',block:'nearest'});},300);
-});
-
-/* ═══════════════════════════════════════
-   TIER 4 SUBMIT
-═══════════════════════════════════════ */
-document.getElementById('t4-submit').addEventListener('click',function(){
-  if(state.t4)return;
-  attempts.t4++;
-  var txt=document.getElementById('t4-text').value.trim();
-  var words=txt.split(/\s+/).filter(Boolean).length;
-  if(words<10){
-    showFeedback('t4-feedback','Please add more detail — at least 10 words.','error');return;
-  }
-  state.t4=true;
-  showFeedback('t4-feedback','Tier 4 submitted! Complete the concept check below to unlock the journal.','success');
-  document.getElementById('t4-submit').disabled=true;
-  markDone('tp4');document.getElementById('tc4j').classList.add('done');
-  var d=lmsGet();d.t4_submitted={text:txt,attempts:attempts.t4,ts:Date.now()};lmsSet(d);
-  
-    var _atd=lmsGet();_atd.t4_attempts_count=attempts.t4;lmsSet(_atd);/*t4_attempts_count_saved*/
-    postToSheets({type:'tier',tier:'T4',step:stepN,attempts:attempts.t4,text:txt});
-  /* Unlock Concept Check gate */
-  (function(){
-    var cg=document.getElementById('concept-check-gate');
-    if(cg){
-      cg.classList.remove('tier-locked');
-      cg.removeAttribute('aria-disabled');
-      var li=cg.querySelector('.lock-icon');
-      if(li)li.textContent='\u2705';
-      initConceptCheck({step:stepN,containerId:'concept-check-wrap'});
-    }
-  })();
-  setTimeout(function(){document.getElementById('concept-check-gate').scrollIntoView({behavior:'smooth',block:'nearest'});},300);
-});
-
-/* ═══════════════════════════════════════
-   REFLECTION GATE 3
-═══════════════════════════════════════ */
-document.getElementById('refl3-submit').addEventListener('click',function(){
-  if(state.refl3)return;
-  var r1txt=document.getElementById('refl3-text').value.trim();
-  var r2txt=document.getElementById('post-r2').value.trim();
-  var minWords=10;
-  if(r1txt.split(/[\s]+/).filter(Boolean).length<minWords){
-    showFeedback('refl3-feedback','Please write more for question 3 (aim for 10+ words).','error');return;
-  }
-  if(r2txt.split(/[\s]+/).filter(Boolean).length<minWords){
-    showFeedback('refl3-feedback','Please write more for question 4 (aim for 10+ words).','error');return;
-  }
-  state.refl3=true;
-  var postConf=+(document.getElementById('post-conf').value||5);
-  var postActual=document.getElementById('post-actual').value;
-  var d=lmsGet();
-  d.post_cal={post_confidence:postConf,actual_pct:postActual,r1:r1txt,r2:r2txt,ts:Date.now()};
-  lmsSet(d);
-  lmsLog('post_cal_submitted',{step:10,post_confidence:postConf,actual_pct:postActual,r1:r1txt,r2:r2txt,ts:Date.now()});
-  /* Post to Google Sheets */
-  (function(){
-    try{
-      var APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec';
-      var st={};
-      try{st=JSON.parse(localStorage.getItem('umpsa_snake_student')||'{}');}catch(e){}
-      var pl={
-        type:'post_cal',
-        matric:st.matric||'',
-        name:st.name||'',
-        class:st.class||'',
-        step:10,
-        post_confidence:postConf,
-        actual_pct:postActual,
-        r1:r1txt,
-        r2:r2txt,
-        submitted_iso:new Date().toISOString()
-      };
-      fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify(pl)});
-    }catch(err){console.warn('PostCal POST error:',err);}
-  })();
-  showFeedback('refl3-feedback','Post check-in saved! Step complete!','success');
-  sendActivityRecord(10);
-  document.getElementById('refl3-submit').disabled=true;
-  document.getElementById('step-complete-banner').style.display='block';
-  document.getElementById('step-complete-banner').scrollIntoView({behavior:'smooth',block:'nearest'});
-  var d=lmsGet();d.complete=true;d.complete_ts=Date.now();lmsSet(d);
-});
-
-/* ═══════════════════════════════════════
-   JOURNAL SUBMIT
-═══════════════════════════════════════ */
-document.getElementById('tj-submit').addEventListener('click',function(){
-  if(state.tj)return;
-  attempts.tj++;
-  var ids=['jr1','jr2','jr3','jr4','jr5'];
-  var short=ids.filter(function(id){
-    return document.getElementById(id).value.trim().split(/\s+/).filter(Boolean).length<5;
-  });
-  if(short.length>1){
-    showFeedback('tj-feedback','Please write at least 5 words in each journal prompt.','error');return;
-  }
-  state.tj=true;
-  var responses={};
-  ids.forEach(function(id){responses[id]=document.getElementById(id).value;});
-  var d=lmsGet();
-  d.tj_submitted={responses:responses,ts:Date.now()};
-
-  // Compute calibration index
-  if(d.cal&&d.cal.predicted_score!==undefined&&d.t1_first_attempt_pct!==undefined){
-    d.calibration_index=d.cal.predicted_score-d.t1_first_attempt_pct;
-    d.calibration_confidence=d.cal.confidence;
-    lmsLog('calibration_index',{predicted:d.cal.predicted_score,actual:d.t1_first_attempt_pct,index:d.calibration_index});
-  }
-  lmsSet(d);
-  lmsLog('journal_submitted',{ts:Date.now()});postJournalToSheets(10, responses);
-
-  markDone('tpj');
-  showFeedback('tj-feedback','Journal saved! Post-activity check-in is now unlocked.','success');
-  document.getElementById('tj-submit').disabled=true;
-  /* Unlock Post-Cal (refl3) */
-  (function(){
-    var r3c=document.getElementById('refl3');
-    if(r3c){
-      r3c.classList.remove('tier-locked');r3c.removeAttribute('aria-disabled');
-      document.getElementById('refl3-submit').disabled=false;
-      var d2=lmsGet();
-      var pct=d2.t1_first_attempt_pct;
-      var el=document.getElementById('post-actual');
-      if(el&&pct!==undefined){
-        el.value=pct;
-        var pred=d2.cal&&d2.cal.predicted_score!==undefined?d2.cal.predicted_score:'--';
-        var hint=document.getElementById('post-actual-hint');
-        if(hint) hint.textContent='Your first-attempt score: '+pct+'%. Your prediction was: '+pred+'%.';
-      }
-      setTimeout(function(){r3c.scrollIntoView({behavior:'smooth',block:'nearest'});},200);
-    }
-  })();
-});
-
-/* ═══════════════════════════════════════
-   AUTO-SAVE textareas
-═══════════════════════════════════════ */
-['jr1','jr2','jr3','jr4','jr5','cal-r1','refl2-text','refl3-text','t3-text','t4-text','post-r2'].forEach(function(id){
-  var el=document.getElementById(id);
-  if(!el)return;
-  // restore saved value
-  try{
-    var d=lmsGet();
-    if(d._autosave&&d._autosave[id])el.value=d._autosave[id];
-  }catch(e){}
-  el.addEventListener('input',function(){
-    try{
-      var d=lmsGet();
-      if(!d._autosave)d._autosave={};
-      d._autosave[id]=el.value;
-      lmsSet(d);
-    }catch(e){}
-  });
-});
-
-/* ═══════════════════════════════════════
-   RESTORE STATE ON PAGE LOAD
-═══════════════════════════════════════ */
-(function restore(){
-  var d=lmsGet();
-
-  // Calibration
-  if(d.cal){
-    state.cal=true;
-    document.getElementById('cal-submit').disabled=true;
-    if(d.cal.confidence!==undefined)document.getElementById('cal-conf').value=d.cal.confidence;
-    document.getElementById('cal-conf-val').textContent=d.cal.confidence||5;
-    if(d.cal.predicted_score!==undefined)document.getElementById('cal-pred').value=d.cal.predicted_score;
-    if(d.cal.reflection_1)document.getElementById('cal-r1').value=d.cal.reflection_1;
-    showFeedback('cal-feedback','Calibration saved (confidence: '+d.cal.confidence+'/10, predicted: '+d.cal.predicted_score+'%).','success');
-    markDone('tp0');document.getElementById('tc01').classList.add('done');
-    unlockTier(1);document.getElementById('t1-submit').disabled=false;
-  }
-
-  // T1
-  if(d.t1_submitted){
-    state.t1=true;
-    document.getElementById('t1-submit').disabled=true;
-    markDone('tp1');document.getElementById('tc12').classList.add('done');
-    unlockTier(2);document.getElementById('t2-submit').disabled=false;
-  }
-
-  // T2 + refl2
-  if(d.t2_submitted){
-    state.t2=true;
-    document.getElementById('t2-submit').disabled=true;
-    markDone('tp2');document.getElementById('tc23').classList.add('done');
-    var r2c=document.getElementById('refl2');
-    r2c.classList.remove('tier-locked');r2c.removeAttribute('aria-disabled');
-    if(d.reflection_2){
-      state.refl2=true;
-      document.getElementById('refl2-submit').disabled=true;
-      document.getElementById('refl2-text').value=d.reflection_2.text||'';
-      showFeedback('refl2-feedback','Reflection saved.','success');
-      unlockTier(3);document.getElementById('t3-submit').disabled=false;
+// ── TIER 2 ─────────────────────────────────────────────────────────────
+var t2Attempts = 0;
+function checkT2(){
+  t2Attempts++;
+  var ids=['bug1','bug2','bug3'];
+  var allOk=true;
+  ids.forEach(function(id){
+    var el=document.getElementById(id);
+    var ans=el.dataset.ans.toLowerCase().replace(/\s+/g,' ').trim();
+    var val=el.value.toLowerCase().replace(/\s+/g,' ').trim();
+    if(val.includes(ans)||ans.includes(val)){
+      el.classList.add('correct'); el.classList.remove('wrong');
+      fb(id+'-fb','&#10003; Correct fix!','ok');
     } else {
-      document.getElementById('refl2-submit').disabled=false;
-    }
-  }
-
-  // T3
-  if(d.t3_submitted){
-    state.t3=true;
-    document.getElementById('t3-submit').disabled=true;
-    document.getElementById('t3-text').value=d.t3_submitted.text||'';
-    markDone('tp3');document.getElementById('tc34').classList.add('done');
-    unlockTier(4);document.getElementById('t4-submit').disabled=false;
-  }
-
-  // T4 + Concept Check
-  if(d.t4_submitted){
-    state.t4=true;
-    document.getElementById('t4-submit').disabled=true;
-    document.getElementById('t4-text').value=d.t4_submitted.text||'';
-    markDone('tp4');document.getElementById('tc4j').classList.add('done');
-    (function(){
-      var cg=document.getElementById('concept-check-gate');
-      if(cg){cg.classList.remove('tier-locked');cg.removeAttribute('aria-disabled');
-        var li=cg.querySelector('.lock-icon');if(li)li.textContent='\u2705';}
-      initConceptCheck({step:stepN,containerId:'concept-check-wrap'});
-      if(d.concept_step&&d.concept_step.submitted){
-        var jc=document.getElementById('tierJ');
-        if(jc){jc.classList.remove('tier-locked');jc.removeAttribute('aria-disabled');}
-        var tj=document.getElementById('tj-submit');if(tj)tj.disabled=false;
-      }
-    })();
-  }
-
-  // Journal + Refl3 restore
-  if(d.tj_submitted){
-    state.tj=true;
-    document.getElementById('tj-submit').disabled=true;
-    markDone('tpj');
-    var r=d.tj_submitted.responses||{};
-    ['jr1','jr2','jr3','jr4','jr5','post-r2'].forEach(function(id){
-      if(r[id])document.getElementById(id).value=r[id];
-    });
-    /* Unlock Post-Cal (refl3) */
-    var r3c=document.getElementById('refl3');
-    if(r3c){r3c.classList.remove('tier-locked');r3c.removeAttribute('aria-disabled');}
-    document.getElementById('refl3-submit').disabled=false;
-    if(d.post_cal){
-      state.refl3=true;
-      document.getElementById('refl3-submit').disabled=true;
-      showFeedback('refl3-feedback','Post check-in saved.','success');
-      document.getElementById('step-complete-banner').style.display='block';
-    }
-  }
-})();
-
-/* ═══════════════════════════════════════
-   EXPORT PANEL
-═══════════════════════════════════════ */
-if(location.search.indexOf('export=1')!==-1){
-  document.getElementById('export-panel').style.display='block';
-}
-document.getElementById('exp-copy')&&document.getElementById('exp-copy').addEventListener('click',function(){
-  navigator.clipboard.writeText(JSON.stringify(lmsGet(),null,2)).then(function(){alert('Copied!');});
-});
-document.getElementById('exp-dl-json')&&document.getElementById('exp-dl-json').addEventListener('click',function(){
-  var a=document.createElement('a');
-  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(lmsGet(),null,2));
-  a.download='lms_step10.json';a.click();
-});
-document.getElementById('exp-dl-csv')&&document.getElementById('exp-dl-csv').addEventListener('click',function(){
-  var d=lmsGet(),rows=[['field','value']];
-  function flat(obj,pre){
-    Object.keys(obj).forEach(function(k){
-      var v=obj[k],key=pre?pre+'.'+k:k;
-      if(v&&typeof v==='object'&&!Array.isArray(v))flat(v,key);
-      else rows.push([key,JSON.stringify(v)]);
-    });
-  }
-  flat(d,'');
-  var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
-  var a=document.createElement('a');
-  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
-  a.download='lms_step10.csv';a.click();
-});
-</script>
-<script>
-(function(){
-  var clicks=0,timer;
-  var box=document.getElementById('see-box');
-  if(!box)return;
-  box.addEventListener('click',function(){
-    clicks++;
-    clearTimeout(timer);
-    timer=setTimeout(function(){clicks=0;},3000);
-    if(clicks>=3){
-      clicks=0;
-      box.style.opacity='0.5';
-      setTimeout(function(){window.location.href='teacher-10.html';},200);
+      el.classList.add('wrong'); el.classList.remove('correct'); allOk=false;
+      if(t2Attempts>=2) fb(id+'-fb','The fix is: <code>'+el.dataset.ans+'</code>','warn');
+      else fb(id+'-fb','Not quite — check again.','err');
     }
   });
-})();
-
-/* ── Google Sheets: journal POST ── */
-function postJournalToSheets(stepNum, jData) {
-  try {
-    var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec';
-    var student = {};
-    try { student = JSON.parse(localStorage.getItem('umpsa_snake_student') || '{}'); } catch(e) {}
-    var entries = Object.keys(jData).map(function(k) {
-      return { prompt_id: k, response: jData[k] };
-    });
-    var payload = {
-      type: 'journal',
-      matric: student.matric || '',
-      name:   student.name   || '',
-      class:  student.class  || '',
-      step:   stepNum,
-      entries: entries,
-      submitted_iso: new Date().toISOString()
-    };
-    fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-  } catch(err) { console.warn('Journal POST error:', err); }
-}
-
-/* ─── Generic Sheets poster ─────────────────────────────────── */
-
-/* === sendActivityRecord: bundle full activity data -> Sheets === */
-function sendActivityRecord(stepNum) {
-  try {
-    var APPS_URL = 'https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec';
-    var st = {}; try { st = JSON.parse(localStorage.getItem('umpsa_snake_student')||'{}'); } catch(e) {}
-    var d = lmsGet();
-    var cal = d.cal || {}; var refl2 = d.reflection_2 || {}; var cs = d.concept_step || {}; var pc = d.post_cal || {};
-    function jv(id) { var el=document.getElementById(id); if(el&&el.value) return el.value; return (d.journal_text&&d.journal_text[id])?d.journal_text[id]:''; }
-    function pv(id,lk) { var el=document.getElementById(id); if(el&&el.value) return el.value; return pc[lk]!==undefined?pc[lk]:''; }
-    var payload = {
-      type: 'act_'+stepNum,
-      /* ── Student identity (10 fields) ── */
-      matric:      st.matric      || '',
-      name:        st.name        || '',
-      class:       st.class       || '',
-      gender:      st.gender      || '',
-      age:         st.age         || '',
-      mykid:       st.mykid       || '',
-      home_state:  st.home_state  || '',
-      school_code: st.school_code || '',
-      phone:       st.phone       || '',
-      email:       st.email       || '',
-      step:        stepNum,
-      submitted_iso: new Date().toISOString(),
-      cal_confidence: cal.confidence!==undefined?cal.confidence:'',
-      cal_predicted:  cal.predicted_score!==undefined?cal.predicted_score:'',
-      cal_reflection: cal.what_hardest||'',
-      t1_score_pct:  d.t1_first_attempt_pct!==undefined?d.t1_first_attempt_pct:'',
-      t2_attempts:   d.t2_attempts_count!==undefined?d.t2_attempts_count:'',
-      refl2_text:    refl2.text||'',
-      t3_attempts:   d.t3_attempts_count!==undefined?d.t3_attempts_count:'',
-      t4_attempts:   d.t4_attempts_count!==undefined?d.t4_attempts_count:'',
-      concept_answers: cs.answers||[], concept_score_pct: cs.score_pct!==undefined?cs.score_pct:'',
-      concept_passed:  cs.submitted?1:0, concept_attempts: d.concept_attempts!==undefined?d.concept_attempts:'',
-      jr1:jv('jr1'),jr2:jv('jr2'),jr3:jv('jr3'),jr4:jv('jr4'),jr5:jv('jr5'),
-      post_confidence: pv('post-conf','post_confidence'), post_actual: pv('post-actual','actual_pct'),
-      post_r1: pv('refl3-text','r1'), post_r2: pv('post-r2','r2'),
-      calibration_index: d.calibration_index!==undefined?d.calibration_index:''
-    };
-    fetch(APPS_URL, {method:'POST',mode:'no-cors',body:JSON.stringify(payload)});
-  } catch(err) { console.warn('sendActivityRecord error:',err); }
-}
-
-function postToSheets(payload){
-  try{
-    var st={};
-    try{st=JSON.parse(localStorage.getItem('umpsa_snake_student')||'{}');}catch(e){}
-    payload.matric      = payload.matric      || st.matric      || '';
-    payload.name        = payload.name        || st.name        || '';
-    payload.class       = payload.class       || st.class       || '';
-    payload.gender      = payload.gender      || st.gender      || '';
-    payload.age         = payload.age         || st.age         || '';
-    payload.mykid       = payload.mykid       || st.mykid       || '';
-    payload.home_state  = payload.home_state  || st.home_state  || '';
-    payload.school_code = payload.school_code || st.school_code || '';
-    payload.phone       = payload.phone       || st.phone       || '';
-    payload.email       = payload.email       || st.email       || '';
-    payload.submitted_iso = payload.submitted_iso || new Date().toISOString();
-    fetch('https://script.google.com/macros/s/AKfycbzf-GMR_xF3Oudij5iHVltyyelg6_B7ycvrONlmr4EM_2-vsTGd9KW6A-a2bmUqCsKizQ/exec',{method:'POST',mode:'no-cors',body:JSON.stringify(payload)});
-  }catch(err){console.warn('postToSheets error:',err);}
-}
-</script>
-
-<footer style="background:#1e293b;color:#94a3b8;padding:32px 24px;margin-top:48px;font-size:13px;text-align:center">
-  <div style="max-width:900px;margin:0 auto">
-    <p style="margin-bottom:8px"><strong style="color:#e2e8f0">See &middot; Think &middot; Explore &middot; Marvel</strong><br>UMPSA STEM LAB &middot; Snake Game Python Tutorial</p>
-    <p style="margin-top:10px;font-size:12px;color:#64748b">
-      <span>© 2026 Nurul Hazlina Noordin &middot; UMPSA STEM Lab Engineering Education Initiative</span>
-      <a href="https://ee.ump.edu.my/hazlina/#research" target="_blank" rel="noopener" style="color:#64748b;margin-left:8px" aria-label="Research page">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-      </a>
-      <a href="mailto:hazlina@umpsa.edu.my" style="color:#64748b;margin-left:8px" aria-label="Email">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
-      </a>
-    </p>
-  </div>
-</footer>
-<script>
-/* ── DEV MODE: unlock all gates for testing ── */
-document.addEventListener('DOMContentLoaded', function() {
-  /* Wire up hardcoded concept-submit button */
-  var csBtn = document.getElementById('concept-submit');
-  if (csBtn && !csBtn._wired) {
-    csBtn._wired = true;
-    var q10 = [{ans:1,opts:["Most Valuable Player","The simplest working version you can build and test first","Maximum Video Processing","Minimum Variable Program"]},{ans:2,opts:["Plan the logic on paper","Write pseudocode","Write all the code at once before planning","Identify what the feature needs to know and do"]},{ans:1,opts:["Keeping all code inside one giant function","Splitting input, logic update, and drawing into separate functions/sections","Using only global variables","Never using functions"]},{ans:1,opts:["The snake's body list positions","Different game modes: PLAYING, PAUSED, GAME_OVER","Food random positions","Screen background colours"]},{ans:2,opts:["Writing everything in one long file","No comments — 'clean' code explains itself","Named constants, clear function names, and organised structure","Running at maximum possible speed"]}];
-    csBtn.addEventListener('click', function() {
-      var allAnswered = true, allCorrect = true, score = 0;
-      for (var i = 0; i < 5; i++) {
-        var sel = document.querySelector('input[name="cq'+i+'"]:checked');
-        var fb = document.getElementById('cfb-'+i);
-        if (!sel) { allAnswered = false; continue; }
-        var val = parseInt(sel.value);
-        fb.hidden = false;
-        if (val === q10[i].ans) {
-          score++;
-          fb.className = 'concept-feedback correct';
-          fb.textContent = '✓ Correct!';
-        } else {
-          allCorrect = false;
-          fb.className = 'concept-feedback incorrect';
-          fb.textContent = '✗ The correct answer is: ' + q10[i].opts[q10[i].ans];
-        }
-      }
-      if (!allAnswered) { alert('Please answer all 5 questions first.'); return; }
-      if (allCorrect) {
-        csBtn.disabled = true;
-        csBtn.textContent = 'Answers submitted ✓';
-        var jCard = document.getElementById('tierJ');
-        if (jCard) { jCard.classList.remove('tier-locked'); jCard.removeAttribute('aria-disabled'); }
-        var tjBtn = document.getElementById('tj-submit');
-        if (tjBtn) tjBtn.disabled = false;
-      }
-    });
+  state.t2_attempts = t2Attempts;
+  saveState();
+  if(allOk){
+    fb('t2-fb','&#10003; All bugs fixed! Moving on…','ok');
+    setTimeout(function(){ state.currentSection=3; saveState(); updateDots(); showSection('refl2'); },1200);
+  } else if(t2Attempts>=2){
+    setTimeout(function(){ state.currentSection=3; saveState(); updateDots(); showSection('refl2'); },2000);
   }
-  
-  /* === Concept soft gate: 3 attempts -> Continue anyway === */
-  (function() {
-    var csb = document.getElementById('concept-submit');
-    if (!csb || csb._sg) return;
-    csb._sg = true;
-    var cAttempts = 0;
-    csb.addEventListener('click', function() {
-      var checked = 0;
-      for (var i = 0; i < 5; i++) {
-        if (document.querySelector('input[name="cq' + i + '"]:checked')) checked++;
-      }
-      if (checked < 5) return;
-      cAttempts++;
-      var correct = 0, answers = [];
-      for (var i = 0; i < 5; i++) {
-        var fb  = document.getElementById('cfb-' + i);
-        var sel = document.querySelector('input[name="cq' + i + '"]:checked');
-        var ok  = (fb && fb.classList.contains('correct')) ? 1 : 0;
-        correct += ok;
-        answers.push({ answer: sel ? parseInt(sel.value) : -1, correct: ok });
-      }
-      var d = lmsGet();
-      d.concept_step     = { submitted: correct === 5, answers: answers,
-                              score_pct: Math.round(correct / 5 * 100), ts: Date.now() };
-      d.concept_attempts = cAttempts;
-      lmsSet(d);
-      if (correct === 5) return;
-      if (cAttempts >= 3 && !document.getElementById('concept-skip')) {
-        var skip = document.createElement('button');
-        skip.id = 'concept-skip';
-        skip.className = 'tier-btn';
-        skip.style.cssText = 'background:var(--blue);margin-top:8px;display:block';
-        skip.textContent = 'Continue anyway → (' + correct + '/5 correct)';
-        skip.addEventListener('click', function() {
-          skip.remove();
-          csb.disabled = true; csb.textContent = 'Submitted ✓';
-          var d2 = lmsGet(); d2.concept_step.submitted = true; lmsSet(d2);
-          var jCard = document.getElementById('tierJ');
-          if (jCard) { jCard.classList.remove('tier-locked'); jCard.removeAttribute('aria-disabled'); }
-          var tjBtn = document.getElementById('tj-submit');
-          if (tjBtn) tjBtn.disabled = false;
-        });
-        csb.parentNode.appendChild(skip);
-      }
-    });
-  })();
+}
 
-});
+// ── REFL2 ──────────────────────────────────────────────────────────────
+function finishRefl2(){
+  state.refl2_text = document.getElementById('refl2').value;
+  state.currentSection = 4; saveState(); updateDots(); showSection('t3');
+}
+
+// ── TIER 3 ─────────────────────────────────────────────────────────────
+var t3Attempts = 0;
+function checkT3(){
+  t3Attempts++;
+  var ans = document.getElementById('t3-ans').value;
+  var ok = ans.includes('best_future') && ans.includes('target') && (ans.includes('GAMMA') || ans.includes('gamma')) && (ans.includes('ALPHA') || ans.includes('alpha')) && ans.includes('q_table');
+  state.t3_attempts = t3Attempts; saveState();
+  if(ok){
+    fb('t3-fb','&#10003; Looks good! Your Bellman implementation is complete.','ok');
+    setTimeout(function(){ state.currentSection=5; saveState(); updateDots(); showSection('t4'); },1200);
+  } else if(t3Attempts>=2){
+    fb('t3-fb','&#9888;&#65039; Partial. Make sure you compute best_future, target, and update q_table using both ALPHA and GAMMA. Proceeding…','warn');
+    setTimeout(function(){ state.currentSection=5; saveState(); updateDots(); showSection('t4'); },2500);
+  } else {
+    fb('t3-fb','Missing some elements. Check: best_future, target, GAMMA, ALPHA, and q_table update.','err');
+  }
+}
+
+// ── TIER 4 ─────────────────────────────────────────────────────────────
+var t4Attempts = 0;
+function checkT4(){
+  t4Attempts++;
+  var ans = document.getElementById('t4-ans').value;
+  var ok = ans.includes('epsilon') && ans.includes('0.995') && (ans.includes('max') || ans.includes('clamp')) && ans.includes('0.01');
+  state.t4_attempts = t4Attempts; saveState();
+  if(ok){
+    fb('t4-fb','&#10003; Epsilon decay implemented. The agent will explore less as training progresses.','ok');
+    setTimeout(function(){ state.currentSection=6; saveState(); updateDots(); buildCQ(); showSection('cq'); },1200);
+  } else if(t4Attempts>=2){
+    fb('t4-fb','&#9888;&#65039; Partially correct. Make sure you: start with epsilon=0.5, multiply by 0.995, and clamp with max(0.01, …). Proceeding…','warn');
+    setTimeout(function(){ state.currentSection=6; saveState(); updateDots(); buildCQ(); showSection('cq'); },2500);
+  } else {
+    fb('t4-fb','Check that you include: epsilon variable, 0.995 decay, 0.01 minimum clamp.','err');
+  }
+}
+
+// ── CONCEPT CHECK ──────────────────────────────────────────────────────
+var cqAnswers = [];
+var cqAttempts = 0;
+function buildCQ(){
+  cqAnswers = new Array(CQ_QS.length).fill(-1);
+  var html = '';
+  CQ_QS.forEach(function(item,qi){
+    html += '<div style="margin-bottom:22px"><p style="font-weight:600;font-size:15px;margin-bottom:8px">'+(qi+1)+'. '+item.q+'</p>';
+    item.opts.forEach(function(opt,oi){
+      html += '<button class="cq-opt" id="cqo-'+qi+'-'+oi+'" onclick="selectCQ('+qi+','+oi+')">'+
+              '<span style="flex-shrink:0;font-weight:700;color:var(--teal-dark);margin-right:4px">'+'ABCD'[oi]+'.</span> '+opt+'</button>';
+    });
+    html += '</div>';
+  });
+  document.getElementById('cq-questions').innerHTML = html;
+}
+function selectCQ(qi,oi){
+  cqAnswers[qi] = oi;
+  for(var j=0;j<CQ_QS[qi].opts.length;j++){
+    var b=document.getElementById('cqo-'+qi+'-'+j);
+    b.classList.remove('selected-ok','selected-err');
+  }
+  document.getElementById('cqo-'+qi+'-'+oi).classList.add('selected-ok');
+}
+function checkCQ(){
+  cqAttempts++;
+  var correct=0;
+  var detail=[];
+  CQ_QS.forEach(function(item,qi){
+    var ans=cqAnswers[qi]; var ok=(ans===CQ_ANS[qi]);
+    if(ok) correct++;
+    for(var j=0;j<item.opts.length;j++){
+      var b=document.getElementById('cqo-'+qi+'-'+j);
+      b.disabled=true; b.classList.remove('selected-ok','selected-err');
+      if(j===CQ_ANS[qi]) b.classList.add('selected-ok');
+      else if(j===ans && !ok) b.classList.add('selected-err');
+    }
+    detail.push({ans:ans,cor:ok?1:0});
+  });
+  var pct=Math.round(correct/CQ_QS.length*100);
+  state.concept_score_pct=pct;
+  state.concept_passed=(pct>=80)?1:0;
+  state.concept_attempts=cqAttempts;
+  CQ_QS.forEach(function(q,i){ state['concept_q'+(i+1)+'_ans']=detail[i].ans; state['concept_q'+(i+1)+'_cor']=detail[i].cor; });
+  saveState();
+  if(pct>=80){
+    fb('cq-fb','&#10003; '+correct+' / '+CQ_QS.length+' correct ('+pct+'%). Passed! Moving to journal…','ok');
+    document.getElementById('cq-btn').disabled=true;
+    setTimeout(function(){ state.currentSection=7; saveState(); updateDots(); buildJR(); showSection('jr'); },1400);
+  } else {
+    fb('cq-fb',correct+' / '+CQ_QS.length+' correct ('+pct+'%). Need 80% to pass — try again.','err');
+    cqAnswers=new Array(CQ_QS.length).fill(-1);
+    buildCQ();
+    document.getElementById('cq-attempts-msg').textContent='Attempt '+cqAttempts;
+  }
+}
+
+// ── JOURNAL ────────────────────────────────────────────────────────────
+function buildJR(){
+  var html='';
+  JR_PROMPTS.forEach(function(p,i){
+    html+='<div style="margin-bottom:20px"><p style="font-size:15px;font-weight:600;margin-bottom:6px">'+(i+1)+'. '+p+'</p>'+
+    '<textarea class="jr-area" id="jr'+(i+1)+'" rows="4" placeholder="Write your answer here…">'+(state['jr'+(i+1)]||'')+'</textarea></div>';
+  });
+  document.getElementById('jr-prompts').innerHTML=html;
+  // auto-save
+  JR_PROMPTS.forEach(function(p,i){
+    document.getElementById('jr'+(i+1)).addEventListener('input',function(){
+      state['jr'+(i+1)]=this.value; saveState();
+    });
+  });
+}
+function finishJournal(){
+  JR_PROMPTS.forEach(function(p,i){ state['jr'+(i+1)]=document.getElementById('jr'+(i+1)).value; });
+  state.currentSection=8; saveState(); updateDots(); showSection('post');
+}
+
+// ── POST-CAL / SUBMIT ──────────────────────────────────────────────────
+function submitAll(){
+  state.post_confidence = document.getElementById('post-conf').value;
+  state.post_actual     = document.getElementById('post-actual').value;
+  state.post_r1         = document.getElementById('post-r1').value;
+  state.post_r2         = document.getElementById('post-r2').value;
+  state.calibration_index = parseFloat(state.post_actual||0) - parseFloat(state.cal_predicted||0);
+
+  // read student identity (localStorage first, form fallback)
+  var stu = {};
+  try{ stu=JSON.parse(localStorage.getItem(ID_KEY)||'{}'); }catch(e){}
+  var f=function(k,fid){ return stu[k]||document.getElementById(fid).value||''; };
+  var payload = {
+    type:'act_10', sid:'act10_'+Date.now(), step:10,
+    matric: f('matric','sid-matric'), name: f('name','sid-name'),
+    gender: f('gender','sid-gender'), age: f('age','sid-age'),
+    mykid:  f('mykid','sid-mykid'),  home_state: f('home_state','sid-state'),
+    class:  f('class','sid-class'),  school_code: f('school_code','sid-school'),
+    phone:  f('phone','sid-phone'),  email: f('email','sid-email'),
+    cal_confidence: state.cal_confidence, cal_predicted: state.cal_predicted,
+    cal_reflection: state.cal_reflection,
+    t1_score_pct:   state.t1_score_pct||0,
+    t2_attempts:    state.t2_attempts||0, refl2_text: state.refl2_text||'',
+    t3_attempts:    state.t3_attempts||0,
+    t4_attempts:    state.t4_attempts||0,
+    concept_score_pct: state.concept_score_pct||0,
+    concept_passed:    state.concept_passed||0,
+    concept_attempts:  state.concept_attempts||0,
+    concept_q1_ans: state.concept_q1_ans, concept_q1_cor: state.concept_q1_cor,
+    concept_q2_ans: state.concept_q2_ans, concept_q2_cor: state.concept_q2_cor,
+    concept_q3_ans: state.concept_q3_ans, concept_q3_cor: state.concept_q3_cor,
+    concept_q4_ans: state.concept_q4_ans, concept_q4_cor: state.concept_q4_cor,
+    concept_q5_ans: state.concept_q5_ans, concept_q5_cor: state.concept_q5_cor,
+    jr1: state.jr1||'', jr2: state.jr2||'', jr3: state.jr3||'',
+    jr4: state.jr4||'', jr5: state.jr5||'',
+    post_confidence: state.post_confidence, post_actual: state.post_actual,
+    post_r1: state.post_r1, post_r2: state.post_r2,
+    calibration_index: state.calibration_index
+  };
+  fetch(GAS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+    .catch(function(){});
+  state.submitted=true; state.currentSection=9; saveState(); updateDots();
+  document.getElementById('sec-post').classList.remove('active');
+  document.getElementById('sec-done').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── EXPORT ─────────────────────────────────────────────────────────────
+function exportData(){
+  var blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='lms_step10.json'; a.click();
+}
+function clearData(){
+  if(!confirm('Clear all Step 10 progress?')) return;
+  localStorage.removeItem(LMS_KEY); state={}; location.reload();
+}
+
+// ── AUTO-SAVE TEXTAREAS ────────────────────────────────────────────────
+function wireAutoSave(){
+  [['cal-refl','cal_reflection'],['refl2','refl2_text'],
+   ['t3-ans','t3_ans'],['t4-ans','t4_ans'],
+   ['post-r1','post_r1'],['post-r2','post_r2']].forEach(function(pair){
+    var el=document.getElementById(pair[0]); if(!el) return;
+    el.addEventListener('input',function(){ state[pair[1]]=this.value; saveState(); });
+    if(state[pair[1]]) el.value=state[pair[1]];
+  });
+}
+
+// ── PREFILL FROM STATE ──────────────────────────────────────────────────
+function restoreSliders(){
+  if(state.cal_confidence){
+    document.getElementById('cal-conf').value=state.cal_confidence;
+    document.getElementById('cal-conf-val').textContent=state.cal_confidence;
+  }
+  if(state.cal_predicted){
+    document.getElementById('cal-pred').value=state.cal_predicted;
+    document.getElementById('cal-pred-val').textContent=state.cal_predicted+' %';
+  }
+}
+
+// ── INIT ────────────────────────────────────────────────────────────────
+(function(){
+  if(!localStorage.getItem(ID_KEY)){
+    // not registered — redirect
+    // window.location.href='student-register.html';
+    // Comment out for testing; uncomment for production
+  }
+  initSliders();
+  wireAutoSave();
+  restoreSliders();
+  var cur = state.currentSection || 0;
+  updateDots();
+  if(state.submitted){ showSection('post'); document.getElementById('sec-post').classList.remove('active'); document.getElementById('sec-done').style.display='block'; return; }
+  if(cur === 0) showSection('cal');
+  else if(cur === 1) showSection('t1');
+  else if(cur === 2) showSection('t2');
+  else if(cur === 3) showSection('refl2');
+  else if(cur === 4) showSection('t3');
+  else if(cur === 5) showSection('t4');
+  else if(cur === 6){ buildCQ(); showSection('cq'); }
+  else if(cur === 7){ buildJR(); showSection('jr'); }
+  else if(cur === 8) showSection('post');
+  // prefill ident from localStorage
+  var stu={}; try{ stu=JSON.parse(localStorage.getItem(ID_KEY)||'{}'); }catch(e){}
+  var pairs=[['sid-name','name'],['sid-matric','matric'],['sid-class','class'],['sid-school','school_code'],
+             ['sid-gender','gender'],['sid-age','age'],['sid-mykid','mykid'],['sid-state','home_state'],
+             ['sid-phone','phone'],['sid-email','email']];
+  pairs.forEach(function(p){ var el=document.getElementById(p[0]); if(el&&stu[p[1]]) el.value=stu[p[1]]; });
+})();
 </script>
 </body>
 </html>
