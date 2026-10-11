@@ -3,756 +3,915 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Step 10 Activity — ML Extension | Snake Game Tutorial</title>
+<title>Step 10 Activity – ML Extension | Snake Game Tutorial</title>
 <link rel="stylesheet" href="style.css">
 <style>
-.t-blank{display:inline-block;min-width:130px;border-bottom:2px solid var(--teal);background:transparent;font-family:inherit;font-size:14px;padding:2px 6px;color:var(--ink);outline:none;text-align:center;border-radius:4px 4px 0 0;transition:border-color .2s,background .2s}
-.t-blank:focus{border-color:var(--orange);background:rgba(245,162,29,.07)}
-.t-blank.correct{border-color:#22c55e;background:rgba(34,197,94,.08);color:#15803d}
-.t-blank.wrong{border-color:var(--red,#dc2626);background:rgba(220,38,38,.07);color:#dc2626;animation:shake .3s}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
-.debug-editor{width:100%;font-family:"SFMono-Regular",Consolas,monospace;font-size:13px;background:var(--code-bg,#f1f5f9);border:1.5px solid var(--line,#dde3ec);border-radius:10px;padding:14px;color:var(--ink);resize:vertical;line-height:1.6;min-height:60px}
-.debug-editor.correct{border-color:#22c55e;background:rgba(34,197,94,.06)}
-.debug-editor.wrong{border-color:#dc2626}
-.tier-section{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:28px;margin-bottom:22px;display:none}
-.tier-section.active{display:block}
-.tier-label{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-bottom:12px}
-.tier-label.t1{background:rgba(10,143,138,.12);color:var(--teal-dark)}
-.tier-label.t2{background:rgba(59,130,246,.12);color:#1d4ed8}
-.tier-label.t3{background:rgba(245,162,29,.15);color:#92400e}
-.tier-label.t4{background:rgba(168,85,247,.12);color:#6d28d9}
-.tier-label.tcq{background:rgba(239,68,68,.1);color:#b91c1c}
-.tier-label.tjr{background:rgba(34,197,94,.12);color:#15803d}
-.tier-label.tpc{background:rgba(99,102,241,.12);color:#3730a3}
-code.il{background:var(--code-bg,#f1f5f9);padding:1px 6px;border-radius:4px;font-size:13px;font-family:"SFMono-Regular",Consolas,monospace;color:var(--ink)}
-.hint-chip{display:inline-block;font-size:11px;color:var(--muted);background:rgba(0,0,0,.04);border:1px solid var(--line);border-radius:10px;padding:1px 8px;margin-left:6px;font-style:italic}
-.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
-.btn{display:inline-flex;align-items:center;gap:7px;padding:11px 22px;border-radius:9px;font-size:14px;font-weight:700;border:none;cursor:pointer;font-family:inherit;transition:background .15s,transform .1s;text-decoration:none}
-.btn:active{transform:translateY(1px)}
-.btn-teal{background:var(--teal-dark);color:#fff}
-.btn-teal:hover{background:#065056}
-.btn-outline{background:transparent;color:var(--teal-dark);border:2px solid var(--teal-dark)}
-.btn-outline:hover{background:rgba(10,143,138,.07)}
-.btn-green{background:#16a34a;color:#fff}
-.btn-green:hover{background:#15803d}
-.btn-red{background:#dc2626;color:#fff}
-.btn-red:hover{background:#b91c1c}
-.fb{margin-top:14px;padding:12px 16px;border-radius:8px;font-size:14px;display:none}
-.fb.show{display:block}
-.fb.ok{background:rgba(34,197,94,.1);border:1px solid #86efac;color:#15803d}
-.fb.err{background:rgba(220,38,38,.08);border:1px solid #fca5a5;color:#dc2626}
-.fb.warn{background:rgba(245,162,29,.1);border:1px solid #fcd34d;color:#92400e}
-.cq-opt{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-radius:9px;border:1.5px solid var(--line);background:transparent;cursor:pointer;font-size:14px;font-family:inherit;color:var(--ink);text-align:left;transition:border-color .15s,background .15s;margin-bottom:8px;width:100%}
-.cq-opt:hover:not(:disabled){border-color:var(--teal);background:rgba(10,143,138,.05)}
-.cq-opt.selected-ok{border-color:#22c55e;background:rgba(34,197,94,.09);color:#15803d}
-.cq-opt.selected-err{border-color:#dc2626;background:rgba(220,38,38,.07);color:#dc2626}
-.cq-opt:disabled{cursor:default}
-.jr-area{width:100%;min-height:90px;border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;font-family:inherit;font-size:14px;color:var(--ink);background:var(--card);resize:vertical;line-height:1.6}
-.jr-area:focus{outline:none;border-color:var(--teal)}
-.cal-row{display:flex;gap:16px;flex-wrap:wrap}
-.cal-group{flex:1;min-width:180px}
-.cal-label{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px}
-.cal-slider{width:100%;accent-color:var(--teal)}
-.cal-val{font-size:13px;color:var(--teal-dark);font-weight:700}
-.progress-strip{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px}
-.ps-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;border:2px solid var(--line);color:var(--muted);background:transparent}
-.ps-dot.done{background:var(--teal);border-color:var(--teal);color:#fff}
-.ps-dot.active{border-color:var(--teal-dark);color:var(--teal-dark);background:rgba(10,143,138,.09)}
-.score-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:700}
-.score-ok{background:rgba(34,197,94,.12);color:#15803d;border:1px solid #86efac}
-.score-bad{background:rgba(220,38,38,.08);color:#dc2626;border:1px solid #fca5a5}
-.ident-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:14px 0}
-.ident-grid label{font-size:13px;color:var(--muted);display:block;margin-bottom:4px}
-.ident-grid input,.ident-grid select{width:100%;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;font:inherit;font-size:14px;background:var(--card);color:var(--ink)}
-.export-panel{background:rgba(99,102,241,.05);border:1.5px solid rgba(99,102,241,.2);border-radius:12px;padding:18px 20px;margin-top:18px}
-.export-panel h4{margin:0 0 10px;font-size:15px;color:#3730a3}
-.complete-banner{background:linear-gradient(135deg,var(--teal-dark),#1FA898);color:#fff;border-radius:14px;padding:28px;text-align:center;margin-top:24px}
-.complete-banner h2{font-size:22px;margin-bottom:8px}
-.complete-banner p{opacity:.88;margin-bottom:18px}
-pre.code-block{background:var(--code-bg,#f1f5f9);border:1px solid var(--line);border-radius:10px;padding:16px;overflow-x:auto;font-family:"SFMono-Regular",Consolas,monospace;font-size:13px;line-height:1.6;color:var(--ink);margin:12px 0}
+:root{--fg:var(--ink,#1f2933);--fg-soft:var(--muted,#5b7284)}
+.site-header{background:var(--teal-dark);color:#fff;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.28)}
+.header-inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:52px;gap:16px}
+.logo{color:#fff;text-decoration:none;font-weight:800;font-size:17px;white-space:nowrap;letter-spacing:-.01em}
+.logo:hover{opacity:.85}
+.step-nav{display:flex;gap:3px;align-items:center;flex-wrap:wrap}
+.step-nav a{color:rgba(255,255,255,.75);text-decoration:none;font-size:13px;font-weight:600;padding:5px 9px;border-radius:6px;transition:background .15s,color .15s;line-height:1}
+.step-nav a:hover{background:rgba(255,255,255,.15);color:#fff}
+.step-nav a.active{background:rgba(255,255,255,.22);color:#fff;font-weight:800}
+.container{max-width:1100px;margin:0 auto;padding:0 20px}
+.main-content{padding:28px 0 64px}
+section.hero{background:linear-gradient(135deg,var(--teal-dark) 0%,#063f3b 100%);color:#fff;border:none;border-radius:0;margin:0}
+.step-badge{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:12px}
+.hero-title{font-size:clamp(22px,4vw,30px);font-weight:800;margin:0 0 8px;line-height:1.2}
+.hero-sub{font-size:15px;margin:0;opacity:.85;line-height:1.5}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--teal);color:#fff;font-weight:700;font-size:14px;padding:10px 22px;border-radius:8px;text-decoration:none;border:none;cursor:pointer;transition:opacity .15s;white-space:nowrap;line-height:1;font-family:inherit}
+.btn:hover{opacity:.85}
+.btn-outline{background:transparent;border:2px solid rgba(255,255,255,.55);color:#fff}
+.btn-outline:hover{background:rgba(255,255,255,.1);opacity:1}
+.tier-progress{display:flex;align-items:center;margin-bottom:24px;padding:14px 0;overflow-x:auto}
+.tier-step{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:60px}
+.tier-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;background:var(--line);color:var(--muted);transition:background .3s,color .3s}
+.tier-step.active .tier-num{background:var(--teal);color:#fff}
+.tier-step.done .tier-num{background:var(--teal-dark);color:#fff}
+.tier-label{font-size:11px;font-weight:600;color:var(--muted);white-space:nowrap}
+.tier-connector{flex:1;min-width:14px;height:3px;background:var(--line);transition:background .3s;align-self:flex-start;margin-top:19px}
+.tier-connector.done{background:var(--teal)}
+.tier-card{border:1.5px solid var(--line);border-radius:12px;margin-bottom:20px;overflow:hidden;background:var(--card)}
+.tier-card.tier-locked{opacity:.45;pointer-events:none}
+.tier-card:not(.tier-locked){opacity:1;pointer-events:auto}
+.tier-header{padding:13px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--line);background:rgba(0,0,0,.025)}
+.tier-body{padding:18px}
+.tier-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.05em;padding:3px 10px;border-radius:20px;background:var(--teal);color:#fff;white-space:nowrap;text-transform:uppercase}
+.tier-title{font-size:15px;font-weight:700;color:var(--ink)}
+.tier-desc{font-size:13px;color:var(--muted)}
+.tier-intro{font-size:14px;color:var(--ink);margin:0 0 12px;line-height:1.6}
+.code-block{background:var(--code-bg);border-radius:8px;padding:14px 16px;font-family:"SFMono-Regular",Consolas,monospace;font-size:13px;line-height:1.65;overflow-x:auto;margin-bottom:12px;color:#cdd;white-space:pre}
+.tier-textarea{width:100%;background:var(--code-bg);border:1px solid rgba(100,130,150,.35);border-radius:6px;color:#cdd;font-size:13px;font-family:inherit;padding:10px 12px;resize:vertical;box-sizing:border-box;line-height:1.5}
+.tier-textarea:focus{outline:none;border-color:var(--teal)}
+.journal-prompt{margin-bottom:16px}
+.journal-prompt label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;line-height:1.5}
+.jp-num{display:inline-flex;align-items:center;justify-content:center;background:var(--blue);color:#fff;font-size:11px;font-weight:800;width:20px;height:20px;border-radius:50%;margin-right:4px;vertical-align:middle}
+.cal-gate{background:linear-gradient(135deg,rgba(11,79,75,.12),rgba(2,173,165,.06));border:2px solid var(--teal);border-radius:12px;margin-bottom:24px;overflow:hidden}
+.cal-gate-header{background:linear-gradient(90deg,rgba(2,173,165,.2),transparent);padding:12px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cal-gate-body{padding:18px}
+.cal-label{font-weight:700;font-size:14px;margin-bottom:6px;display:block;line-height:1.5}
+.cal-sub{font-size:13px;color:var(--muted);margin-bottom:10px;display:block}
+.conf-slider-wrap{display:flex;align-items:center;gap:10px;margin:8px 0 16px}
+.conf-slider-wrap input[type=range]{flex:1;accent-color:var(--teal)}
+.conf-val{min-width:2em;font-family:monospace;font-weight:800;font-size:20px;color:var(--teal);text-align:center}
+.pred-input{background:var(--code-bg);border:1px solid var(--line);border-radius:6px;color:var(--fg);font-family:monospace;font-size:16px;padding:8px 12px;width:110px;text-align:center;font-weight:700}
+.pred-input:focus{outline:none;border-color:var(--teal)}
+.cal-tip{background:rgba(2,173,165,.08);border-left:3px solid var(--teal);border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:16px;font-size:13px;line-height:1.6}
+.refl-gate{border:1.5px solid rgba(13,85,167,.4);border-radius:12px;margin-bottom:20px;overflow:hidden;background:rgba(13,85,167,.04)}
+.refl-gate.tier-locked{opacity:.45;pointer-events:none}
+.refl-gate:not(.tier-locked){opacity:1;pointer-events:auto}
+.refl-gate-header{background:linear-gradient(90deg,rgba(13,85,167,.15),transparent);padding:12px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.refl-badge{font-size:11px;font-weight:700;letter-spacing:.06em;padding:3px 8px;border-radius:20px;background:var(--blue);color:#fff;white-space:nowrap}
+.refl-gate-body{padding:18px}
+.blank-row{display:flex;align-items:center;gap:10px;margin:4px 0;flex-wrap:wrap}
+.blank-num{min-width:22px;font-size:12px;font-weight:700;color:var(--muted)}
+.blank-label{font-size:13px;font-family:monospace;color:var(--fg-soft);flex:1;min-width:160px}
+.blank-input{background:var(--code-bg);border:1px solid var(--line);border-radius:5px;color:var(--fg);font-family:monospace;font-size:14px;padding:5px 10px;width:200px}
+.blank-input:focus{outline:none;border-color:var(--teal)}
+.blank-input.correct{border-color:#22b35a;background:rgba(0,180,0,.08)}
+.blank-input.wrong{border-color:#e53e3e;background:rgba(200,0,0,.06)}
+.bug-card{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin-bottom:12px;background:rgba(0,0,0,.03)}
+.bug-card h4{margin:0 0 8px;font-size:14px;color:var(--orange)}
+.bug-line{font-family:monospace;font-size:13px;background:var(--code-bg);padding:6px 10px;border-radius:5px;margin:6px 0;color:#f88;word-break:break-all}
+.bug-fix-input{width:100%;background:var(--code-bg);border:1px solid var(--line);border-radius:5px;color:var(--fg);font-family:monospace;font-size:13px;padding:6px 10px;box-sizing:border-box}
+.bug-fix-input:focus{outline:none;border-color:var(--blue)}
+.bug-hint{font-size:12px;color:var(--muted);margin-top:4px;font-style:italic}
+.starter-code{background:var(--code-bg);border-radius:8px;padding:14px 16px;font-family:monospace;font-size:13px;line-height:1.6;overflow-x:auto;margin-bottom:12px;white-space:pre;color:#cdd}
+.complete-banner{background:linear-gradient(135deg,rgba(2,173,165,.15),rgba(11,79,75,.1));border:2px solid var(--teal);border-radius:12px;padding:20px 24px;text-align:center;margin-top:24px}
+.complete-banner h2{margin:0 0 8px;color:var(--teal-dark)}
+.complete-banner p{margin:0;color:var(--muted)}
+.concept-q{background:var(--code-bg);border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin-bottom:14px;color:var(--fg)}
+.concept-q-text{margin:0 0 10px;font-size:15px;line-height:1.5;color:var(--fg);font-weight:500}
+.concept-opts{display:flex;flex-direction:column;gap:8px}
+.concept-opt{display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:14px;line-height:1.4;color:var(--fg)}
+.concept-opt input[type=radio]{margin-top:3px;flex-shrink:0;cursor:pointer}
+.concept-feedback{margin-top:8px;font-size:13px;padding:6px 10px;border-radius:6px}
+.concept-feedback.correct{background:#16a34a22;color:#16a34a;border:1px solid #16a34a44}
+.concept-feedback.incorrect{background:#dc262622;color:#dc2626;border:1px solid #dc262644}
+.tier-btn{padding:9px 22px;border:none;border-radius:8px;background:var(--teal);color:#fff;font-weight:700;font-size:14px;cursor:pointer;transition:opacity .2s;font-family:inherit}
+.tier-btn:hover:not(:disabled){opacity:.85}
+.tier-btn:disabled{opacity:.4;cursor:not-allowed}
+.feedback-success{background:rgba(0,180,100,.12);border:1px solid rgba(0,180,100,.35);border-radius:8px;padding:10px 14px;color:#166534;font-size:13px;font-weight:600}
+.feedback-error{background:rgba(200,0,0,.08);border:1px solid rgba(200,0,0,.3);border-radius:8px;padding:10px 14px;color:#9b1c1c;font-size:13px;font-weight:600}
+.feedback-warning{background:rgba(200,130,0,.08);border:1px solid rgba(200,130,0,.3);border-radius:8px;padding:10px 14px;color:#92400e;font-size:13px;font-weight:600}
+.feedback-anim{animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.id-block{background:linear-gradient(135deg,#08312F,#0a3d39);border-radius:12px;padding:20px 22px;margin-bottom:22px;border:2px solid rgba(2,173,165,.3)}
+.id-block.id-confirmed{border-color:#02ADA5}
+.id-block-title{font-weight:800;font-size:15px;color:#fff;display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.id-required-badge{background:#02ADA5;color:#fff;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;letter-spacing:.05em;flex-shrink:0}
+.id-subtitle{font-weight:400;font-size:13px;color:rgba(255,255,255,.6)}
+.id-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px 12px;align-items:end}
+.id-field{display:flex;flex-direction:column;gap:5px}
+.id-field.id-w2{grid-column:span 2}
+.id-field label{font-size:11px;font-weight:700;color:rgba(255,255,255,.65);letter-spacing:.06em;text-transform:uppercase}
+.id-req{color:#f5a21d;margin-left:2px}
+.id-field input,.id-field select{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);border-radius:7px;padding:9px 12px;color:#fff;font-size:13px;font-family:inherit;width:100%;box-sizing:border-box}
+.id-field select{cursor:pointer;-webkit-appearance:none;appearance:none}
+.id-field select option{background:#0a3d39;color:#fff}
+.id-field input:focus,.id-field select:focus{outline:none;border-color:#02ADA5}
+.id-field input::placeholder{color:rgba(255,255,255,.3)}
+.id-save-btn{background:#02ADA5;color:#fff;border:none;border-radius:8px;padding:11px 22px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;width:100%;margin-top:14px}
+.id-save-btn:hover{opacity:.88}
+.id-confirmed-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.id-confirmed-name{font-weight:700;font-size:16px;color:#fff}
+.id-confirmed-meta{color:rgba(255,255,255,.65);font-size:13px}
+.id-edit-btn{background:transparent;border:1.5px solid rgba(255,255,255,.35);color:rgba(255,255,255,.75);border-radius:6px;padding:5px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.id-notice{background:rgba(245,162,29,.12);border:1.5px solid rgba(245,162,29,.45);border-radius:8px;padding:9px 14px;color:#f5a21d;font-size:13px;font-weight:600;margin-top:12px;display:none}
 </style>
 </head>
 <body>
-<div class="chev" id="chev"><span id="see-box">See</span><span>Think</span><span>Explore</span><span>Marvel</span></div>
-<nav class="sitenav"><div class="wrap">
-  <a class="brand" href="index.html">Snake Game <span>Python Tutorial</span></a>
-  <details class="navsel"><summary>Steps</summary><div class="navmenu" role="menu">
-    <a href="step-1-activity.html"><b>Step 1</b>: Variables &amp; Setup</a>
-    <a href="step-2-activity.html"><b>Step 2</b>: Loop &amp; Events</a>
-    <a href="step-3-activity.html"><b>Step 3</b>: Direction Control</a>
-    <a href="step-4-activity.html"><b>Step 4</b>: Snake Body ⭐</a>
-    <a href="step-5-activity.html"><b>Step 5</b>: Bonus Food 🌟</a>
-    <a href="step-6-activity.html"><b>Step 6</b>: Functions</a>
-    <a href="step-7-activity.html"><b>Step 7</b>: Wrap-Around ⭐</a>
-    <a href="step-8-activity.html"><b>Step 8</b>: Save High Score</a>
-    <a href="step-9-activity.html"><b>Step 9</b>: OOP Refactor</a>
-    <a href="step-10-activity.html" class="active"><b>Step 10</b>: ML Extension 🤖</a>
-  </div></details>
-  <a class="nl" href="step-10.html">Notes</a>
-</div></nav>
-
-<header class="hero"><div class="wrap">
-  <p class="eyebrow">UMPSA STEM LAB · Step 10 of 10 · Activities</p>
-  <h1>Step 10 — ML Extension 🤖</h1>
-  <p class="sub">Apply Q-Learning to let the Snake teach itself to play. You'll complete the Q-table, debug the reward logic, and build an epsilon-decay training loop.</p>
-  <div class="pills">
-    <span class="pill">Q-Learning</span><span class="pill">Q-table</span><span class="pill">epsilon-greedy</span><span class="pill">Bellman equation</span><span class="pill">Reward signal</span>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="index.html">&#x1F40D; Snake Tutorial</a>
+    <nav class="step-nav">
+      <a href="step-1-activity.html">1</a>
+      <a href="step-2-activity.html">2</a>
+      <a href="step-3-activity.html">3</a>
+      <a href="step-4-activity.html">4</a>
+      <a href="step-5-activity.html">5</a>
+      <a href="step-6-activity.html">6</a>
+      <a href="step-7-activity.html">7</a>
+      <a href="step-8-activity.html">8</a>
+      <a href="step-9-activity.html">9</a>
+      <a href="step-10-activity.html" class="active">10</a>
+    </nav>
   </div>
-</div></header>
-<div class="progress-bar"><div class="wrap"><div class="track"><i style="width:100%"></i></div><b>Step 10 / 10</b></div></div>
+</header>
 
-<div class="wrap" style="padding-top:28px;padding-bottom:60px">
-
-<!-- PROGRESS DOTS -->
-<div class="progress-strip" id="progress-strip">
-  <div class="ps-dot" id="pd0" title="Calibrate">C</div>
-  <div class="ps-dot" id="pd1" title="Tier 1">T1</div>
-  <div class="ps-dot" id="pd2" title="Tier 2">T2</div>
-  <div class="ps-dot" id="pd3" title="Reflect">R</div>
-  <div class="ps-dot" id="pd4" title="Tier 3">T3</div>
-  <div class="ps-dot" id="pd5" title="Tier 4">T4</div>
-  <div class="ps-dot" id="pd6" title="Concept Check">CQ</div>
-  <div class="ps-dot" id="pd7" title="Journal">JR</div>
-  <div class="ps-dot" id="pd8" title="Post-Calibrate">PC</div>
-</div>
-
-<!-- ── PRE-CALIBRATION ── -->
-<div class="tier-section active" id="sec-cal">
-  <span class="tier-label t1">Pre-Calibration</span>
-  <h2 style="margin-top:0">Before you begin — how confident are you?</h2>
-  <p style="color:var(--muted);font-size:14px">Answer honestly. This is for research — not graded.</p>
-  <div class="cal-row" style="margin-top:16px">
-    <div class="cal-group">
-      <div class="cal-label">Confidence level (1 = not at all, 10 = very confident)</div>
-      <input type="range" class="cal-slider" id="cal-conf" min="1" max="10" value="5">
-      <div class="cal-val" id="cal-conf-val">5</div>
-    </div>
-    <div class="cal-group">
-      <div class="cal-label">I predict I'll score ___ % on the fill-in-blank exercise</div>
-      <input type="range" class="cal-slider" id="cal-pred" min="0" max="100" step="5" value="50">
-      <div class="cal-val" id="cal-pred-val">50 %</div>
+<section class="hero" style="padding:32px 0 24px">
+  <div class="container">
+    <div class="step-badge">Step 10 &mdash; Activity</div>
+    <h1 class="hero-title">ML Extension &mdash; Q-Learning</h1>
+    <p class="hero-sub">Q-table &bull; epsilon-greedy &bull; Bellman equation &bull; reward shaping &bull; epsilon decay</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+      <a class="btn btn-outline" href="step-10.html">&#x1F4D6; Concept Page</a>
+      <a class="btn btn-outline" href="step-9-activity.html">&larr; Step 9</a>
+      <a class="btn" href="survey-post.html">Post-Survey &rarr;</a>
     </div>
   </div>
-  <div style="margin-top:16px">
-    <label style="font-size:14px;font-weight:600">What do you already know about Q-Learning or AI agents? (free text)</label>
-    <textarea class="jr-area" id="cal-refl" rows="3" placeholder="Write anything — prior knowledge, experience, hunches…" style="margin-top:6px"></textarea>
-  </div>
-  <div class="btn-row">
-    <button class="btn btn-teal" onclick="finishCal()">Start Activities →</button>
-  </div>
+</section>
+
+<main class="main-content">
+<div class="container">
+
+<div class="tier-progress" id="tierProgress">
+  <div class="tier-step active" id="tp0"><span class="tier-num">&#x1F3AF;</span><span class="tier-label">Calibrate</span></div>
+  <div class="tier-connector" id="tc01"></div>
+  <div class="tier-step" id="tp1"><span class="tier-num">1</span><span class="tier-label">Fill-in</span></div>
+  <div class="tier-connector" id="tc12"></div>
+  <div class="tier-step" id="tp2"><span class="tier-num">2</span><span class="tier-label">Debug</span></div>
+  <div class="tier-connector" id="tc23"></div>
+  <div class="tier-step" id="tp3"><span class="tier-num">3</span><span class="tier-label">Bellman</span></div>
+  <div class="tier-connector" id="tc34"></div>
+  <div class="tier-step" id="tp4"><span class="tier-num">4</span><span class="tier-label">Decay</span></div>
+  <div class="tier-connector" id="tc4c"></div>
+  <div class="tier-step" id="tpc"><span class="tier-num">&#x1F9E0;</span><span class="tier-label">Concept</span></div>
+  <div class="tier-connector" id="tccj"></div>
+  <div class="tier-step" id="tpj"><span class="tier-num">&#x1F4D3;</span><span class="tier-label">Reflect</span></div>
 </div>
 
-<!-- ── TIER 1: Fill in the Blanks ── -->
-<div class="tier-section" id="sec-t1">
-  <span class="tier-label t1">Tier 1 — Fill in the Blanks</span>
-  <h2 style="margin-top:0">Complete the Q-Learning core functions</h2>
-  <p>Each blank is a single Python identifier, number, or keyword. Read the surrounding code and comments carefully.</p>
-
-  <h3 style="margin-top:20px">Block A — Q-table setup &amp; action selection</h3>
-  <pre class="code-block">from collections import <input class="t-blank" id="b1" placeholder="collection type" autocomplete="off" spellcheck="false">
-
-# Q-table maps (state, action) pairs → expected future reward
-q_table = defaultdict(float)
-
-ACTIONS = [0, 1, 2]           # 0=straight, 1=left, 2=right
-<input class="t-blank" id="b2" placeholder="rate variable"> = 0.1    # exploration rate (10% random)
-
-def choose_action(state):
-    if random.random() &lt; EPSILON:
-        return random.choice(ACTIONS)      # explore!
-    q_vals = [q_table[(state, a)] for a in ACTIONS]
-    return ACTIONS[q_vals.index(<input class="t-blank" id="b3" placeholder="built-in fn">(q_vals))]  # exploit!</pre>
-
-  <h3 style="margin-top:20px">Block B — Reward signal &amp; Q-update</h3>
-  <pre class="code-block">ALPHA = 0.1    # learning rate
-GAMMA = 0.9    # discount factor
-
-if game.score &gt; old_score:
-    reward = <input class="t-blank" id="b4" placeholder="positive reward">   # ate food — good!
-elif not game.running:
-    reward = -10               # died — bad!
-else:
-    reward = -0.1              # survived step — small penalty
-
-def update_q(state, action, reward, next_state):
-    old_q       = q_table[(state, action)]
-    best_future = max(q_table[(next_state, a)] for a in ACTIONS)
-    target      = reward + <input class="t-blank" id="b6" placeholder="discount factor"> * best_future
-    q_table[(state, action)] = old_q + <input class="t-blank" id="b5" placeholder="learning rate"> * (target - old_q)</pre>
-
-  <div class="fb" id="t1-fb"></div>
-  <div class="btn-row">
-    <button class="btn btn-teal" onclick="checkT1()">Check Answers</button>
+<!-- STUDENT IDENTITY -->
+<div class="id-block" id="idBlock">
+  <div class="id-block-title">
+    &#x1F464; Your Details
+    <span class="id-required-badge">REQUIRED</span>
+    <span class="id-subtitle">&mdash; fill in before you begin (<span style="color:#f5a21d">&#9733;</span> = required)</span>
   </div>
-</div>
-
-<!-- ── TIER 2: Debug ── -->
-<div class="tier-section" id="sec-t2">
-  <span class="tier-label t2">Tier 2 — Debug the Code</span>
-  <h2 style="margin-top:0">Three Q-Learning bugs — find and fix each one</h2>
-  <p>Each code block contains exactly one bug. Type the corrected line (or full corrected code block) in the editable area below each snippet. You have <strong>2 attempts</strong>.</p>
-
-  <!-- Bug 1 -->
-  <div style="margin-bottom:24px">
-    <h3>Bug 1</h3>
-    <pre class="code-block" style="border-color:#fca5a5">q_table = {}        # create the Q-table</pre>
-    <p style="font-size:14px;color:var(--muted)">Fix the Q-table initialisation so missing keys return 0.0 automatically.</p>
-    <textarea class="debug-editor" id="bug1" rows="2" spellcheck="false" data-ans="q_table = defaultdict(float)">q_table = {}        # create the Q-table</textarea>
-    <div class="fb" id="bug1-fb"></div>
-  </div>
-
-  <!-- Bug 2 -->
-  <div style="margin-bottom:24px">
-    <h3>Bug 2</h3>
-    <pre class="code-block" style="border-color:#fca5a5">def choose_action(state):
-    if random.random() &gt; EPSILON:   # explore?
-        return random.choice(ACTIONS)
-    q_vals = [q_table[(state, a)] for a in ACTIONS]
-    return ACTIONS[q_vals.index(max(q_vals))]</pre>
-    <p style="font-size:14px;color:var(--muted)">The exploration branch never fires correctly. Fix the one buggy line.</p>
-    <textarea class="debug-editor" id="bug2" rows="2" spellcheck="false" data-ans="if random.random() < EPSILON:">    if random.random() &gt; EPSILON:   # explore?</textarea>
-    <div class="fb" id="bug2-fb"></div>
-  </div>
-
-  <!-- Bug 3 -->
-  <div style="margin-bottom:24px">
-    <h3>Bug 3</h3>
-    <pre class="code-block" style="border-color:#fca5a5">if game.score &gt; old_score:
-    reward = -10   # ate food</pre>
-    <p style="font-size:14px;color:var(--muted)">The reward for eating food is wrong. Fix the reward value.</p>
-    <textarea class="debug-editor" id="bug3" rows="2" spellcheck="false" data-ans="reward = 10">    reward = -10   # ate food</textarea>
-    <div class="fb" id="bug3-fb"></div>
-  </div>
-
-  <div class="fb" id="t2-fb"></div>
-  <div class="btn-row">
-    <button class="btn btn-teal" onclick="checkT2()">Check Fixes</button>
-  </div>
-</div>
-
-<!-- ── REFLECTION 2 ── -->
-<div class="tier-section" id="sec-refl2">
-  <span class="tier-label t2">Mid-Activity Reflection</span>
-  <h2 style="margin-top:0">Think about exploration vs exploitation</h2>
-  <p>What happens when the agent <strong>never</strong> explores (EPSILON = 0)? And what if it <strong>always</strong> explores (EPSILON = 1)?</p>
-  <textarea class="jr-area" id="refl2" rows="4" placeholder="Write your thoughts here…"></textarea>
-  <div class="btn-row">
-    <button class="btn btn-teal" onclick="finishRefl2()">Continue →</button>
-  </div>
-</div>
-
-<!-- ── TIER 3: Complete ── -->
-<div class="tier-section" id="sec-t3">
-  <span class="tier-label t3">Tier 3 — Complete the Code</span>
-  <h2 style="margin-top:0">Write the full Q-Learning update rule</h2>
-  <p>The skeleton below is missing the Bellman equation inside <code class="il">update_q()</code>. Complete the function so it correctly updates the Q-table.</p>
-  <pre class="code-block">ALPHA = 0.1
-GAMMA = 0.9
-
-def update_q(state, action, reward, next_state):
-    old_q = q_table[(state, action)]
-    # --- Complete from here ---
-    # 1. Find the best possible Q-value from the next state
-    # 2. Calculate the Bellman target
-    # 3. Update the Q-table entry using the learning rate
-    pass   # ← replace this</pre>
-
-  <textarea class="debug-editor" id="t3-ans" rows="7" spellcheck="false" placeholder="Write your complete update_q() body here…"></textarea>
-  <div class="fb" id="t3-fb"></div>
-  <div class="btn-row">
-    <button class="btn btn-teal" onclick="checkT3()">Submit Tier 3</button>
-  </div>
-</div>
-
-<!-- ── TIER 4: Create ── -->
-<div class="tier-section" id="sec-t4">
-  <span class="tier-label t4">Tier 4 — Create</span>
-  <h2 style="margin-top:0">Add epsilon decay to the training loop</h2>
-  <p>A fixed EPSILON means the agent keeps exploring randomly even after it has learned a good strategy. Your task: modify the training loop to <strong>decay epsilon over time</strong> so the agent explores less as it gains experience.</p>
-  <p style="color:var(--muted);font-size:14px;margin-top:6px"><b>Requirements:</b> Start with <code class="il">epsilon = 0.5</code>. After each episode, decay it by multiplying by 0.995. Clamp the minimum at 0.01 so the agent always has a tiny chance to explore. Print the current epsilon every 500 episodes.</p>
-  <textarea class="debug-editor" id="t4-ans" rows="10" spellcheck="false" placeholder="Write your training loop with epsilon decay here…"></textarea>
-  <div class="fb" id="t4-fb"></div>
-  <div class="btn-row">
-    <button class="btn btn-teal" onclick="checkT4()">Submit Tier 4</button>
-  </div>
-</div>
-
-<!-- ── CONCEPT CHECK ── -->
-<div class="tier-section" id="sec-cq">
-  <span class="tier-label tcq">Concept Check</span>
-  <h2 style="margin-top:0">5 Questions — pass 4 of 5 to continue</h2>
-  <p id="cq-attempts-msg" style="font-size:13px;color:var(--muted)"></p>
-  <div id="cq-questions"></div>
-  <div class="fb" id="cq-fb"></div>
-  <div class="btn-row">
-    <button class="btn btn-teal" id="cq-btn" onclick="checkCQ()">Submit Answers</button>
-  </div>
-</div>
-
-<!-- ── JOURNAL ── -->
-<div class="tier-section" id="sec-jr">
-  <span class="tier-label tjr">Reflective Journal</span>
-  <h2 style="margin-top:0">Five prompts — write at least 2–3 sentences each</h2>
-  <div id="jr-prompts"></div>
-  <div class="btn-row">
-    <button class="btn btn-teal" onclick="finishJournal()">Continue to Post-Calibration →</button>
-  </div>
-</div>
-
-<!-- ── POST-CALIBRATION ── -->
-<div class="tier-section" id="sec-post">
-  <span class="tier-label tpc">Post-Calibration</span>
-  <h2 style="margin-top:0">Reflect on how you actually performed</h2>
-  <div class="cal-row">
-    <div class="cal-group">
-      <div class="cal-label">Confidence now (1–10)</div>
-      <input type="range" class="cal-slider" id="post-conf" min="1" max="10" value="5">
-      <div class="cal-val" id="post-conf-val">5</div>
-    </div>
-    <div class="cal-group">
-      <div class="cal-label">My actual Tier 1 score was about ___ %</div>
-      <input type="range" class="cal-slider" id="post-actual" min="0" max="100" step="5" value="50">
-      <div class="cal-val" id="post-actual-val">50 %</div>
-    </div>
-  </div>
-  <div style="margin-top:16px">
-    <label style="font-size:14px;font-weight:600">Was your prediction accurate? What surprised you?</label>
-    <textarea class="jr-area" id="post-r1" rows="3" placeholder="Compare your prediction with your actual score…" style="margin-top:6px"></textarea>
-  </div>
-  <div style="margin-top:12px">
-    <label style="font-size:14px;font-weight:600">What was the hardest concept in Step 10 for you?</label>
-    <textarea class="jr-area" id="post-r2" rows="3" placeholder="Q-table, Bellman equation, epsilon-greedy, state representation…" style="margin-top:6px"></textarea>
-  </div>
-
-  <!-- Student identity confirmation -->
-  <details style="margin-top:22px">
-    <summary style="cursor:pointer;font-size:14px;font-weight:600;color:var(--teal-dark)">Confirm student details (click to expand)</summary>
-    <div class="ident-grid" style="margin-top:12px">
-      <div><label>Name</label><input id="sid-name" type="text" placeholder="Full name"></div>
-      <div><label>Matric No.</label><input id="sid-matric" type="text" placeholder="e.g. CA23001"></div>
-      <div><label>Class</label><input id="sid-class" type="text" placeholder="e.g. 2BKAA"></div>
-      <div><label>School Code</label><input id="sid-school" type="text" placeholder="e.g. FKEE"></div>
-      <div><label>Gender</label>
-        <select id="sid-gender"><option value="">—</option><option>Male</option><option>Female</option></select>
+  <div id="idForm">
+    <div class="id-grid">
+      <div class="id-field id-w2">
+        <label>Full Name <span class="id-req">&#9733;</span></label>
+        <input type="text" id="id-name" placeholder="Ahmad bin Ali" autocomplete="name">
       </div>
-      <div><label>Age</label><input id="sid-age" type="number" min="10" max="99" placeholder="e.g. 20"></div>
-      <div><label>MyKid / IC</label><input id="sid-mykid" type="text" placeholder="e.g. 030512-11-1234"></div>
-      <div><label>Home State</label>
-        <select id="sid-state">
-          <option value="">—</option>
-          <option>Johor</option><option>Kedah</option><option>Kelantan</option><option>Melaka</option>
-          <option>Negeri Sembilan</option><option>Pahang</option><option>Penang</option><option>Perak</option>
-          <option>Perlis</option><option>Sabah</option><option>Sarawak</option><option>Selangor</option>
-          <option>Terengganu</option><option>Kuala Lumpur</option><option>Labuan</option><option>Putrajaya</option>
+      <div class="id-field">
+        <label>Matric No. <span class="id-req">&#9733;</span></label>
+        <input type="text" id="id-matric" placeholder="RE25001" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>Class <span class="id-req">&#9733;</span></label>
+        <input type="text" id="id-class" placeholder="01A" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>School / Programme Code</label>
+        <input type="text" id="id-school-code" placeholder="BEE / BCS / etc." autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>Gender</label>
+        <select id="id-gender">
+          <option value="">-- select --</option>
+          <option>Male</option><option>Female</option><option>Prefer not to say</option>
         </select>
       </div>
-      <div><label>Phone</label><input id="sid-phone" type="tel" placeholder="e.g. 0123456789"></div>
-      <div><label>Email</label><input id="sid-email" type="email" placeholder="your@email.com"></div>
+      <div class="id-field">
+        <label>Age</label>
+        <input type="number" id="id-age" placeholder="18" min="10" max="99" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>IC / MyKid No.</label>
+        <input type="text" id="id-mykid" placeholder="050101-xx-xxxx" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>Home State</label>
+        <select id="id-home-state">
+          <option value="">-- select --</option>
+          <option>Johor</option><option>Kedah</option><option>Kelantan</option><option>Kuala Lumpur</option>
+          <option>Labuan</option><option>Melaka</option><option>Negeri Sembilan</option><option>Pahang</option>
+          <option>Perak</option><option>Perlis</option><option>Pulau Pinang</option><option>Putrajaya</option>
+          <option>Sabah</option><option>Sarawak</option><option>Selangor</option><option>Terengganu</option>
+        </select>
+      </div>
+      <div class="id-field">
+        <label>Phone</label>
+        <input type="tel" id="id-phone" placeholder="011-2345678" autocomplete="tel">
+      </div>
+      <div class="id-field id-w2">
+        <label>Email</label>
+        <input type="email" id="id-email" placeholder="student@student.umpsa.edu.my" autocomplete="email">
+      </div>
     </div>
-  </details>
-
-  <div class="btn-row">
-    <button class="btn btn-green" onclick="submitAll()">&#10003; Submit Step 10 Record</button>
+    <button class="id-save-btn" id="idSaveBtn">Save &amp; Continue &#x2192;</button>
+    <div class="id-notice" id="idNotice">Please fill in Name, Matric No., and Class before continuing.</div>
   </div>
-  <div class="fb" id="post-fb"></div>
-</div>
-
-<!-- ── COMPLETE BANNER ── -->
-<div class="complete-banner" id="sec-done" style="display:none">
-  <div style="font-size:40px;margin-bottom:10px">🎉🤖</div>
-  <h2>You've completed all 10 steps!</h2>
-  <p>From <code>print("Hello, World!")</code> to training an AI agent — you built an entire Snake game and an RL learner. That's remarkable.</p>
-  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-    <a class="btn btn-teal" href="survey-post.html">Take the Post-Survey →</a>
-    <a class="btn btn-outline" style="color:#fff;border-color:rgba(255,255,255,.6)" href="index.html">← Back to Index</a>
+  <div id="idConfirmed" style="display:none">
+    <div class="id-confirmed-row">
+      <span style="font-size:28px">&#x2705;</span>
+      <div>
+        <div class="id-confirmed-name" id="idConfName"></div>
+        <div class="id-confirmed-meta" id="idConfMeta"></div>
+      </div>
+      <button class="id-edit-btn" id="idEditBtn">Edit</button>
+    </div>
   </div>
 </div>
 
-<!-- EXPORT PANEL -->
-<div class="export-panel" id="export-panel" style="margin-top:30px">
-  <h4>&#128190; Your Progress Data</h4>
-  <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Download or clear your saved Step 10 data.</p>
-  <div class="btn-row" style="margin-top:0">
-    <button class="btn btn-outline" onclick="exportData()" style="font-size:13px;padding:8px 16px">Download JSON</button>
-    <button class="btn" onclick="clearData()" style="font-size:13px;padding:8px 16px;background:rgba(220,38,38,.08);color:#dc2626;border:1.5px solid #fca5a5">Clear Progress</button>
+<!-- CALIBRATION -->
+<div class="cal-gate" id="cal-gate">
+  <div class="cal-gate-header">
+    <span class="tier-badge" style="background:var(--teal-dark)">&#x1F3AF; Pre-Activity Calibration</span>
+    <span style="font-size:13px;color:var(--muted)">Complete this before unlocking the tiers</span>
+  </div>
+  <div class="cal-gate-body">
+    <div class="cal-tip">Before you start, think about what you already know about machine learning and how an agent can learn to play a game. Your prediction helps you track how your understanding grows!</div>
+    <label class="cal-label" for="cal-conf">How confident are you about machine learning / reinforcement learning? (1 = not at all, 10 = very confident)</label>
+    <div class="conf-slider-wrap">
+      <input type="range" id="cal-conf" min="1" max="10" value="5">
+      <span class="conf-val" id="cal-conf-val">5</span>
+    </div>
+    <label class="cal-label" for="cal-pred">What score do you predict on Tier 1? (0-100%)</label>
+    <span class="cal-sub">Be honest &mdash; this is just for your own reflection later!</span>
+    <input class="pred-input" type="number" id="cal-pred" min="0" max="100" placeholder="e.g. 65">
+    <br><br>
+    <label class="cal-label" for="cal-r1">What do you already know about how a computer can learn to make decisions? (min 10 words)</label>
+    <textarea class="tier-textarea" id="cal-r1" rows="3" placeholder="Write your prior knowledge here..."></textarea>
+    <br><br>
+    <button class="tier-btn" id="cal-submit">Save Calibration &amp; Start &#x1F680;</button>
+    <div id="cal-feedback" style="margin-top:10px"></div>
   </div>
 </div>
 
-</div><!-- /wrap -->
+<!-- TIER 1: FILL IN BLANKS -->
+<div class="tier-card tier-locked" id="tier1">
+  <div class="tier-header">
+    <span class="tier-badge">&#x270F;&#xFE0F; Tier 1</span>
+    <span class="tier-title">Fill in the Blanks &mdash; Q-Learning Agent</span>
+    <span class="tier-desc">6 blanks. All must be correct to advance.</span>
+  </div>
+  <div class="tier-body">
+    <p class="tier-intro">Complete the Q-learning agent skeleton by filling in the missing parts. Each blank is a single keyword, function name, constant name, or integer value.</p>
+    <div class="code-block">from collections import ___1___(float)
+q_table = defaultdict(float)
+___2___ = 0.1   # exploration rate  (10% random)
+ALPHA   = 0.2   # learning rate
+GAMMA   = 0.9   # discount factor
+
+def choose_action(state):
+    if random.random() &lt; EPSILON:          # explore
+        return random.choice(ACTIONS)
+    return ___3___(q_table[(state, a)]      # exploit
+                   for a in ACTIONS)
+
+def reward(ate_food, died):
+    if died:       return -___4___
+    if ate_food:   return  ___4___
+    return -0.1
+
+def update_q(state, action, r, next_state):
+    old_q  = q_table[(state, action)]
+    best   = max(q_table[(next_state, a)] for a in ACTIONS)
+    q_table[(state, action)] = old_q + ___5___ * (r + ___6___ * best - old_q)</div>
+    <div class="blank-row"><span class="blank-num">1</span><span class="blank-label">from collections import ___1___(float) &mdash; a collections class that auto-creates 0.0 for missing keys</span><input class="blank-input" id="t1b1" placeholder="class name"></div>
+    <div class="blank-row"><span class="blank-num">2</span><span class="blank-label">___2___ = 0.1 &mdash; constant name for the exploration rate used in choose_action</span><input class="blank-input" id="t1b2" placeholder="constant name"></div>
+    <div class="blank-row"><span class="blank-num">3</span><span class="blank-label">return ___3___(...) &mdash; built-in Python function that returns the highest value in an iterable</span><input class="blank-input" id="t1b3" placeholder="built-in function"></div>
+    <div class="blank-row"><span class="blank-num">4</span><span class="blank-label">return &plusmn;___4___ &mdash; the integer magnitude of both the food reward and the death penalty</span><input class="blank-input" id="t1b4" placeholder="number"></div>
+    <div class="blank-row"><span class="blank-num">5</span><span class="blank-label">old_q + ___5___ * (...) &mdash; the learning-rate constant that controls how fast Q-values are updated</span><input class="blank-input" id="t1b5" placeholder="constant name"></div>
+    <div class="blank-row"><span class="blank-num">6</span><span class="blank-label">r + ___6___ * best &mdash; the discount-factor constant that weighs future rewards vs immediate ones</span><input class="blank-input" id="t1b6" placeholder="constant name"></div>
+    <br>
+    <button class="tier-btn" id="t1-submit" disabled>Check Answers</button>
+    <div id="t1-feedback" style="margin-top:10px"></div>
+  </div>
+</div>
+
+<!-- TIER 2: DEBUG -->
+<div class="tier-card tier-locked" id="tier2">
+  <div class="tier-header">
+    <span class="tier-badge" style="background:var(--orange)">&#x1F41B; Tier 2</span>
+    <span class="tier-title">Debug the Q-Learning Code</span>
+    <span class="tier-desc">3 bugs hidden below. Fix each one. 2 attempts max.</span>
+  </div>
+  <div class="tier-body">
+    <p class="tier-intro">Each code snippet contains exactly one bug. Type the corrected line in the input box below each one.</p>
+    <div class="bug-card">
+      <h4>Bug 1 &mdash; Wrong data structure for Q-table</h4>
+      <div class="bug-line">q_table = {}  # Q-table initialisation</div>
+      <input class="bug-fix-input" id="t2bug1" data-ans="q_table = defaultdict(float)" placeholder="Type the corrected line...">
+      <div class="bug-hint">Hint: A plain dict raises KeyError for any unseen state-action pair. The Q-table needs to return 0.0 automatically for unknown entries.</div>
+    </div>
+    <div class="bug-card">
+      <h4>Bug 2 &mdash; Wrong comparison operator in epsilon-greedy</h4>
+      <div class="bug-line">    if random.random() &gt; EPSILON:  # inside choose_action</div>
+      <input class="bug-fix-input" id="t2bug2" data-ans="if random.random() < EPSILON:" placeholder="Type the corrected line...">
+      <div class="bug-hint">Hint: Epsilon is the probability of exploring (choosing randomly). The condition should be true when a random number is <em>less than</em> epsilon.</div>
+    </div>
+    <div class="bug-card">
+      <h4>Bug 3 &mdash; Wrong sign on death penalty</h4>
+      <div class="bug-line">    if died: return 10  # inside reward()</div>
+      <input class="bug-fix-input" id="t2bug3" data-ans="if died: return -10" placeholder="Type the corrected line...">
+      <div class="bug-hint">Hint: Dying is bad! The agent should receive a large <em>negative</em> reward when it hits a wall or itself.</div>
+    </div>
+    <button class="tier-btn" id="t2-submit" disabled style="background:var(--orange)">Check Fixes</button>
+    <div id="t2-feedback" style="margin-top:10px"></div>
+  </div>
+</div>
+
+<!-- REFLECTION 2 -->
+<div class="refl-gate tier-locked" id="refl2">
+  <div class="refl-gate-header">
+    <span class="refl-badge">REFLECTION</span>
+    <strong style="font-size:14px">Mid-Activity Reflection</strong>
+  </div>
+  <div class="refl-gate-body">
+    <label class="cal-label" for="refl2-text">In your own words: what is the difference between <strong>exploration</strong> and <strong>exploitation</strong> in reinforcement learning, and why does the agent need both? (min 10 words)</label>
+    <textarea class="tier-textarea" id="refl2-text" rows="3" placeholder="Explain exploration vs exploitation and why both are needed..."></textarea>
+    <br><br>
+    <button class="tier-btn" id="refl2-submit" disabled>Save Reflection &amp; Unlock Tier 3</button>
+    <div id="refl2-feedback" style="margin-top:10px"></div>
+  </div>
+</div>
+
+<!-- TIER 3: BELLMAN -->
+<div class="tier-card tier-locked" id="tier3">
+  <div class="tier-header">
+    <span class="tier-badge" style="background:var(--blue)">&#x1F527; Tier 3</span>
+    <span class="tier-title">Bellman &mdash; Write the Full Q-Update</span>
+    <span class="tier-desc">Implement update_q() step by step using the Bellman equation.</span>
+  </div>
+  <div class="tier-body">
+    <p class="tier-intro">Complete the <code>update_q()</code> function. You need exactly 4 lines of code:
+    (1) look up the current Q-value for <code>(state, action)</code>,
+    (2) find the best future Q-value across all actions in <code>next_state</code>,
+    (3) compute the TD target as <code>reward + GAMMA &times; best_future</code>,
+    (4) apply the weighted update to the Q-table.
+    Add a comment to each line explaining what it does.</p>
+    <div class="starter-code">from collections import defaultdict
+
+ALPHA   = 0.2   # learning rate
+GAMMA   = 0.9   # discount factor
+ACTIONS = ['UP', 'DOWN', 'LEFT', 'RIGHT']
+q_table = defaultdict(float)
+
+def update_q(state, action, reward, next_state):
+    # Write your 4-line Bellman update here (with comments).
+    pass</div>
+    <textarea class="tier-textarea" id="t3-text" rows="12" placeholder="def update_q(state, action, reward, next_state):&#10;    old_q       = ...  # current Q-value&#10;    best_future = ...  # best Q in next state&#10;    target      = ...  # TD target&#10;    q_table[...] = ...  # Bellman update"></textarea>
+    <br><br>
+    <button class="tier-btn" id="t3-submit" disabled style="background:var(--blue)">Submit Bellman Update</button>
+    <div id="t3-feedback" style="margin-top:10px"></div>
+  </div>
+</div>
+
+<!-- TIER 4: EPSILON DECAY -->
+<div class="tier-card tier-locked" id="tier4">
+  <div class="tier-header">
+    <span class="tier-badge" style="background:#7c3aed">&#x1F3C6; Tier 4</span>
+    <span class="tier-title">Extend &mdash; Add Epsilon Decay</span>
+    <span class="tier-desc">Make the agent explore less as it learns more.</span>
+  </div>
+  <div class="tier-body">
+    <p class="tier-intro">Add epsilon decay to the training loop so the agent gradually shifts from exploration to exploitation. Start with <code>EPSILON = 0.5</code>, multiply by <code>0.995</code> after each episode, clamp the minimum at <code>0.01</code>, and print the current epsilon every 500 episodes. Add a comment to each new line.</p>
+    <div class="starter-code">NUM_EPISODES = 5000
+EPSILON = 0.5   # start exploring 50% of the time
+
+for episode in range(NUM_EPISODES):
+    run_episode()
+
+    # --- Add your epsilon decay code below this line ---
+
+
+    # --- End of your addition ---
+
+    if episode % 500 == 0:
+        print(f"Episode {episode}: epsilon = {EPSILON:.4f}")</div>
+    <textarea class="tier-textarea" id="t4-text" rows="10" placeholder="# Write the 2 lines that decay and clamp EPSILON&#10;# e.g. global EPSILON  (if needed inside a function)&#10;#      EPSILON = max(0.01, EPSILON * 0.995)  # decay & clamp"></textarea>
+    <br><br>
+    <button class="tier-btn" id="t4-submit" disabled style="background:#7c3aed">Submit Decay Extension</button>
+    <div id="t4-feedback" style="margin-top:10px"></div>
+  </div>
+</div>
+
+<!-- CONCEPT CHECK -->
+<div class="tier-card tier-locked" id="concept-check-gate">
+  <div class="tier-header">
+    <span class="tier-badge" style="background:var(--blue)">&#x1F9E0; Concept</span>
+    <span class="tier-title">Concept Check &mdash; Q-Learning &amp; Reinforcement Learning</span>
+    <span class="tier-desc">5 multiple-choice questions. Answer all then submit.</span>
+  </div>
+  <div class="tier-body">
+    <p style="font-size:14px;color:var(--muted);margin-bottom:12px">Test your understanding of Q-learning, the Bellman equation, reward shaping, and epsilon-greedy exploration.</p>
+    <div class="concept-q">
+      <p class="concept-q-text">1. What does the Q-table store in a Q-learning agent?</p>
+      <div class="concept-opts">
+        <label class="concept-opt"><input type="radio" name="cq0" value="0"><span>The pixel colours of each game frame</span></label>
+        <label class="concept-opt"><input type="radio" name="cq0" value="1"><span>The estimated long-term reward for taking each action in each state</span></label>
+        <label class="concept-opt"><input type="radio" name="cq0" value="2"><span>A chronological list of all moves the snake has ever made</span></label>
+        <label class="concept-opt"><input type="radio" name="cq0" value="3"><span>The current coordinates of the food and the snake's head</span></label>
+      </div>
+      <div class="concept-feedback" id="cfb-0" hidden></div>
+    </div>
+    <div class="concept-q">
+      <p class="concept-q-text">2. In epsilon-greedy, what happens when <code>random.random() &lt; EPSILON</code> is True?</p>
+      <div class="concept-opts">
+        <label class="concept-opt"><input type="radio" name="cq1" value="0"><span>The agent picks a random action (explores)</span></label>
+        <label class="concept-opt"><input type="radio" name="cq1" value="1"><span>The agent picks the action with the highest Q-value (exploits)</span></label>
+        <label class="concept-opt"><input type="radio" name="cq1" value="2"><span>The Q-table is reset to all zeros</span></label>
+        <label class="concept-opt"><input type="radio" name="cq1" value="3"><span>The episode ends immediately</span></label>
+      </div>
+      <div class="concept-feedback" id="cfb-1" hidden></div>
+    </div>
+    <div class="concept-q">
+      <p class="concept-q-text">3. In the Bellman equation <code>Q(s,a) &larr; Q(s,a) + &alpha;[r + &gamma;&thinsp;max Q(s&prime;,a&prime;) &minus; Q(s,a)]</code>, what role does &gamma; (gamma) play?</p>
+      <div class="concept-opts">
+        <label class="concept-opt"><input type="radio" name="cq2" value="0"><span>It sets how fast Q-values move towards new estimates (the learning rate)</span></label>
+        <label class="concept-opt"><input type="radio" name="cq2" value="1"><span>It controls the probability of choosing a random action</span></label>
+        <label class="concept-opt"><input type="radio" name="cq2" value="2"><span>It discounts future rewards relative to immediate ones</span></label>
+        <label class="concept-opt"><input type="radio" name="cq2" value="3"><span>It limits the maximum number of steps per episode</span></label>
+      </div>
+      <div class="concept-feedback" id="cfb-2" hidden></div>
+    </div>
+    <div class="concept-q">
+      <p class="concept-q-text">4. Why does the snake receive a small negative reward (&minus;0.1) every step, even when nothing special happens?</p>
+      <div class="concept-opts">
+        <label class="concept-opt"><input type="radio" name="cq3" value="0"><span>To keep the Q-table from growing too large in memory</span></label>
+        <label class="concept-opt"><input type="radio" name="cq3" value="1"><span>To penalise inefficiency and teach the snake to reach food quickly</span></label>
+        <label class="concept-opt"><input type="radio" name="cq3" value="2"><span>To slow down epsilon decay so the agent explores longer</span></label>
+        <label class="concept-opt"><input type="radio" name="cq3" value="3"><span>Because pygame requires a nonzero reward signal every frame</span></label>
+      </div>
+      <div class="concept-feedback" id="cfb-3" hidden></div>
+    </div>
+    <div class="concept-q">
+      <p class="concept-q-text">5. What is the main advantage of <code>defaultdict(float)</code> over a plain <code>{}</code> dict for the Q-table?</p>
+      <div class="concept-opts">
+        <label class="concept-opt"><input type="radio" name="cq4" value="0"><span>Any unseen (state, action) pair automatically gets Q-value 0.0, so no KeyError is raised</span></label>
+        <label class="concept-opt"><input type="radio" name="cq4" value="1"><span>It converts all Q-values to integers, saving memory</span></label>
+        <label class="concept-opt"><input type="radio" name="cq4" value="2"><span>It automatically sorts entries by Q-value for faster lookup</span></label>
+        <label class="concept-opt"><input type="radio" name="cq4" value="3"><span>It prevents the same state from being stored more than once</span></label>
+      </div>
+      <div class="concept-feedback" id="cfb-4" hidden></div>
+    </div>
+    <button class="tier-btn" id="concept-submit" disabled style="background:var(--blue)">Submit Concept Check</button>
+    <div id="concept-feedback" style="margin-top:10px"></div>
+  </div>
+</div>
+
+<!-- POST-CALIBRATION -->
+<div class="refl-gate tier-locked" id="refl3">
+  <div class="refl-gate-header">
+    <span class="refl-badge">POST-ACTIVITY</span>
+    <strong style="font-size:14px">Post-Activity Calibration &amp; Reflection</strong>
+  </div>
+  <div class="refl-gate-body">
+    <label class="cal-label" for="post-conf">How confident do you feel NOW about Q-learning and reinforcement learning concepts? (1&ndash;10)</label>
+    <div class="conf-slider-wrap">
+      <input type="range" id="post-conf" min="1" max="10" value="5">
+      <span class="conf-val" id="post-conf-val">5</span>
+    </div>
+    <label class="cal-label" for="post-actual">What score do you think you actually got on Tier 1? (0&ndash;100%)</label>
+    <span class="cal-sub">Your self-estimate &mdash; be honest!</span>
+    <input class="pred-input" type="number" id="post-actual" min="0" max="100" placeholder="e.g. 83">
+    <br><br>
+    <label class="cal-label" for="refl3-text">Comparing your Tier 1 prediction to your actual result &mdash; were you surprised? What does this tell you about your own understanding of ML concepts? (min 10 words)</label>
+    <textarea class="tier-textarea" id="refl3-text" rows="3" placeholder="Write your post-activity reflection here..."></textarea>
+    <br><br>
+    <button class="tier-btn" id="refl3-submit" disabled>Save &amp; Unlock Journal &#x1F4D3;</button>
+    <div id="refl3-feedback" style="margin-top:10px"></div>
+  </div>
+</div>
+
+<!-- REFLECTIVE JOURNAL -->
+<div class="refl-gate tier-locked" id="tierJ">
+  <div class="refl-gate-header">
+    <span class="refl-badge" style="background:#7c3aed">JOURNAL</span>
+    <strong style="font-size:14px">Reflective Journal &mdash; Step 10</strong>
+    <span style="font-size:12px;color:var(--muted)">(min 5 words per prompt)</span>
+  </div>
+  <div class="refl-gate-body">
+    <div class="journal-prompt">
+      <label for="jr1"><span class="jp-num">1</span> In your own words, explain what the Q-table stores and how the snake uses it to decide which direction to move.</label>
+      <textarea class="tier-textarea" id="jr1" rows="3" placeholder="Explain the Q-table and how the snake uses it to decide..."></textarea>
+    </div>
+    <div class="journal-prompt">
+      <label for="jr2"><span class="jp-num">2</span> Why does epsilon decay over training episodes? What could go wrong if it decays too fast, or if it never decays at all?</label>
+      <textarea class="tier-textarea" id="jr2" rows="3" placeholder="Discuss epsilon decay and what happens at the extremes..."></textarea>
+    </div>
+    <div class="journal-prompt">
+      <label for="jr3"><span class="jp-num">3</span> Compare how the Q-learning snake learns with how a human learns to play a new game. What is similar? What is fundamentally different?</label>
+      <textarea class="tier-textarea" id="jr3" rows="3" placeholder="Compare human learning vs Q-learning..."></textarea>
+    </div>
+    <div class="journal-prompt">
+      <label for="jr4"><span class="jp-num">4</span> The reward function gives +10 for food, &minus;10 for dying, and &minus;0.1 per step. How would the snake's behaviour change if the step penalty were &minus;1.0 instead?</label>
+      <textarea class="tier-textarea" id="jr4" rows="3" placeholder="Predict how the snake's strategy would change..."></textarea>
+    </div>
+    <div class="journal-prompt">
+      <label for="jr5"><span class="jp-num">5</span> After 5 000 training episodes, what do you predict the Q-values look like for a state where food is directly to the right and there are no danger sensors active? Explain your reasoning.</label>
+      <textarea class="tier-textarea" id="jr5" rows="3" placeholder="Predict and reason about Q-values in that specific state..."></textarea>
+    </div>
+    <button class="tier-btn" id="tj-submit" disabled style="background:#7c3aed">Submit Journal &amp; Finish Step 10 &#x1F3C1;</button>
+    <div id="tj-feedback" style="margin-top:10px"></div>
+  </div>
+</div>
+
+<!-- COMPLETE BANNER -->
+<div class="complete-banner" id="step-complete-banner" style="display:none">
+  <h2>&#x1F389; Step 10 Complete!</h2>
+  <p>You have applied Q-learning to the Snake game &mdash; building a Q-table, an epsilon-greedy policy, the Bellman update, and epsilon decay. You have now completed the full Snake Tutorial! Please take a few minutes to fill in the post-survey.</p>
+  <br>
+  <a class="btn" href="survey-post.html">Go to Post-Survey &#x1F4CB; &rarr;</a>
+</div>
+
+<div id="export-panel" style="display:none;margin-top:20px;padding:16px;border:1px dashed var(--line);border-radius:8px">
+  <strong>Export / Debug</strong><br><br>
+  <button id="exp-copy">Copy LMS JSON</button>
+  <button id="exp-dl-json" style="margin-left:8px">Download JSON</button>
+  <button id="exp-clear" style="margin-left:8px;color:red">Clear Progress</button>
+</div>
+
+</div>
+</main>
 
 <script>
-// ── CONSTANTS ──────────────────────────────────────────────────────────
-var LMS_KEY    = 'lms_step10';
-var ID_KEY     = 'umpsa_snake_student';
-var GAS_URL    = 'https://script.google.com/macros/s/AKfycbyDlkpeqaDPzJoMDGMAplN1LOisC81dBdIo0fPJTOAeOqMsq-aM9sX60e8J0xrY780R/exec';
-var T1_ANSWERS = ['defaultdict', 'EPSILON', 'max', '10', 'ALPHA', 'GAMMA'];
-var CQ_ANS     = [1, 0, 2, 1, 0];   // 0-indexed correct option per question
-var CQ_QS = [
-  { q: 'What does the Q-table store?',
-    opts: ['The raw pixel values of the game screen at each frame',
-           'The expected future reward for each (state, action) pair',
-           'The complete history of moves the agent made during training',
-           'The current (x, y) position of the snake\'s head'] },
-  { q: 'What is epsilon (ε) used for in epsilon-greedy exploration?',
-    opts: ['It controls the probability of choosing a random action vs the best-known action',
-           'It sets the speed at which the snake moves inside the game window',
-           'It determines how many training episodes to run',
-           'It controls how many boolean features are in the state vector'] },
-  { q: 'What happens if the learning rate ALPHA is set to 1.0?',
-    opts: ['Training is faster because the agent absorbs each lesson fully in one step',
-           'The agent explores the state space more thoroughly',
-           'The agent completely forgets all past experience with every single update',
-           'The Q-table grows much larger than with a smaller learning rate'] },
-  { q: 'What does the discount factor GAMMA control?',
-    opts: ['How fast the snake moves during the training game',
-           'How much the agent values future rewards compared to immediate rewards',
-           'The rate at which epsilon decays during training',
-           'The maximum size the Q-table dictionary is allowed to grow to'] },
-  { q: 'What is the purpose of the reward signal in Q-learning?',
-    opts: ['It tells the agent which actions lead to good or bad outcomes over time',
-           'It directly controls the movement speed of the snake every frame',
-           'It decides which 11 boolean features to include in the state vector',
-           'It determines the architecture of the neural network layer sizes'] }
-];
-var JR_PROMPTS = [
-  'In your own words, explain what the Q-table stores and why a Python dictionary (defaultdict) is a good data structure for it.',
-  'Why is the explore–exploit tradeoff important in RL? What goes wrong if EPSILON is always 0? What if it is always 1?',
-  'What does the discount factor GAMMA control? Why might the agent value a reward received now more than the same reward received in 100 steps?',
-  'Reinforcement Learning is inspired by how humans and animals learn. Give one real-life example where reward and punishment shapes behaviour — and map it onto the RL terms: agent, state, action, reward.',
-  'Our 11-bit state cannot represent the full shape of the snake\'s body. Describe one specific situation where this causes the agent to make a bad decision, and propose one improvement to the state design.'
-];
+var LMS_KEY='lms_step10';
+var ID_KEY='umpsa_snake_student';
+var GAS_URL='https://script.google.com/macros/s/AKfycbyDlkpeqaDPzJoMDGMAplN1LOisC81dBdIo0fPJTOAeOqMsq-aM9sX60e8J0xrY780R/exec';
+var T1_ANSWERS=['defaultdict','EPSILON','max','10','ALPHA','GAMMA'];
+var CQ_ANS=[1,0,2,1,0];
 
-// ── STATE ──────────────────────────────────────────────────────────────
-var state = {};
-function loadState(){ try{ var s=localStorage.getItem(LMS_KEY); if(s) state=JSON.parse(s); }catch(e){} }
-function saveState(){ try{ localStorage.setItem(LMS_KEY, JSON.stringify(state)); }catch(e){} }
-loadState();
-
-// ── SECTION NAVIGATION ─────────────────────────────────────────────────
-var SECTIONS = ['cal','t1','t2','refl2','t3','t4','cq','jr','post'];
-var DOT_LABELS = ['C','T1','T2','R','T3','T4','CQ','JR','PC'];
-function showSection(id){
-  SECTIONS.forEach(function(s){ document.getElementById('sec-'+s).classList.remove('active'); });
-  document.getElementById('sec-'+id).classList.add('active');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function updateDots(){
-  var cur = state.currentSection || 0;
-  SECTIONS.forEach(function(s,i){
-    var d=document.getElementById('pd'+i);
-    if(!d) return;
-    if(i < cur){ d.classList.add('done'); d.classList.remove('active'); }
-    else if(i===cur){ d.classList.add('active'); d.classList.remove('done'); }
-    else{ d.classList.remove('done','active'); }
-  });
+function lmsGet(){try{return JSON.parse(localStorage.getItem(LMS_KEY)||'{}')}catch(e){return{}}}
+function lmsSet(d){try{localStorage.setItem(LMS_KEY,JSON.stringify(d))}catch(e){}}
+function lmsLog(ev,data){var d=lmsGet();if(!d._log)d._log=[];d._log.push({event:ev,ts:Date.now(),data:data});lmsSet(d);}
+var state={cal:false,t1:false,t2:false,refl2:false,t3:false,t4:false,concept:false,refl3:false,tj:false};
+var attempts={t1:0,t2:0,t3:0,t4:0,tj:0};
+function showFeedback(id,msg,type){var el=document.getElementById(id);if(!el)return;el.innerHTML='<div class="feedback-'+type+' feedback-anim">'+msg+'</div>';}
+function markDone(id){var el=document.getElementById(id);if(el){el.classList.remove('active');el.classList.add('done');}}
+function unlockTier(n){
+  var map={1:'tier1',2:'tier2',3:'tier3',4:'tier4','C':'concept-check-gate','J':'tierJ'};
+  var tmap={1:'tp1',2:'tp2',3:'tp3',4:'tp4','C':'tpc','J':'tpj'};
+  var card=document.getElementById(map[n]),prog=document.getElementById(tmap[n]);
+  if(card)card.classList.remove('tier-locked');
+  if(prog&&!prog.classList.contains('done'))prog.classList.add('active');
 }
 
-// ── HELPERS ────────────────────────────────────────────────────────────
-function fb(id,msg,type){
-  var el=document.getElementById(id);
-  el.innerHTML=msg; el.className='fb show '+(type||'ok');
-}
-
-// ── CAL ────────────────────────────────────────────────────────────────
-function initSliders(){
-  ['cal-conf','cal-pred','post-conf','post-actual'].forEach(function(id){
-    var el=document.getElementById(id); if(!el) return;
-    var valEl=document.getElementById(id+'-val');
-    el.addEventListener('input',function(){
-      valEl.textContent = id.includes('pred')||id.includes('actual') ? el.value+' %' : el.value;
-    });
-  });
-}
-function finishCal(){
-  state.cal_confidence = document.getElementById('cal-conf').value;
-  state.cal_predicted  = document.getElementById('cal-pred').value;
-  state.cal_reflection = document.getElementById('cal-refl').value;
-  state.currentSection = 1;
-  saveState(); updateDots(); showSection('t1');
-}
-
-// ── TIER 1 ─────────────────────────────────────────────────────────────
-var t1Attempts = 0;
-function checkT1(){
-  var ids = ['b1','b2','b3','b4','b5','b6'];
-  var correct = 0;
-  ids.forEach(function(id,i){
-    var el=document.getElementById(id);
-    var val = el.value.trim().toLowerCase();
-    var ans = T1_ANSWERS[i].toLowerCase();
-    if(val === ans){ el.classList.add('correct'); el.classList.remove('wrong'); correct++; }
-    else{ el.classList.add('wrong'); el.classList.remove('correct'); }
-  });
-  var pct = Math.round(correct/ids.length*100);
-  state.t1_score_pct = pct;
-  if(correct === ids.length){
-    fb('t1-fb','&#10003; All 6 correct! Score: '+pct+'%','ok');
-    setTimeout(function(){ state.currentSection=2; saveState(); updateDots(); showSection('t2'); },1200);
-  } else {
-    t1Attempts++;
-    fb('t1-fb',correct+' of '+ids.length+' correct ('+pct+'%). Check the red boxes and try again.','err');
-  }
-  saveState();
-}
-
-// ── TIER 2 ─────────────────────────────────────────────────────────────
-var t2Attempts = 0;
-function checkT2(){
-  t2Attempts++;
-  var ids=['bug1','bug2','bug3'];
-  var allOk=true;
-  ids.forEach(function(id){
-    var el=document.getElementById(id);
-    var ans=el.dataset.ans.toLowerCase().replace(/\s+/g,' ').trim();
-    var val=el.value.toLowerCase().replace(/\s+/g,' ').trim();
-    if(val.includes(ans)||ans.includes(val)){
-      el.classList.add('correct'); el.classList.remove('wrong');
-      fb(id+'-fb','&#10003; Correct fix!','ok');
-    } else {
-      el.classList.add('wrong'); el.classList.remove('correct'); allOk=false;
-      if(t2Attempts>=2) fb(id+'-fb','The fix is: <code>'+el.dataset.ans+'</code>','warn');
-      else fb(id+'-fb','Not quite — check again.','err');
-    }
-  });
-  state.t2_attempts = t2Attempts;
-  saveState();
-  if(allOk){
-    fb('t2-fb','&#10003; All bugs fixed! Moving on…','ok');
-    setTimeout(function(){ state.currentSection=3; saveState(); updateDots(); showSection('refl2'); },1200);
-  } else if(t2Attempts>=2){
-    setTimeout(function(){ state.currentSection=3; saveState(); updateDots(); showSection('refl2'); },2000);
-  }
-}
-
-// ── REFL2 ──────────────────────────────────────────────────────────────
-function finishRefl2(){
-  state.refl2_text = document.getElementById('refl2').value;
-  state.currentSection = 4; saveState(); updateDots(); showSection('t3');
-}
-
-// ── TIER 3 ─────────────────────────────────────────────────────────────
-var t3Attempts = 0;
-function checkT3(){
-  t3Attempts++;
-  var ans = document.getElementById('t3-ans').value;
-  var ok = ans.includes('best_future') && ans.includes('target') && (ans.includes('GAMMA') || ans.includes('gamma')) && (ans.includes('ALPHA') || ans.includes('alpha')) && ans.includes('q_table');
-  state.t3_attempts = t3Attempts; saveState();
-  if(ok){
-    fb('t3-fb','&#10003; Looks good! Your Bellman implementation is complete.','ok');
-    setTimeout(function(){ state.currentSection=5; saveState(); updateDots(); showSection('t4'); },1200);
-  } else if(t3Attempts>=2){
-    fb('t3-fb','&#9888;&#65039; Partial. Make sure you compute best_future, target, and update q_table using both ALPHA and GAMMA. Proceeding…','warn');
-    setTimeout(function(){ state.currentSection=5; saveState(); updateDots(); showSection('t4'); },2500);
-  } else {
-    fb('t3-fb','Missing some elements. Check: best_future, target, GAMMA, ALPHA, and q_table update.','err');
-  }
-}
-
-// ── TIER 4 ─────────────────────────────────────────────────────────────
-var t4Attempts = 0;
-function checkT4(){
-  t4Attempts++;
-  var ans = document.getElementById('t4-ans').value;
-  var ok = ans.includes('epsilon') && ans.includes('0.995') && (ans.includes('max') || ans.includes('clamp')) && ans.includes('0.01');
-  state.t4_attempts = t4Attempts; saveState();
-  if(ok){
-    fb('t4-fb','&#10003; Epsilon decay implemented. The agent will explore less as training progresses.','ok');
-    setTimeout(function(){ state.currentSection=6; saveState(); updateDots(); buildCQ(); showSection('cq'); },1200);
-  } else if(t4Attempts>=2){
-    fb('t4-fb','&#9888;&#65039; Partially correct. Make sure you: start with epsilon=0.5, multiply by 0.995, and clamp with max(0.01, …). Proceeding…','warn');
-    setTimeout(function(){ state.currentSection=6; saveState(); updateDots(); buildCQ(); showSection('cq'); },2500);
-  } else {
-    fb('t4-fb','Check that you include: epsilon variable, 0.995 decay, 0.01 minimum clamp.','err');
-  }
-}
-
-// ── CONCEPT CHECK ──────────────────────────────────────────────────────
-var cqAnswers = [];
-var cqAttempts = 0;
-function buildCQ(){
-  cqAnswers = new Array(CQ_QS.length).fill(-1);
-  var html = '';
-  CQ_QS.forEach(function(item,qi){
-    html += '<div style="margin-bottom:22px"><p style="font-weight:600;font-size:15px;margin-bottom:8px">'+(qi+1)+'. '+item.q+'</p>';
-    item.opts.forEach(function(opt,oi){
-      html += '<button class="cq-opt" id="cqo-'+qi+'-'+oi+'" onclick="selectCQ('+qi+','+oi+')">'+
-              '<span style="flex-shrink:0;font-weight:700;color:var(--teal-dark);margin-right:4px">'+'ABCD'[oi]+'.</span> '+opt+'</button>';
-    });
-    html += '</div>';
-  });
-  document.getElementById('cq-questions').innerHTML = html;
-}
-function selectCQ(qi,oi){
-  cqAnswers[qi] = oi;
-  for(var j=0;j<CQ_QS[qi].opts.length;j++){
-    var b=document.getElementById('cqo-'+qi+'-'+j);
-    b.classList.remove('selected-ok','selected-err');
-  }
-  document.getElementById('cqo-'+qi+'-'+oi).classList.add('selected-ok');
-}
-function checkCQ(){
-  cqAttempts++;
-  var correct=0;
-  var detail=[];
-  CQ_QS.forEach(function(item,qi){
-    var ans=cqAnswers[qi]; var ok=(ans===CQ_ANS[qi]);
-    if(ok) correct++;
-    for(var j=0;j<item.opts.length;j++){
-      var b=document.getElementById('cqo-'+qi+'-'+j);
-      b.disabled=true; b.classList.remove('selected-ok','selected-err');
-      if(j===CQ_ANS[qi]) b.classList.add('selected-ok');
-      else if(j===ans && !ok) b.classList.add('selected-err');
-    }
-    detail.push({ans:ans,cor:ok?1:0});
-  });
-  var pct=Math.round(correct/CQ_QS.length*100);
-  state.concept_score_pct=pct;
-  state.concept_passed=(pct>=80)?1:0;
-  state.concept_attempts=cqAttempts;
-  CQ_QS.forEach(function(q,i){ state['concept_q'+(i+1)+'_ans']=detail[i].ans; state['concept_q'+(i+1)+'_cor']=detail[i].cor; });
-  saveState();
-  if(pct>=80){
-    fb('cq-fb','&#10003; '+correct+' / '+CQ_QS.length+' correct ('+pct+'%). Passed! Moving to journal…','ok');
-    document.getElementById('cq-btn').disabled=true;
-    setTimeout(function(){ state.currentSection=7; saveState(); updateDots(); buildJR(); showSection('jr'); },1400);
-  } else {
-    fb('cq-fb',correct+' / '+CQ_QS.length+' correct ('+pct+'%). Need 80% to pass — try again.','err');
-    cqAnswers=new Array(CQ_QS.length).fill(-1);
-    buildCQ();
-    document.getElementById('cq-attempts-msg').textContent='Attempt '+cqAttempts;
-  }
-}
-
-// ── JOURNAL ────────────────────────────────────────────────────────────
-function buildJR(){
-  var html='';
-  JR_PROMPTS.forEach(function(p,i){
-    html+='<div style="margin-bottom:20px"><p style="font-size:15px;font-weight:600;margin-bottom:6px">'+(i+1)+'. '+p+'</p>'+
-    '<textarea class="jr-area" id="jr'+(i+1)+'" rows="4" placeholder="Write your answer here…">'+(state['jr'+(i+1)]||'')+'</textarea></div>';
-  });
-  document.getElementById('jr-prompts').innerHTML=html;
-  // auto-save
-  JR_PROMPTS.forEach(function(p,i){
-    document.getElementById('jr'+(i+1)).addEventListener('input',function(){
-      state['jr'+(i+1)]=this.value; saveState();
-    });
-  });
-}
-function finishJournal(){
-  JR_PROMPTS.forEach(function(p,i){ state['jr'+(i+1)]=document.getElementById('jr'+(i+1)).value; });
-  state.currentSection=8; saveState(); updateDots(); showSection('post');
-}
-
-// ── POST-CAL / SUBMIT ──────────────────────────────────────────────────
-function submitAll(){
-  state.post_confidence = document.getElementById('post-conf').value;
-  state.post_actual     = document.getElementById('post-actual').value;
-  state.post_r1         = document.getElementById('post-r1').value;
-  state.post_r2         = document.getElementById('post-r2').value;
-  state.calibration_index = parseFloat(state.post_actual||0) - parseFloat(state.cal_predicted||0);
-
-  // read student identity (localStorage first, form fallback)
-  var stu = {};
-  try{ stu=JSON.parse(localStorage.getItem(ID_KEY)||'{}'); }catch(e){}
-  var f=function(k,fid){ return stu[k]||document.getElementById(fid).value||''; };
-  var payload = {
-    type:'act_10', sid:'act10_'+Date.now(), step:10,
-    matric: f('matric','sid-matric'), name: f('name','sid-name'),
-    gender: f('gender','sid-gender'), age: f('age','sid-age'),
-    mykid:  f('mykid','sid-mykid'),  home_state: f('home_state','sid-state'),
-    class:  f('class','sid-class'),  school_code: f('school_code','sid-school'),
-    phone:  f('phone','sid-phone'),  email: f('email','sid-email'),
-    cal_confidence: state.cal_confidence, cal_predicted: state.cal_predicted,
-    cal_reflection: state.cal_reflection,
-    t1_score_pct:   state.t1_score_pct||0,
-    t2_attempts:    state.t2_attempts||0, refl2_text: state.refl2_text||'',
-    t3_attempts:    state.t3_attempts||0,
-    t4_attempts:    state.t4_attempts||0,
-    concept_score_pct: state.concept_score_pct||0,
-    concept_passed:    state.concept_passed||0,
-    concept_attempts:  state.concept_attempts||0,
-    concept_q1_ans: state.concept_q1_ans, concept_q1_cor: state.concept_q1_cor,
-    concept_q2_ans: state.concept_q2_ans, concept_q2_cor: state.concept_q2_cor,
-    concept_q3_ans: state.concept_q3_ans, concept_q3_cor: state.concept_q3_cor,
-    concept_q4_ans: state.concept_q4_ans, concept_q4_cor: state.concept_q4_cor,
-    concept_q5_ans: state.concept_q5_ans, concept_q5_cor: state.concept_q5_cor,
-    jr1: state.jr1||'', jr2: state.jr2||'', jr3: state.jr3||'',
-    jr4: state.jr4||'', jr5: state.jr5||'',
-    post_confidence: state.post_confidence, post_actual: state.post_actual,
-    post_r1: state.post_r1, post_r2: state.post_r2,
-    calibration_index: state.calibration_index
-  };
-  fetch(GAS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
-    .catch(function(){});
-  state.submitted=true; state.currentSection=9; saveState(); updateDots();
-  document.getElementById('sec-post').classList.remove('active');
-  document.getElementById('sec-done').style.display='block';
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-// ── EXPORT ─────────────────────────────────────────────────────────────
-function exportData(){
-  var blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
-  var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
-  a.download='lms_step10.json'; a.click();
-}
-function clearData(){
-  if(!confirm('Clear all Step 10 progress?')) return;
-  localStorage.removeItem(LMS_KEY); state={}; location.reload();
-}
-
-// ── AUTO-SAVE TEXTAREAS ────────────────────────────────────────────────
-function wireAutoSave(){
-  [['cal-refl','cal_reflection'],['refl2','refl2_text'],
-   ['t3-ans','t3_ans'],['t4-ans','t4_ans'],
-   ['post-r1','post_r1'],['post-r2','post_r2']].forEach(function(pair){
-    var el=document.getElementById(pair[0]); if(!el) return;
-    el.addEventListener('input',function(){ state[pair[1]]=this.value; saveState(); });
-    if(state[pair[1]]) el.value=state[pair[1]];
-  });
-}
-
-// ── PREFILL FROM STATE ──────────────────────────────────────────────────
-function restoreSliders(){
-  if(state.cal_confidence){
-    document.getElementById('cal-conf').value=state.cal_confidence;
-    document.getElementById('cal-conf-val').textContent=state.cal_confidence;
-  }
-  if(state.cal_predicted){
-    document.getElementById('cal-pred').value=state.cal_predicted;
-    document.getElementById('cal-pred-val').textContent=state.cal_predicted+' %';
-  }
-}
-
-// ── INIT ────────────────────────────────────────────────────────────────
+/* ── Student Identity ── */
 (function(){
-  if(!localStorage.getItem(ID_KEY)){
-    // not registered — redirect
-    // window.location.href='student-register.html';
-    // Comment out for testing; uncomment for production
+  var IK=ID_KEY;
+  function idLoad(){try{return JSON.parse(localStorage.getItem(IK)||'{}')}catch(e){return{}}}
+  function idSave(d){try{localStorage.setItem(IK,JSON.stringify(d))}catch(e){}}
+  function render(st){
+    var conf=document.getElementById('idConfirmed'),form=document.getElementById('idForm'),block=document.getElementById('idBlock');
+    if(st.name&&st.matric&&st['class']){
+      form.style.display='none';conf.style.display='block';
+      document.getElementById('idConfName').textContent=st.name;
+      document.getElementById('idConfMeta').textContent='Matric: '+st.matric+' | Class: '+st['class']+(st.gender?' | '+st.gender:'');
+      block.classList.add('id-confirmed');
+    }else{form.style.display='block';conf.style.display='none';block.classList.remove('id-confirmed');}
   }
-  initSliders();
-  wireAutoSave();
-  restoreSliders();
-  var cur = state.currentSection || 0;
-  updateDots();
-  if(state.submitted){ showSection('post'); document.getElementById('sec-post').classList.remove('active'); document.getElementById('sec-done').style.display='block'; return; }
-  if(cur === 0) showSection('cal');
-  else if(cur === 1) showSection('t1');
-  else if(cur === 2) showSection('t2');
-  else if(cur === 3) showSection('refl2');
-  else if(cur === 4) showSection('t3');
-  else if(cur === 5) showSection('t4');
-  else if(cur === 6){ buildCQ(); showSection('cq'); }
-  else if(cur === 7){ buildJR(); showSection('jr'); }
-  else if(cur === 8) showSection('post');
-  // prefill ident from localStorage
-  var stu={}; try{ stu=JSON.parse(localStorage.getItem(ID_KEY)||'{}'); }catch(e){}
-  var pairs=[['sid-name','name'],['sid-matric','matric'],['sid-class','class'],['sid-school','school_code'],
-             ['sid-gender','gender'],['sid-age','age'],['sid-mykid','mykid'],['sid-state','home_state'],
-             ['sid-phone','phone'],['sid-email','email']];
-  pairs.forEach(function(p){ var el=document.getElementById(p[0]); if(el&&stu[p[1]]) el.value=stu[p[1]]; });
+  var st=idLoad();
+  var fieldMap={name:'id-name',matric:'id-matric','class':'id-class',school_code:'id-school-code',gender:'id-gender',age:'id-age',mykid:'id-mykid',home_state:'id-home-state',phone:'id-phone',email:'id-email'};
+  Object.keys(fieldMap).forEach(function(k){var el=document.getElementById(fieldMap[k]);if(el&&st[k])el.value=st[k];});
+  render(st);
+  document.getElementById('idSaveBtn').addEventListener('click',function(){
+    var name=document.getElementById('id-name').value.trim();
+    var matric=document.getElementById('id-matric').value.trim();
+    var cls=document.getElementById('id-class').value.trim();
+    if(!name||!matric||!cls){document.getElementById('idNotice').style.display='block';return;}
+    document.getElementById('idNotice').style.display='none';
+    var d={name:name,matric:matric,'class':cls,
+      school_code:document.getElementById('id-school-code').value.trim(),
+      gender:document.getElementById('id-gender').value,
+      age:document.getElementById('id-age').value,
+      mykid:document.getElementById('id-mykid').value.trim(),
+      home_state:document.getElementById('id-home-state').value,
+      phone:document.getElementById('id-phone').value.trim(),
+      email:document.getElementById('id-email').value.trim()};
+    idSave(d);render(d);
+  });
+  document.getElementById('idEditBtn').addEventListener('click',function(){
+    var st2=idLoad();
+    Object.keys(fieldMap).forEach(function(k){var el=document.getElementById(fieldMap[k]);if(el)el.value=st2[k]||'';});
+    document.getElementById('idForm').style.display='block';
+    document.getElementById('idConfirmed').style.display='none';
+    document.getElementById('idBlock').classList.remove('id-confirmed');
+  });
 })();
+
+/* ── GAS submit ── */
+function sendActivityRecord(){
+  try{
+    var st={};try{st=JSON.parse(localStorage.getItem(ID_KEY)||'{}')}catch(e){}
+    var d=lmsGet();var cal=d.cal||{};var cs=d.concept_step||{};var pc=d.post_cal||{};
+    var cqa=(cs.answers&&cs.answers.length)?cs.answers:[];
+    function tv(id){var el=document.getElementById(id);if(el&&el.value)return el.value.trim();
+      var r=d.tj_submitted&&d.tj_submitted.responses;return(r&&r[id])?r[id]:'';}
+    var payload={
+      type:'act_10',submitted_iso:new Date().toISOString(),sid:'act10_'+Date.now(),step:10,
+      matric:st.matric||'',name:st.name||'',gender:st.gender||'',age:st.age||'',mykid:st.mykid||'',
+      home_state:st.home_state||'',class:st['class']||'',school_code:st.school_code||'',phone:st.phone||'',email:st.email||'',
+      cal_confidence:cal.confidence!==undefined?cal.confidence:'',cal_predicted:cal.predicted_score!==undefined?cal.predicted_score:'',
+      cal_reflection:cal.reflection_1||'',
+      t1_score_pct:d.t1_first_attempt_pct!==undefined?d.t1_first_attempt_pct:'',
+      t2_attempts:d.t2_submitted?d.t2_submitted.attempts:'',refl2_text:(d.reflection_2||{}).text||'',
+      t3_attempts:d.t3_submitted?d.t3_submitted.attempts:'',t4_attempts:d.t4_submitted?d.t4_submitted.attempts:'',
+      concept_score_pct:cs.score_pct!==undefined?cs.score_pct:'',concept_passed:cs.submitted?1:0,concept_attempts:cs.attempts||'',
+      concept_q1_ans:cqa[0]!==undefined?cqa[0]:'',concept_q1_cor:cqa[0]!==undefined?(cqa[0]===CQ_ANS[0]?1:0):'',
+      concept_q2_ans:cqa[1]!==undefined?cqa[1]:'',concept_q2_cor:cqa[1]!==undefined?(cqa[1]===CQ_ANS[1]?1:0):'',
+      concept_q3_ans:cqa[2]!==undefined?cqa[2]:'',concept_q3_cor:cqa[2]!==undefined?(cqa[2]===CQ_ANS[2]?1:0):'',
+      concept_q4_ans:cqa[3]!==undefined?cqa[3]:'',concept_q4_cor:cqa[3]!==undefined?(cqa[3]===CQ_ANS[3]?1:0):'',
+      concept_q5_ans:cqa[4]!==undefined?cqa[4]:'',concept_q5_cor:cqa[4]!==undefined?(cqa[4]===CQ_ANS[4]?1:0):'',
+      jr1:tv('jr1'),jr2:tv('jr2'),jr3:tv('jr3'),jr4:tv('jr4'),jr5:tv('jr5'),
+      post_confidence:pc.post_confidence||'',post_actual:pc.actual_pct||'',post_r1:pc.r1||'',post_r2:'',
+      calibration_index:d.calibration_index!==undefined?d.calibration_index:''
+    };
+    fetch(GAS_URL,{method:'POST',mode:'no-cors',body:JSON.stringify(payload)});
+    lmsLog('activity_submitted',{ts:Date.now()});
+  }catch(err){console.warn('sendActivityRecord error:',err);}
+}
+
+/* ── Calibration ── */
+document.getElementById('cal-conf').addEventListener('input',function(){document.getElementById('cal-conf-val').textContent=this.value;});
+document.getElementById('cal-submit').addEventListener('click',function(){
+  if(state.cal)return;
+  var conf=+document.getElementById('cal-conf').value;
+  var pred=document.getElementById('cal-pred').value.trim();
+  var r1=document.getElementById('cal-r1').value.trim();
+  if(pred===''||isNaN(+pred)||+pred<0||+pred>100){showFeedback('cal-feedback','Please enter a predicted score 0-100.','error');return;}
+  if(r1.split(/\s+/).filter(Boolean).length<10){showFeedback('cal-feedback','Please write at least 10 words.','error');return;}
+  state.cal=true;
+  var d=lmsGet();d.cal={confidence:conf,predicted_score:+pred,reflection_1:r1,ts:Date.now()};lmsSet(d);
+  lmsLog('cal_submitted',{confidence:conf,predicted_score:+pred});
+  showFeedback('cal-feedback','Calibration saved! Tier 1 is now unlocked.','success');
+  document.getElementById('cal-submit').disabled=true;
+  markDone('tp0');document.getElementById('tc01').classList.add('done');
+  unlockTier(1);document.getElementById('t1-submit').disabled=false;
+  setTimeout(function(){document.getElementById('tier1').scrollIntoView({behavior:'smooth',block:'nearest'});},300);
+});
+
+/* ── Tier 1 ── */
+document.getElementById('t1-submit').addEventListener('click',function(){
+  if(state.t1)return;attempts.t1++;var correct=0;
+  T1_ANSWERS.forEach(function(ans,i){
+    var inp=document.getElementById('t1b'+(i+1));if(!inp)return;
+    var norm=function(s){return s.replace(/['"]/g,'').toLowerCase().trim();};
+    var ok=norm(inp.value)===norm(ans);
+    inp.classList.toggle('correct',ok);inp.classList.toggle('wrong',!ok);
+    if(ok)correct++;
+  });
+  var pct=Math.round(correct/T1_ANSWERS.length*100);
+  if(attempts.t1===1){var d=lmsGet();d.t1_first_attempt_pct=pct;lmsSet(d);}
+  if(correct===T1_ANSWERS.length){
+    state.t1=true;showFeedback('t1-feedback','All 6 correct! Tier 2 is now unlocked.','success');
+    document.getElementById('t1-submit').disabled=true;
+    markDone('tp1');document.getElementById('tc12').classList.add('done');
+    var d=lmsGet();d.t1_submitted={score:pct,attempts:attempts.t1,ts:Date.now()};lmsSet(d);
+    unlockTier(2);document.getElementById('t2-submit').disabled=false;
+    setTimeout(function(){document.getElementById('tier2').scrollIntoView({behavior:'smooth',block:'nearest'});},300);
+  }else{showFeedback('t1-feedback',correct+'/6 correct &mdash; red boxes still need fixing.','error');}
+});
+
+/* ── Tier 2 ── */
+document.getElementById('t2-submit').addEventListener('click',function(){
+  if(state.t2)return;attempts.t2++;var correct=0;
+  ['t2bug1','t2bug2','t2bug3'].forEach(function(id){
+    var inp=document.getElementById(id);if(!inp)return;
+    var norm=function(s){return s.replace(/\s+/g,' ').trim().toLowerCase();};
+    var ok=norm(inp.value)===norm(inp.dataset.ans||'');
+    inp.style.borderColor=ok?'#22b35a':'#e53e3e';if(ok)correct++;
+  });
+  var d=lmsGet();
+  if(correct===3){
+    state.t2=true;showFeedback('t2-feedback','All 3 bugs fixed! Complete the reflection to unlock Tier 3.','success');
+    document.getElementById('t2-submit').disabled=true;
+    markDone('tp2');document.getElementById('tc23').classList.add('done');
+    d.t2_submitted={attempts:attempts.t2,passed:true,score:3,ts:Date.now()};lmsSet(d);
+    var r2=document.getElementById('refl2');r2.classList.remove('tier-locked');
+    document.getElementById('refl2-submit').disabled=false;
+    setTimeout(function(){r2.scrollIntoView({behavior:'smooth',block:'nearest'});},300);
+  }else if(attempts.t2>=2){
+    state.t2=true;d.t2_submitted={attempts:attempts.t2,passed:false,score:correct,ts:Date.now()};lmsSet(d);
+    showFeedback('t2-feedback',correct+'/3 after 2 attempts &mdash; moving on. Your answers were recorded.','warning');
+    document.getElementById('t2-submit').disabled=true;
+    var r2=document.getElementById('refl2');r2.classList.remove('tier-locked');
+    document.getElementById('refl2-submit').disabled=false;
+    setTimeout(function(){r2.scrollIntoView({behavior:'smooth',block:'nearest'});},300);
+  }else{
+    d.t2_attempt={attempt:attempts.t2,score:correct,ts:Date.now()};lmsSet(d);
+    showFeedback('t2-feedback',correct+'/3 correct. 1 attempt remaining.','error');
+  }
+});
+
+/* ── Reflection 2 ── */
+document.getElementById('refl2-submit').addEventListener('click',function(){
+  if(state.refl2)return;
+  var txt=document.getElementById('refl2-text').value.trim();
+  if(txt.split(/\s+/).filter(Boolean).length<10){showFeedback('refl2-feedback','Please write at least 10 words.','error');return;}
+  state.refl2=true;
+  var d=lmsGet();d.reflection_2={text:txt,ts:Date.now()};lmsSet(d);
+  showFeedback('refl2-feedback','Reflection saved! Tier 3 is now unlocked.','success');
+  document.getElementById('refl2-submit').disabled=true;
+  unlockTier(3);document.getElementById('t3-submit').disabled=false;
+  setTimeout(function(){document.getElementById('tier3').scrollIntoView({behavior:'smooth',block:'nearest'});},300);
+});
+
+/* ── Tier 3 ── */
+document.getElementById('t3-submit').addEventListener('click',function(){
+  if(state.t3)return;attempts.t3++;
+  var txt=document.getElementById('t3-text').value.trim();
+  if(txt.split(/\s+/).filter(Boolean).length<10){showFeedback('t3-feedback','Please write more code (with comments).','error');return;}
+  state.t3=true;showFeedback('t3-feedback','Tier 3 submitted! Tier 4 is now unlocked.','success');
+  document.getElementById('t3-submit').disabled=true;
+  markDone('tp3');document.getElementById('tc34').classList.add('done');
+  var d=lmsGet();d.t3_submitted={text:txt,attempts:attempts.t3,ts:Date.now()};lmsSet(d);
+  unlockTier(4);document.getElementById('t4-submit').disabled=false;
+  setTimeout(function(){document.getElementById('tier4').scrollIntoView({behavior:'smooth',block:'nearest'});},300);
+});
+
+/* ── Tier 4 ── */
+document.getElementById('t4-submit').addEventListener('click',function(){
+  if(state.t4)return;attempts.t4++;
+  var txt=document.getElementById('t4-text').value.trim();
+  if(txt.split(/\s+/).filter(Boolean).length<5){showFeedback('t4-feedback','Please add your epsilon decay code with comments.','error');return;}
+  state.t4=true;showFeedback('t4-feedback','Tier 4 submitted! Concept Check is now unlocked.','success');
+  document.getElementById('t4-submit').disabled=true;
+  markDone('tp4');var tc=document.getElementById('tc4c');if(tc)tc.classList.add('done');
+  var d=lmsGet();d.t4_submitted={text:txt,attempts:attempts.t4,ts:Date.now()};lmsSet(d);
+  var cgc=document.getElementById('concept-check-gate');cgc.classList.remove('tier-locked');
+  document.getElementById('concept-submit').disabled=false;
+  setTimeout(function(){cgc.scrollIntoView({behavior:'smooth',block:'nearest'});},300);
+});
+
+/* ── Concept Check ── */
+document.getElementById('concept-submit').addEventListener('click',function(){
+  var d=lmsGet();if(d.concept_step&&d.concept_step.submitted)return;
+  var answers=[];var correct=0;var allAnswered=true;
+  for(var i=0;i<5;i++){
+    var sel=document.querySelector('input[name="cq'+i+'"]:checked');
+    if(!sel){allAnswered=false;break;}
+    var v=parseInt(sel.value);answers.push(v);
+    var fb=document.getElementById('cfb-'+i);fb.hidden=false;
+    if(v===CQ_ANS[i]){correct++;fb.className='concept-feedback correct';fb.textContent='Correct';}
+    else{fb.className='concept-feedback incorrect';fb.textContent='Incorrect';}
+  }
+  if(!allAnswered){showFeedback('concept-feedback','Please answer all 5 questions.','error');return;}
+  var pct=Math.round(correct/5*100);
+  d.concept_step={answers:answers,correct:correct,score_pct:pct,submitted:true,attempts:1,ts:Date.now()};
+  lmsSet(d);lmsLog('concept_submitted',{answers:answers,correct:correct,pct:pct});
+  showFeedback('concept-feedback','Submitted! '+correct+'/5 ('+pct+'%) &mdash; Post-Activity Reflection unlocked.','success');
+  document.getElementById('concept-submit').disabled=true;
+  document.querySelectorAll('.concept-opts input[type=radio]').forEach(function(r){r.disabled=true;});
+  markDone('tpc');var tc2=document.getElementById('tccj');if(tc2)tc2.classList.add('done');
+  var r3=document.getElementById('refl3');r3.classList.remove('tier-locked');
+  document.getElementById('refl3-submit').disabled=false;
+  setTimeout(function(){r3.scrollIntoView({behavior:'smooth',block:'nearest'});},300);
+});
+
+/* ── Post-calibration ── */
+document.getElementById('post-conf').addEventListener('input',function(){document.getElementById('post-conf-val').textContent=this.value;});
+document.getElementById('refl3-submit').addEventListener('click',function(){
+  if(state.refl3)return;
+  var txt=document.getElementById('refl3-text').value.trim();
+  if(txt.split(/\s+/).filter(Boolean).length<10){showFeedback('refl3-feedback','Please write at least 10 words.','error');return;}
+  state.refl3=true;
+  var postConf=+document.getElementById('post-conf').value;
+  var postActual=document.getElementById('post-actual').value||'';
+  var d=lmsGet();d.post_cal={post_confidence:postConf,actual_pct:postActual,r1:txt,ts:Date.now()};lmsSet(d);
+  showFeedback('refl3-feedback','Saved! Reflective Journal is now unlocked.','success');
+  document.getElementById('refl3-submit').disabled=true;
+  unlockTier('J');document.getElementById('tj-submit').disabled=false;
+  setTimeout(function(){document.getElementById('tierJ').scrollIntoView({behavior:'smooth',block:'nearest'});},300);
+});
+
+/* ── Journal ── */
+document.getElementById('tj-submit').addEventListener('click',function(){
+  if(state.tj)return;attempts.tj++;
+  var ids=['jr1','jr2','jr3','jr4','jr5'];
+  var short=ids.filter(function(id){return document.getElementById(id).value.trim().split(/\s+/).filter(Boolean).length<5;});
+  if(short.length>0){showFeedback('tj-feedback','Please write at least 5 words in each prompt.','error');return;}
+  state.tj=true;
+  var responses={};ids.forEach(function(id){responses[id]=document.getElementById(id).value;});
+  var d=lmsGet();d.tj_submitted={responses:responses,ts:Date.now()};
+  if(d.cal&&d.cal.predicted_score!==undefined&&d.t1_first_attempt_pct!==undefined){
+    d.calibration_index=d.t1_first_attempt_pct-d.cal.predicted_score;
+  }
+  lmsSet(d);lmsLog('journal_submitted',{ts:Date.now()});
+  markDone('tpj');
+  showFeedback('tj-feedback','Journal saved &mdash; Step 10 complete!','success');
+  document.getElementById('tj-submit').disabled=true;
+  document.getElementById('step-complete-banner').style.display='block';
+  document.getElementById('step-complete-banner').scrollIntoView({behavior:'smooth',block:'nearest'});
+  sendActivityRecord();
+});
+
+/* ── Auto-save textareas ── */
+['jr1','jr2','jr3','jr4','jr5','cal-r1','refl2-text','refl3-text','t3-text','t4-text'].forEach(function(id){
+  var el=document.getElementById(id);if(!el)return;
+  try{var d=lmsGet();if(d._autosave&&d._autosave[id])el.value=d._autosave[id];}catch(e){}
+  el.addEventListener('input',function(){try{var d=lmsGet();if(!d._autosave)d._autosave={};d._autosave[id]=el.value;lmsSet(d);}catch(e){}});
+});
+
+/* ── Restore on load ── */
+(function restore(){
+  var d=lmsGet();
+  if(d.cal){
+    state.cal=true;document.getElementById('cal-submit').disabled=true;
+    if(d.cal.confidence!==undefined){document.getElementById('cal-conf').value=d.cal.confidence;document.getElementById('cal-conf-val').textContent=d.cal.confidence;}
+    if(d.cal.predicted_score!==undefined)document.getElementById('cal-pred').value=d.cal.predicted_score;
+    if(d.cal.reflection_1)document.getElementById('cal-r1').value=d.cal.reflection_1;
+    showFeedback('cal-feedback','Calibration saved (confidence: '+d.cal.confidence+'/10).','success');
+    markDone('tp0');document.getElementById('tc01').classList.add('done');
+    unlockTier(1);document.getElementById('t1-submit').disabled=false;
+  }
+  if(d.t1_submitted){
+    state.t1=true;document.getElementById('t1-submit').disabled=true;
+    markDone('tp1');document.getElementById('tc12').classList.add('done');
+    unlockTier(2);document.getElementById('t2-submit').disabled=false;
+  }
+  if(d.t2_submitted){
+    state.t2=true;document.getElementById('t2-submit').disabled=true;
+    markDone('tp2');document.getElementById('tc23').classList.add('done');
+    var r2=document.getElementById('refl2');r2.classList.remove('tier-locked');
+    if(d.reflection_2){
+      state.refl2=true;document.getElementById('refl2-submit').disabled=true;
+      document.getElementById('refl2-text').value=d.reflection_2.text||'';
+      unlockTier(3);document.getElementById('t3-submit').disabled=false;
+    }else{document.getElementById('refl2-submit').disabled=false;}
+  }
+  if(d.t3_submitted){
+    state.t3=true;document.getElementById('t3-submit').disabled=true;
+    if(d.t3_submitted.text)document.getElementById('t3-text').value=d.t3_submitted.text;
+    markDone('tp3');document.getElementById('tc34').classList.add('done');
+    unlockTier(4);document.getElementById('t4-submit').disabled=false;
+  }
+  if(d.t4_submitted){
+    state.t4=true;document.getElementById('t4-submit').disabled=true;
+    if(d.t4_submitted.text)document.getElementById('t4-text').value=d.t4_submitted.text;
+    markDone('tp4');var tc=document.getElementById('tc4c');if(tc)tc.classList.add('done');
+    var cgc=document.getElementById('concept-check-gate');cgc.classList.remove('tier-locked');
+    document.getElementById('concept-submit').disabled=false;
+  }
+  if(d.concept_step&&d.concept_step.submitted){
+    state.concept=true;document.getElementById('concept-submit').disabled=true;
+    document.querySelectorAll('.concept-opts input[type=radio]').forEach(function(r){r.disabled=true;});
+    if(d.concept_step.answers){
+      d.concept_step.answers.forEach(function(ans,i){
+        var sel=document.querySelector('input[name="cq'+i+'"][value="'+ans+'"]');if(sel)sel.checked=true;
+        var fb=document.getElementById('cfb-'+i);
+        if(fb){fb.hidden=false;fb.className='concept-feedback '+(ans===CQ_ANS[i]?'correct':'incorrect');fb.textContent=ans===CQ_ANS[i]?'Correct':'Incorrect';}
+      });
+    }
+    markDone('tpc');var tc2=document.getElementById('tccj');if(tc2)tc2.classList.add('done');
+    var r3=document.getElementById('refl3');r3.classList.remove('tier-locked');
+    document.getElementById('refl3-submit').disabled=false;
+  }
+  if(d.post_cal){
+    state.refl3=true;document.getElementById('refl3-submit').disabled=true;
+    if(d.post_cal.post_confidence){document.getElementById('post-conf').value=d.post_cal.post_confidence;document.getElementById('post-conf-val').textContent=d.post_cal.post_confidence;}
+    if(d.post_cal.actual_pct)document.getElementById('post-actual').value=d.post_cal.actual_pct;
+    if(d.post_cal.r1)document.getElementById('refl3-text').value=d.post_cal.r1;
+    unlockTier('J');document.getElementById('tj-submit').disabled=false;
+  }
+  if(d.tj_submitted){
+    state.tj=true;document.getElementById('tj-submit').disabled=true;markDone('tpj');
+    var r=d.tj_submitted.responses||{};
+    ['jr1','jr2','jr3','jr4','jr5'].forEach(function(id){if(r[id])document.getElementById(id).value=r[id];});
+    document.getElementById('step-complete-banner').style.display='block';
+  }
+})();
+
+/* ── Export panel ── */
+if(location.search.indexOf('export=1')!==-1)document.getElementById('export-panel').style.display='block';
+document.getElementById('exp-copy').addEventListener('click',function(){navigator.clipboard.writeText(JSON.stringify(lmsGet(),null,2)).then(function(){alert('Copied!');});});
+document.getElementById('exp-dl-json').addEventListener('click',function(){var a=document.createElement('a');a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(lmsGet(),null,2));a.download='lms_step10.json';a.click();});
+document.getElementById('exp-clear').addEventListener('click',function(){if(confirm('Clear all Step 10 progress?')){localStorage.removeItem(LMS_KEY);location.reload();}});
 </script>
 </body>
 </html>
