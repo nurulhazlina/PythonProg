@@ -6,7 +6,6 @@
 <title>Facilitator Notes — Step 9 | Snake Tutorial</title>
 <meta name="robots" content="noindex, nofollow">
 <style>
-/* ── LIGHT-MODE TEACHER PAGE ── independent of style.css ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#F0F4F8;
@@ -34,94 +33,41 @@
   --shadow:0 1px 4px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.05);
 }
 html{font-size:16px;-webkit-text-size-adjust:100%}
-body{
-  background:var(--bg);
-  color:var(--body);
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  line-height:1.65;
-}
-.sitenav{
-  background:var(--teal-dark);
-  color:#fff;
-  padding:0 24px;
-  display:flex;
-  align-items:center;
-  gap:20px;
-  min-height:56px;
-  position:sticky;top:0;z-index:100;
-  box-shadow:0 2px 8px rgba(0,0,0,.15);
-}
+body{background:var(--bg);color:var(--body);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.65;}
+.sitenav{background:var(--teal-dark);color:#fff;padding:0 24px;display:flex;align-items:center;gap:20px;min-height:56px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15);}
 .sitenav .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;font-weight:700;font-size:15px}
 .sitenav .brand img{display:none}
 .sitenav a.nl{color:rgba(255,255,255,.8);text-decoration:none;font-size:14px;padding:4px 8px;border-radius:6px;transition:background .15s}
 .sitenav a.nl:hover{background:rgba(255,255,255,.15)}
 details.navsel{margin-left:auto;position:relative}
-details.navsel summary{
-  list-style:none;cursor:pointer;color:rgba(255,255,255,.9);
-  font-size:14px;font-weight:600;padding:6px 12px;
-  border-radius:6px;transition:background .15s;
-}
+details.navsel summary{list-style:none;cursor:pointer;color:rgba(255,255,255,.9);font-size:14px;font-weight:600;padding:6px 12px;border-radius:6px;transition:background .15s;}
 details.navsel summary:hover{background:rgba(255,255,255,.15)}
 details.navsel summary::-webkit-details-marker{display:none}
-.navmenu{
-  position:absolute;right:0;top:calc(100% + 8px);
-  background:#fff;color:var(--ink);
-  border:1px solid var(--border);border-radius:var(--radius);
-  min-width:300px;box-shadow:var(--shadow);
-  overflow:hidden;z-index:200;
-}
-.navmenu a{
-  display:block;padding:10px 16px;font-size:13.5px;
-  text-decoration:none;color:var(--body);
-  border-bottom:1px solid var(--border);transition:background .12s;
-}
+.navmenu{position:absolute;right:0;top:calc(100% + 8px);background:#fff;color:var(--ink);border:1px solid var(--border);border-radius:var(--radius);min-width:300px;box-shadow:var(--shadow);overflow:hidden;z-index:200;}
+.navmenu a{display:block;padding:10px 16px;font-size:13.5px;text-decoration:none;color:var(--body);border-bottom:1px solid var(--border);transition:background .12s;}
 .navmenu a:last-child{border-bottom:none}
 .navmenu a:hover{background:var(--teal-light)}
 .navmenu a[aria-current="page"]{background:var(--teal-light);color:var(--teal-dark);font-weight:700}
-.gate{
-  max-width:520px;margin:80px auto;padding:40px 36px;
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:14px;box-shadow:var(--shadow);text-align:center;
-}
+.gate{max-width:520px;margin:80px auto;padding:40px 36px;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);text-align:center;}
 .gate h2{font-size:24px;color:var(--ink);margin-bottom:12px}
 .gate p{color:var(--muted);margin-bottom:16px;font-size:15px}
 .gate a{color:var(--teal);text-decoration:none;font-size:14px}
 .gate a:hover{text-decoration:underline}
 .lock-icon{font-size:48px;margin-bottom:16px}
-.t-hero{
-  background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal) 100%);
-  color:#fff;padding:40px 24px 36px;
-}
+.t-hero{background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal) 100%);color:#fff;padding:40px 24px 36px;}
 .t-hero .wrap{max-width:900px;margin:0 auto}
 .t-hero .eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.75;margin-bottom:8px}
 .t-hero h1{font-size:clamp(22px,4vw,32px);font-weight:800;line-height:1.2;margin-bottom:8px}
 .t-hero .meta{font-size:14px;opacity:.8;margin-bottom:20px}
 .t-cta-row{display:flex;flex-wrap:wrap;gap:10px}
-.t-cta-row a{
-  display:inline-block;padding:8px 18px;border-radius:8px;
-  font-size:13px;font-weight:600;text-decoration:none;
-  background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);
-  transition:background .15s;
-}
+.t-cta-row a{display:inline-block;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);transition:background .15s;}
 .t-cta-row a:hover{background:rgba(255,255,255,.28)}
 .wrap{max-width:900px;margin:0 auto;padding:0 20px}
 .page-body{padding:36px 20px 60px;max-width:900px;margin:0 auto}
-.tbanner{
-  background:var(--amber-bg);border:1px solid var(--amber-border);
-  color:#78350F;border-radius:8px;padding:12px 16px;
-  font-size:13.5px;margin-bottom:28px;
-}
+.tbanner{background:var(--amber-bg);border:1px solid var(--amber-border);color:#78350F;border-radius:8px;padding:12px 16px;font-size:13.5px;margin-bottom:28px;}
 .tbanner b{color:#92400E}
-.t-section{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius);padding:28px 28px;margin-bottom:24px;
-  box-shadow:var(--shadow);
-}
-.t-section h2{
-  font-size:18px;font-weight:700;color:var(--ink);
-  padding-bottom:10px;margin-bottom:16px;
-  border-bottom:2px solid var(--teal);display:flex;align-items:center;gap:8px;
-}
+.t-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px 28px;margin-bottom:24px;box-shadow:var(--shadow);}
+.t-section h2{font-size:18px;font-weight:700;color:var(--ink);padding-bottom:10px;margin-bottom:16px;border-bottom:2px solid var(--teal);display:flex;align-items:center;gap:8px;}
 .t-section h2 .sec-icon{font-size:20px}
 .t-section h3{font-size:15px;font-weight:700;color:var(--teal-dark);margin:16px 0 8px}
 .t-section p{margin-bottom:10px;font-size:15px}
@@ -129,67 +75,51 @@ details.navsel summary::-webkit-details-marker{display:none}
 .t-section li{margin-bottom:6px;font-size:15px}
 .t-section strong{color:var(--ink)}
 .t-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
-.t-table thead th{
-  background:var(--teal);color:#fff;padding:10px 14px;
-  text-align:left;font-weight:600;font-size:13px;letter-spacing:.02em;
-}
+.t-table thead th{background:var(--teal);color:#fff;padding:10px 14px;text-align:left;font-weight:600;font-size:13px;letter-spacing:.02em;}
 .t-table thead th:first-child{border-radius:8px 0 0 0}
 .t-table thead th:last-child{border-radius:0 8px 0 0}
 .t-table tbody tr:nth-child(even){background:var(--surface2)}
 .t-table tbody td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}
 .t-table td code{font-size:12.5px;background:var(--bg);padding:1px 5px;border-radius:4px;color:var(--ink)}
+.sev-low{color:#065F46;font-weight:600}
+.sev-med{color:#92400E;font-weight:600}
+.sev-high{color:#991B1B;font-weight:600}
 .codebox{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:12px 0;position:relative}
 .codebox pre{padding:20px;overflow-x:auto}
 .codebox code{color:var(--code-fg);font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13.5px;line-height:1.6}
-.copybtn{
-  position:absolute;top:10px;right:10px;
-  background:var(--border);color:var(--ink);
-  border:none;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;
-  transition:background .15s;
-}
+.copybtn{position:absolute;top:10px;right:10px;background:var(--border);color:var(--ink);border:none;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;transition:background .15s;}
 .copybtn:hover{background:rgba(255,255,255,.22)}
 .copybtn.copied{background:rgba(134,239,172,.25);color:#86EFAC}
 code{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13px;background:var(--bg);padding:1px 5px;border-radius:4px;color:var(--ink)}
-.callout{
-  display:flex;gap:12px;padding:14px 16px;border-radius:8px;
-  border:1px solid var(--border);background:var(--surface2);margin:12px 0;
-  font-size:14px;align-items:flex-start;
-}
+.demo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:12px}
+.demo-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px;border-top:3px solid var(--teal);}
+.demo-card .demo-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--teal);margin-bottom:6px}
+.demo-card h3{font-size:15px;font-weight:700;color:var(--ink);margin:0 0 8px}
+.demo-card p{font-size:13.5px;color:var(--body);margin:0 0 10px}
+.demo-card .demo-tip{font-size:12.5px;color:var(--muted);padding:8px 10px;background:var(--teal-light);border-radius:6px;border-left:3px solid var(--teal);}
+.demo-card .demo-tip strong{color:var(--teal-dark)}
+.answer-card{background:var(--green-bg);border:1px solid var(--green-border);border-radius:8px;padding:14px 18px;margin:12px 0;}
+.answer-card .answer-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--green-ink);margin-bottom:4px}
+.callout{display:flex;gap:12px;padding:14px 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);margin:12px 0;font-size:14px;align-items:flex-start;}
 .callout-icon{font-size:22px;flex-shrink:0;line-height:1.2}
 .callout p{margin:0}
-.stem-brand-bar{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  width:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-}
-.stem-brand-bar .sb{
-  display:flex;align-items:center;justify-content:center;
-  padding:6px 8px;font-size:12px;font-weight:800;
-  letter-spacing:.12em;color:#fff;text-transform:uppercase;
-}
+.stem-brand-bar{display:grid;grid-template-columns:repeat(4,1fr);width:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
+.stem-brand-bar .sb{display:flex;align-items:center;justify-content:center;padding:6px 8px;font-size:12px;font-weight:800;letter-spacing:.12em;color:#fff;text-transform:uppercase;}
 .sb-see{background:#2E5FAF}
 .sb-think{background:#B82828}
 .sb-explore{background:#D99A10}
 .sb-marvel{background:#1FA898}
-footer{
-  background:#1C5C54;color:rgba(255,255,255,.78);
-  text-align:center;padding:20px 20px;font-size:13px;margin-top:40px;
-  display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
-}
+footer{background:#1C5C54;color:rgba(255,255,255,.78);text-align:center;padding:20px 20px;font-size:13px;margin-top:40px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;}
 footer a{color:rgba(255,255,255,.85);text-decoration:none;display:inline-flex;align-items:center;gap:4px}
 footer a:hover{color:#fff}
-.cta-btn{
-  display:inline-block;padding:12px 28px;border-radius:9px;
-  font-size:15px;font-weight:700;border:none;cursor:pointer;
-  background:var(--teal);color:#fff;
-  box-shadow:0 4px 14px rgba(10,143,138,.3);
-  transition:background .15s,transform .1s;
-}
+.cta-btn{display:inline-block;padding:12px 28px;border-radius:9px;font-size:15px;font-weight:700;border:none;cursor:pointer;background:var(--teal);color:#fff;box-shadow:0 4px 14px rgba(10,143,138,.3);transition:background .15s,transform .1s;}
 .cta-btn:hover{background:var(--teal-dark);transform:translateY(-1px)}
 .cta-btn:active{transform:translateY(0)}
 @media(max-width:600px){
   .t-section{padding:20px 16px}
   .t-hero{padding:28px 16px 24px}
   .t-cta-row a{font-size:12px;padding:6px 12px}
+  .demo-grid{grid-template-columns:1fr}
   .t-table{font-size:13px}
   .sitenav{padding:0 14px}
 }
@@ -227,6 +157,7 @@ footer a:hover{color:#fff}
   </details>
 </nav>
 
+<!-- GATE -->
 <div class="gate" id="gate">
   <div class="lock-icon">&#128274;</div>
   <h2>Facilitator Notes</h2>
@@ -238,16 +169,17 @@ footer a:hover{color:#fff}
   <p style="margin-top:20px"><a href="step-9.html">&#8592; Back to student page</a></p>
 </div>
 
+<!-- MAIN CONTENT -->
 <div id="tcontent" hidden>
 
 <div class="t-hero">
   <div class="wrap">
     <p class="eyebrow">STEP 9 OF 10 &nbsp;&middot;&nbsp; FACILITATOR NOTES</p>
     <h1>OOP Refactor</h1>
-    <p class="meta">Core concepts: classes &nbsp;&middot;&nbsp; __init__ &nbsp;&middot;&nbsp; self &nbsp;&middot;&nbsp; methods &nbsp;&middot;&nbsp; encapsulation &nbsp;&middot;&nbsp; Snake / Food / Game classes</p>
+    <p class="meta">Core concepts: class &nbsp;&middot;&nbsp; __init__ &nbsp;&middot;&nbsp; self &nbsp;&middot;&nbsp; encapsulation &nbsp;&middot;&nbsp; instance methods</p>
     <div class="t-cta-row">
       <a href="teacher-8.html">&#8592; Step 8</a>
-      <a href="step-9.html">Student Page</a>
+      <a href="step-9-activity.html">Student Activity</a>
       <a href="teacher-10.html">Step 10 &#8594;</a>
     </div>
   </div>
@@ -256,206 +188,327 @@ footer a:hover{color:#fff}
 <div class="page-body">
 
   <div class="tbanner">
-    &#9201; <b>Suggested pace: 35&ndash;40 minutes</b> &nbsp;&middot;&nbsp; This is the longest step. OOP is a new paradigm &mdash; budget time for the blueprint analogy and let students explore the class structure before typing code.
+    &#9201; <b>Suggested pace: 30&ndash;40 minutes</b> &nbsp;&middot;&nbsp; OOP is the biggest conceptual leap in the module. Budget extra time for <code>self</code> confusion &mdash; almost every student trips here. Live code the refactor from scratch so students see the transformation step by step.
   </div>
 
-  <!-- ── SECTION 1 · Learning Objectives ── -->
+  <!-- SECTION 1: Learning Objectives -->
   <div class="t-section">
     <h2><span class="sec-icon">&#127919;</span> Learning Objectives</h2>
     <ul>
-      <li>Define a class with <code>class ClassName:</code></li>
-      <li>Use <code>__init__</code> to initialise object state</li>
-      <li>Use <code>self</code> to refer to the current instance</li>
-      <li>Call methods on objects using dot notation</li>
-      <li>Refactor the snake game into Snake, Food, and Game classes</li>
+      <li>Define a class using the <code>class</code> keyword and understand what it represents (a blueprint for objects)</li>
+      <li>Write an <code>__init__</code> method to initialise instance attributes using <code>self</code></li>
+      <li>Understand that <code>self</code> is a reference to the specific instance being acted on</li>
+      <li>Define instance methods and call them on objects (<code>snake.move()</code>)</li>
+      <li>Explain encapsulation: bundling related data and behaviour inside a class</li>
+      <li>Refactor the snake game into three collaborating classes: <code>Snake</code>, <code>Food</code>, and <code>Game</code></li>
     </ul>
   </div>
 
-  <!-- ── SECTION 2 · The Big Idea ── -->
+  <!-- SECTION 2: The Big Idea -->
   <div class="t-section">
     <h2><span class="sec-icon">&#128161;</span> The Big Idea &mdash; Annotated Code</h2>
 
+    <h3>Class anatomy</h3>
     <div class="codebox">
       <button class="copybtn" type="button">Copy</button>
       <pre><code>class Snake:
-    """Represents the snake: its body, direction, and movement logic."""
-
+    # ── __init__ runs automatically when Snake() is called ──
     def __init__(self):
-        self.body = [(10, 7), (9, 7), (8, 7)]  # list of (col, row) tuples
-        self.dx = 1
-        self.dy = 0
-        self.alive = True
+        # self refers to THIS particular Snake instance
+        self.body = [(100, 100), (80, 100), (60, 100)]  # instance attribute
+        self.direction = "RIGHT"                          # instance attribute
 
-    def turn(self, dx, dy):
-        """Change direction — guards against 180° reversal."""
-        if (dx, dy) != (-self.dx, -self.dy):
-            self.dx, self.dy = dx, dy
-
+    # ── instance method: first parameter is ALWAYS self ──
     def move(self):
-        """Advance the snake one step; returns True if food was eaten."""
-        hx, hy = self.body[0]
-        new_head = ((hx + self.dx) % GRID_COLS, (hy + self.dy) % GRID_ROWS)
-        self.body.insert(0, new_head)
-        return False   # caller must pop tail if False
+        x, y = self.body[0]          # read THIS snake's head
+        if self.direction == "RIGHT": x += 20
+        elif self.direction == "LEFT":  x -= 20
+        elif self.direction == "UP":    y -= 20
+        elif self.direction == "DOWN":  y += 20
+        self.body.insert(0, (x, y))  # add new head
+        self.body.pop()              # remove tail
 
-    def grow(self):
-        """Grow — tail already inserted by move(); just don&#39;t pop."""
-        pass
-
-    def check_self_collision(self):
-        return self.body[0] in self.body[1:]
-
-    def draw(self, surface):
-        for i, (col, row) in enumerate(self.body):
-            colour = DKGREEN if i == 0 else GREEN
-            pygame.draw.rect(surface, colour,
-                (col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE-1, CELL_SIZE-1))
-
+    def change_direction(self, new_dir):
+        # "self" lets us access instance data from any method
+        opposites = {"RIGHT":"LEFT","LEFT":"RIGHT","UP":"DOWN","DOWN":"UP"}
+        if new_dir != opposites.get(self.direction):
+            self.direction = new_dir
 
 class Food:
-    """Manages food position and drawing."""
-
     def __init__(self):
-        self.respawn()
+        self.position = self._random_pos()
 
-    def respawn(self, avoid=()):
-        while True:
-            x = random.randint(0, GRID_COLS-1)
-            y = random.randint(0, GRID_ROWS-1)
-            if (x, y) not in avoid:
-                self.x, self.y = x, y
-                break
+    def _random_pos(self):         # leading _ means "internal helper"
+        import random
+        return (random.randrange(0, 600, 20), random.randrange(0, 400, 20))
 
-    def draw(self, surface):
-        pygame.draw.rect(surface, RED,
-            (self.x * CELL_SIZE, self.y * CELL_SIZE, CELL_SIZE-1, CELL_SIZE-1))
-
+    def respawn(self):
+        self.position = self._random_pos()
 
 class Game:
-    """Top-level controller — owns the snake, food, score, and game loop."""
-
     def __init__(self):
-        self.snake = Snake()
-        self.food  = Food()
+        self.snake = Snake()        # instantiate Snake class
+        self.food  = Food()         # instantiate Food class
         self.score = 0
-        self.running = True
 
     def update(self):
         self.snake.move()
-        if self.snake.body[0] == (self.food.x, self.food.y):
+        if self.snake.body[0] == self.food.position:
             self.score += 1
-            self.food.respawn(avoid=self.snake.body)
-        else:
-            self.snake.body.pop()
-        if self.snake.check_self_collision():
-            self.running = False
+            self.food.respawn()
 
-    def draw(self, surface):
-        surface.fill(BG)
-        self.snake.draw(surface)
-        self.food.draw(surface)
-        pygame.display.flip()</code></pre>
+    def run(self):
+        while True:                 # main loop lives inside the class
+            self.update()
+            # draw, handle events, clock.tick...</code></pre>
     </div>
 
     <h3>Key concept explanations</h3>
     <ul>
-      <li><strong><code>class</code></strong>: defines a blueprint for creating objects. Each object is an <strong>instance</strong> of the class.</li>
-      <li><strong><code>__init__</code></strong>: runs automatically when an object is created (<code>snake = Snake()</code>). Initialises the instance&#39;s attributes.</li>
-      <li><strong><code>self</code></strong>: a reference to the specific instance being operated on. <code>self.body</code> = this snake&#39;s body, not any other snake&#39;s.</li>
-      <li><strong>Methods</strong>: functions defined inside a class, always taking <code>self</code> as the first parameter.</li>
-      <li><strong>Dot notation</strong>: <code>snake.move()</code>, <code>food.respawn()</code> &mdash; access attributes and methods through the object.</li>
-      <li><strong>Encapsulation</strong>: each class owns its own data and the methods that operate on it. <code>Food.respawn()</code> knows where to put food; the Game doesn&#39;t need to know how.</li>
+      <li><strong><code>class Snake:</code></strong> &mdash; defines a blueprint. You can create many independent Snake instances from one class.</li>
+      <li><strong><code>def __init__(self):</code></strong> &mdash; the constructor. Python calls it automatically when you write <code>Snake()</code>. It sets up the object's initial state.</li>
+      <li><strong><code>self</code></strong> &mdash; the invisible first argument that Python fills in automatically. When you call <code>snake.move()</code>, Python secretly passes <code>snake</code> as <code>self</code>. Inside the method, <code>self.body</code> means "this snake's body list".</li>
+      <li><strong>Instance attributes</strong> &mdash; variables stored on <code>self</code> (e.g. <code>self.body</code>). Each object has its own copy. Contrast with a regular variable inside a function, which disappears when the function returns.</li>
+      <li><strong>Encapsulation</strong> &mdash; all data (body, direction) and behaviour (move, change_direction) for the snake are in one place. If you need to change how the snake moves, you change only the Snake class, not everywhere the snake is used.</li>
+      <li><strong>Instantiation</strong> &mdash; <code>self.snake = Snake()</code> creates an object from the class blueprint. The parentheses call <code>__init__</code>. Without them (<code>Snake</code>) you get the class itself, not an object.</li>
     </ul>
   </div>
 
-  <!-- ── SECTION 3 · Activity Answers ── -->
+  <!-- SECTION 3: Activity Answers -->
   <div class="t-section">
     <h2><span class="sec-icon">&#128290;</span> Activity Answers</h2>
 
-    <h3>Tier 1 &mdash; Check Understanding</h3>
+    <h3>Tier 1 &mdash; Fill in the Blanks (6 blanks)</h3>
+    <p>Students complete a <code>Snake</code> and <code>Game</code> class skeleton. Each blank is a single keyword, name, or value.</p>
     <table class="t-table">
-      <thead><tr><th>Question</th><th>Accepted answer</th></tr></thead>
+      <thead><tr><th style="width:30%">Blank</th><th>Correct answer</th><th>Why</th></tr></thead>
       <tbody>
         <tr>
-          <td>What is the difference between a class and an object?</td>
-          <td>A class is a blueprint (the definition); an object is an instance (a specific thing created from the blueprint).</td>
+          <td>Blank 1 &mdash; <code>___1___ Snake:</code></td>
+          <td><code>class</code></td>
+          <td>The keyword that starts a class definition in Python. <code>def</code> defines functions; <code>class</code> defines classes.</td>
         </tr>
         <tr>
-          <td>What does <code>__init__</code> do?</td>
-          <td>It&#39;s the initialiser &mdash; runs automatically when a new object is created, setting up the object&#39;s initial state.</td>
+          <td>Blank 2 &mdash; <code>self.___2___ = "RIGHT"</code></td>
+          <td><code>direction</code></td>
+          <td>The name of the attribute that stores which way the snake is moving. Must match wherever else the attribute is referenced.</td>
         </tr>
         <tr>
-          <td>Why does every method take <code>self</code> as the first parameter?</td>
-          <td><code>self</code> refers to the specific instance being operated on, so the method knows which object&#39;s data to use.</td>
+          <td>Blank 3 &mdash; <code>def move(___3___):</code></td>
+          <td><code>self</code></td>
+          <td>Every instance method must have <code>self</code> as its first parameter so Python can pass the calling object in automatically.</td>
         </tr>
         <tr>
-          <td>What does dot notation (<code>snake.move()</code>) do?</td>
-          <td>Calls the <code>move</code> method on the <code>snake</code> object &mdash; <code>self</code> inside <code>move</code> refers to that snake instance.</td>
+          <td>Blank 4 &mdash; <code>self.body.___4___()</code></td>
+          <td><code>pop</code></td>
+          <td><code>list.pop()</code> removes and returns the last element &mdash; used to remove the snake's tail after adding a new head, keeping the length constant.</td>
+        </tr>
+        <tr>
+          <td>Blank 5 &mdash; <code>self.snake = ___5___()</code></td>
+          <td><code>Snake</code></td>
+          <td>Instantiates the <code>Snake</code> class. The parentheses are essential &mdash; without them you get the class object, not an instance.</td>
+        </tr>
+        <tr>
+          <td>Blank 6 &mdash; <code>while ___6___:</code></td>
+          <td><code>True</code></td>
+          <td>A game loop runs indefinitely until explicitly broken out of. <code>while True:</code> is the standard Python idiom for an infinite loop.</td>
         </tr>
       </tbody>
     </table>
 
-    <h3>Tier 2 &mdash; Fix the Bug</h3>
-    <p><strong>Bug:</strong> <code>def turn(dx, dy):</code> &mdash; missing <code>self</code> parameter.</p>
-    <p><strong>Error:</strong> <code>TypeError: turn() takes 2 positional arguments but 3 were given</code> (Python automatically passes <code>self</code> as the first arg)</p>
-    <p><strong>Fix:</strong> <code>def turn(self, dx, dy):</code></p>
-
-    <h3>Tier 3 &mdash; Extend: Add a <code>speed</code> attribute to <code>Snake</code></h3>
     <div class="codebox">
       <button class="copybtn" type="button">Copy</button>
-      <pre><code># In Snake.__init__:
-self.speed = 8   # initial FPS
+      <pre><code>class Snake:                          # blank 1: class
+    def __init__(self):
+        self.body = [(100,100),(80,100),(60,100)]
+        self.direction = "RIGHT"      # blank 2: direction
 
-# In Game.update, after eating food:
-self.snake.speed = min(20, self.snake.speed + 0.5)
+    def move(self):                   # blank 3: self
+        x, y = self.body[0]
+        if self.direction == "RIGHT": x += 20
+        self.body.insert(0, (x, y))
+        self.body.pop()               # blank 4: pop
 
-# In main loop:
-clock.tick(int(game.snake.speed))</code></pre>
+class Game:
+    def __init__(self):
+        self.snake = Snake()          # blank 5: Snake
+        self.score = 0
+
+    def run(self):
+        while True:                   # blank 6: True
+            self.snake.move()</code></pre>
     </div>
 
-    <h3>Tier 4 &mdash; New Task: Add a <code>reset()</code> method to <code>Game</code></h3>
+    <h3>Tier 2 &mdash; Debug the Code (3 bugs)</h3>
+    <table class="t-table">
+      <thead><tr><th style="width:8%">Bug</th><th>Buggy line</th><th>Fixed line</th><th>Explanation</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>1</strong></td>
+          <td><code>def move():</code></td>
+          <td><code>def move(self):</code></td>
+          <td>All instance methods must have <code>self</code> as their first parameter. Without it Python raises <code>TypeError: move() takes 0 positional arguments but 1 was given</code> when you call <code>snake.move()</code>.</td>
+        </tr>
+        <tr>
+          <td><strong>2</strong></td>
+          <td><code>score += 1</code></td>
+          <td><code>self.score += 1</code></td>
+          <td>Inside a method, bare <code>score</code> looks for a local variable which does not exist. The attribute is stored on the instance, so <code>self.score</code> is required. Forgetting <code>self.</code> is the single most common OOP mistake.</td>
+        </tr>
+        <tr>
+          <td><strong>3</strong></td>
+          <td><code>self.snake = Snake</code></td>
+          <td><code>self.snake = Snake()</code></td>
+          <td>Without parentheses <code>Snake</code> is the class object itself, not an instance. Calling <code>self.snake.move()</code> would then fail with <code>TypeError: move() missing 1 required positional argument: 'self'</code> because no instance was created.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Tier 3 &mdash; Extend: add draw() methods</h3>
+    <p>Students add a <code>draw(self, screen)</code> method to both <code>Snake</code> and <code>Food</code>.</p>
     <div class="codebox">
       <button class="copybtn" type="button">Copy</button>
-      <pre><code>def reset(self):
-    self.snake = Snake()
-    self.food = Food()
-    self.score = 0
-    self.running = True
+      <pre><code>class Snake:
+    def __init__(self):
+        self.body   = [(100, 100), (80, 100), (60, 100)]
+        self.colour = (0, 200, 100)
 
-# After game over, press R to restart:
-if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
-    game.reset()</code></pre>
+    def move(self):
+        pass  # movement logic (already implemented)
+
+    def draw(self, screen):
+        # draw each segment of the snake's body
+        for segment in self.body:
+            rect = pygame.Rect(segment[0], segment[1], 20, 20)
+            pygame.draw.rect(screen, self.colour, rect)
+
+
+class Food:
+    def __init__(self):
+        self.position = (200, 200)
+        self.colour   = (220, 50, 50)
+
+    def draw(self, screen):
+        # draw the food as a single rectangle
+        rect = pygame.Rect(self.position[0], self.position[1], 20, 20)
+        pygame.draw.rect(screen, self.colour, rect)</code></pre>
     </div>
+    <p><em>Accept any valid call to <code>pygame.draw.rect(screen, colour, rect)</code>. Students may use <code>pygame.draw.circle</code> or <code>ellipse</code> for food &mdash; accept these too. The key criterion is that the method takes <code>self</code> and <code>screen</code>, and uses <code>self.colour</code> and <code>self.body</code> / <code>self.position</code>.</em></p>
+
+    <h3>Tier 4 &mdash; Create: full Game class</h3>
+    <p>Students write a complete <code>Game</code> class with four methods: <code>__init__</code>, <code>update</code>, <code>draw</code>, <code>run</code>.</p>
+    <div class="codebox">
+      <button class="copybtn" type="button">Copy</button>
+      <pre><code>import pygame, random
+
+class Snake:
+    def __init__(self):
+        self.body = [(100,100),(80,100),(60,100)]
+        self.direction = "RIGHT"
+        self.colour = (0,200,100)
+    def move(self):
+        x,y = self.body[0]
+        if self.direction=="RIGHT": x+=20
+        elif self.direction=="LEFT":  x-=20
+        elif self.direction=="UP":    y-=20
+        elif self.direction=="DOWN":  y+=20
+        self.body.insert(0,(x,y))
+        self.body.pop()
+    def draw(self,screen):
+        for seg in self.body:
+            pygame.draw.rect(screen,self.colour,pygame.Rect(seg[0],seg[1],20,20))
+
+class Food:
+    def __init__(self):
+        self.position=(random.randrange(0,600,20),random.randrange(0,400,20))
+        self.colour=(220,50,50)
+    def respawn(self):
+        self.position=(random.randrange(0,600,20),random.randrange(0,400,20))
+    def draw(self,screen):
+        pygame.draw.rect(screen,self.colour,pygame.Rect(self.position[0],self.position[1],20,20))
+
+
+class Game:
+    def __init__(self):
+        # create instances of the collaborating objects
+        pygame.init()
+        self.screen = pygame.display.set_mode((600,400))
+        self.clock  = pygame.time.Clock()
+        self.snake  = Snake()
+        self.food   = Food()
+        self.score  = 0
+        self.running = True
+
+    def update(self):
+        # move snake and check food collision
+        self.snake.move()
+        if self.snake.body[0] == self.food.position:
+            self.score += 1
+            self.food.respawn()
+        # wall collision
+        hx, hy = self.snake.body[0]
+        if hx &lt; 0 or hx &gt;= 600 or hy &lt; 0 or hy &gt;= 400:
+            self.running = False
+
+    def draw(self, screen):
+        # draw all game elements
+        screen.fill((30,30,30))
+        self.snake.draw(screen)
+        self.food.draw(screen)
+        font = pygame.font.SysFont(None, 28)
+        screen.blit(font.render(f"Score: {self.score}", True, (255,255,255)), (10,10))
+        pygame.display.flip()
+
+    def run(self):
+        # main game loop encapsulated inside the class
+        while self.running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
+                if event.type == pygame.KEYDOWN:
+                    dirs = {pygame.K_UP:"UP",pygame.K_DOWN:"DOWN",
+                            pygame.K_LEFT:"LEFT",pygame.K_RIGHT:"RIGHT"}
+                    if event.key in dirs:
+                        self.snake.change_direction(dirs[event.key])
+            self.update()
+            self.draw(self.screen)
+            self.clock.tick(10)
+        pygame.quit()
+
+if __name__ == "__main__":
+    Game().run()</code></pre>
+    </div>
+    <p><em>The key assessment criterion for Tier 4 is structure, not a runnable game: does the class have <code>__init__</code>, <code>update</code>, <code>draw</code>, and <code>run</code>? Are Snake and Food instantiated inside <code>__init__</code>? Is the game loop inside <code>run</code>? These are the markers of genuine encapsulation understanding.</em></p>
 
     <h3>Reflective Journal &mdash; Suggested Strong Answers</h3>
     <table class="t-table">
       <thead><tr><th>Prompt</th><th>Key ideas a strong answer contains</th></tr></thead>
       <tbody>
         <tr>
-          <td>1. What is encapsulation?</td>
-          <td>Bundling data (attributes) and the methods that operate on it inside a class. Other parts of the program interact through a defined interface, not raw data.</td>
+          <td>1. What problem does OOP solve that functions cannot?</td>
+          <td>Functions scatter related data and behaviour across the file. OOP bundles them: all snake state (body, direction, colour) and all snake behaviour (move, draw, change_direction) live in one <code>Snake</code> class. You can create two independent snakes without duplicating any code, and you know exactly where to look when a bug appears.</td>
         </tr>
         <tr>
-          <td>2. Why is OOP useful?</td>
-          <td>Organises complex programs; each class has one job; easy to add features without breaking other parts; real-world concepts map to objects.</td>
+          <td>2. Why must every method have <code>self</code> as its first parameter?</td>
+          <td><code>snake.move()</code> is shorthand for <code>Snake.move(snake)</code>. Python automatically passes the calling object as the first argument. If <code>self</code> is missing, the method receives the object as an unexpected argument and raises <code>TypeError</code>. <code>self</code> is the door through which a method accesses its own object's data.</td>
         </tr>
         <tr>
-          <td>3. What is inheritance? (preview)</td>
-          <td>A class can inherit attributes and methods from a parent class. E.g., <code>BonusFood(Food)</code> would be a Food with extra behaviour.</td>
+          <td>3. Class attribute vs instance attribute</td>
+          <td>A class attribute is defined directly in the class body and shared by all instances: <code>GRID_SIZE = 20</code>. An instance attribute is set with <code>self.name = ...</code> in <code>__init__</code> and belongs only to that object: <code>self.body = [(100,100)]</code>. Two Snake objects have different bodies but share the same <code>GRID_SIZE</code>.</td>
         </tr>
         <tr>
-          <td>4. When is OOP overkill?</td>
-          <td>For small scripts with one function &mdash; a class adds overhead. OOP pays off when a program has multiple interacting entities with their own state.</td>
+          <td>4. Design Player and Ghost classes for Pac-Man</td>
+          <td><code>Player</code> attributes: position, lives, score, powered_up. Methods: move(direction), eat(dot), die(). <code>Ghost</code> attributes: position, colour, frightened. Methods: move(), respawn(), is_frightened(). Strong answers explain why each attribute/method belongs to that class, not to a global variable.</td>
         </tr>
         <tr>
-          <td>5. Explain <code>self</code> to a classmate</td>
-          <td>"When you call <code>snake.move()</code>, Python automatically passes <code>snake</code> as <code>self</code>. It&#39;s like saying &#39;move YOURSELF&#39; &mdash; each snake knows which body is its own."</td>
+          <td>5. Advantages of a Game class instead of global scope</td>
+          <td>State (score, snake, food, running) lives on <code>self</code>, not in globals &mdash; no accidental overwriting. The loop is in <code>run()</code> so it is easy to start and stop. You can create multiple Game instances for testing. Maintenance is easier: looking for a bug in the update logic? Go to <code>update()</code>, not a 300-line script.</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- ── SECTION 4 · Mistakes ── -->
+  <!-- SECTION 4: Mistakes -->
   <div class="t-section">
     <h2><span class="sec-icon">&#9888;&#65039;</span> Mistakes Students Actually Make</h2>
     <table class="t-table">
@@ -468,136 +521,125 @@ if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
       </thead>
       <tbody>
         <tr>
-          <td>Missing <code>self</code> in <code>__init__</code> parameters</td>
-          <td><code>TypeError: __init__() takes 0 positional arguments but 1 was given</code></td>
-          <td>"Python automatically passes the new object as the first argument. <code>__init__</code> must accept <code>self</code>."</td>
+          <td>Forgot <code>self</code> in <code>def move():</code></td>
+          <td><code>TypeError: move() takes 0 positional arguments but 1 was given</code></td>
+          <td>"Python silently passes the object as the first argument. If <code>self</code> is missing, that object lands in the wrong slot. Always put <code>self</code> first."</td>
         </tr>
         <tr>
-          <td><code>body = [...]</code> (without <code>self.</code>)</td>
-          <td><code>NameError: name &#39;body&#39; is not defined</code> when method accesses it</td>
-          <td>"Without <code>self.</code>, <code>body</code> is a local variable that disappears when <code>__init__</code> finishes. Use <code>self.body</code>."</td>
+          <td>Used bare <code>score += 1</code> instead of <code>self.score += 1</code></td>
+          <td><code>UnboundLocalError: local variable 'score' referenced before assignment</code></td>
+          <td>"The attribute is stored on the object, not as a local variable. Inside any method, prefix instance attributes with <code>self.</code>"</td>
         </tr>
         <tr>
-          <td>Calling <code>Snake.move()</code> instead of <code>snake.move()</code></td>
-          <td><code>TypeError: move() missing 1 required positional argument: &#39;self&#39;</code></td>
-          <td>"Call methods on an instance (lowercase): <code>snake.move()</code>. <code>Snake.move()</code> is a class-level call that needs the instance explicitly."</td>
+          <td>Wrote <code>self.snake = Snake</code> (no parentheses)</td>
+          <td>No error yet, but later: <code>TypeError: move() missing 1 required positional argument: 'self'</code></td>
+          <td>"<code>Snake</code> is the class (blueprint). <code>Snake()</code> with parentheses calls <code>__init__</code> and creates an object from the blueprint. Always instantiate with <code>()</code>."</td>
         </tr>
         <tr>
-          <td>Putting game logic in <code>__init__</code></td>
-          <td>Game runs once on creation, then can&#39;t restart</td>
-          <td>"<code>__init__</code> sets up state. Put running logic in a separate <code>update()</code> or <code>run()</code> method."</td>
+          <td>Called method without the instance: <code>move()</code> instead of <code>self.snake.move()</code></td>
+          <td><code>NameError: name 'move' is not defined</code></td>
+          <td>"Methods live on the object, not in global scope. You must always say which object: <code>self.snake.move()</code>."</td>
         </tr>
         <tr>
-          <td>Accessing <code>snake.body</code> from <code>Game</code> directly</td>
-          <td>Works but breaks encapsulation</td>
-          <td>"It works, but it&#39;s better to call <code>snake.move()</code> and let Snake manage its own body. This is the principle of encapsulation."</td>
+          <td>Defined attribute inside a method (not <code>__init__</code>): <code>def move(self): self.body = ...</code></td>
+          <td>Attribute re-initialised every frame &mdash; snake always stays 3 segments long, never grows</td>
+          <td>"<code>__init__</code> is the right place to set up an object's starting state. A method that re-assigns <code>self.body</code> resets the snake on every call."</td>
+        </tr>
+        <tr>
+          <td>Indented class body incorrectly</td>
+          <td><code>IndentationError</code> or method defined outside the class</td>
+          <td>"Everything inside the class must be indented consistently. Use 4 spaces. Methods that are not indented are just global functions and have no access to <code>self</code>."</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- ── SECTION 5 · Teaching Notes ── -->
+  <!-- SECTION 5: Teaching Notes -->
   <div class="t-section">
     <h2><span class="sec-icon">&#128483;&#65039;</span> Teaching &amp; Facilitation Notes</h2>
 
-    <h3>Opening hook &mdash; Blueprint analogy</h3>
-    <p>"A class is like an architectural blueprint. The blueprint for a house describes rooms, windows, doors. Each actual house built from the blueprint is an object &mdash; an instance. Different houses, same design."</p>
-    <p>Or: "A class is like a cookie cutter; objects are the cookies. Same shape, different dough."</p>
+    <h3>Opening hook</h3>
+    <p>"What if we needed two snakes on screen at the same time &mdash; how would you do it with our current code?" Students quickly realise that duplicating all the variables is a nightmare. Classes solve exactly this problem.</p>
 
-    <h3>Scaffolding suggestion</h3>
-    <p>Have students read the finished class definitions before typing them. Ask: "What does this class know? What can it do? What does it NOT know or care about?" This is the encapsulation exercise.</p>
+    <h3>Demystifying <code>self</code></h3>
+    <p><code>self</code> confuses almost everyone on first encounter. The clearest explanation: <code>snake.move()</code> is Python shorthand for <code>Snake.move(snake)</code>. Python is passing the object as the first argument automatically. <code>self</code> is just the name we give that argument &mdash; it could be called anything, but <code>self</code> is the universal convention.</p>
+    <p>Live demo: define a method without <code>self</code>, call it, see the error. Add <code>self</code>, call again. The error message "<em>takes 0 positional arguments but 1 was given</em>" is Python telling you it tried to pass the object but had nowhere to put it.</p>
 
-    <h3>Key pedagogical moment &mdash; why refactor?</h3>
-    <p>The step-8 code is ~150 lines of procedural code. Ask students: "If you wanted to add a second snake for multiplayer, what would you need to change?" In procedural code: a lot. With <code>Snake</code> as a class: create <code>snake2 = Snake()</code>. This motivates OOP concretely.</p>
+    <h3>The refactor as a live coding session</h3>
+    <p>Start with the students&#39; existing snake code (one long script). Ask: "Where does all the snake&#39;s data live?" Circle global variables. "Where is all the snake&#39;s behaviour?" Circle functions. "OOP says: put them in the same place." Then copy-paste the globals into <code>__init__</code> (add <code>self.</code>), and the functions into the class (add <code>self</code> as first parameter). The transformation is visible and not magic.</p>
 
-    <h3>CT connection &mdash; Abstraction + Decomposition</h3>
+    <h3>Encapsulation vs inheritance</h3>
+    <p>Students sometimes ask if OOP means inheritance. Clarify: OOP has several pillars. Step 9 focuses on <em>encapsulation</em> only &mdash; grouping data and behaviour. Inheritance is a separate concept (a future step).</p>
+
     <div class="callout">
       <span class="callout-icon">&#128172;</span>
-      <p>Classes are the ultimate abstraction. The <code>Game</code> class doesn&#39;t know how <code>Snake.draw()</code> works &mdash; it just calls it. Decomposition: each class has a single responsibility.</p>
+      <p><strong>CT connection &mdash; Abstraction:</strong> "When you call <code>self.snake.move()</code> in the Game class, you don&#39;t need to know HOW it moves &mdash; just that it does. The Snake class hides the implementation. This is called abstraction, and it&#39;s why large software systems are manageable."</p>
     </div>
 
-    <h3>Pacing</h3>
-    <p>This is the longest step. Consider splitting it across two sessions if time is tight. First session: understand and trace the class structure. Second session: type and run the refactored code.</p>
+    <h3>Assessment focus</h3>
+    <p>The Tier 4 rubric is structural: four methods present, Snake and Food instantiated inside <code>__init__</code>, game loop inside <code>run()</code>. Don&#39;t penalise for minor syntax errors if the student clearly understands where data and methods belong.</p>
   </div>
 
-</div><!-- /page-body -->
-</div><!-- /tcontent -->
-
-<script>
-(function(){
-  var b = document.getElementById('gatebtn');
-  if(!b) return;
-  b.addEventListener('click', function(){
-    document.getElementById('gate').hidden = true;
-    document.getElementById('tcontent').hidden = false;
-  });
-})();
-</script>
-<script>
-document.querySelectorAll('.copybtn').forEach(function(b){
-  b.addEventListener('click', function(){
-    var t = b.parentElement.querySelector('code').textContent;
-    navigator.clipboard.writeText(t).then(function(){
-      b.textContent = 'Copied!';
-      b.classList.add('copied');
-      setTimeout(function(){ b.textContent = 'Copy'; b.classList.remove('copied'); }, 2000);
-    }).catch(function(){});
-  });
-});
-</script>
-
-
-  <!-- CONCEPT_CHECK_ADDED -->
-  <!-- ══ CONCEPT CHECK ANSWER KEY ══ -->
+  <!-- CONCEPT CHECK ANSWER KEY -->
   <div class="t-section">
     <h2><span class="sec-icon">&#x1F9E0;</span> Concept Check &mdash; Answer Key (Step 9)</h2>
-    <p>These 5 questions appear in the activity page <strong>after Tier 4</strong> (post-calibration gate).
-    Pass mark is <strong>4&nbsp;of&nbsp;5&nbsp;(80%)</strong>. Students who fail may retry; the system records attempts and final score in Google Sheets.</p>
+    <p>5 questions appear in the activity page after Tier 4. Pass mark is <strong>4&nbsp;of&nbsp;5&nbsp;(80%)</strong>. CQ_ANS array (0-indexed): <code>[1, 1, 1, 2, 2]</code>.</p>
     <table class="t-table">
-      <thead><tr><th style="width:65%">Question (displayed to student)</th><th>Correct Answer</th></tr></thead>
+      <thead><tr><th style="width:6%">#</th><th style="width:52%">Question (displayed to student)</th><th>Correct option (0-indexed)</th><th>Correct Answer</th></tr></thead>
       <tbody>
         <tr>
-          <td>Q1: Replacing literal 30 with CELL_SIZE = 30 throughout is better because:</td>
-          <td class="sev-low">&#10003; You only need to change one line to update all usages</td>
+          <td>Q1</td>
+          <td>Which keyword is used to define a class in Python?</td>
+          <td class="sev-low">1</td>
+          <td class="sev-low">&#10003; <code>class</code></td>
         </tr>
         <tr>
-          <td>Q2: What does a # TODO: add sound comment indicate?</td>
-          <td class="sev-low">&#10003; A note marking work planned for the future</td>
+          <td>Q2</td>
+          <td>What does <code>self</code> refer to inside a class method?</td>
+          <td class="sev-low">1</td>
+          <td class="sev-low">&#10003; The specific instance (object) that the method was called on</td>
         </tr>
         <tr>
-          <td>Q3: Moving snake-drawing code into draw_snake() is an example of:</td>
-          <td class="sev-low">&#10003; Refactoring — isolating responsibility into a dedicated function</td>
+          <td>Q3</td>
+          <td>When is <code>__init__</code> called?</td>
+          <td class="sev-low">1</td>
+          <td class="sev-low">&#10003; It is called automatically when a new object is created</td>
         </tr>
         <tr>
-          <td>Q4: A helper function grid_to_pixel(col, row) is useful because:</td>
-          <td class="sev-low">&#10003; It converts coordinates in one place and can be called anywhere</td>
+          <td>Q4</td>
+          <td>Given <code>snake = Snake()</code>, how do you call its <code>move</code> method?</td>
+          <td class="sev-low">2</td>
+          <td class="sev-low">&#10003; <code>snake.move()</code></td>
         </tr>
         <tr>
-          <td>Q5: Which of these is NOT a benefit of using named constants?</td>
-          <td class="sev-low">&#10003; Slightly faster execution</td>
+          <td>Q5</td>
+          <td>What best describes <strong>encapsulation</strong> in OOP?</td>
+          <td class="sev-low">2</td>
+          <td class="sev-low">&#10003; Bundling related data (attributes) and behaviour (methods) together inside a class</td>
         </tr>
       </tbody>
     </table>
     <div class="callout" style="margin-top:14px">
       <span class="callout-icon">&#x1F4CA;</span>
       <p><strong>Recorded in Google Sheet (Act_9 tab):</strong>
-      <code>concept_q1</code>&ndash;<code>concept_q5</code> (student&rsquo;s 0-based answer index),
+      <code>concept_q1_ans</code>&ndash;<code>concept_q5_ans</code> (student&#39;s 0-based answer index),
+      <code>concept_q1_cor</code>&ndash;<code>concept_q5_cor</code> (1&nbsp;=&nbsp;correct, 0&nbsp;=&nbsp;wrong),
       <code>concept_score_pct</code>, <code>concept_passed</code> (1&nbsp;=&nbsp;pass, 0&nbsp;=&nbsp;fail),
       <code>concept_attempts</code> (retry count).</p>
     </div>
   </div>
 
-  <!-- ══ GOOGLE SHEETS DATA STRUCTURE ══ -->
+  <!-- GOOGLE SHEETS DATA STRUCTURE -->
   <div class="t-section">
     <h2><span class="sec-icon">&#x1F4CA;</span> Google Sheets &mdash; Data Collected (Act_9)</h2>
-    <p>Every submission to this step writes one row to the <strong>Act_9</strong> tab in the research spreadsheet. All 13 tabs (Student_Reg, Pre_Test, Post_Test, Act_1&ndash;Act_10) share the same student identity columns.</p>
+    <p>Every submission writes one row to the <strong>Act_9</strong> tab. Column structure is identical to Act_8 &mdash; same 41 columns, same student identity fields.</p>
     <table class="t-table" style="font-size:13px">
       <thead><tr><th style="width:36%">Column</th><th>Description</th></tr></thead>
       <tbody>
         <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">STUDENT IDENTITY (10 fields)</td></tr>
         <tr><td><code>matric</code></td><td>Matric / student ID</td></tr>
         <tr><td><code>name</code></td><td>Full name</td></tr>
-        <tr><td><code>gender</code></td><td>Gender (Female / Male / Other)</td></tr>
+        <tr><td><code>gender</code></td><td>Gender</td></tr>
         <tr><td><code>age</code></td><td>Age in years</td></tr>
         <tr><td><code>mykid</code></td><td>MyKid / IC number</td></tr>
         <tr><td><code>home_state</code></td><td>Home state in Malaysia</td></tr>
@@ -609,34 +651,57 @@ document.querySelectorAll('.copybtn').forEach(function(b){
         <tr><td><code>step</code></td><td>Step number (9)</td></tr>
         <tr><td><code>submitted_iso</code></td><td>KL timestamp (UTC+8, ISO&nbsp;8601)</td></tr>
         <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">PRE-CALIBRATION</td></tr>
-        <tr><td><code>cal_confidence</code></td><td>Self-confidence before activity (1&ndash;5 scale)</td></tr>
-        <tr><td><code>cal_predicted</code></td><td>Predicted score before activity (%)</td></tr>
-        <tr><td><code>cal_reflection</code></td><td>Free-text: what will be hard?</td></tr>
+        <tr><td><code>cal_confidence</code></td><td>Self-confidence before activity (1&ndash;10)</td></tr>
+        <tr><td><code>cal_predicted</code></td><td>Predicted Tier 1 score before activity (%)</td></tr>
+        <tr><td><code>cal_reflection</code></td><td>Prior knowledge free-text</td></tr>
         <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">ACTIVITY TIERS</td></tr>
-        <tr><td><code>t1_score_pct</code></td><td>Tier&nbsp;1 Fill-in-Blanks score (%)</td></tr>
-        <tr><td><code>t2_attempts</code></td><td>Tier&nbsp;2 Debug — number of attempts</td></tr>
-        <tr><td><code>refl2_text</code></td><td>Tier&nbsp;2 reflection free text</td></tr>
-        <tr><td><code>t3_attempts</code></td><td>Tier&nbsp;3 Complete-Code attempts</td></tr>
-        <tr><td><code>t4_attempts</code></td><td>Tier&nbsp;4 New Task attempts</td></tr>
+        <tr><td><code>t1_score_pct</code></td><td>Tier&nbsp;1 Fill-in-Blanks first-attempt score (%)</td></tr>
+        <tr><td><code>t2_attempts</code></td><td>Tier&nbsp;2 Debug &mdash; attempts (max 2)</td></tr>
+        <tr><td><code>refl2_text</code></td><td>Mid-activity reflection on <code>self</code></td></tr>
+        <tr><td><code>t3_attempts</code></td><td>Tier&nbsp;3 Extend attempts</td></tr>
+        <tr><td><code>t4_attempts</code></td><td>Tier&nbsp;4 Create attempts</td></tr>
         <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">CONCEPT CHECK</td></tr>
         <tr><td><code>concept_q1</code>&ndash;<code>concept_q5</code></td><td>Student answer index (0-based) per question</td></tr>
         <tr><td><code>concept_score_pct</code></td><td>Percentage correct (0&ndash;100)</td></tr>
         <tr><td><code>concept_passed</code></td><td>1 = passed (&ge;80%), 0 = failed</td></tr>
         <tr><td><code>concept_attempts</code></td><td>Total retries</td></tr>
         <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">REFLECTIVE JOURNAL</td></tr>
-        <tr><td><code>jr1</code>&ndash;<code>jr5</code></td><td>Journal prompts 1&ndash;5 free-text responses</td></tr>
+        <tr><td><code>jr1</code>&ndash;<code>jr5</code></td><td>Journal prompts 1&ndash;5 (OOP: classes, self, attributes, design, Game class)</td></tr>
         <tr><td colspan="2" style="background:#F0F4F8;font-weight:700;font-size:12px;padding:8px 14px;letter-spacing:.04em">POST-CALIBRATION</td></tr>
-        <tr><td><code>post_confidence</code></td><td>Confidence rating after activity (1&ndash;5)</td></tr>
-        <tr><td><code>post_actual</code></td><td>Self-reported actual score (%)</td></tr>
-        <tr><td><code>post_r1</code></td><td>Reflection: how accurate was the prediction?</td></tr>
-        <tr><td><code>post_r2</code></td><td>Reflection: what would you do differently?</td></tr>
+        <tr><td><code>post_confidence</code></td><td>Confidence rating after activity (1&ndash;10)</td></tr>
+        <tr><td><code>post_actual</code></td><td>Self-estimated actual Tier 1 score (%)</td></tr>
+        <tr><td><code>post_r1</code></td><td>Reflection: prediction vs actual</td></tr>
+        <tr><td><code>post_r2</code></td><td>Second reflection (if collected)</td></tr>
         <tr><td><code>calibration_index</code></td><td>post_actual &minus; cal_predicted (negative = overconfident)</td></tr>
       </tbody>
     </table>
   </div>
 
+</div><!-- /page-body -->
+</div><!-- /tcontent -->
+
+<script>
+(function(){
+  var b=document.getElementById('gatebtn');
+  if(!b)return;
+  b.addEventListener('click',function(){
+    document.getElementById('gate').hidden=true;
+    document.getElementById('tcontent').hidden=false;
+  });
+})();
+document.querySelectorAll('.copybtn').forEach(function(b){
+  b.addEventListener('click',function(){
+    var t=b.parentElement.querySelector('code').textContent;
+    navigator.clipboard.writeText(t).then(function(){
+      b.textContent='Copied!';b.classList.add('copied');
+      setTimeout(function(){b.textContent='Copy';b.classList.remove('copied');},2000);
+    }).catch(function(){});
+  });
+});
+</script>
+
 <footer>
-  <span>&copy; 2026 Nurul Hazlina Noordin · UMPSA STEM Lab Engineering Education Initiative</span>
+  <span>&copy; 2026 Nurul Hazlina Noordin &middot; UMPSA STEM Lab Engineering Education Initiative</span>
   <a href="https://www.umpsa.edu.my" target="_blank" rel="noopener" aria-label="UMPSA website">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
   </a>

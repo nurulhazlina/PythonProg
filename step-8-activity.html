@@ -200,6 +200,10 @@ section.hero{background:linear-gradient(135deg,var(--teal-dark) 0%,#063f3b 100%)
         <input type="text" id="id-class" placeholder="01A" autocomplete="off">
       </div>
       <div class="id-field">
+        <label>School / Programme Code</label>
+        <input type="text" id="id-school-code" placeholder="BEE / BCS / etc." autocomplete="off">
+      </div>
+      <div class="id-field">
         <label>Gender</label>
         <select id="id-gender">
           <option value="">— select —</option>
@@ -628,6 +632,7 @@ function unlockTier(n){
   if(st.name)document.getElementById('id-name').value=st.name||'';
   if(st.matric)document.getElementById('id-matric').value=st.matric||'';
   if(st.class)document.getElementById('id-class').value=st.class||'';
+  if(st.school_code)document.getElementById('id-school-code').value=st.school_code||'';
   if(st.gender)document.getElementById('id-gender').value=st.gender||'';
   if(st.age)document.getElementById('id-age').value=st.age||'';
   if(st.mykid)document.getElementById('id-mykid').value=st.mykid||'';
@@ -642,6 +647,7 @@ function unlockTier(n){
     if(!name||!matric||!cls){document.getElementById('idNotice').style.display='block';return;}
     document.getElementById('idNotice').style.display='none';
     var d={name:name,matric:matric,class:cls,
+      school_code:document.getElementById('id-school-code').value.trim(),
       gender:document.getElementById('id-gender').value,
       age:document.getElementById('id-age').value,
       mykid:document.getElementById('id-mykid').value.trim(),
@@ -655,6 +661,7 @@ function unlockTier(n){
     document.getElementById('id-name').value=st2.name||'';
     document.getElementById('id-matric').value=st2.matric||'';
     document.getElementById('id-class').value=st2.class||'';
+    document.getElementById('id-school-code').value=st2.school_code||'';
     document.getElementById('id-gender').value=st2.gender||'';
     document.getElementById('id-age').value=st2.age||'';
     document.getElementById('id-mykid').value=st2.mykid||'';
@@ -673,6 +680,11 @@ function unlockTier(n){
 function sendActivityRecord(stepNum){
   try{
     var st={};try{st=JSON.parse(localStorage.getItem(ID_KEY)||'{}');}catch(e){}
+    // Fallback: read directly from form fields if localStorage is empty
+    function fv(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+    if(!st.matric){st.name=fv('id-name');st.matric=fv('id-matric');st.class=fv('id-class');
+      st.gender=fv('id-gender');st.age=fv('id-age');st.mykid=fv('id-mykid');
+      st.home_state=fv('id-home-state');st.school_code=fv('id-school-code');st.phone=fv('id-phone');st.email=fv('id-email');}
     var d=lmsGet();var cal=d.cal||{};var cs=d.concept_step||{};var pc=d.post_cal||{};
     function jv(id){var el=document.getElementById(id);if(el&&el.value)return el.value;return (d.tj_submitted&&d.tj_submitted.responses&&d.tj_submitted.responses[id])?d.tj_submitted.responses[id]:'';}
     var cqa=(cs.answers&&cs.answers.length)?cs.answers:((d.concept_first_answers&&d.concept_first_answers.answers)?d.concept_first_answers.answers:[]);
