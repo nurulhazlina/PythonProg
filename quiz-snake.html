@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Concept Quiz — Snake Game Python Steps 1–9 | BTE1522 / DRE2213</title>
+<style>
+/* ── Design tokens ── */
+:root{
+  --blue:#0D55A7;--blue-dk:#0a3d7a;--blue-lt:rgba(13,85,167,.08);
+  --teal:#02ADA5;--teal-dk:#017a74;
+  --green:#1a7f37;--green-lt:rgba(26,127,55,.1);--green-bd:rgba(26,127,55,.35);
+  --red:#c00;--red-lt:rgba(200,0,0,.07);--red-bd:rgba(200,0,0,.3);
+  --bg:#f4f6fb;--card:#fff;--line:#e2e6ee;--muted:#6b7280;
+  --radius:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+  background:var(--bg);color:#1a1f2e;font-size:14px;line-height:1.5}
+a{color:var(--blue)}
+.wrap{max-width:820px;margin:0 auto;padding:0 16px}
+
+/* ── Chev bar (coloured chevron arrows) ── */
+.chev{display:flex;height:34px;overflow:hidden}
+.chev span{flex:1;display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:900;letter-spacing:.13em;text-transform:uppercase;
+  color:#fff;user-select:none;transition:opacity .15s}
+.chev span:hover{opacity:.85}
+.chev span:nth-child(1){background:#2563EB;
+  clip-path:polygon(0 0,calc(100% - 13px) 0,100% 50%,calc(100% - 13px) 100%,0 100%)}
+.chev span:nth-child(2){background:#DC2626;
+  clip-path:polygon(0 0,calc(100% - 13px) 0,100% 50%,calc(100% - 13px) 100%,0 100%,13px 50%)}
+.chev span:nth-child(3){background:#F59E0B;
+  clip-path:polygon(0 0,calc(100% - 13px) 0,100% 50%,calc(100% - 13px) 100%,0 100%,13px 50%)}
+.chev span:nth-child(4){background:var(--teal);
+  clip-path:polygon(0 0,100% 0,100% 100%,0 100%,13px 50%)}
+#see-box{cursor:pointer}
+
+/* ── Nav ── */
+.sitenav{background:var(--blue-dk);padding:0}
+.sitenav .wrap{display:flex;align-items:center;gap:16px;height:50px}
+.brand{color:#fff;font-weight:800;font-size:15px;text-decoration:none}
+.brand span{font-weight:400;opacity:.7}
+.nl{color:rgba(255,255,255,.75);text-decoration:none;font-size:13px;margin-left:auto}
+.nl:hover{color:#fff}
+/* steps dropdown */
+.navsel{position:relative;list-style:none}
+.navsel summary{color:rgba(255,255,255,.85);font-size:13px;font-weight:600;
+  cursor:pointer;padding:6px 10px;border-radius:6px;list-style:none;
+  display:flex;align-items:center;gap:5px;user-select:none}
+.navsel summary:hover{background:rgba(255,255,255,.1)}
+.navsel summary::after{content:'▾';font-size:10px;opacity:.7}
+.navmenu{position:absolute;top:calc(100% + 6px);left:0;background:#fff;
+  border:1px solid var(--line);border-radius:10px;min-width:220px;
+  box-shadow:0 6px 24px rgba(0,0,0,.15);z-index:200;padding:6px}
+.navmenu a{display:block;padding:7px 13px;font-size:13px;color:#1a1f2e;
+  text-decoration:none;border-radius:6px;line-height:1.4}
+.navmenu a:hover{background:var(--blue-lt);color:var(--blue)}
+.navmenu a[aria-current="page"]{background:var(--blue-lt);color:var(--blue);font-weight:700}
+
+/* ── Hero ── */
+.hero{background:var(--blue);color:#fff;padding:34px 0 28px}
+.hero .eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.6);margin:0 0 8px}
+.hero h1{margin:0 0 9px;font-size:clamp(1.3rem,4vw,1.85rem)}
+.hero .sub{margin:0;opacity:.82;max-width:540px;line-height:1.55}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.pill{background:rgba(255,255,255,.15);border-radius:20px;padding:4px 13px;
+  font-size:12px;font-weight:700;letter-spacing:.02em}
+
+/* ── Progress bar ── */
+.progress-bar{padding:11px 0;background:var(--card);border-bottom:1px solid var(--line);
+  position:sticky;top:0;z-index:50;box-shadow:0 1px 6px rgba(0,0,0,.06)}
+.progress-bar .wrap{display:flex;flex-direction:column;gap:5px}
+.track{height:7px;background:rgba(0,0,0,.09);border-radius:4px;overflow:hidden}
+.track i{display:block;height:100%;background:var(--blue);border-radius:4px;transition:width .3s;width:0%}
+.prog-lbl{font-size:12px;color:var(--muted)}
+
+/* ── Blocks ── */
+.s-block{background:var(--card);border-radius:var(--radius);border:1px solid var(--line);
+  margin:22px 0;overflow:hidden}
+.s-block-hdr{background:var(--blue);color:#fff;padding:13px 18px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px}
+.s-block-hdr h2{margin:0;font-size:15px}
+.s-block-hdr p{margin:3px 0 0;font-size:12px;opacity:.8}
+.badge{background:rgba(255,255,255,.2);border-radius:20px;padding:2px 10px;font-size:12px;font-weight:700}
+.instr{background:var(--blue-lt);border:1px solid rgba(13,85,167,.15);border-radius:8px;
+  padding:11px 15px;margin:13px 16px 6px;font-size:13px;line-height:1.6;color:var(--muted)}
+.instr strong{color:var(--blue)}
+.step-hdr{background:rgba(10,55,110,.85);color:#B9D4F5;padding:7px 16px;font-size:11px;
+  font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+
+/* ── Question rows ── */
+.ci-row{padding:13px 16px;border-bottom:1px solid var(--line);display:flex;
+  gap:10px;align-items:flex-start;transition:background .2s}
+.ci-row:last-child{border-bottom:none}
+.ci-row.unanswered{background:rgba(200,0,0,.04)}
+.ci-num{color:var(--blue);font-weight:700;font-size:13px;min-width:26px;
+  flex-shrink:0;padding-top:1px}
+.ci-body{flex:1}
+.ci-q{font-size:14px;line-height:1.5;margin:0 0 10px}
+.ci-opts{display:flex;flex-direction:column;gap:5px}
+.ci-opt{display:flex;align-items:flex-start;gap:8px;cursor:pointer;padding:6px 10px;
+  border-radius:7px;border:1.5px solid var(--line);font-size:13.5px;line-height:1.4;
+  transition:all .12s;background:var(--card)}
+.ci-opt:hover{border-color:var(--blue);background:var(--blue-lt)}
+.ci-opt.selected{border-color:var(--blue);background:var(--blue-lt);font-weight:600}
+.ci-opt input[type=radio]{margin-top:2px;flex-shrink:0;accent-color:var(--blue)}
+.opt-lbl{width:18px;height:18px;border-radius:4px;background:var(--blue);color:#fff;
+  font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:1px;transition:background .2s}
+
+/* ── Answer reveal states ── */
+.ci-row.revealed-correct{background:var(--green-lt)}
+.ci-row.revealed-wrong{background:var(--red-lt)}
+.ci-opt.ans-correct{border-color:var(--green);background:var(--green-lt);font-weight:700}
+.ci-opt.ans-correct .opt-lbl{background:var(--green)}
+.ci-opt.ans-wrong-pick{border-color:var(--red);background:var(--red-lt)}
+.ci-opt.ans-wrong-pick .opt-lbl{background:var(--red)}
+.reveal-badge{display:none;font-size:12px;font-weight:700;margin-top:8px;padding:5px 10px;
+  border-radius:6px;width:fit-content}
+.reveal-badge.correct{display:block;background:var(--green-lt);border:1px solid var(--green-bd);
+  color:var(--green)}
+.reveal-badge.wrong{display:block;background:var(--red-lt);border:1px solid var(--red-bd);
+  color:var(--red)}
+.locked .ci-opt{cursor:default;pointer-events:none}
+
+/* ── Identity Block ── */
+.id-block{background:linear-gradient(135deg,#08312F,#0a3d39);border-radius:var(--radius);
+  padding:18px 20px;margin:0 0 20px;border:2px solid rgba(2,173,165,.3)}
+.id-block.id-confirmed{border-color:#02ADA5;background:linear-gradient(135deg,#052e16,#073d2e)}
+.id-block-title{font-weight:800;font-size:14px;color:#fff;display:flex;align-items:center;
+  gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.id-required-badge{background:#02ADA5;color:#fff;font-size:11px;font-weight:700;
+  padding:2px 9px;border-radius:20px;letter-spacing:.05em;flex-shrink:0}
+.id-subtitle{font-weight:400;font-size:12px;color:rgba(255,255,255,.6)}
+.id-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:9px 11px;align-items:end}
+.id-field{display:flex;flex-direction:column;gap:4px}
+.id-field.id-w2{grid-column:span 2}
+.id-field label{font-size:11px;font-weight:700;color:rgba(255,255,255,.65);
+  letter-spacing:.06em;text-transform:uppercase}
+.id-req{color:#f5a21d;margin-left:2px}
+.id-field input,.id-field select{background:rgba(255,255,255,.1);
+  border:1.5px solid rgba(255,255,255,.18);border-radius:7px;padding:8px 11px;
+  color:#fff;font-size:13px;font-family:inherit;width:100%;box-sizing:border-box}
+.id-field select{-webkit-appearance:none;appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23fff' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 11px center;padding-right:30px}
+.id-field select option{background:#0a3d39;color:#fff}
+.id-field input:focus,.id-field select:focus{outline:none;border-color:#02ADA5;
+  background:rgba(2,173,165,.12)}
+.id-save-btn{background:#02ADA5;color:#fff;border:none;border-radius:8px;padding:10px 20px;
+  font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;width:100%;margin-top:12px}
+.id-save-btn:hover{opacity:.88}
+.id-confirmed-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.id-confirmed-name{font-weight:700;font-size:15px;color:#fff}
+.id-confirmed-meta{color:rgba(255,255,255,.65);font-size:13px}
+.id-edit-btn{background:transparent;border:1.5px solid rgba(255,255,255,.35);border-radius:7px;
+  padding:6px 14px;color:rgba(255,255,255,.75);font-size:13px;font-weight:600;
+  cursor:pointer;font-family:inherit;margin-left:auto}
+.id-edit-btn:hover{border-color:#02ADA5;color:#02ADA5}
+.id-notice{background:rgba(245,162,29,.12);border:1.5px solid rgba(245,162,29,.45);
+  border-radius:7px;padding:8px 13px;color:#f5a21d;font-size:13px;font-weight:600;
+  margin-top:10px;display:none}
+
+/* ── Submit / Result ── */
+.submit-area{text-align:center;padding:26px 0 34px}
+.btn-sub{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:14px 48px;
+  font-size:15px;font-weight:700;cursor:pointer;transition:opacity .15s;font-family:inherit}
+.btn-sub:hover{opacity:.88}
+.btn-sub:disabled{background:#aaa;cursor:not-allowed}
+.val-msg{color:var(--red);font-size:14px;margin-top:10px;display:none;font-weight:600}
+
+/* ── Result card ── */
+.result-card{background:var(--card);border:2px solid var(--blue);border-radius:14px;
+  padding:0;display:none;max-width:600px;margin:18px auto 0;overflow:hidden}
+.result-top{background:var(--blue);color:#fff;padding:20px 24px;text-align:center}
+.result-top h3{margin:0 0 4px;font-size:1.1rem}
+.result-top p{margin:0;opacity:.82;font-size:13px}
+.score-row{display:flex;justify-content:center;gap:30px;margin:16px 0 4px;flex-wrap:wrap}
+.score-box{text-align:center}
+.score-num{font-size:2.6rem;font-weight:800;line-height:1}
+.score-lbl{font-size:12px;opacity:.82;margin-top:2px}
+.result-body{padding:18px 24px}
+.perf-bar-wrap{margin:10px 0 14px}
+.perf-bar-track{height:12px;background:rgba(0,0,0,.1);border-radius:6px;overflow:hidden}
+.perf-bar-fill{height:100%;border-radius:6px;background:var(--green);transition:width .8s .2s}
+.perf-bar-fill.med{background:#e69400}
+.perf-bar-fill.low{background:var(--red)}
+.step-scores{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-top:12px}
+.step-sc{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.step-sc .step-nm{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.05em;margin-bottom:3px}
+.step-sc .step-val{font-size:1.1rem;font-weight:700}
+.step-sc.s-hi .step-val{color:var(--green)}
+.step-sc.s-mid .step-val{color:#e69400}
+.step-sc.s-lo .step-val{color:var(--red)}
+.reveal-note{background:var(--blue-lt);border:1px solid rgba(13,85,167,.2);border-radius:8px;
+  padding:10px 14px;font-size:13px;color:var(--blue);margin-top:14px;font-weight:600}
+
+/* ── Code snippet inside question ── */
+.ci-code{background:#0d1117;border:1px solid #30363d;border-radius:7px;
+  padding:10px 14px;margin:0 0 10px;overflow-x:auto;font-family:'Courier New',Courier,monospace;
+  font-size:12.5px;line-height:1.65;color:#e6edf3;white-space:pre}
+.ci-code .kw{color:#ff7b72}  /* keywords */
+.ci-code .fn{color:#d2a8ff}  /* functions */
+.ci-code .st{color:#a5d6ff}  /* strings */
+.ci-code .cm{color:#8b949e}  /* comments */
+.ci-code .nm{color:#79c0ff}  /* numbers/consts */
+.ci-code .bi{color:#ffa657}  /* builtins */
+.code-label{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 4px;display:flex;align-items:center;gap:5px}
+.code-label::before{content:'';display:inline-block;width:8px;height:8px;
+  border-radius:50%;background:#ff7b72;box-shadow:12px 0 0 #ffa657,24px 0 0 #3fb950}
+
+/* ── Step breakdown in result ── */
+.step-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+.step-table th{background:var(--blue);color:#fff;padding:7px 10px;text-align:left;font-size:11.5px}
+.step-table td{padding:7px 10px;border-bottom:1px solid var(--line)}
+.step-table tr:last-child td{border-bottom:none}
+.step-table tr.s-hi td:last-child{color:var(--green);font-weight:700}
+.step-table tr.s-mid td:last-child{color:#e69400;font-weight:700}
+.step-table tr.s-lo td:last-child{color:var(--red);font-weight:700}
+
+/* ── Footer ── */
+footer{background:var(--card);border-top:1px solid var(--line);padding:22px 0;margin-top:30px}
+footer p{font-size:12px;color:var(--muted);text-align:center;line-height:1.7}
+footer strong{color:#1a1f2e}
+
+@media(max-width:580px){
+  .id-field.id-w2{grid-column:span 1}
+  .score-row{gap:18px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── Chev bar ── -->
+<div class="chev" id="chev"><span id="see-box">See</span><span>Think</span><span>Explore</span><span>Marvel</span></div>
+
+<!-- ── Nav ── -->
+<nav class="sitenav"><div class="wrap">
+  <a class="brand" href="index.html">Snake Game <span>Python Tutorial</span></a>
+  <details class="navsel"><summary>Steps</summary><div class="navmenu" role="menu">
+      <a href="step-1.html"><b>Step 1</b>: Variables &amp; Setup</a>
+      <a href="step-2.html"><b>Step 2</b>: Loop &amp; Events</a>
+      <a href="step-3.html"><b>Step 3</b>: Direction Control</a>
+      <a href="step-4.html"><b>Step 4</b>: Snake Body ⭐</a>
+      <a href="step-5.html"><b>Step 5</b>: Bonus Food 🌟</a>
+      <a href="step-6.html"><b>Step 6</b>: Functions</a>
+      <a href="step-7.html"><b>Step 7</b>: Wrap-Around ⭐</a>
+      <a href="step-8.html"><b>Step 8</b>: Save High Score</a>
+      <a href="step-9.html"><b>Step 9</b>: OOP Refactor</a>
+      <a href="step-10.html"><b>Step 10</b>: ML Extension</a>
+    </div></details>
+  <a class="nl" href="index.html">Home</a>
+</div></nav>
+
+<!-- ── Hero ── -->
+<header class="hero"><div class="wrap">
+  <p class="eyebrow">UMPSA STEM LAB &middot; BTE1522 / DRE2213 &middot; Formative Quiz</p>
+  <h1>Programming Concept Quiz — Snake Game</h1>
+  <p class="sub">Answer all <strong>50 questions</strong> across Steps 1–9. Submit when done — correct answers and your score are revealed immediately after submission.</p>
+  <div class="pills">
+    <span class="pill">📋 50 MCQ</span>
+    <span class="pill">⏱ ~15 min</span>
+    <span class="pill">🔒 Auto-saved</span>
+    <span class="pill">👁 Answers revealed after submit</span>
+    <span class="pill">📊 Bloom L1–L6</span>
+  </div>
+</div></header>
+
+<!-- ── Progress bar ── -->
+<div class="progress-bar"><div class="wrap">
+  <div class="track"><i id="pf"></i></div>
+  <div class="prog-lbl" id="pl">0 of 50 answered (0%)</div>
+</div></div>
+
+<main><div class="wrap">
+
+<!-- ── Student Identity ── -->
+<div class="id-block" id="idBlock" style="margin-top:22px">
+  <div class="id-block-title">
+    &#x1F464; Your Details
+    <span class="id-required-badge">REQUIRED</span>
+    <span class="id-subtitle">&mdash; fill in before submitting (<span style="color:#f5a21d">&#9733;</span> = required)</span>
+  </div>
+  <div id="idForm">
+    <div class="id-grid">
+      <div class="id-field id-w2">
+        <label>Full Name <span class="id-req">&#9733;</span></label>
+        <input type="text" id="id-name" placeholder="Ahmad bin Ali" autocomplete="name">
+      </div>
+      <div class="id-field">
+        <label>Matric No. <span class="id-req">&#9733;</span></label>
+        <input type="text" id="id-matric" placeholder="RE25001" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>Class <span class="id-req">&#9733;</span></label>
+        <input type="text" id="id-class" placeholder="01A" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>Gender <span class="id-req">&#9733;</span></label>
+        <select id="id-gender">
+          <option value="">-- select --</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Prefer not to say</option>
+        </select>
+      </div>
+      <div class="id-field">
+        <label>Age <span class="id-req">&#9733;</span></label>
+        <input type="number" id="id-age" min="10" max="30" placeholder="e.g. 19">
+      </div>
+      <div class="id-field">
+        <label>Home State</label>
+        <select id="id-state">
+          <option value="">-- select --</option>
+          <option>Johor</option><option>Kedah</option><option>Kelantan</option>
+          <option>Melaka</option><option>Negeri Sembilan</option><option>Pahang</option>
+          <option>Perak</option><option>Perlis</option><option>Pulau Pinang</option>
+          <option>Sabah</option><option>Sarawak</option><option>Selangor</option>
+          <option>Terengganu</option><option>Kuala Lumpur</option>
+          <option>Labuan</option><option>Putrajaya</option>
+        </select>
+      </div>
+      <div class="id-field id-w2">
+        <label>IC / MyKid No.</label>
+        <input type="text" id="id-mykid" placeholder="e.g. 050101-01-1234" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>School Code</label>
+        <input type="text" id="id-school" placeholder="e.g. JBA0001" autocomplete="off">
+      </div>
+      <div class="id-field">
+        <label>Phone</label>
+        <input type="tel" id="id-phone" placeholder="0123456789" autocomplete="tel">
+      </div>
+      <div class="id-field id-w2">
+        <label>Email</label>
+        <input type="email" id="id-email" placeholder="name@example.com" autocomplete="email">
+      </div>
+    </div>
+    <div class="id-notice" id="idNotice"></div>
+    <button class="id-save-btn" onclick="saveIdentity()">&#10003; Confirm My Details</button>
+  </div>
+  <div id="idConfirmed" style="display:none">
+    <div class="id-confirmed-row">
+      <span style="font-size:20px">&#9989;</span>
+      <div>
+        <div class="id-confirmed-name" id="idConfName"></div>
+        <div class="id-confirmed-meta" id="idConfMeta"></div>
+      </div>
+      <button class="id-edit-btn" onclick="editIdentity()">Edit</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Quiz Questions ── -->
+<div class="s-block">
+  <div class="s-block-hdr">
+    <div>
+      <h2>Programming Concept Inventory</h2>
+      <p>50 questions &middot; 5 per step &middot; Select the one best answer</p>
+    </div>
+    <span class="badge">50 MC</span>
+  </div>
+  <div class="instr">
+    <strong>Instructions:</strong> Select the <strong>one best answer</strong> for each question.
+    All answers are about the Snake Game Python code you studied.
+  </div>
+  <div id="ci-items"></div>
+</div>
+
+<!-- ── Submit ── -->
+<div class="submit-area">
+  <button class="btn-sub" id="sub-btn" type="button" onclick="doSubmit()">
+    &#9654; Submit Quiz &amp; See Answers
+  </button>
+  <div class="val-msg" id="vm"></div>
+
+  <!-- Result panel (shown after submit) -->
+  <div class="result-card" id="result-card">
+    <div class="result-top">
+      <h3>&#10003; Quiz Submitted — Well done! &#127881;</h3>
+      <p>Scroll down to see which answers were correct and which to review.</p>
+      <div class="score-row">
+        <div class="score-box">
+          <div class="score-num" id="sc-num">—</div>
+          <div class="score-lbl">correct out of 50</div>
+        </div>
+        <div class="score-box">
+          <div class="score-num" id="sc-pct">—</div>
+          <div class="score-lbl">concept score</div>
+        </div>
+      </div>
+    </div>
+    <div class="result-body">
+      <!-- overall bar -->
+      <div class="perf-bar-wrap">
+        <div class="perf-bar-track">
+          <div class="perf-bar-fill" id="perf-bar" style="width:0%"></div>
+        </div>
+      </div>
+      <!-- per-step table -->
+      <div style="font-weight:700;font-size:13px;margin-bottom:8px">Score by Step</div>
+      <table class="step-table">
+        <thead><tr><th>Step</th><th>Topic</th><th>Score</th></tr></thead>
+        <tbody id="step-tbl-body"></tbody>
+      </table>
+      <div class="reveal-note">
+        &#128269; Scroll up — each question now shows <strong>&#10003; Correct</strong> or
+        <strong>&#10005; Incorrect</strong> with the right answer highlighted in green.
+      </div>
+    </div>
+  </div>
+</div>
+
+</div></main>
+
+<div id="teacher-reveal" hidden style="position:fixed;bottom:24px;right:24px;background:#08312F;color:#B9E4E1;border-radius:10px;padding:14px 18px;font-size:14px;z-index:999;border:1px solid rgba(255,255,255,.2);box-shadow:0 8px 24px rgba(0,0,0,.4)">
+  🔑 Teacher: quiz is formative — answers revealed on submit.
+</div>
+<footer><div class="wrap"><p><strong>See · Think · Explore · Marvel</strong><br>UMPSA STEM LAB &middot; BTE1522 / DRE2213 Programming &amp; Data Structure</p></div>
+  <p style="margin-top:10px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-weight:400">
+    <span>&copy; 2026 Nurul Hazlina Noordin &middot; UMPSA STEM Lab Engineering Education Initiative</span>
+    <a href="https://ee.ump.edu.my/hazlina/#research" target="_blank" rel="noopener"
+       title="Visit research page" aria-label="Research website"
+       style="color:var(--teal);display:inline-flex;align-items:center;transition:opacity .15s"
+       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="2" y1="12" x2="22" y2="12"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    </a>
+    <a href="mailto:hazlina@umpsa.edu.my"
+       title="hazlina@umpsa.edu.my" aria-label="Email Dr Nurul Hazlina"
+       style="color:var(--teal);display:inline-flex;align-items:center;transition:opacity .15s"
+       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true">
+        <rect x="2" y="4" width="20" height="16" rx="2"/>
+        <polyline points="2,4 12,13 22,4"/>
+      </svg>
+    </a>
+  </p>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════
+   QUIZ SCRIPT — Snake Game Concept Quiz
+   Questions are embedded below (self-contained)
+   Google Sheets: Apps Script web app below
+   ═══════════════════════════════════════════════ */
+
+var APPS_URL = 'https://script.google.com/macros/s/AKfycbx_mk1C27Su9IxEE9vt_NpyXRdRFAivSKNZR5a44r_w_ET_MwbqEpyrEQ9Ukvgmg669/exec';
+var LMS_KEY  = 'lms_quiz_snake';
+var ID_KEY   = 'umpsa_snake_student';
+var OPT_LETTERS = ['A','B','C','D'];
+var TOTAL    = 50;
+
+var STEP_LBL = {
+  1:'Step 1: Variables & Setup',       2:'Step 2: Game Loop & Events',
+  3:'Step 3: Direction Control',       4:'Step 4: Snake Body',
+  5:'Step 5: Food & Randomness',    6:'Step 6: Functions',
+  7:'Step 7: Wrap-Around',          8:'Step 8: Save High Score',
+  9:'Step 9: Object-Oriented',      10:'Step 10: Synthesis & Evaluation'
+};
+
+/* ═══════════════════════════════════════════════
+   50 QUESTIONS — 2 concept + 3 code analysis per step
+   bloom : Bloom's taxonomy level (1–6)
+   mc    : misconception code per option (null = correct, string = misconception label)
+   ═══════════════════════════════════════════════ */
+var PRE_POST_QUESTIONS = {
+  1: [
+    /* concept */
+    { q: "In the Snake game setup, what is the purpose of writing WIDTH = 600 at the top of the code?",
+      opts: ["It creates a variable that stores the width of the game window","It draws a rectangle on the screen","It sets the speed of the snake","It imports the pygame library"],
+      ans: 0, bloom: 1,
+      mc: [null,"confuse_var_with_draw","confuse_var_with_speed","confuse_var_with_import"] },
+    { q: "Which line of code initialises the Pygame library so the game can run?",
+      opts: ["pygame.display.set_mode((600,600))","import pygame","pygame.init()","screen = pygame.Surface((600,600))"],
+      ans: 2, bloom: 1,
+      mc: ["confuse_init_with_display","confuse_init_with_import",null,"confuse_init_with_surface"] },
+    /* code analysis */
+    { q: "What value does the expression below produce?",
+      code: "WIDTH = 600\nCELL  = 20\nprint(WIDTH // CELL)",
+      opts: ["12","30","600","20"],
+      ans: 1, bloom: 3,
+      mc: ["wrong_operator_modulo",null,"confuse_result_with_operand","confuse_result_with_divisor"] },
+    { q: "This code has a bug. Which line is incorrect?",
+      code: "import pygame\npygame.init()\nscreen = pygame.display.set_mode(600, 600)  # line 3\nGREEN = (0, 200, 0)",
+      opts: ["import pygame","pygame.init()","set_mode(600, 600) — needs a tuple: (600, 600)","GREEN = (0, 200, 0)"],
+      ans: 2, bloom: 4,
+      mc: ["false_positive_import","false_positive_init",null,"false_positive_constant"] },
+    { q: "After running the code below, what will the game window look like?",
+      code: "pygame.init()\npygame.display.set_caption('Snake Game')\nscreen = pygame.display.set_mode((400, 300))",
+      opts: ["A 600×600 window titled 'Snake Game'","A 400×300 window titled 'Snake Game'","A blank screen with no title","An error — missing CELL constant"],
+      ans: 1, bloom: 3,
+      mc: ["use_default_not_given",null,"ignore_set_caption","overfit_missing_var_error"] }
+  ],
+  2: [
+    /* concept */
+    { q: "What is the role of the while running: loop in the Snake game?",
+      opts: ["It draws the snake once","It keeps the game running continuously until the player quits","It checks the score","It sets the window title"],
+      ans: 1, bloom: 2,
+      mc: ["confuse_loop_with_single_draw",null,"confuse_loop_with_score","confuse_loop_with_title"] },
+    { q: "Which Pygame function retrieves all events that happened since the last frame?",
+      opts: ["pygame.get_events()","pygame.event.get()","pygame.event.check()","pygame.events.list()"],
+      ans: 1, bloom: 1,
+      mc: ["wrong_namespace",null,"invented_method","invented_plural_namespace"] },
+    /* code analysis */
+    { q: "What is the value of running after the code below executes once through the loop body?",
+      code: "running = True\nfor event in pygame.event.get():\n    if event.type == pygame.QUIT:\n        running = False",
+      opts: ["Always True","Always False","True unless the player clicked Close","None"],
+      ans: 2, bloom: 4,
+      mc: ["ignore_quit_event","always_false_overgeneralise",null,"confuse_bool_with_none"] },
+    { q: "What is printed when this code finishes?",
+      code: "running = True\ncount   = 0\nwhile running:\n    count += 1\n    if count == 3:\n        running = False\nprint(count)",
+      opts: ["0","2","3","The loop runs forever"],
+      ans: 2, bloom: 4,
+      mc: ["off_by_all","off_by_one",null,"ignore_exit_condition"] },
+    { q: "What does clock.tick(10) do compared to clock.tick(30) in the game loop?",
+      code: "clock = pygame.time.Clock()\n# inside game loop:\nclock.tick(10)   # Option A\nclock.tick(30)   # Option B",
+      opts: ["clock.tick(10) runs the loop faster","clock.tick(30) allows up to 3× more frames per second","Both produce the same speed","clock.tick(10) crashes the game"],
+      ans: 1, bloom: 4,
+      mc: ["reverse_fps_logic",null,"ignore_fps_difference","overfit_crash_fear"] }
+  ],
+  3: [
+    /* concept */
+    { q: "In the Snake game, a KEYDOWN event fires when:",
+      opts: ["The mouse is clicked","A keyboard key is pressed down","The game window is resized","The snake eats food"],
+      ans: 1, bloom: 1,
+      mc: ["confuse_key_with_mouse",null,"confuse_key_with_resize","confuse_key_with_game_event"] },
+    { q: "The snake direction is stored as dx = 1, dy = 0. What direction is the snake moving?",
+      opts: ["Up","Down","Left","Right"],
+      ans: 3, bloom: 2,
+      mc: ["confuse_dy_with_dx","confuse_positive_y_axis","confuse_negative_x",null] },
+    /* code analysis */
+    { q: "The player presses the LEFT arrow key. What are the new values of dx and dy?",
+      code: "dx, dy = 1, 0\nif event.key == pygame.K_UP:\n    dx, dy = 0, -1\nif event.key == pygame.K_LEFT:\n    dx, dy = -1, 0\nif event.key == pygame.K_DOWN:\n    dx, dy = 0, 1",
+      opts: ["dx=1, dy=0","dx=0, dy=-1","dx=-1, dy=0","dx=0, dy=1"],
+      ans: 2, bloom: 3,
+      mc: ["ignore_keypress","confuse_left_with_up",null,"confuse_left_with_down"] },
+    { q: "The snake is currently moving right (dx=1, dy=0). The player presses LEFT (new_dx=-1, new_dy=0). Does the direction change?",
+      code: "# reverse-direction guard\nif dx + new_dx != 0 or dy + new_dy != 0:\n    dx, dy = new_dx, new_dy",
+      opts: ["Yes — snake now moves left","No — 1+(-1)=0, so the condition is False and direction is unchanged","Yes — but only if len(body) > 1","Error — cannot add dx and new_dx"],
+      ans: 1, bloom: 4,
+      mc: ["ignore_guard_logic",null,"overfit_body_length_condition","type_error_misconception"] },
+    { q: "What does the code below print?",
+      code: "x, y  = 100, 100\ndx, dy = 0, 1\nCELL  = 20\nx = x + dx * CELL\ny = y + dy * CELL\nprint(x, y)",
+      opts: ["100 100","120 100","100 120","120 120"],
+      ans: 2, bloom: 3,
+      mc: ["ignore_update","update_wrong_axis",null,"update_both_axes"] }
+  ],
+  4: [
+    /* concept */
+    { q: "In the Snake game, the snake's body is stored as a list of (x, y) tuples. What Python data type is used for the full body?",
+      opts: ["Tuple","Dictionary","List","String"],
+      ans: 2, bloom: 1,
+      mc: ["confuse_container_with_element","confuse_list_with_dict",null,"confuse_list_with_string"] },
+    { q: "Each frame a new head position is inserted at the front of the body list. Which method does this?",
+      opts: ["body.append(new_head)","body.insert(0, new_head)","body.add(new_head)","body.push(new_head)"],
+      ans: 1, bloom: 2,
+      mc: ["append_adds_to_back",null,"invented_add_method","invented_push_method"] },
+    /* code analysis */
+    { q: "What is printed after running the code below?",
+      code: "body = [(100,100), (80,100), (60,100)]\nnew_head = (120, 100)\nbody.insert(0, new_head)\nprint(body[0])",
+      opts: ["(100, 100)","(60, 100)","(120, 100)","Error — body is immutable"],
+      ans: 2, bloom: 3,
+      mc: ["insert_doesnt_shift","confuse_front_with_back",null,"tuple_immutability_overgeneralise"] },
+    { q: "What is len(body) after these two lines execute?",
+      code: "body = [(100,100), (80,100), (60,100)]\nbody.insert(0, (120, 100))\nbody.pop()\nprint(len(body))",
+      opts: ["2","3","4","1"],
+      ans: 1, bloom: 4,
+      mc: ["ignore_insert","correct_trace",null,"double_count"] },
+    { q: "What is printed — 'Game Over' or 'Safe'?",
+      code: "body = [(100,100),(80,100),(60,100),(40,100)]\nhead = body[0]\nif head in body[1:]:\n    print('Game Over')\nelse:\n    print('Safe')",
+      opts: ["Game Over — head matches a body segment","Safe — head is not in the rest of the body","Error — cannot use 'in' on a list of tuples","Safe — body has fewer than 5 elements"],
+      ans: 1, bloom: 4,
+      mc: ["misread_distinct_elements",null,"in_operator_misconception","length_threshold_confusion"] }
+  ],
+  5: [
+    /* concept */
+    { q: "After the snake eats food, what two things happen in the game?",
+      opts: ["Score resets and body is cleared","Score increases and food moves to a new random position","Speed increases and dx changes","The window closes and reopens"],
+      ans: 1, bloom: 2,
+      mc: ["reset_instead_of_increase",null,"confuse_eating_with_speedup","confuse_eating_with_restart"] },
+    { q: "Why must food respawn at a position that is a multiple of CELL?",
+      opts: ["So the food is always at the centre","So the food aligns with the movement grid and can be collected","To avoid overlapping with the border only","Because random.randint always returns multiples of 20"],
+      ans: 1, bloom: 2,
+      mc: ["centre_misconception",null,"border_only_overgeneralise","wrong_randint_assumption"] },
+    /* code analysis */
+    { q: "What will food_x % CELL always equal after running this code?",
+      code: "import random\nCELL  = 20\nWIDTH = 600\nfood_x = random.randint(0, WIDTH // CELL - 1) * CELL\nprint(food_x % CELL)",
+      opts: ["A random number 0–599","20","0","A random number 0–19"],
+      ans: 2, bloom: 4,
+      mc: ["ignore_modulo_reduction","confuse_result_with_cell",null,"partial_modulo_understanding"] },
+    { q: "What is printed after this code runs?",
+      code: "body  = [(100,100),(80,100)]\nfood  = (100,100)\nscore = 0\nif body[0] == food:\n    score += 10\n    food = (200,200)\nprint(score, food)",
+      opts: ["0 (200,200)","10 (200,200)","10 (100,100)","0 (100,100)"],
+      ans: 1, bloom: 4,
+      mc: ["miss_collision","correct_trace","ignore_food_respawn","ignore_score_update"] },
+    { q: "What does len(choices) print and what does the list represent?",
+      code: "CELL   = 20\nWIDTH  = 600\nchoices = [i * CELL for i in range(WIDTH // CELL)]\nprint(len(choices))",
+      opts: ["20 — the cell size","30 — the number of grid columns across the window","600 — the window width","10 — the number of tutorial steps"],
+      ans: 1, bloom: 4,
+      mc: ["confuse_range_with_step",null,"confuse_range_with_width","domain_confusion"] }
+  ],
+  6: [
+    /* concept */
+    { q: "What keyword is used to define a function in Python?",
+      opts: ["function","define","def","func"],
+      ans: 2, bloom: 1,
+      mc: ["js_keyword_transfer","invented_keyword",null,"abbreviated_keyword"] },
+    { q: "Why is it good practice to put the drawing code inside a draw_snake() function?",
+      opts: ["It makes the game run faster","It makes the code reusable and easier to read","Python requires it","It prevents the snake from moving"],
+      ans: 1, bloom: 2,
+      mc: ["confuse_structure_with_speed",null,"syntax_necessity_misconception","confuse_function_with_logic"] },
+    /* code analysis */
+    { q: "What value does get_score() return when called with the body below?",
+      code: "def get_score(body):\n    return len(body) - 1\n\nbody = [(100,100),(80,100),(60,100)]\nprint(get_score(body))",
+      opts: ["3","2","1","0"],
+      ans: 1, bloom: 3,
+      mc: ["off_by_one_positive",null,"off_by_two","return_zero_confusion"] },
+    { q: "What shape does this function draw, and where?",
+      code: "def draw_cell(surface, colour, x, y, size):\n    pygame.draw.rect(surface, colour, (x, y, size, size))\n\ndraw_cell(screen, (0,200,0), 100, 100, 20)",
+      opts: ["A circle at (100,100) with radius 20","A 20×20 green square at position (100,100)","A line from (100,100) to (120,120)","Nothing — draw_cell has no return value"],
+      ans: 1, bloom: 4,
+      mc: ["confuse_rect_with_circle",null,"confuse_rect_with_line","no_return_misconception"] },
+    { q: "The snake head is at (620, 100) and WIDTH=600. What does is_alive() return?",
+      code: "def is_alive(body, WIDTH, HEIGHT):\n    hx, hy = body[0]\n    if hx < 0 or hx >= WIDTH:\n        return False\n    if body[0] in body[1:]:\n        return False\n    return True",
+      opts: ["True","False — head x=620 is outside WIDTH=600","False — head collides with the body","Error — too many parameters"],
+      ans: 1, bloom: 4,
+      mc: ["ignore_boundary_check",null,"misread_condition_as_collision","parameter_count_misconception"] }
+  ],
+  7: [
+    /* concept */
+    { q: "Wrap-around means the snake reappears on the opposite side when it leaves the window. Which Python operator makes this happen?",
+      opts: ["// (floor division)","** (power)","% (modulo)","- (subtraction)"],
+      ans: 2, bloom: 1,
+      mc: ["confuse_modulo_with_floor","confuse_modulo_with_power",null,"confuse_modulo_with_minus"] },
+    { q: "If WIDTH=600 and CELL=20, what does  x = (x + dx*CELL) % WIDTH  compute?",
+      opts: ["The snake's speed","The new x position that wraps around the grid","The food's x position","The number of grid columns"],
+      ans: 1, bloom: 2,
+      mc: ["confuse_position_with_speed",null,"confuse_snake_pos_with_food","confuse_position_with_count"] },
+    /* code analysis */
+    { q: "What is printed after this code runs?",
+      code: "x     = 580\ndx    = 1\nCELL  = 20\nWIDTH = 600\nx = (x + dx * CELL) % WIDTH\nprint(x)",
+      opts: ["600","580","0","20"],
+      ans: 2, bloom: 3,
+      mc: ["no_wrap_boundary","ignore_update",null,"off_by_one_modulo"] },
+    { q: "The snake's y position is 0 and it moves UP (dy = -1). What is the new y with wrap-around?",
+      code: "y      = 0\ndy     = -1\nCELL   = 20\nHEIGHT = 600\ny = (y + dy * CELL) % HEIGHT\nprint(y)",
+      opts: ["-20","580","0","600"],
+      ans: 1, bloom: 4,
+      mc: ["ignore_modulo_on_negative",null,"no_movement_applied","off_by_cell_boundary"] },
+    { q: "What is positions[2] after the loop finishes?",
+      code: "CELL      = 20\npositions = []\nfor i in range(5):\n    x = (100 + i * CELL) % 600\n    positions.append(x)\nprint(positions[2])",
+      opts: ["100","120","140","160"],
+      ans: 2, bloom: 4,
+      mc: ["off_by_start","off_by_one_index",null,"off_by_two_index"] }
+  ],
+  8: [
+    /* concept */
+    { q: "To save the high score to a file, which built-in Python function opens the file?",
+      opts: ["save()","open()","write_file()","file()"],
+      ans: 1, bloom: 1,
+      mc: ["invented_save_function",null,"invented_write_file","old_python2_file"] },
+    { q: "Why should reading the high score file be wrapped in a try/except block?",
+      opts: ["Python requires it for all file operations","The file may not exist on the first run, causing an error","It speeds up file reading","It allows the file to be opened twice at once"],
+      ans: 1, bloom: 2,
+      mc: ["syntax_necessity_misconception",null,"confuse_try_with_performance","confuse_try_with_concurrency"] },
+    /* code analysis */
+    { q: "What does this code do to highscore.txt?",
+      code: "with open('highscore.txt', 'w') as f:\n    f.write(str(42))",
+      opts: ["Reads 42 from the file","Appends 42 to the file","Creates or overwrites the file with the text '42'","Deletes the file"],
+      ans: 2, bloom: 3,
+      mc: ["confuse_w_with_r","confuse_w_with_a",null,"confuse_w_with_delete"] },
+    { q: "If highscore.txt does not exist, what is printed?",
+      code: "try:\n    with open('highscore.txt', 'r') as f:\n        high = int(f.read())\nexcept:\n    high = 0\nprint(high)",
+      opts: ["Error and the program crashes","None","0","An empty string"],
+      ans: 2, bloom: 4,
+      mc: ["ignore_except_block","confuse_except_return",null,"confuse_int_empty_string"] },
+    { q: "highscore.txt currently contains '90'. What is printed?",
+      code: "score = 85\ntry:\n    with open('highscore.txt', 'r') as f:\n        high = int(f.read())\nexcept:\n    high = 0\nif score > high:\n    print('New high score!')\nelse:\n    print('Keep trying!')",
+      opts: ["New high score!","Keep trying!","Error","85"],
+      ans: 1, bloom: 4,
+      mc: ["reverse_comparison",null,"overfit_error_expectation","print_variable_confusion"] }
+  ],
+  9: [
+    /* concept */
+    { q: "In Python OOP, which method is called automatically when a new object is created from a class?",
+      opts: ["start()","run()","__init__()","create()"],
+      ans: 2, bloom: 1,
+      mc: ["invented_start_method","confuse_init_with_run",null,"invented_create_method"] },
+    { q: "Inside a class method, what does self refer to?",
+      opts: ["The class itself","The current instance (object) of the class","The parent class","A local variable"],
+      ans: 1, bloom: 2,
+      mc: ["confuse_self_with_class",null,"confuse_self_with_parent","confuse_self_with_local"] },
+    /* code analysis */
+    { q: "What is printed after running the code below?",
+      code: "class Snake:\n    def __init__(self):\n        self.body = [(100,100),(80,100)]\n        self.dx   = 1\n\ns = Snake()\nprint(s.body[0])",
+      opts: ["(80,100)","[(100,100),(80,100)]","(100,100)","Error — body not defined"],
+      ans: 2, bloom: 3,
+      mc: ["confuse_first_with_last","print_whole_list",null,"scope_outside_class"] },
+    { q: "What does s.body[0] equal after calling s.move()?",
+      code: "class Snake:\n    def __init__(self):\n        self.body = [(100,100)]\n    def move(self, dx, dy, CELL=20):\n        hx, hy = self.body[0]\n        self.body.insert(0,(hx+dx*CELL, hy+dy*CELL))\n        self.body.pop()\n\ns = Snake()\ns.move(1, 0)\nprint(s.body[0])",
+      opts: ["(100,100)","(120,100)","(100,120)","Error"],
+      ans: 1, bloom: 4,
+      mc: ["ignore_move_effect",null,"confuse_dx_with_dy","method_call_error"] },
+    { q: "What is printed after calling f.respawn()?",
+      code: "class Food:\n    def __init__(self, x, y):\n        self.pos = (x, y)\n    def respawn(self, nx, ny):\n        self.pos = (nx, ny)\n\nf = Food(200, 200)\nf.respawn(400, 100)\nprint(f.pos)",
+      opts: ["(200,200)","(400,100)","Error — pos is read-only","None"],
+      ans: 1, bloom: 4,
+      mc: ["ignore_method_mutation",null,"immutability_overgeneralise","no_return_confusion"] }
+  ],
+  10: [
+    { q: "A student argues: 'Refactoring the Snake game into classes (Step 9) makes it run faster because Python objects execute quicker than plain functions.' Evaluate this claim.",
+      opts: [
+        "True — Python classes use compiled C internally so they always execute faster.",
+        "False — OOP refactoring reorganises code for readability and maintainability; it does not inherently speed up execution.",
+        "True — calling self.method() skips the Python interpreter overhead.",
+        "False — OOP always slows Python code down due to extra attribute lookup cost."
+      ],
+      ans: 1, bloom: 6,
+      mc: ["oop_faster_compiled",null,"self_skips_interpreter","oop_always_slower"]
+    },
+    { q: "A student wants to add a 'lives' system: the snake resets position when it dies but the score persists, and the game ends after 3 deaths. Which combination of Steps from this course is MOST directly needed?",
+      opts: [
+        "Step 1 (variables for lives counter) + Step 4 (body list reset) + Step 2 (game loop continue without quitting)",
+        "Step 3 (direction control) + Step 5 (food randomness) + Step 8 (file I/O)",
+        "Step 6 (functions) + Step 7 (wrap-around) + Step 9 (OOP class design)",
+        "Step 5 (random food) + Step 2 (event handling) + Step 3 (direction reset)"
+      ],
+      ans: 0, bloom: 5,
+      mc: [null,"direction_food_saves_lives","functions_wrap_oop_lives","random_events_direction"]
+    },
+    { q: "This update() function integrates movement (Step 3), body growth (Step 4), and wrap-around (Step 7). One line contains a bug — which is it?",
+      code: "def update(snake, direction, food, WIDTH, HEIGHT, CELL):\n    head = snake[0]\n    dx, dy = direction\n    new_head = (head[0] + dx, head[1] + dy)\n    new_head = (new_head[0] % WIDTH, new_head[1] % WIDTH)  # wrap\n    if new_head == food:\n        snake.insert(0, new_head)\n    else:\n        snake.insert(0, new_head)\n        snake.pop()\n    return snake",
+      opts: [
+        "snake.insert(0, new_head) — should be snake.append(new_head) to add at the tail",
+        "new_head = (new_head[0] % WIDTH, new_head[1] % WIDTH) — y should wrap using HEIGHT, not WIDTH",
+        "snake.pop() — should be snake.pop(0) to remove the head instead of the tail",
+        "dx, dy = direction — should be unpacked as dy, dx = direction"
+      ],
+      ans: 1, bloom: 6,
+      mc: ["insert_vs_append_confusion",null,"pop_removes_head","direction_unpack_reversed"]
+    },
+    { q: "This function integrates file I/O (Step 8), body reset (Step 4), and score variable (Step 1). What does it return when the current score exactly equals the saved high score?",
+      code: "def game_over(snake, score, INIT_LENGTH):\n    try:\n        with open('highscore.txt') as f:\n            best = int(f.read())\n    except:\n        best = 0\n    if score > best:\n        with open('highscore.txt', 'w') as f:\n            f.write(str(score))\n    del snake[INIT_LENGTH:]\n    return score > best",
+      opts: [
+        "True — score equals best, so the condition score > best is satisfied.",
+        "False — score > best is False when the values are equal; the file is not overwritten.",
+        "None — there is no return statement for the case when score equals best.",
+        "0 — the function resets the score to zero whenever a new high score is not set."
+      ],
+      ans: 1, bloom: 5,
+      mc: ["equal_satisfies_greater",null,"missing_return_for_equal","reset_on_no_new_high"]
+    },
+    { q: "A student places pygame.init() inside __init__ of a SnakeGame class (Step 9) to initialise the game loop (Step 2). Another student creates two SnakeGame() instances in sequence. What is the MOST likely consequence?",
+      opts: [
+        "No issue — pygame.init() is fully idempotent and safe to call any number of times.",
+        "A hard crash on the second SnakeGame() because pygame cannot be initialised twice in one process.",
+        "pygame.init() called twice may produce warnings and unstable mixer or display state on the second instance, but rarely crashes outright.",
+        "Both instances automatically share the same display window, showing the two games side by side."
+      ],
+      ans: 2, bloom: 6,
+      mc: ["pygame_init_idempotent","pygame_init_always_crashes",null,"pygame_shared_display"]
+    }
+  ]
+
+};
+
+/* ── Build CI array from embedded questions ── */
+var CI = [];
+for (var _s = 1; _s <= 10; _s++) {
+  var _qs = PRE_POST_QUESTIONS[_s] || [];
+  _qs.forEach(function(q) {
+    CI.push({ id: 'ci' + (CI.length + 1), step: _s, text: q.q, code: q.code || null, opts: q.opts, ans: q.ans, bloom: q.bloom || 1, mc: q.mc || null });
+  });
+}
+
+/* ── localStorage helpers ── */
+function lmsGet() { try { return JSON.parse(localStorage.getItem(LMS_KEY) || 'null') || {}; } catch(e) { return {}; } }
+function lmsSet(d) { try { localStorage.setItem(LMS_KEY, JSON.stringify(d)); } catch(e) {} }
+
+/* ── Responses store ── */
+var R = {};
+(function() { var s = lmsGet(); if (s.responses) R = s.responses; })();
+function saveR() { var d = lmsGet(); d.responses = R; d.updated = Date.now(); lmsSet(d); }
+
+/* ── Measurement: timing & answer-change counters ── */
+var QUIZ_START   = null;   // ms timestamp at first interaction
+var STEP_START   = {};     // { stepN: ms } — when user first touched each step
+var STEP_DWELL   = {};     // { stepN: seconds } — accumulated dwell
+var ANS_CHANGES  = {};     // { itemId: count }   — times user revised an answer
+
+/* ── Progress bar ── */
+function updateProg() {
+  var done = Object.keys(R).filter(function(k) { return R[k] !== undefined && R[k] !== null; }).length;
+  var pct  = Math.round(done / TOTAL * 100);
+  document.getElementById('pf').style.width = pct + '%';
+  document.getElementById('pl').textContent = done + ' of ' + TOTAL + ' answered (' + pct + '%)';
+}
+
+/* ── Build question rows ── */
+function buildCI() {
+  var c = document.getElementById('ci-items'), lastStep = -1, n = 0;
+  CI.forEach(function(item) {
+    n++;
+    if (item.step !== lastStep) {
+      var sh = document.createElement('div'); sh.className = 'step-hdr';
+      sh.textContent = STEP_LBL[item.step] || ('Step ' + item.step);
+      c.appendChild(sh); lastStep = item.step;
+    }
+    var row  = document.createElement('div'); row.className = 'ci-row'; row.id = 'row-' + item.id;
+    var numEl = document.createElement('div'); numEl.className = 'ci-num'; numEl.textContent = n + '.';
+    var body  = document.createElement('div'); body.className = 'ci-body';
+    var qEl   = document.createElement('p');   qEl.className  = 'ci-q';  qEl.textContent = item.text;
+
+    /* code block — only for code-analysis questions */
+    var codeEl = null;
+    if (item.code) {
+      var codeWrap = document.createElement('div'); codeWrap.className = 'ci-code-wrap';
+      var codeLbl  = document.createElement('div'); codeLbl.className  = 'code-label'; codeLbl.textContent = 'Python';
+      codeEl = document.createElement('pre');  codeEl.className = 'ci-code';
+      codeEl.textContent = item.code;
+      codeWrap.appendChild(codeLbl); codeWrap.appendChild(codeEl);
+      body.appendChild(qEl); body.appendChild(codeWrap);
+    } else {
+      body.appendChild(qEl);
+    }
+
+    var opts  = document.createElement('div'); opts.className = 'ci-opts';
+
+    item.opts.forEach(function(opt, i) {
+      var lbl    = document.createElement('label'); lbl.className = 'ci-opt';
+      if (R[item.id] === i) lbl.classList.add('selected');
+      var inp    = document.createElement('input'); inp.type = 'radio'; inp.name = item.id; inp.value = i;
+      if (R[item.id] === i) inp.checked = true;
+      var letter = document.createElement('span');  letter.className = 'opt-lbl'; letter.textContent = OPT_LETTERS[i];
+      var txt    = document.createTextNode(' ' + opt);
+
+      inp.addEventListener('change', function() {
+        opts.querySelectorAll('.ci-opt').forEach(function(l) { l.classList.remove('selected'); });
+        lbl.classList.add('selected');
+        /* ── measure: record first interaction timestamp ── */
+        var now = Date.now();
+        if (!QUIZ_START) QUIZ_START = now;
+        if (!STEP_START[item.step]) STEP_START[item.step] = now;
+        /* ── measure: count answer changes (revision after first pick) ── */
+        if (R[item.id] !== undefined && R[item.id] !== null) {
+          ANS_CHANGES[item.id] = (ANS_CHANGES[item.id] || 0) + 1;
+        }
+        R[item.id] = i; row.classList.remove('unanswered');
+        saveR(); updateProg();
+      });
+      lbl.appendChild(inp); lbl.appendChild(letter); lbl.appendChild(txt);
+      opts.appendChild(lbl);
+    });
+
+    /* reveal badge (hidden until submit) */
+    var badge = document.createElement('div'); badge.className = 'reveal-badge'; badge.id = 'badge-' + item.id;
+    body.appendChild(opts); body.appendChild(badge);
+    row.appendChild(numEl); row.appendChild(body);
+    c.appendChild(row);
+  });
+}
+
+/* ── Identity gate ── */
+var _idConfirmed = false;
+
+function _setIdentityConfirmed(st) {
+  _idConfirmed = true;
+  var blk = document.getElementById('idBlock');
+  blk.classList.add('id-confirmed');
+  document.getElementById('idForm').style.display      = 'none';
+  document.getElementById('idConfirmed').style.display = 'block';
+  document.getElementById('idConfName').textContent    = st.name || '';
+  var parts = [];
+  if (st.matric) parts.push(st.matric);
+  if (st.class)  parts.push('Class ' + st.class);
+  if (st.gender) parts.push(st.gender);
+  if (st.age)    parts.push('Age ' + st.age);
+  document.getElementById('idConfMeta').textContent = parts.join(' · ');
+}
+
+function saveIdentity() {
+  var name   = (document.getElementById('id-name')   || {}).value || '';
+  var matric = (document.getElementById('id-matric') || {}).value || '';
+  var cls    = (document.getElementById('id-class')  || {}).value || '';
+  var gender = (document.getElementById('id-gender') || {}).value || '';
+  var age    = (document.getElementById('id-age')    || {}).value || '';
+  var notice = document.getElementById('idNotice');
+  var missing = [];
+  if (!name.trim())   missing.push('Full Name');
+  if (!matric.trim()) missing.push('Matric No.');
+  if (!cls.trim())    missing.push('Class');
+  if (!gender)        missing.push('Gender');
+  if (!age)           missing.push('Age');
+  if (missing.length) {
+    notice.textContent = 'Required: ' + missing.join(', ');
+    notice.style.display = 'block'; return;
+  }
+  notice.style.display = 'none';
+  var st = {
+    name: name.trim(), matric: matric.trim().toUpperCase(),
+    class: cls.trim(), gender: gender, age: age,
+    home_state:  (document.getElementById('id-state')  || {}).value || '',
+    mykid:       (document.getElementById('id-mykid')  || {}).value || '',
+    school_code: (document.getElementById('id-school') || {}).value || '',
+    phone:       (document.getElementById('id-phone')  || {}).value || '',
+    email:       (document.getElementById('id-email')  || {}).value || ''
+  };
+  try { localStorage.setItem(ID_KEY, JSON.stringify(st)); } catch(e) {}
+  _setIdentityConfirmed(st);
+}
+
+function editIdentity() {
+  _idConfirmed = false;
+  document.getElementById('idForm').style.display      = 'block';
+  document.getElementById('idConfirmed').style.display = 'none';
+  document.getElementById('idBlock').classList.remove('id-confirmed');
+}
+
+/* Restore identity + gate submit button */
+(function _initIdentity() {
+  var st = {};
+  try { st = JSON.parse(localStorage.getItem(ID_KEY) || '{}'); } catch(e) {}
+  var fields = {
+    'id-name': 'name', 'id-matric': 'matric', 'id-class': 'class',
+    'id-gender': 'gender', 'id-age': 'age', 'id-state': 'home_state',
+    'id-mykid': 'mykid', 'id-school': 'school_code',
+    'id-phone': 'phone', 'id-email': 'email'
+  };
+  Object.keys(fields).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && st[fields[id]]) el.value = st[fields[id]];
+  });
+  if (st.name && st.matric && st.class && st.gender && st.age) {
+    _setIdentityConfirmed(st);
+  }
+  /* guard: gate submit to identity confirmation */
+  document.getElementById('sub-btn').addEventListener('click', function(e) {
+    if (!_idConfirmed) {
+      e.stopImmediatePropagation();
+      var notice = document.getElementById('idNotice');
+      notice.textContent = 'Please confirm your details above before submitting.';
+      notice.style.display = 'block';
+      document.getElementById('idBlock').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, true);
+})();
+
+/* ═══════════════════════════════════════════════
+   SUBMIT & ANSWER REVEAL
+   ═══════════════════════════════════════════════ */
+function doSubmit() {
+  /* 1. Check all answered */
+  var miss = CI.filter(function(item) { return R[item.id] === undefined || R[item.id] === null; });
+  if (miss.length) {
+    var vm = document.getElementById('vm');
+    vm.style.display = 'block';
+    vm.textContent   = 'Please answer all questions before submitting. (' + miss.length + ' unanswered)';
+    miss.forEach(function(item) {
+      var r = document.getElementById('row-' + item.id);
+      if (r) r.classList.add('unanswered');
+    });
+    document.getElementById('row-' + miss[0].id).scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  /* 2. Score */
+  var correct = 0;
+  CI.forEach(function(item) { if (R[item.id] === item.ans) correct++; });
+  var pct = Math.round(correct / TOTAL * 100);
+
+  /* 3. Per-step breakdown */
+  var byStep = {};
+  CI.forEach(function(item) {
+    if (!byStep[item.step]) byStep[item.step] = { correct: 0, total: 0 };
+    byStep[item.step].total++;
+    if (R[item.id] === item.ans) byStep[item.step].correct++;
+  });
+
+  /* 4. Compute timing totals */
+  var submitMs     = Date.now();
+  var totalSeconds = QUIZ_START ? Math.round((submitMs - QUIZ_START) / 1000) : 0;
+  /* per-step dwell: spread from quiz start proportionally if start times missing */
+  var stepSecs = {};
+  for (var _st = 1; _st <= 10; _st++) {
+    stepSecs[_st] = STEP_START[_st]
+      ? Math.round(((_st < 10 ? (STEP_START[_st+1] || submitMs) : submitMs) - STEP_START[_st]) / 1000)
+      : 0;
+  }
+  /* per-question Bloom level and misconception chosen */
+  var bloomScores = {};  // bloom_level -> {correct, total}
+  var mcChosen    = {};  // itemId -> misconception code or 'correct'
+  CI.forEach(function(item) {
+    var chosen = R[item.id];
+    var bl = item.bloom || 1;
+    if (!bloomScores[bl]) bloomScores[bl] = { correct: 0, total: 0 };
+    bloomScores[bl].total++;
+    if (chosen === item.ans) {
+      bloomScores[bl].correct++;
+      mcChosen[item.id] = 'correct';
+    } else {
+      bloomScores[bl];
+      mcChosen[item.id] = (item.mc && chosen !== undefined && item.mc[chosen]) ? item.mc[chosen] : 'wrong';
+    }
+  });
+
+  /* 4b. Save to localStorage */
+  var payload = {
+    responses: R, concept_score: correct, concept_total: TOTAL,
+    concept_pct: pct + '%', by_step: byStep,
+    total_seconds: totalSeconds, step_secs: stepSecs,
+    bloom_scores: bloomScores, mc_chosen: mcChosen, ans_changes: ANS_CHANGES,
+    submitted_at: submitMs, submitted_iso: new Date().toISOString()
+  };
+  var d = lmsGet(); d.submitted = true; d.payload = payload; lmsSet(d);
+
+  /* 5. Post to Google Sheets */
+  var st = {};
+  try { st = JSON.parse(localStorage.getItem(ID_KEY) || '{}'); } catch(e) {}
+  var studentFields = {
+    matric: st.matric || '', name: st.name || '', class: st.class || '',
+    gender: st.gender || '', age: st.age || '', mykid: st.mykid || '',
+    home_state: st.home_state || '', school_code: st.school_code || '',
+    phone: st.phone || '', email: st.email || ''
+  };
+  /* bundled quiz row */
+  try {
+    var answers = CI.map(function(item) {
+      return R[item.id] !== undefined ? item.opts[R[item.id]] : '';
+    });
+    var bloom1 = bloomScores[1] || {correct:0,total:0};
+    var bloom2 = bloomScores[2] || {correct:0,total:0};
+    var bloom3 = bloomScores[3] || {correct:0,total:0};
+    var bloom4 = bloomScores[4] || {correct:0,total:0};
+    var bloom5 = bloomScores[5] || {correct:0,total:0};
+    var bloom6 = bloomScores[6] || {correct:0,total:0};
+    fetch(APPS_URL, {
+      method: 'POST', mode: 'no-cors',
+      body: JSON.stringify(Object.assign({}, studentFields, {
+        sheet_name: 'QUIZ_5pc', type: 'quiz', submitted_iso: new Date().toISOString(),
+        score: correct, score_pct: pct, answers: answers,
+        total_seconds: totalSeconds,
+        step1_secs: stepSecs[1]||0, step2_secs: stepSecs[2]||0,
+        step3_secs: stepSecs[3]||0, step4_secs: stepSecs[4]||0,
+        step5_secs: stepSecs[5]||0, step6_secs: stepSecs[6]||0,
+        step7_secs: stepSecs[7]||0, step8_secs: stepSecs[8]||0,
+        step9_secs: stepSecs[9]||0, step10_secs: stepSecs[10]||0,
+        bloom1_correct: bloom1.correct, bloom1_total: bloom1.total,
+        bloom2_correct: bloom2.correct, bloom2_total: bloom2.total,
+        bloom3_correct: bloom3.correct, bloom3_total: bloom3.total,
+        bloom4_correct: bloom4.correct, bloom4_total: bloom4.total,
+        bloom5_correct: bloom5.correct, bloom5_total: bloom5.total,
+        bloom6_correct: bloom6.correct, bloom6_total: bloom6.total,
+        ans_changes_json: JSON.stringify(ANS_CHANGES),
+        mc_chosen_json: JSON.stringify(mcChosen)
+      }))
+    });
+  } catch(e) {}
+  /* per-step rows */
+  Object.keys(byStep).forEach(function(step) {
+    var sc = byStep[step];
+    var sa = CI.filter(function(i){ return i.step == step; }).map(function(item){
+      return { answer: item.opts[R[item.id]], correct: R[item.id] === item.ans ? 1 : 0 };
+    });
+    try {
+      fetch(APPS_URL, {
+        method: 'POST', mode: 'no-cors',
+        body: JSON.stringify(Object.assign({}, studentFields, {
+          sheet_name: 'QUIZ_5pc', type: 'concept', step: parseInt(step, 10), test_type: 'quiz',
+          answers: sa, score_pct: Math.round(sc.correct / sc.total * 100),
+          submitted_iso: new Date().toISOString()
+        }))
+      });
+    } catch(e) {}
+  });
+
+  /* 6. Disable submit, hide error */
+  document.getElementById('sub-btn').disabled = true;
+  document.getElementById('vm').style.display  = 'none';
+
+  /* 7. Show result card */
+  var rc = document.getElementById('result-card');
+  rc.style.display = 'block';
+  document.getElementById('sc-num').textContent = correct;
+  document.getElementById('sc-pct').textContent = pct + '%';
+  /* performance bar */
+  var bar = document.getElementById('perf-bar');
+  bar.style.width = pct + '%';
+  if (pct < 40) bar.classList.add('low');
+  else if (pct < 70) bar.classList.add('med');
+  /* step table */
+  var tbody = document.getElementById('step-tbl-body');
+  Object.keys(byStep).sort(function(a,b){return a-b;}).forEach(function(s) {
+    var sc = byStep[s];
+    var sp = Math.round(sc.correct / sc.total * 100);
+    var cls = sp >= 80 ? 's-hi' : sp >= 60 ? 's-mid' : 's-lo';
+    var tr = document.createElement('tr'); tr.className = cls;
+    tr.innerHTML = '<td>' + s + '</td><td>' + (STEP_LBL[s] || 'Step ' + s) + '</td><td>' + sc.correct + '/' + sc.total + ' (' + sp + '%)</td>';
+    tbody.appendChild(tr);
+  });
+
+  /* 8. Answer reveal — run after short delay for smooth UX */
+  setTimeout(function() { revealAnswers(); }, 400);
+
+  /* 9. Scroll to result */
+  rc.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function revealAnswers() {
+  /* Lock all inputs */
+  document.getElementById('ci-items').classList.add('locked');
+  CI.forEach(function(item) {
+    var row   = document.getElementById('row-' + item.id);
+    var badge = document.getElementById('badge-' + item.id);
+    var isCorrect = R[item.id] === item.ans;
+    /* colour the row */
+    row.classList.remove('unanswered');
+    row.classList.add(isCorrect ? 'revealed-correct' : 'revealed-wrong');
+    /* colour each option */
+    var optEls = row.querySelectorAll('.ci-opt');
+    optEls.forEach(function(lbl, i) {
+      if (i === item.ans) {
+        lbl.classList.add('ans-correct');
+      } else if (i === R[item.id] && !isCorrect) {
+        lbl.classList.add('ans-wrong-pick');
+      }
+    });
+    /* badge */
+    if (isCorrect) {
+      badge.className = 'reveal-badge correct';
+      badge.textContent = '✓ Correct!';
+    } else {
+      badge.className = 'reveal-badge wrong';
+      badge.textContent = '✗ Incorrect — Correct answer: ' + OPT_LETTERS[item.ans] + '. ' + item.opts[item.ans];
+    }
+  });
+}
+
+/* ── Init ── */
+buildCI();
+updateProg();
+
+/* teacher reveal: triple-click "See" */
+(function(){var clicks=0,timer,box=document.getElementById('see-box');if(!box)return;box.style.cursor='pointer';box.addEventListener('click',function(){clicks++;clearTimeout(timer);timer=setTimeout(function(){clicks=0;},1500);if(clicks>=3){clicks=0;var el=document.getElementById('teacher-reveal');if(el)el.hidden=false;}});})();
+</script>
+</body>
+</html>
