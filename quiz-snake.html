@@ -162,6 +162,26 @@ a{color:var(--blue)}
 .id-notice{background:rgba(245,162,29,.12);border:1.5px solid rgba(245,162,29,.45);
   border-radius:7px;padding:8px 13px;color:#f5a21d;font-size:13px;font-weight:600;
   margin-top:10px;display:none}
+.cal-block{margin-top:14px;background:rgba(255,255,255,.07);border-radius:9px;
+  padding:14px 16px;border:1px solid rgba(255,255,255,.13)}
+.cal-block h4{font-size:12px;font-weight:800;color:#02ADA5;letter-spacing:.07em;
+  text-transform:uppercase;margin-bottom:10px}
+.cal-row{margin-bottom:12px}
+.cal-row label{font-size:11px;font-weight:700;color:rgba(255,255,255,.65);
+  display:block;margin-bottom:4px}
+.cal-row .cal-val{color:#fff;font-weight:800;font-size:13px;margin-left:8px}
+.cal-row input[type=range]{width:100%;accent-color:#02ADA5;cursor:pointer}
+.reflection-wrap{margin-top:18px;padding:14px 16px;background:#f0fdf4;
+  border:1.5px solid #86efac;border-radius:10px}
+.reflection-wrap label{font-size:13px;font-weight:700;color:#166534;display:block;margin-bottom:8px}
+.reflection-wrap textarea{width:100%;border:1.5px solid #86efac;border-radius:7px;
+  padding:10px;font-family:inherit;font-size:13px;resize:vertical;color:#1e293b;
+  background:#fff;min-height:80px}
+.reflection-wrap .ref-btn{margin-top:8px;background:#16a34a;color:#fff;border:none;
+  border-radius:7px;padding:8px 20px;font-weight:700;font-size:13px;cursor:pointer;
+  font-family:inherit}
+.reflection-wrap .ref-btn:hover{opacity:.88}
+.reflection-wrap .ref-saved{color:#166534;font-size:13px;font-weight:700;display:none;margin-top:6px}
 
 /* ── Submit / Result ── */
 .submit-area{text-align:center;padding:26px 0 34px}
@@ -341,6 +361,21 @@ footer strong{color:#1a1f2e}
         <input type="email" id="id-email" placeholder="name@example.com" autocomplete="email">
       </div>
     </div>
+    <div class="cal-block">
+      <h4>&#128200; Before you start — predict your performance</h4>
+      <div class="cal-row">
+        <label>How confident are you about Python programming?
+          <span class="cal-val" id="conf-val">5</span> / 10</label>
+        <input type="range" id="id-confidence" min="1" max="10" value="5"
+          oninput="document.getElementById('conf-val').textContent=this.value">
+      </div>
+      <div class="cal-row">
+        <label>What score do you predict you&#39;ll get?
+          <span class="cal-val" id="pred-val">50</span>%</label>
+        <input type="range" id="id-predicted" min="0" max="100" step="5" value="50"
+          oninput="document.getElementById('pred-val').textContent=this.value">
+      </div>
+    </div>
     <div class="id-notice" id="idNotice"></div>
     <button class="id-save-btn" onclick="saveIdentity()">&#10003; Confirm My Details</button>
   </div>
@@ -408,6 +443,12 @@ footer strong{color:#1a1f2e}
         <thead><tr><th>Step</th><th>Topic</th><th>Score</th></tr></thead>
         <tbody id="step-tbl-body"></tbody>
       </table>
+      <div class="reflection-wrap" id="reflection-wrap" style="display:none">
+        <label>&#128161; Now that you&#39;ve seen your score — what will you focus on improving?</label>
+        <textarea id="cal-reflection" placeholder="e.g. I need to review Step 3 direction logic and practice OOP class structure..."></textarea>
+        <button class="ref-btn" onclick="saveReflection()">&#10003; Save Reflection</button>
+        <div class="ref-saved" id="ref-saved">&#9989; Reflection saved — thank you!</div>
+      </div>
       <div class="reveal-note">
         &#128269; Scroll up — each question now shows <strong>&#10003; Correct</strong> or
         <strong>&#10005; Incorrect</strong> with the right answer highlighted in green.
@@ -468,7 +509,7 @@ var STEP_LBL = {
   3:'Step 3: Direction Control',       4:'Step 4: Snake Body',
   5:'Step 5: Food & Randomness',    6:'Step 6: Functions',
   7:'Step 7: Wrap-Around',          8:'Step 8: Save High Score',
-  9:'Step 9: Object-Oriented',      10:'Step 10: Synthesis & Evaluation'
+  9:'Step 9: Object-Oriented',      10:'Synthesis: Steps 1–9'
 };
 
 /* ═══════════════════════════════════════════════
@@ -911,6 +952,8 @@ function saveIdentity() {
   notice.style.display = 'none';
   var st = {
     name: name.trim(), matric: matric.trim().toUpperCase(),
+      cal_confidence: parseInt((document.getElementById('id-confidence')||{value:'5'}).value)||5,
+      cal_predicted: parseInt((document.getElementById('id-predicted')||{value:'50'}).value)||50,
     class: cls.trim(), gender: gender, age: age,
     home_state:  (document.getElementById('id-state')  || {}).value || '',
     mykid:       (document.getElementById('id-mykid')  || {}).value || '',
@@ -1046,23 +1089,49 @@ function doSubmit() {
     var bloom4 = bloomScores[4] || {correct:0,total:0};
     var bloom5 = bloomScores[5] || {correct:0,total:0};
     var bloom6 = bloomScores[6] || {correct:0,total:0};
+    /* build per-question columns (q1…q50, q1_mc…q50_mc) */
+    var qCols = {};
+    CI.forEach(function(item, idx) {
+      var n = idx + 1;
+      var answered = R[item.id] !== undefined;
+      qCols['q' + n] = answered ? (R[item.id] === item.ans ? 1 : 0) : '';
+      var mcCode = '';
+      if (answered && R[item.id] !== item.ans && item.mc && item.mc[R[item.id]]) {
+        mcCode = item.mc[R[item.id]];
+      }
+      qCols['q' + n + '_mc'] = mcCode;
+    });
+    /* per-step score % */
+    var stepPcts = {};
+    for (var s = 1; s <= 10; s++) {
+      var sc2 = byStep[s] || {correct:0,total:0};
+      stepPcts['step' + s + '_pct'] = sc2.total > 0 ? Math.round(sc2.correct / sc2.total * 100) : '';
+    }
+    /* calibration */
+    var calConf = st.cal_confidence || 5;
+    var calPred = st.cal_predicted  || 50;
+    var calErr  = Math.abs(calPred - pct);
+    /* store matric for reflection POST */
+    window._quizMatric = st.matric || '';
+    window._quizISO    = new Date().toISOString();
     fetch(APPS_URL, {
       method: 'POST', mode: 'no-cors',
-      body: JSON.stringify(Object.assign({}, studentFields, {
-        sheet_name: 'QUIZ_5pc', type: 'quiz', submitted_iso: new Date().toISOString(),
-        score: correct, score_pct: pct, answers: answers,
-        total_seconds: totalSeconds,
+      body: JSON.stringify(Object.assign({}, studentFields, qCols, stepPcts, {
+        sheet_name: 'QUIZ_5pc', type: 'quiz', submitted_iso: window._quizISO,
+        score: correct, score_pct: pct, total_seconds: totalSeconds,
         step1_secs: stepSecs[1]||0, step2_secs: stepSecs[2]||0,
         step3_secs: stepSecs[3]||0, step4_secs: stepSecs[4]||0,
         step5_secs: stepSecs[5]||0, step6_secs: stepSecs[6]||0,
         step7_secs: stepSecs[7]||0, step8_secs: stepSecs[8]||0,
         step9_secs: stepSecs[9]||0, step10_secs: stepSecs[10]||0,
-        bloom1_correct: bloom1.correct, bloom1_total: bloom1.total,
-        bloom2_correct: bloom2.correct, bloom2_total: bloom2.total,
-        bloom3_correct: bloom3.correct, bloom3_total: bloom3.total,
-        bloom4_correct: bloom4.correct, bloom4_total: bloom4.total,
-        bloom5_correct: bloom5.correct, bloom5_total: bloom5.total,
-        bloom6_correct: bloom6.correct, bloom6_total: bloom6.total,
+        bloom1_pct: bloom1.total>0?Math.round(bloom1.correct/bloom1.total*100):'',
+        bloom2_pct: bloom2.total>0?Math.round(bloom2.correct/bloom2.total*100):'',
+        bloom3_pct: bloom3.total>0?Math.round(bloom3.correct/bloom3.total*100):'',
+        bloom4_pct: bloom4.total>0?Math.round(bloom4.correct/bloom4.total*100):'',
+        bloom5_pct: bloom5.total>0?Math.round(bloom5.correct/bloom5.total*100):'',
+        bloom6_pct: bloom6.total>0?Math.round(bloom6.correct/bloom6.total*100):'',
+        cal_confidence: calConf, cal_predicted: calPred, cal_error: calErr,
+        cal_reflection: '',
         ans_changes_json: JSON.stringify(ANS_CHANGES),
         mc_chosen_json: JSON.stringify(mcChosen)
       }))
@@ -1078,7 +1147,7 @@ function doSubmit() {
       fetch(APPS_URL, {
         method: 'POST', mode: 'no-cors',
         body: JSON.stringify(Object.assign({}, studentFields, {
-          sheet_name: 'QUIZ_5pc', type: 'concept', step: parseInt(step, 10), test_type: 'quiz',
+          sheet_name: 'QUIZ_5pc_steps', type: 'concept', step: parseInt(step, 10), test_type: 'quiz',
           answers: sa, score_pct: Math.round(sc.correct / sc.total * 100),
           submitted_iso: new Date().toISOString()
         }))
@@ -1116,6 +1185,31 @@ function doSubmit() {
 
   /* 9. Scroll to result */
   rc.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  /* show reflection box */
+  setTimeout(function(){
+    var rw = document.getElementById('reflection-wrap');
+    if (rw) rw.style.display = 'block';
+  }, 800);
+}
+
+function saveReflection() {
+  var txt = (document.getElementById('cal-reflection') || {}).value || '';
+  if (!txt.trim()) return;
+  try {
+    fetch(APPS_URL, {
+      method: 'POST', mode: 'no-cors',
+      body: JSON.stringify({
+        sheet_name: 'QUIZ_5pc', type: 'reflection',
+        matric: window._quizMatric || '',
+        submitted_iso: window._quizISO || new Date().toISOString(),
+        cal_reflection: txt.trim()
+      })
+    });
+  } catch(e) {}
+  var saved = document.getElementById('ref-saved');
+  if (saved) saved.style.display = 'block';
+  var btn = document.querySelector('.ref-btn');
+  if (btn) { btn.disabled = true; btn.style.opacity = '.5'; }
 }
 
 function revealAnswers() {
